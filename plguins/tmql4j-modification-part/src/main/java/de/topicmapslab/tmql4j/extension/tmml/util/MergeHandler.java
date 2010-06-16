@@ -116,7 +116,7 @@ public class MergeHandler {
 
 		roles: for (Role role : other.getRoles()) {
 			for (Role r : association.getRoles(role.getType())) {
-				if (role.getPlayer().equals(r)) {
+				if (role.getPlayer().equals(r.getPlayer())) {
 					continue roles;
 				}
 			}
