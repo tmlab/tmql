@@ -1,0 +1,38 @@
+== Tutorials ==
+
+This chapter contains a set of tutorials to learn the topic maps query language and its extensions step by step. To get a fine grasp the session starts with simple examples and get more complicated step by step. Please note that all tutorials are base on the previous one. The explanation of the examples used from previous tutorials will be reduced as much as possible. 
+
+To create a consitent understanding we use the known topic map about italian operas. Each tutorial will be organzied into three parts. At first we define our use case containing the goals we try to gain with the query. At section two we create the query step by step and get explanations why we make use of this language patterns. In Addition to that alternatives will be shown because of the fact, that there isn't the only one solution for our use case. The last section we be a short summary about the new information described by the tutorial.
+
+///////////////////////
+Describe the onotlogy of the topic map
+///////////////////////
+
+include::tutorial-get-a-topic.txt[]
+
+include::tutorial-using-prefixes.txt[]
+
+include::tutorial-get-characteristics.txt[]
+
+include::tutorial-getting-names-and-occurrences.txt[]
+
+include::tutorial-get-associations-played.txt[]
+
+include::tutorial-instances.txt[]
+
+include::tutorial-filter.txt[]
+
+include::tutorial-projection.txt[]
+
+include::tutorial-select-expression.txt[]
+
+include::tutorial-flwr-expression.txt[]
+
+include::tutorial-insert-a-topic.txt[]
+
+include::tutorial-delete-a-topic.txt[]
+
+include::tutorial-update-a-topic.txt[]
+
+include::tutorial-merge-topics-by-email.txt[]
+

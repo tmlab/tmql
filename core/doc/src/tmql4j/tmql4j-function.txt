@@ -1,0 +1,123 @@
+=== Functions ===
+
+Similar to the other query languages like SQL, the current draft specify a number of functions which can be used to transform tuples or sequences. Each function are represented by a topic as a part of the environment topic map of the runtime container and can be used as part of the TMQL query like each other topic reference. In addition TMQL define a expression type called 'function-invocation' to call a function with a list of arguments. Each function will be addressed by a topic item reference and a tuple-expression to define the parameter list given to the function interpreter. 
+
+Each function type will be handled by a special function interpreter module.
+
+==== Predefined functions ====
+
+The current draft of TMQL contains a number of predefined functions which are implemented by the tmql4j engine and can be used as a part of the given query.
+
+include::tmql4j-predefined-function.txt[]
+
+==== Implementing your own function ====
+
+The tmql4j engine provides an API to integrate your own functions. The function can be used in the query by the given identifier. This chapter tries to explain how to define a new function at the example of the function 'length' shown in the upper sections.
+
+To define your own function we have to create a new function interpreter implementing the API interface 'IFunctionInvocationInterpreter'.  The function interpreter will be called during the interpretation process to handle the function in relation to the current query. Each function interpreter will be initialized one times for each position in the parsing tree, that means if the function is used as a part of the select clause of a select expression, the interpreter will be initialized exactly at the time, the function will be interpret first. This generated instance will be stored by the internal function handler and called if the function is used again. But if the function is used two times at different parts of the query, two instances will be created.
+
+At first we have to create a new function interpreter class as shown in the next code snippet.
+
+-------------------------------------
+1:	public class LengthFunctionInvocationInterpreter extends
+2:		ExpressionInterpreterImpl<FunctionInvocation> implements
+3:			IFunctionInvocationInterpreter {
+4:		....
+5:	}
+-------------------------------------
+
+=====================================
+A simple notation to create new function interpreter is to named it by the function identifier 'Length' in combination with the postfix 'FunctionInvocationInterpreter'. The class has to implements the API interface 'IFunctionInvocationInterpreter' as shown in line 3. To use the interpreter in the context of a TMQL query it also has to extend the abstract class 'ExpressionInterpreterImpl' with the type argument 'FunctionInvocation'. An expression interpreter is used by the tmql4j handler during the interpretation process to handle the expression of the specific type given by the type argument.
+=====================================
+
+The new function interpreter has to implements there inherit methods. The first method only returns the internal identifier of the function use to store it as a topic of the internal environment map. The given identifier shall be unique to avoid side effects.
+
+-------------------------------------
+1:	public String getItemIdentifier() {
+2:		return "fn:length";
+3:	}
+-------------------------------------
+
+The second method simply returns the number of expected variables used to handle the function. 
+
+-------------------------------------
+1:	public long getRequiredVariableCount() {
+2:		return 1;
+3:	}
+-------------------------------------
+
+The last method 'interpret' represent the core functionality of the function interpreter and will be called if the function shall be handled.
+
+-------------------------------------
+1:	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+2:		QueryMatches results = new QueryMatches(runtime);
+3:		runtime.getRuntimeContext().pushToStack();
+4:
+5:		/*
+6:		* call sub-expression
+7:		*/
+8:		IExpressionInterpreter<?> interpreter = getInterpreters(runtime).get(0);
+9:		interpreter.interpret(runtime);
+10:
+11:		/*
+12:		 * extract results and check number of parameters
+13:		 */
+14:		QueryMatches parameters = (QueryMatches) runtime.getRuntimeContext().popFromStack().getValue(VariableNames.QUERYMATCHES);
+15:		if (parameters.getOrderedKeys().size() < getRequiredVariableCount()) {
+16:			throw new TMQLRuntimeException(getItemIdentifier() + "() requires " + getRequiredVariableCount() + " parameter.");
+17:		}
+18:
+19:		/*
+20:		 * iterate over parameters
+21:		 */
+22:		for (Map<String, Object> tuple : parameters) {
+23:			Object sequence = tuple.get("$0");
+24:			Map<String, Object> result = new THashMap<String, Object>();
+25:			/*
+26:			 * check if value is a sequence
+27:			 */
+28:			if (sequence instanceof Collection<?>) {
+29:				ITupleSequence<Integer> lengths = runtime.getProperties().newSequence();
+30:				/*
+31:				 * add length of each string to a new sequence
+32:				 */
+33:				for (Object obj : (Collection<?>) sequence) {
+34:					lengths.add(obj.toString().length());
+35:				}
+36:				result.put(QueryMatches.getNonScopedVariable(), lengths);
+37:			}
+38:			/*
+39:			 * add length of the string to result tuple
+40:			 */
+41:			else {
+42:				result.put(QueryMatches.getNonScopedVariable(), sequence
+43:						.toString().length());
+44:			}
+45:			results.add(result);
+46:		}
+47:		runtime.getRuntimeContext().peekFromStack().createAndAddToOrSetTo( VariableNames.QUERYMATCHES, results);
+48:	}
+-------------------------------------
+
+=====================================
+The tuple sequence representing the result of an interpretation task of an expression will be encapsulated by an instance of the class 'QueryMatches'. In line 2 we create a new instance to store the results. 
+
+The processing model of the tmql4j engine based on the indirect communication between the the different expression at the different tree levels. The communication based on a stack storing all variable bindings which are valid for the current expression instance. If a new expression interpreter gain control of the tmql4j engine it has to push a new variable set on top of the stack before calling any subexpressions as you see in line 3. The production of a function in TMQL describe a subexpression containing all parameters of this function interpretation, so have to call the underlying subexpression first, as we see in line 8 and 9. 
+
+To get the results of this interpretation the interpreter has to pop the variables set which was added before from the internal stack ( line 14 ). The results are stored by the variable 'VariableNames.QUERYMATCHES', because of that we has to call the 'getValue' method with the variable name.
+
+In line 15 until 17 we will check the number of contained arguments and raise an exception if the number differes from the expected one given by the method 'getRequiredVariableCount'.
+
+Between line 22 and 46 the code realized the function interpretation. In line 23 we extracted the argument representing the tuple sequence by using the index variable '$0'. 
+
+The last step is to store the overall results at the stack to return it to the parent expression handler. The results are also identified by the variable 'VariableNames.QUERYMATCHES' as we see in line 47.
+=====================================
+
+After finishing our implementation we have to register our new function at the tmql4j runtime using the provided interface.
+
+-------------------------------------
+1:	runtime.getLanguageContext().getFunctionRegistry().registerFunction("fn:length", LengthFunctionInvocationInterpreter.class);
+-------------------------------------
+
+Now we can use our new function.
+	

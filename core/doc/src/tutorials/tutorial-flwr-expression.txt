@@ -1,0 +1,157 @@
+=== Section: Flwr expressions ===
+
+The previous examples and tutorials always using the select or path expression style. There is an other expression style defined by the current draft called flwr expression. The flwr expression looks similar to a programming language and is the only expression type to return special result types like CTM or XTM.
+
+==== Tutorial: How to use flwr expressions ====
+
+===== Use Case =====
+
+In this case we try to extract all Composers only using the flwr style.
+
+===== Solution =====
+
+In relation to the tutorial using select style to realize this use case, we try to use the flwr style to realize the same goals. At first we take a look at the grammar rule of the flwr-style.
+
+
+-----------------------------
+1:	FOR < binding-set >
+2:	WHERE boolean-expression
+3:	ORDER BY < value-expressenion >
+4:	RETURN content
+-----------------------------
+
+=============================
+The flwr style contains any expressions we already known from the select style. In line 2 there is a where clause containing some boolean condition which has been satisfing by all variable bindings of this expression. Where-clause can be used similar to where clauses of select expression. As we see in line 3 there are also an order-by clause contained by the flwr style. The expression works like order-by clauses of a select expression we learned in a previous example. The binding-set contained by the for-clause in line 1 can be used in the same way like the binding sets of quantified expressions. 
+=============================
+
+If we want to use the flwr expression style to realize our use case, we need some additional information. At first we need a binding definition to get all composers. We already know that the binding set binds a variable iteratively to each possible value of the defined context. To get all composers we can use the 'instances' axis with the known type 'psi:Composer' and bind that values to a variable called '$composer'.
+
+--------------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	FOR $composer IN // psi:Composer
+--------------------------------
+
+The flwr style enforces that the return clause has to be a part of the final query and cannot be left out. The return statement contains a content definition describe how to export the results of the boolean condition and the bindings set after optional ordering. The return clause can contain every possible content definition of different types, like simple tuple sequences or CTM or XTM. In this case we only need to export the results as simple tuple sequences.
+
+----------------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	FOR $composer IN // psi:Composer
+3:	RETURN $composer
+----------------------------------
+
+==================================
+In line 3 we add a return clause starting with the keyword 'RETURN' to get the results we need. The return clause only contains the simple sub expression '$composer' which will be return the values binding to the variable in the current iteration. The overall results will be a tuple sequence only contains singleton tuples with a topic item of the type composer.
+==================================
+
+===== Summary =====
+
+This first short tutorial of the flwr style describes how to use the flwr style similar to the select style. The expression types have conformities in style and make use of the same sub-expression types including the where-clause and the order-by clause. In reverse to the select style, the flwr style does not support the selection of a specific window and can not unify the values using a unique-clause. But the flwr style only supports the variable binding as a core metric, because of that we have not to use an instance-of expression. A flwr-expression can contain an unspecific number of for-clauses to bind a set of variables in one query. The return-clause of a flwr expression is non optional and defines the return values of the expression itselfs.
+
+==== Tutorial: Create a topic map fragment ====
+
+===== Use Case =====
+
+A client process wants to extract a specific construct of a topic map managed by the server process. In this case we want to extract our topic map fragment using TMQL and the CTM syntax.
+
+===== Solution =====
+
+At first we need to know something about the serialization format CTM. CTM is a simple text based serialization specification for topic maps. Each topic map construct will be represented by a specific text block. The benefit of CTM is the human readable syntax. The main drawback is the fact we needs a special parser.
+
+To realize the use case we normaly can use each of the three expression types. The problem is that only one of that can export CTM as a core element of the engine itselfs. If we don't want to transform the elements to CTM for oneself, we only can use the flwr-expression. The TMQL draft contains a production rule as a subtype of content, creating a CTM literal in combination with a number of variable bindings. Because we know the return clause of flwr expression contains a content expression, we know how to use the new content type as part of our last query.
+
+The last think to know is, how the ctm-content looks like. The ctm-fragments used as part of a TMQL query are encapsulated by a triple quote '""""'. The interpreter will transform each content between this quotes to CTM. If the content contains a sub-query, at first the query will be interpreted and their results will be transformed to CTM itselfs. The overall result will be a set of little CTM fragments representing a fragment of our queried topic map.
+
+----------------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	FOR $composer IN // psi:Composer
+3:	RETURN """ { $composer } """
+----------------------------------
+
+==================================
+The query looks like the last example except of the last line. In line 3 we change the result type to CTM content using the tripple quotes. The angle brackets '{' and '}' symbolize the internal sub-query. All tokens between both brackets are interpreted as TMQL query which can be return any content type. If the results will be topic map constructs, they will be transformed using the CTM syntax. In addition if the constructs representing a name item, a occurrence item or a variant, the parent topic item will be exported. If the item represents an association role, the parent association item will be exported. For more informations please look at the current CTM draft.
+==================================
+
+===== Summary =====
+
+In this lession we learn how to use the flwr style to export content as CTM. Currently only the flwr style supports the result type CTM as a part of the return clause. A CTM content are encapsulated by tripple quotes '""""' every time. If the content contains qub-queryies ( encapsulted by angle brackets '{' and '}' ) the results of the sub-query interpretation will be transformed to CTM.In addition if the constructs representing a name item, a occurrence item or a variant, the parent topic item will be exported. If the item represents an association role, the parent association item will be exported.
+
+==== Tutorial: Create an XML document ====
+
+===== Use Case =====
+
+According to CTM the flwr style supports the transformation to XML too. Using a special content type called XML-content. In this tutorial we want to extract all composers and their operas as the following XML file.
+
+-------------------------
+1:	<xml>
+2:		<composer>
+3:			<name>
+4:				<!-- the first name of the composer -->
+5:			</name>
+6:			<composed>
+7:				<opera>
+8:					<!-- the first name of the opera -->
+9:				</opera>
+10:			</composed>
+11:		</composer>
+12:	</xml>
+-------------------------
+
+===== Solution =====
+
+Because of the iteration over all composers we need an enclosing query creating the root node '<xml>'. If it is missing all results will be returned as XML fragments and not as one XML.
+
+-----------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	RETURN <xml> </xml>
+-----------------------------
+
+=============================
+The query will return simple an XML fragment containing one empty note '<xml>'.
+=============================
+
+To include all composer to our XML file we have to use a sub-query, similar to the last tutorial except the return type has to be XML too. To realize sub-queries we have to add angle brackets containing our sub-query.
+
+-----------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	RETURN 
+3:		<xml> 
+4:			{
+5:				FOR $composer IN // psi:Composer
+6:				RETURN <composer> <name> { $composer / tm:name [0] } </name> </composer>
+7:			}
+8:		</xml>
+-----------------------------
+
+=============================
+Between the line 4 and 7 we add the query of the last tutorial to get all composers. To export XML again we have to use a flwr query too as wee see in line 5 and 6. In line 5 we define a variable binding for each instance of composer and in line 6 we use a sub-query again to extract the first name of the composer using the 'characteristics' and 'atomify' axis represented by the shortcut '/'.
+=============================
+
+As next step we have to add a second sub-query based on the variable binding for '$composer' to extract all operas composed by the current composer topic item. If we want to use the variable '$composer', we have to embed our query as part of the return clause of the sub-query binding this variable.
+
+-----------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	RETURN 
+3:		<xml> 
+4:			{
+5:				FOR $composer IN // psi:Composer
+6:				RETURN <composer> 
+7:							<name> { $composer / tm:name [0] } </name> 
+8:							<composed>
+9:								{
+10:									FOR $opera IN // psi:Opera
+11:									WHERE psi:composed_by ( psi:Composer : $composer , psi:Work : $opera )
+12:									RETURN <opera> { $opera / tm:name [0] } </opera>
+13:								}
+14:							</composed>
+15:						</composer>
+16:			}
+17:		</xml>
+-----------------------------
+
+=============================
+Between the line 8 and 14 we embed the sub-query to extract all operas composed by the current composer topic item bind to the variable '$composer'. In line 10 we bind the variable '$opera' to every instance of the topic type 'psi:Opera' and in line 11 we make use of the predicate invocations to check if there is an association of type 'psi:composed_by' played by the current opera and composer. The result of valid bindings of '$opera' will be transformed to XML in line 12. By using a subquery too, we extract the first name of the opera to add the opera item to the XML file embeded by the '<opera>' XML tag. The overall result will be a XML file which looks like the file we want.
+=============================
+
+===== Summary =====
+
+Flwr expression can also return XML content as well. Using XML-content we can extract informations of the topic map and add them to a specific XML structure. Sub-queries can be used similar to CTM-content to extract values bind to a variable by the encapsulating flwr expressions. Each sub-query inherit the bindings of the parent-query. If the result of sub-query is a topic map construct, it will be transformed using XTM, a XML-based serialization format of topic maps.

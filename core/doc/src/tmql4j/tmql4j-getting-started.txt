@@ -1,0 +1,82 @@
+=== Create the Runtime ===
+
+The whole querying process is encapsulated by a container called runtime. The runtime provides core functionalities of changing internal system properties to control the query process or embedding own adaptations or functions in an easy way. 
+
+The runtime can not be instantiate in a usual way. The user has to use an instance of the runtime factory to get an representation of this container class using to execute queries and operating with internal functionalities. The container implementation is represented by an interface class to hide internal methods and unify the using of the engine. The next paragraphs describing each function provided by the runtime interface and how it shall be used to realize the business use cases.
+
+-------------------------------------
+1:	TopicMapSystem topicMapSystem = TopicMapSystemFactory.newInstance().newTopicMapSystem();
+2:	
+3:	TopicMap topicMap = topicMapSystem.createTopicMap("http://de.topicmapslab/tmql4j/");
+4:
+5:	File ltm = new File("src/test/resources/ItalianOpera.ltm");
+6:
+7:	LTMTopicMapReader reader = new LTMTopicMapReader(topicMap, ltm);
+8:	reader.read();			
+9:
+10:	ITMQLRuntime runtime = TMQLRuntimeFactory.newFactory().newRuntime(topicMap);
+11: 
+12:	IQuery query = runtime.run("http://psi.ontopedia.net/Puccini");
+-------------------------------------
+
+=====================================
+The short code snippet give you an overview about initializing and using the runtime container. As we can see in line 10, the 'TMQLRuntimeFactory' is used to create a new runtime by calling the method 'newRuntime'. In the lines 1 until 8 we initializing the topic map instance by importing a topic map from an external LTM file. The last code line of the snippet calling the runtime to execute the given query.
+=====================================
+
+The factory supports a set of different method initializing a runtime container estimating a topic map system, a set of topic maps or internal system arguments, like a set of supported expression types to restrict the parser process. 
+
+[[allowed_expressions]]
+====  Control supported expressions ====
+
+The runtime container supports the possibility to control the parsing process by excluding restricted expression types, like the insert - or update-expressions. The factory provides a method to create a new runtime container by a list of allowed expression types. If the list of allowed expression types is empty no restrictions are add to the parser implementation and all expressions are allowed within the given query. If a query contains a restricted expression type an exception will be thrown by the parser implementation containing the information about restricted expressions. Please note that the expression types only represent restriction of first-level expressions, that means that the expression only restricted as children of the root expression containing in the generated parsing tree. If the expression is used in lower levels of the tree it wont be restricted and wont be affected in an exception.
+
+The second possibility is to disable or enable the language extensions using the runtime property handler. The property handler provides functionality to disable the language extensions in a simple way. If a expression of the disabled extension will be used anywhere in the given query, an exception will be thrown.
+
+-------------------------------------
+1:	ExpressionTypes[] allowed = new ExpressionTypes[] { ExpressionTypes.ENVIRONMENT, ExpressionTypes.PATH };
+2:
+3:	runtime = TMQLRuntimeFactory.newFactory().newRuntime(topicMapSystem, topicMaps, false, System.out, false, allowed);
+4:
+5:	runtime.getProperties().enableLanguageExtensionTmqlUl(false);
+-------------------------------------
+
+=====================================
+The short code snippet contains a simple example creating a runtime container, which only allow an environment clause and a path-expression as parts of the root expression of the parsing tree. The set of allowed expressions are specified as an array of the class 'ExpressionTypes' as you can see in line 1. Line 3 creates a new runtime container using the 'TMQLRuntimeFactory' with a argument list containing a topic map system, a set of topic maps and as last argument the array of allowed expression types. The other arguments are explained in other sections and controls other mechanism of the runtime. In addition to the list of allowed expression the line 5 disables the whole topic maps modification language extension of the tmql4j engine.
+=====================================
+
+==== Verbose mode of the runtime ====
+
+The runtime container only provides an internal debug logging mechanism to provide verbose information about the whole processing. The runtime factory contains a method to create a runtime estimates a flag of verbose mode and a print stream as logging target. If the flag is set the runtime will provide additional information about the parsing and interpreting process to the given print stream. If the print stream is null, the default stream is used. As default the flag is disabled.
+
+-------------------------------------
+1: runtime = TMQLRuntimeFactory.newFactory().newRuntime(topicMapSystem, topicMaps, true, System.out, false, allowed);
+-------------------------------------
+
+=====================================
+The code line contains the method of the runtime factory to create a new verbose runtime container. The third argument represents the internal verbose flag and has to be true to enable the verbose mode of the runtime. The 4th argument is the logging target as a instance of print stream. In this example the default print stream is used.
+=====================================
+
+==== Optimize index ====
+
+The runtime realizes some additional indexes to speed up the interpretation process. The indexes are not provided by the topic maps engine ( relating to the topic maps API - TMAPI ). In addition to the three indexes of TMAPI the engine creates an wrapper class of each topic map and each topic instance to add two new indexes to the topic maps engine implementation. The two indexes are providing additional type informations of the topic types and items. The supertype-subtype-index control the supertype-subtype relation between different topic types and providing methods to read the type-hierarchy without calling associations of the topic maps data model. The second index representing a transitive type-instance relation of topic types and their items.
+
+The transitive type-instance-relation in the current topic maps query language draft are defined in the following way.
+
+======================================
+For the binary relation between an instance and a type the interpretation and representation in the topic maps data model is adopted. Accordingly, a processor will assume that if a concept is an instance of a type C, that very concept is also an instance of all supertypes of C.
+======================================
+
+The runtime indexes support two different ways of indexing the information. The first possibility is the reindexing of the whole relations at initializing time. Please note that the processing time of the first method is dependent from the number of topic types and topics contained in the given topic map. The second method is incremental reindex by calling. Using the second mechanism the index will be stored the type-information by calling if the information are not cached yet.
+
+The factory provides a method to create a new runtime container and specifying the mode of reindexing.
+
+-------------------------------------
+1: runtime = TMQLRuntimeFactory.newFactory().newRuntime(topicMapSystem, topicMaps, true, System.out, true, allowed);
+-------------------------------------
+
+=====================================
+The code line contains the method of the runtime factory to create new runtime using auto indexing mode. The 5th argument represents the internal reindexing mode. If the flag is true the auto-indexing will be used, if it is false the indexing-by-calling mode will be used.
+=====================================
+
+
+

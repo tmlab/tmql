@@ -1,0 +1,27 @@
+syntax: glob
+bin
+target
+*.class
+*.log
+*.zip
+build.properties
+.settings
+.classpath
+doc/javadoc
+doc/doc
+.metadata
+.directory
+Diplomarbeit
+Website
+*/\${builder}
+onotoa-update-site/artifacts.jar
+onotoa-update-site/content.jar
+onotoa-update-site/features/
+onotoa-update-site/plugins/*
+de.topicmapslab.tmcledit.releng/releases
+de.topicmapslab.tmcledit.releng/repository
+onotoa.documentation/doc
+de.topicmapslab.tmcledit.doc/html/*
+glob:onotoa.documentation/build.properties
+de.topicmapslab.tmcledit.doc/toc.xml
+doc/build.properties

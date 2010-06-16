@@ -1,0 +1,21 @@
+=== Tutorial: Getting all associations played by a topic ===
+
+===== Use Case =====
+
+In this case we want to extract all associations played by a the topic item Puccini.
+
+===== Solution =====
+
+The extract all associations played by a topic the current draft contains a navigation axis with the identifier 'players'. In forward direction this axis only supports assiciation items and results in a set of topics playing in this association. In backward direction we will get all association items played by the current node, which has to be a topic.
+
+------------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini << players
+------------------------------
+
+==============================
+The pattern '<<' symbolize the backward navigation using the navigation axis 'players'. The result of the query will be a set of association items, if the topic plays any role.
+==============================
+
+===== Summary =====
+
+The short tutorial explain how to use the 'players' axis to get all associations played by a topic item.

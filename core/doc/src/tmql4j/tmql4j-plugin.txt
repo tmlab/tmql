@@ -1,0 +1,23 @@
+=== Plug-Ins ===
+
+.
+
+==== Query-Translators ====
+
+.
+
+===== TOLOG Translator =====
+
+.
+
+===== Toma Translator =====
+
+.
+
+===== TMPL Translator =====
+
+.
+
+===== Integrate your own Query-Translator =====
+
+.

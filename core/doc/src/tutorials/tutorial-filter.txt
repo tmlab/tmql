@@ -1,0 +1,152 @@
+=== Tutorial: Using a type filter ===
+
+===== Use Case =====
+
+The next use case is to extract all occurrences of the specific type 'psi:date_of_birth' without using the optional type argument.
+
+===== Solution =====
+
+In addition to the optional type argument of navigation axes a path expression supports a filter expression at the end. A filter expression can contain a type filter to remove all elements which are not an instance of the defined type. The filter can only used at the end of the whole navigation and is only applicable for typed constructs or topic items.
+
+----------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics [ . >> types == psi:date_of_birth ]
+----------------------------
+
+============================
+A filter definition is always encapsulate by square brackets. To extract the type of the current characteristics object the 'types' axis is used. The current characteristics will be identified by the single dot '.' similar to the XPath notation. The navigation result will be compared with the given topic type 'psi:date_of_birth'. If the navigation result contains at least the topic type with the identifier 'psi:date_of_birth' the filter will return true and the current characteristics construct will be added to the result set.
+============================
+
+In addition the current draft specifies a shortcut as non-canonical production for type filters. A type filter can also be identified using the pattern '^'.
+
+----------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics [ ^ psi:date_of_birth ]
+----------------------------
+
+============================
+The result will be the same like the last query.
+============================
+
+===== Summary =====
+
+The tutorial explain how to use a type filter as a part of a path-expression. It explain that the dot '.' can use to identify the current node of navigation results. The operator '==' is used to compare to sequences and will return true if at least every element of the second sequence is contained by the first one. 
+
+In addition the tutorial shows the shortcut for the type filter '^'.
+
+=== Tutorial: Using an index filter ===
+
+===== Use Case =====
+
+The next step is to extract only the first name of the topic item representing the composer Puccini.
+
+===== Solution =====
+
+Another filter type are index filters returning only a subset of the tuple sequence defined by interger literals. An index can be defined as single interger, than the result will only contains the element at the specific index if it exists, otherwise the result will be empty.
+
+----------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics tm:name [ 0 ]
+----------------------------
+
+============================
+The index filter '[ 0 ]' specifies the selection of the first element of the navigation results. If puccini has names, the first one will be returned. Please note that topic map constructs are unsorted everytime, so the result of the query can be differ for serveral executions.
+============================
+
+In addition there is another index filter specify an index range. The result of a query using a range filter will contain all elements between the given indexes. The lower index will be included by the result set.
+
+----------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics tm:name [ 0 .. 1 ]
+----------------------------
+
+============================
+The index filter '[ 0 .. 1 ]' specifies the selection of all elements between the index 0 and the index 1. Because of the fact that the first index is included, the result will be the same, like the last query. Please note that topic map constructs are unsorted everytime, so the result of the query can be differ for serveral executions.
+============================
+
+The shown filter definitions are non-canonical shortcuts for complex expression representing an index filter at the canonical level. The following snippet shows the corresponding canonical expression of the index filters.
+
+---------------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics tm:name [ $# == 0 ]
+2:
+3:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics tm:name [ 0 <= $# AND $# < 1]
+---------------------------------
+
+==================================
+Both queries has the same results like the non-canonical one. The variable '$#' represents the current index during the iteration over the navigation result. In line 1 the filter expression contains the condition that the value of the variable '$#' has to be the same like '0'. In line 3 the value of this variable has to be greater or equal than '0' and less than '1'.
+==================================
+
+===== Summary =====
+
+There are two types of index filters ( a simple index filter and a range filter ). Index filter return a subset of the origin results specified by the index bounds. For index ranges the upper bound will be excluded and the lower bound will be included. At the canonical level the variable '$#' represents the current index of the tuple.
+
+=== Tutorial: Using a scope filter ===
+
+===== Use Case =====
+
+Extract all names of the topic item representing the composer puccini scoped by the theme 'psi:short_name'. 
+
+===== Solution =====
+
+There are another filter type representing scope filters. A scope filter defines a theme represented by a topic item reference which has to be contained by themes of the scoped construct. 
+
+---------------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics tm:name [ . >> scope == psi:short_name ]
+---------------------------------
+
+==================================
+The filter will be defined between the square brackets. The dot '.' symbolize the current node in the context of the abstract topic maps graph. By using the 'scope' axis we extract all themes of the scoped construct. At last we define that the themes has to contain at least the topic item identified by the topic with the reference 'psi:shot_name'.
+==================================
+
+There are a shortcut at the non-canonical grammar level replacing the grammar pattern '. >> scope == ' with the symbol '@'. In addition the square brackets can be removed.
+
+---------------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics tm:name @ psi:short_name
+---------------------------------
+
+=================================
+The query has the same result than the last one.
+=================================
+
+===== Summary =====
+
+Scoping filters can be used to filter the navigation results by a defined topic theme. There are a canonical filter definition based on the 'scope' axis to get all themes of the current node and also a non-canonical shortcut '@' representing the same statement.
+
+=== Tutorial: Using a boolean filter ===
+
+===== Use Case =====
+
+Extract all occurrence of puccini scoped by the theme 'psi:Web' and all names.
+
+===== Solution =====
+
+At first we has to analyze the use case. We has to extract all occurrences scoped by the theme 'Web' in namespace 'psi'. To realize that we can use the scoped filter and the optional type of the 'characteristics' axis.
+
+---------------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics tm:occurrence @ psi:Web
+---------------------------------
+
+The second challenge is to extract all names of the topic item Puccini without any other restrictions.
+
+---------------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics tm:name
+---------------------------------
+
+The problem is to combine both expression to one complex query according two our principle to extract all by one query. We can not combine the optional types of the navigation axis 'tm:name' and 'tm:occurrence' because of there different type hierarchy, because of that we have to replace the optional type by a type filter. 
+
+Shortcuts can not be combined with other filter expression, so we have to use the canonical syntax of the scope filter instead of '@'. 
+
+Our new filter has to combine different restriction using conjunctions and disjunctions.
+
+---------------------------------
+1:	%prefix psi http://psi.ontopedia.net/ 
+2:	psi:Puccini >> characteristics [ . >> types == tm:name OR ( . >> types == tm:occurrence AND . > scope == psi:Web ) ]
+---------------------------------
+
+=================================
+The filter shown by the example code is more complex than the other one, but it returns the values we want. The first part of the filter '. >> types == tm:name' matches to all names of the topic item Puccini. The second part of out filter '( . >> types == tm:occurrence AND . > scope == psi:Web )' returns all scoped occurrences with the theme 'psi:Web'. Both expressions are combined as a disjunction symbolized by the keyword 'OR'. Because of the fact that all elements which does not matches to the first filter part has to be occurrences, that filter expression '. >> types == tm:occurrence' always return true and can be removed.
+=================================
+
+---------------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics [ . >> types == tm:name OR . > scope == psi:Web ]
+---------------------------------
+
+===== Summary =====
+
+Filter can be more complex than simply a index filter. They can contain any boolean condition but not non-canonical shortcuts. Sometimes it can be important to check if the boolean expression can be reduced to speed up the execution of the query.

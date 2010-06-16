@@ -1,0 +1,137 @@
+=== Engine-Modules ===
+
+TMQL4J is designed as a process chain of simple modules. Each module provides a simple or atomic function in context of the querying process and will be handled by a processing task of the runtime. The modules can be exchanged to adapt the implementation to your own business cases. The processing chain is encapsulated by the tmql4j runtime container and can not be access directly.
+
+==== Pre-Processing Module ====
+
+The preprocessing module is divided into three independent function modules, the screener, the whitespacer and the canonizer. Each of this modules realizes a specific function to clean the given query and transform it to the best representation in relation to the lexical scanning process.
+
+===== screener =====
+
+A screener is a special part of a compiler and clean the given string representation of the TMQL query by removing comments and whitespaces or new-line-commands. The screener implementation of the tmql4j engine is represented by the API interface 'IScreener'. The base implementation of this module is the 'TMQLScreener' which removes all comments contained by the given query symbolized by the hex character '#'. Line breaks will be removed by replacing it with a single space. The result of the screening process will be a single line string representation of the origin query.
+
+----------------------------------
+1:	SELECT $p # set the variable 
+2:		WHERE $p ISA person # boolean condition
+3:
+4:	=> SELECT $p WHERE $p ISA person 
+----------------------------------
+
+===== whitepacer =====
+
+The whitespacer is a special part of the pre-processing module and cleaning the whitespaces of the given query. The whitespacer add optional whitespaces of the current draft missing by the user. If there are multiple whitespaces at a position where at least one is required by the draft. Protected whitespaces will not be changed. A whitespace is protected if it is a part of a string literal or an XML content. The whitespacer is represented by the API interface 'IWhitespacer' and the base implementation is 'TMQLWhiteSpacer'.
+
+----------------------------------
+1:	SELECT $p>>characteristics tm:name
+2:		WHERE $p ISA person
+3:
+4:	=> SELECT $p >> characteristics tm:name WHERE $p ISA person 
+----------------------------------
+
+===== canonizer =====
+
+The canonizer is a special software module of the tmql4j engine. The current draft of TMQL defines a grammar containing three level. The non-canonical level contains term substitutions as kinds of shortcuts for productions of the canonical level. The canonizer try to reduce this term substitutions by replacing the query parts by their canonical representation. Some parts of the canonical level are ambiguous without knowing the whole where context because of that this will not be transformed. The canonizer is represented by the API interface 'ICanonizer' and the base implementation is 'TMQLCanonizer'.
+
+----------------------------------
+1:	SELECT $p / tm:name
+2:		WHERE $p ISA person
+3:
+4:	=> SELECT $p >> characteristics tm:name >> atomify WHERE $p ISA person 
+----------------------------------
+
+==== Lexer Module ====
+
+The lexical scanner is a special program module of the engine to split the given query into language-specific elements, called tokens. Each token represents a logically independent and language specific part of the query, like keywords or variables names. All tokens are defined by the lowest grammar level - token level. The lexer is represented by the API interface 'ILexer' and the base implementation is 'TMQLLexer'. 
+
+At first the lexical scanner split the given string-represented query using a special tokenizer class provided by the internal engine processor. The tokenized string will be checked for knwon keywords element by element and will be represented by a language-specific token. The result of lexical scanning will be a chain of string-represented tokens and language-specific tokens.
+
+----------------------------------
+1:	SELECT $p / tm:name
+2:		WHERE $p ISA person
+3:
+4:	=> [ SELECT , $p , >> , characteristics , tm:name , >> , atomify , WHERE , $p , ISA , person ]
+----------------------------------
+
+==== Parser Module ====
+
+The parser is the core module of the tmql4j engine. It converts the lexical tokens to a tree-structure representing the semantic structure of the given query. Each node of the parser tree represents a production rule of the TMQL draft and contains a number of children, if the production rule contains terminals representing new production rules. Leafs can only be simple atoms or a simple step. The tree structure will be an instance of the API interface 'IParserTree' and will be created by an implementation of 'IParser'. The base implementation of the parser is the class 'TMQLParser'.
+
+----------------------------------
+1:	SELECT $p / tm:name
+2:		WHERE $p ISA person
+3:
+4:	=> QueryExpression([SELECT, $p, >>, characteristics, tm:name, >>, atomify, WHERE, $p, ISA, person])
+5:		|--SelectExpression([SELECT, $p, >>, characteristics, tm:name, >>, atomify, WHERE, $p, ISA, person])
+6:		|--SelectClause([SELECT, $p, >>, characteristics, tm:name, >>, atomify])
+7:		|	|--ValueExpression([$p, >>, characteristics, tm:name, >>, atomify])
+8:		|		|--Content([$p, >>, characteristics, tm:name, >>, atomify])
+9:		|			|--QueryExpression([$p, >>, characteristics, tm:name, >>, atomify])
+10:		|				|--PathExpression([$p, >>, characteristics, tm:name, >>, atomify])
+11:		|					|--PostfixedExpression([$p, >>, characteristics, tm:name, >>, atomify])
+12:		|						|--SimpleContent([$p, >>, characteristics, tm:name, >>, atomify])
+13:		|							|--Navigation([>>, characteristics, tm:name, >>, atomify])
+14:		|								|--Step([>>, characteristics, tm:name])
+15:		|								|--Step([>>, atomify])
+16:		|--WhereClause([WHERE, $p, ISA, person])
+17:			|--BooleanExpression([$p, ISA, person])
+18:				|--BooleanPrimitive([$p, ISA, person])
+19:					|--ExistsClause([$p, ISA, person])
+20:						|--Content([$p, ISA, person])
+21:							|--QueryExpression([$p, ISA, person])
+22:								|--PathExpression([$p, ISA, person])
+23:									|--ISAExpression([$p, ISA, person])
+24:										|--SimpleContent([$p])
+25:										|--SimpleContent([person])
+----------------------------------
+
+==== Interpreter Module ====
+
+The interpreter module is represented by a set of many expression interpreters. An interpreter is responsible for one specific expression type and will be instantiate if a expression of this type is part of the parsing tree. The overall results of the interpretation task will be an instance of 'QueryMatches' which will be transformed to a 'IResultSet' by the underlying results processor. An expression interpreter will be an instance of the API interface 'IExpressionInterpter' or the abstract class 'ExpressionInterpreterImpl'.
+
+==== Result-Processing Module ====
+
+The last module of the default processing chain will be the result processor. The result processor transform and auto-reduce the interpretation results. The results will be transformed to an instance of 'IResultSet' and will be reduced to a two-dimensional result.
+
+----------------------------------
+1:	{ 
+2:		[ "a" , [ "c" , "b" ] ] , 
+3:		[ "x" , [ "y0" , "y1" ] , [ "z0" , "z1" ] ] 
+4:	}
+5:
+6:	=>	{	[ "a" , "c" ] , 
+7:			[ "a" , "b" ] , 
+8:			[ "x" , "y0" , "z0" ] , 
+9:			[ "x" , "y1" , "z0" ] , 
+10:			[ "x" , "y0" , "z1" ] , 
+11:			[ "x" , "y1" , "z1" ] }
+----------------------------------
+
+==== Module integration ====
+
+The tmql4j engine provides two methods to migrate or adapt the modules of the tmql4j runtime container. The migration or adaptation of some modules can be necessary in relation to gain business goals using the tmql4j engine. 
+
+===== Adapt an existing module =====
+
+If a developer only needs to adapt one of the internal modules of the default processing chain like the lexical scanner  or anything else, the property handler can used to integrate own implementations of the core interfaces representing each of this modules.
+
+------------------------------------
+1:	public class MyLexer implements ILexer{
+2:		....
+3:	}
+------------------------------------
+
+====================================
+At first has to implement our own module class extends an existing implementation of a module interface or implements the interface itselfs. In this example we create our own lexical scanner with the name 'MyLexer' as we see in line 1.
+====================================
+
+-------------------------------------
+1:	runtime.getProperties().setProperty(TMQLRuntimeProperties.LEXER_IMPLEMENTATION_CLASS, MyLexer.class.getName());
+-------------------------------------
+
+=====================================
+The last step is to tell the tmql4j engine container to use our implementation of the lexical scanner interface. In line 1 we call the properties of the current runtime instance and changing the property 'lexer-implementation-class' representing the lexical scanner implementation used during the querying process.
+=====================================
+
+===== Migrate a new module =====
+
+It is also possible to create and add a new module to the tmql4j engine. In this case the developer has to implementing its own 'ITMQLRuntime' implementation and its own 'IProcessingChain' to add the module at the correct position during the querying process.

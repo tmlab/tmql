@@ -1,0 +1,111 @@
+=== Path expression ===
+
+The current draft of the topic maps query language supports three different types of query-expressions. Each of theme will be inspired by other query languages of other industrial standards. On of them is the path expression style inspired by the XPath language of XML documents.
+
+A path expression represent a set of navigations through the abstract bidirectional topic maps graph. To realize that the path-expression contains navigations as combination of the defined axes. By combine the navigation axes a path expression can be used to extract information of a topic map without complex conditions on the result set. In additon the results can be filtered by using an optional filter expression based on the boolean expressions. Currently the filter can only added at the end of the whole navigation and cannot be used after one step over a specific axis. This will be changed as soon as possible.
+
+==== Filter expressions ====
+
+A filter expression is an optional part of path expressions to reduce the result set to a sub set of items matching the given filter definition. The concept is similar to filters of XPath expressions. A filter has to be added at the end of a path expression encapsulated by square brackets.
+
+------------------------------
+1:	FILTER-EXPRESSION ::= '[' BOOLEAN-EXPRESSION ']'
+------------------------------
+
+The filter definition can contain each boolean expression discussed in the previous chapters of this document except the fact of missing variables bindings in the context of the path expression. 
+
+In the context of a filter expression the dot '.' can be used to represent the items of the result set of the path expression. Using iterations each element of the navigation result will be bound to the dot '.' token representing the current node similar to the XPath notation.
+
+As frequently used filters the current draft defines a set of productions contained by the non-canonical level which can be used quite simple. A non-canonical filter can only used as stand-alone expression if the filter expression make use of conjunctions or disjunction the canonical counterpart has to be used.
+
+===== Type filter =====
+
+A type filter simple removes all items which are not an instance of the defined type. The type can be defined as topic reference. The filter identified by the token '^' followed by the topic reference representing the topic type.
+
+-----------------------------
+1:	[ ^ TOPIC-REF ]
+-----------------------------
+
+The productions is only valid on the non-canonical level. The canonical counterpart can be used in an equal way.
+
+------------------------------
+1:	[ . >> types == TOPIC-REF ]
+------------------------------
+
+In contrast to the non-canonical type filter the canonical counterpart can be used in the context of boolean combinations.
+
+[NOTE]
+There is a shortcut defined on the non-canonical level representing a type filter in a shorter way. The shortcut '//' can be used instead of '^' and the square brackets.
+
+===== Index filter =====
+
+If the user is only interested in a specific element at a defined index the index filter can be used to extract the element at the current position defined by a numerical literal. If the index is out of bound the constant topic 'un-def' will be returned.
+
+[NOTE]
+By default topic maps and topic map items are unorded. The order of the contained items of the navigation result is quite haphazardly. Because of that the result of an index filter will be different for each execution.
+
+A index filter simply represented by a numerical value. The canonical counterpart take use of a predefined variable of the query processor representing the current iteration index. The processor simple checks if the variable is bound to the same value than the user specified by the numerical literal.
+
+---------------------------
+1:	[ NUMBER ]			#non-canonical production
+2:
+3:	[ $# == NUMBER ]	#canonical counterpart
+---------------------------
+
+===== Index range filter =====
+
+In addition to index filter the user can define an upper and lower border interpreted as a sub set of valid indexes. The processor will return each item with an index which is greater or equal to the lower bound but less than the upper bound. 
+
+[NOTE]
+The upper bound will be excluded everytime and all indices are zero based.
+
+A index range filter simply represented by two numerical values and the special token '..'. The canonical counterpart take use of a predefined variable of the query processor representing the current iteration index. The processor simple checks if the variable is bound to a value contained by the defined range.
+
+---------------------------
+1:	[ NUMBER .. NUMBER ]				#non-canonical production
+2:
+3:	[ NUMBER >= $# AND NUMBER < $# ]	#canonical counterpart
+---------------------------
+
+===== Scope filter =====
+
+If the user is only interested in association items or characteristic items valid in a special scope, he can use the scope filter. A scope filter simply define a topic item representing one theme which has been included by the scope of the current node. If the current node is a topic item the filter fails everytime. The filter symbolized by the token '@'.
+
+----------------------------
+1:	[ @ TOPIC-REF ]
+----------------------------
+
+The productions is only valid on the non-canonical level. The canonical counterpart can be used in an equal way.
+
+----------------------------
+1:	[ . >> scope == TOPIC-REF ]
+----------------------------
+
+In contrast to the non-canonical type filter the canonical counterpart can be used in the context of boolean combinations.
+
+[NOTE]
+There is a shortcut defined on the non-canonical level representing a cope filter in a shorter way and allow to remove the square brackets.
+
+==== Projections ====
+
+Mostly the user is interested in a number of different information items related to the same node of the abstract graph for example all names and all traversal topic players. To realize that the current draft supports projections which can be used instead of filter expressions. A projection used to combine the results of a set of navigations starting at the same node of the abstract graph. 
+
+The projection is defined as a comma separated list of navigation expressions starting at the current node using the dot '.'. A projection can be add at the end of a navigation expression but cannot combine with a filter expression. In addition to that fact an projection must not contain filters as well.
+
+-------------------------------
+1:	PROJECTION ::=	'(' < VALUE-EXPRESSION > ')'
+-------------------------------
+
+A projection definition is always encapsulated by round brackets. The definition of projections make use of value expressions containing simple navigation expressions but must not contain filter or projections as well. To define a number of projections they will be separated by a comma ','.
+
+==== Tuple expressions as path expressions ====
+
+In addition to the simple navigation expressions a path expression can create a sequence of tuples containing more than one item using an expression type called 'tuple expressions'. Tuple expressions are quite similar to projections because they based on the same production. The only difference is the missing navigation in front of the projection. A tuple expression is always encapsulated by round brackets and can contain a unrestricted number of navigations to extract multiple sets of navigation results. The dot '.' token cannot be used because of the missing context.
+
+-------------------------------
+1:	TUPLE-EXPRESSION ::=	'(' < VALUE-EXPRESSION > ')'
+-------------------------------
+
+A tuple expression can be used to extract a set of topic items by using a comma-separated list of topic references. 
+
+On the other hand the tuple expressions often used as parts of other productions like merge expressions.

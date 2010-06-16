@@ -1,0 +1,25 @@
+=== Language grammar ===
+
+The grammar of the query language are modelled in three levels. Each level uses defined constructs of the lower level to extend them. In this context each grammar inspired by an industrial standard.
+
+==== The token level ====
+
+The token level creates the base of the query language by defining the terminal symbols. It makes use of regular expression to specify case-sensitive character patterns for valid terminal symbols. In current draft contains constant tokens representing special keywords of the language itselfs like the keyword 'SELECT'. In addition the draft contains terminal definitions using regular expression, the terminal can be represented by different token literal matching the given regular expression. For example variables has to start with a defined prefix '$' and has to contain at least one character after the prefix.
+
+[NOTE]
+Binary infix or unary prefix operators are not defined as a part of the grammar itselfs. They handled as an part of the predefined environment in the same context like the functions representing the functionality of this operators. But this tokens are reserved too and can not be used in other meanings.
+
+The token level define a set of delimiting characters used to split special token representation automatically. Any other token is not delimiting and whitespace characters must be used for separated. Whitespace characters are blank, tabs and newlines and can be placed without quantified restrictions between every other token. The whitespaces wont be interpreted except their meaning in the context of string literal, XML fragments or CTM streams.
+
+[NOTE]
+The hash character '#' represents comments using in the query context which wont be interpreted by the query processor. The hash character will be identified as a comment only if it is encapsulated by whitespaces and isn't a part of a string literal.
+
+==== The canonical level ====
+
+The definition of the canonical syntax realized using the context-free grammar of XML 1.0 with some conventions. The canonical level defines a set of productions for non-terminals representing the expressions of the query language. The productions make use of terminals of the token level and represented as terms, a sequence of terminals and non-terminals.
+
+==== The non-canonical level ====
+
+The non-canonical level are realized on top of the canonical level and contains special term substituations to reduce the syntactic overhead of some expressions often used in this context of query syntax. The defined shortcuts are equal to its expanded forms and does not add any computational complexity.
+
+

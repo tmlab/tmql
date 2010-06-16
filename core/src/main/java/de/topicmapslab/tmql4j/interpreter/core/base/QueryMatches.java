@@ -1,0 +1,1162 @@
+/*
+ * TMQL4J - Javabased TMQL Engine
+ * 
+ * Copyright: Copyright 2010 Topic Maps Lab, University of Leipzig. http://www.topicmapslab.de/    
+ * License:   Apache License, Version 2.0 http://www.apache.org/licenses/LICENSE-2.0.html
+ * 
+ * @author Sven Krosse
+ * @email krosse@informatik.uni-leipzig.de
+ *
+ */
+package de.topicmapslab.tmql4j.interpreter.core.base;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.common.core.tuplesequence.MultipleTupleSequence;
+import de.topicmapslab.tmql4j.common.core.tuplesequence.UniqueTupleSequence;
+import de.topicmapslab.tmql4j.common.model.runtime.ITMQLRuntime;
+import de.topicmapslab.tmql4j.common.model.tuplesequence.ITupleSequence;
+import de.topicmapslab.tmql4j.common.utility.CollectionsUtility;
+import de.topicmapslab.tmql4j.common.utility.HashUtil;
+import de.topicmapslab.tmql4j.interpreter.core.base.ProjectionQueryMatches.ProjectionQueryMatch;
+
+/**
+ * Class definition of a container of all querying results of the TMQL querying
+ * process. Each expression interpreter create a least one instance of this
+ * class as its interpretation results and put it on the top of the variable
+ * stack.
+ * 
+ * @author Sven Krosse
+ * @email krosse@informatik.uni-leipzig.de
+ * 
+ */
+public class QueryMatches implements Iterable<Map<String, Object>> {
+
+	/**
+	 * internal sequence of tuples
+	 */
+	private final ITupleSequence<Map<String, Object>> matches;
+	/**
+	 * special variable using for content which is not bind to a specific
+	 * variable, like the results of path-expressions
+	 */
+	private static final String nonScopedVariable = "$$$$$";
+	/**
+	 * internal container of known non-matching tuples
+	 */
+	private QueryMatches negation = null;
+	/**
+	 * internal flag representing the current state of the query matches
+	 */
+	private boolean multiple = true;
+
+	/**
+	 * the internal runtime reference creating this query match
+	 */
+	private final ITMQLRuntime runtime;
+
+	/**
+	 * constructor to create a new empty instance
+	 * 
+	 * @param runtime
+	 *            the TMQL4J runtime
+	 * 
+	 * @throws TMQLRuntimeException
+	 *             thrown if internal tuple sequence cannot be instantiate
+	 */
+	public QueryMatches(ITMQLRuntime runtime) throws TMQLRuntimeException {
+		this.runtime = runtime;
+		this.matches = runtime.getProperties().newSequence();
+		multiple = this.matches instanceof MultipleTupleSequence<?>;
+	}
+
+	/**
+	 * base constructor to create a new tuple sequence containing the given
+	 * matches
+	 * <p>
+	 * Constructor will create a copy of the given {@link QueryMatches}.
+	 * </p>
+	 * 
+	 * @param runtime
+	 *            the TMQL4J runtime
+	 * @param queryMatches
+	 *            the {@link QueryMatches} to add
+	 * @throws TMQLRuntimeException
+	 *             thrown if combination fails or if internal tuple sequence
+	 *             cannot be instantiate
+	 */
+	public QueryMatches(ITMQLRuntime runtime, QueryMatches queryMatches)
+			throws TMQLRuntimeException {
+		this.matches = runtime.getProperties().newSequence();
+		this.runtime = runtime;
+		multiple = this.matches instanceof MultipleTupleSequence<?>;
+		add(queryMatches);
+	}
+
+	/**
+	 * base constructor to create a new tuple sequence containing the given
+	 * matches
+	 * <p>
+	 * Constructor will create a new instance by combine each tuple with the
+	 * tuple of the other {@link QueryMatches} identify by their index.
+	 * </p>
+	 * <p>
+	 * For example the query matches {{A1},{A2}} and {{B1},{B2}} will be
+	 * combined to {{A1,B1},{A2,B2}}.
+	 * </p>
+	 * 
+	 * @param runtime
+	 *            the TMQL4J runtime
+	 * @param queryMatches
+	 *            the {@link QueryMatches} to add
+	 * @throws TMQLRuntimeException
+	 *             thrown if combination fails or if internal tuple sequence
+	 *             cannot be instantiate
+	 */
+	public QueryMatches(ITMQLRuntime runtime, QueryMatches... queryMatches)
+			throws TMQLRuntimeException {
+		this(runtime, Arrays.asList(queryMatches));
+	}
+
+	/**
+	 * base constructor to create a new tuple sequence containing the given
+	 * matches
+	 * 
+	 * @param runtime
+	 *            the TMQL4J runtime
+	 * @param matches
+	 *            a sequence of tuples to add
+	 * @throws TMQLRuntimeException
+	 *             thrown if combination fails or if internal tuple sequence
+	 *             cannot be instantiate
+	 */
+	public QueryMatches(ITMQLRuntime runtime,
+			ITupleSequence<Map<String, Object>> matches)
+			throws TMQLRuntimeException {
+		this.runtime = runtime;
+		this.matches = runtime.getProperties().newSequence();
+		multiple = this.matches instanceof MultipleTupleSequence<?>;
+		add(matches);
+	}
+
+	/**
+	 * base constructor to create a new tuple sequence containing the given
+	 * matches
+	 * <p>
+	 * Constructor will create a new instance by combine each tuple with the
+	 * tuple of the other {@link QueryMatches} identify by their index.
+	 * </p>
+	 * <p>
+	 * For example the query matches {{A1},{A2}} and {{B1},{B2}} will be
+	 * combined to {{A1,B1},{A2,B2}}.
+	 * </p>
+	 * 
+	 * @param runtime
+	 *            the TMQL4J runtime
+	 * @param queryMatches
+	 *            the {@link QueryMatches} to add
+	 * @throws TMQLRuntimeException
+	 *             thrown if combination fails or if internal tuple sequence
+	 *             cannot be instantiate
+	 */
+	public QueryMatches(ITMQLRuntime runtime,
+			Collection<QueryMatches> queryMatches) throws TMQLRuntimeException {
+		this.runtime = runtime;
+		this.matches = runtime.getProperties().newSequence();
+		multiple = this.matches instanceof MultipleTupleSequence<?>;
+		/*
+		 * create collection of iterators of given query matches
+		 */
+		Collection<Iterator<Map<String, Object>>> iterators = new LinkedList<Iterator<Map<String, Object>>>();
+		for (QueryMatches queryMatch : queryMatches) {
+			iterators.add(queryMatch.iterator());
+		}
+		/*
+		 * iterate over all matches
+		 */
+		boolean finished = false;
+		while (!finished && !iterators.isEmpty()) {
+			/*
+			 * create temporary tuple
+			 */
+			Map<String, Object> tuple = HashUtil.getHashMap();
+			/*
+			 * iterate over all matches
+			 */
+			for (Iterator<Map<String, Object>> iterator : iterators) {
+				/*
+				 * check if next tuple is available
+				 */
+				if (iterator.hasNext()) {
+					tuple.putAll(iterator.next());
+
+				} else {
+					finished = true;
+					break;
+				}
+			}
+			/*
+			 * add new tuple
+			 */
+			if (!finished) {
+				add(tuple);
+				tuple = HashUtil.getHashMap();
+			}
+		}
+	}
+
+	/**
+	 * Method checks if the current instance contains at least one tuple.
+	 * 
+	 * @return <code>true</code> if the query matches are empty,
+	 *         <code>false</code> otherwise.
+	 */
+	public boolean isEmpty() {
+		return matches.isEmpty();
+	}
+
+	/**
+	 * Method return the internal sequence of tuples containing the results of
+	 * the represented interpretation step.
+	 * 
+	 * @return a sequence of matching tuples
+	 */
+	public ITupleSequence<Map<String, Object>> getMatches() {
+		return matches;
+	}
+
+	/**
+	 * Method add a new sequence of tuples to the end of the internal sequence.
+	 * 
+	 * 
+	 * @param queryMatches
+	 *            the {@link QueryMatches} containing the tuple-sequence
+	 * @throws TMQLRuntimeException
+	 *             thrown if given matches are <code>null</code>
+	 * @see QueryMatches#add(Collection)
+	 */
+	public void add(QueryMatches queryMatches) throws TMQLRuntimeException {
+		if (matches == null) {
+			throw new TMQLRuntimeException("new QueryMatches can not be null");
+		}
+		add(queryMatches.getMatches());
+	}
+
+	/**
+	 * Method add a new sequence of tuples to the end of the internal sequence.
+	 * 
+	 * @param tuples
+	 *            the sequence of tuples to add *
+	 * 
+	 * @see QueryMatches#add(Map)
+	 */
+	public void add(Collection<Map<String, Object>> tuples) {
+		for (Map<String, Object> tuple : tuples) {
+			add(tuple);
+		}
+	}
+
+	/**
+	 * Method add a tuple to the end of the internal sequence.
+	 * 
+	 * @param tuple
+	 *            the tuple to add
+	 */
+	public void add(Map<String, Object> tuple) {
+		if (isTupleAllowed(tuple)) {
+			this.matches.add(tuple);
+		}
+	}
+
+	/**
+	 * Method converts the given collection of values to a sequence of tuples.
+	 * During the iteration over all values, each value of the given set will be
+	 * transformed to a tuple by binding to the non-scoped variable $$$$. *
+	 * 
+	 * @param sequence
+	 *            the value sequence to transform
+	 * @throws TMQLRuntimeException
+	 *             thrown if {@link QueryMatches} contains values
+	 * @see QueryMatches#convertToTuples(Collection, String)
+	 */
+	public void convertToTuples(Collection<?> sequence)
+			throws TMQLRuntimeException {
+		convertToTuples(sequence, getNonScopedVariable());
+	}
+
+	/**
+	 * Method converts the given collection of values to a sequence of tuples.
+	 * During the iteration over all values, each value of the given set will be
+	 * transformed to a tuple by binding to the given variable name.
+	 * 
+	 * @param sequence
+	 *            the value sequence to transform
+	 * @param variable
+	 *            the variable to bind
+	 * @throws TMQLRuntimeException
+	 *             thrown if {@link QueryMatches} contains values
+	 */
+	public void convertToTuples(Collection<?> sequence, final String variable)
+			throws TMQLRuntimeException {
+		if (!isEmpty()) {
+			throw new TMQLRuntimeException("QueryMatches are not empty");
+		}
+		for (Object obj : sequence) {
+			Map<String, Object> tuple = HashUtil.getHashMap();
+			tuple.put(variable, obj);
+			add(tuple);
+		}
+
+	}
+
+	/**
+	 * Combination method to realize a boolean-not operation. The operation
+	 * removes all tuples from the sequence which are contained in the given
+	 * {@link QueryMatches}.
+	 * <p>
+	 * For example, if current tuples are {{A,B},{A2,B}} and the given argument
+	 * contains {A,B} the result will be {{A2,B}}
+	 * 
+	 * @param queryMatches
+	 *            the non-matching tuple sequence
+	 */
+	public void not(QueryMatches queryMatches) {
+		this.matches.removeAll(queryMatches.getMatches());
+	}
+
+	/**
+	 * Combination method to realize a boolean-and operation. The operation
+	 * removes all tuples from the sequence which are only contained in one
+	 * {@link QueryMatches}.
+	 * <p>
+	 * For example, if current tuples are {{A,B},{A2,B}} and the given argument
+	 * contains {A,B} the result will be {{A,B}}
+	 * 
+	 * @param queryMatches
+	 *            the tuple sequence
+	 */
+	public void conjunction(QueryMatches queryMatches)
+			throws TMQLRuntimeException {
+
+		this.negation = new QueryMatches(runtime);
+
+		/*
+		 * extract symmetric keys, other keys are not important
+		 */
+		Set<String> symmetricKeys = HashUtil.getHashSet();
+		symmetricKeys.addAll(getOrderedKeys());
+		symmetricKeys.retainAll(queryMatches.getOrderedKeys());
+
+		/*
+		 * if only non-scoped variable is contained, both are equal
+		 */
+		if (symmetricKeys.size() == 1
+				&& symmetricKeys.contains(getNonScopedVariable())) {
+			// NOTHING TO DO
+		}
+		/*
+		 * otherwise project to topic set
+		 */
+		else {
+			symmetricKeys.remove(getNonScopedVariable());
+			Set<Map<String, Object>> set = HashUtil.getHashSet();
+
+			ProjectionQueryMatches projectionA = new ProjectionQueryMatches(
+					this, symmetricKeys);
+			ProjectionQueryMatches projectionB = new ProjectionQueryMatches(
+					queryMatches, symmetricKeys);
+
+			for (Map<String, Object> projectedTupleA : projectionA) {
+				if (projectionB.contains(projectedTupleA)) {
+					ProjectionQueryMatch projectionQueryMatchA = (ProjectionQueryMatch) projectedTupleA;
+					ProjectionQueryMatch projectionQueryMatchB = (ProjectionQueryMatch) projectionB
+							.get(projectionB.indexOf(projectedTupleA));
+					for (Map<String, Object> tupleA : projectionQueryMatchA
+							.getOrigins()) {
+						for (Map<String, Object> tupleB : projectionQueryMatchB
+								.getOrigins()) {
+							Map<String, Object> combine = HashUtil.getHashMap();
+							combine.putAll(tupleA);
+							combine.putAll(tupleB);
+							set.add(combine);
+						}
+					}
+				}
+			}
+			/*
+			 * reset values
+			 */
+			this.matches.clear();
+			add(set);
+		}
+
+	}
+
+	/**
+	 * Combination method to realize a boolean-or operation.
+	 * 
+	 * @param queryMatches
+	 *            the tuple sequence
+	 */
+	public void disjunction(QueryMatches queryMatches)
+			throws TMQLRuntimeException {
+
+		this.negation = new QueryMatches(runtime);
+
+		/*
+		 * extract symmetric keys, other keys are not important
+		 */
+		Set<String> symmetricKeys = HashUtil.getHashSet();
+		symmetricKeys.addAll(getOrderedKeys());
+		symmetricKeys.retainAll(queryMatches.getOrderedKeys());
+
+		Set<Map<String, Object>> set = HashUtil.getHashSet();
+
+		ProjectionQueryMatches projectionA = new ProjectionQueryMatches(this,
+				symmetricKeys);
+		ProjectionQueryMatches projectionB = new ProjectionQueryMatches(
+				queryMatches, symmetricKeys);
+
+		for (Map<String, Object> projectedTupleA : projectionA) {
+			ProjectionQueryMatch projectionQueryMatchA = (ProjectionQueryMatch) projectedTupleA;
+			if (projectionB.contains(projectedTupleA)) {
+				ProjectionQueryMatch projectionQueryMatchB = (ProjectionQueryMatch) projectionB
+						.get(projectionB.indexOf(projectedTupleA));
+				for (Map<String, Object> tupleA : projectionQueryMatchA
+						.getOrigins()) {
+					for (Map<String, Object> tupleB : projectionQueryMatchB
+							.getOrigins()) {
+						Map<String, Object> combine = HashUtil.getHashMap();
+						combine.putAll(tupleA);
+						combine.putAll(tupleB);
+						set.add(combine);
+					}
+				}
+			} else {
+				set.addAll(projectionQueryMatchA.getOrigins());
+			}
+		}
+		
+		/*
+		 * add reverse tuples not contained by the left side
+		 */
+		for (Map<String, Object> projectedTupleB : projectionB) {
+			ProjectionQueryMatch projectionQueryMatchB = (ProjectionQueryMatch) projectedTupleB;
+			if (!projectionA.contains(projectedTupleB)) {
+				set.addAll(projectionQueryMatchB.getOrigins());
+			}
+		}
+		
+		/*
+		 * reset values
+		 */
+		this.matches.clear();
+		add(set);
+
+//		matches.addAll(queryMatches.getMatches());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public Iterator<Map<String, Object>> iterator() {
+		return matches.iterator();
+	}
+
+	/**
+	 * Method returns the name of the non-scoped variable of the
+	 * {@link QueryMatches} which is used to bind variable-independent values.
+	 * 
+	 * @return the internal non-scoped variable
+	 */
+	public static String getNonScopedVariable() {
+		return nonScopedVariable;
+	}
+
+	/**
+	 * Method extract the value of the non-scoped variable from each tuple and
+	 * add it to a temporary sequence. The method project each tuple to the
+	 * non-scoped variable.
+	 * 
+	 * @return a sequence of all values of the non-scoped variable
+	 * @throws TMQLRuntimeException
+	 *             thrown if projection fails
+	 * @see QueryMatches#getPossibleValuesForVariable(String)
+	 */
+	public ITupleSequence<Object> getPossibleValuesForVariable()
+			throws TMQLRuntimeException {
+		return getPossibleValuesForVariable(getNonScopedVariable());
+	}
+
+	/**
+	 * Method extract the value of the given variable from each tuple and add it
+	 * to a temporary sequence. The method project each tuple to the given
+	 * variable variable.
+	 * 
+	 * @param variable
+	 *            the name of the variable for projection
+	 * 
+	 * @return a sequence of all values of the given variable
+	 * @throws TMQLRuntimeException
+	 *             thrown if projection fails
+	 */
+	public ITupleSequence<Object> getPossibleValuesForVariable(
+			final String variable) throws TMQLRuntimeException {
+		/*
+		 * create temporary sequence
+		 */
+		ITupleSequence<Object> sequence = runtime.getProperties().newSequence();
+
+		/*
+		 * iterate over all tuples
+		 */
+		Iterator<Map<String, Object>> iterator = iterator();
+		while (iterator.hasNext()) {
+			/*
+			 * get current tuple
+			 */
+			Map<String, Object> tuple = iterator.next();
+			/*
+			 * extract value if exists
+			 */
+			if (tuple.containsKey(variable)) {
+				sequence.add(tuple.get(variable));
+			}
+		}
+
+		return sequence;
+	}
+
+	/**
+	 * Method extract all tuples between the given index range and create a new
+	 * instance of {@link QueryMatches} containing all values of this
+	 * selection-window.
+	 * 
+	 * @param fromIndex
+	 *            begin index
+	 * @param limit
+	 *            maximum number of values
+	 * @return a new {@link QueryMatches} instance containing the selection
+	 *         window
+	 * @throws TMQLRuntimeException
+	 *             thrown if fromIndex is out of bounds
+	 */
+	public QueryMatches select(long fromIndex, long limit)
+			throws TMQLRuntimeException {
+		/*
+		 * clean first index if necessary
+		 */
+		long begin = fromIndex;
+		if (fromIndex < 0) {
+			begin = 0;
+		}
+		/*
+		 * if index is [ 0 .. length ] return this
+		 */
+		if (begin == 0 && (limit <= 0 || limit >= matches.size())) {
+			return this;
+		} else {
+			QueryMatches newMatch = new QueryMatches(runtime);
+			for (long index = begin; index < begin + limit
+					&& index < matches.size(); index++) {
+				newMatch.add(matches.get((int) index));
+			}
+			return newMatch;
+		}
+	}
+
+	/**
+	 * Method transform the current instance to a new {@link QueryMatches}
+	 * instance containing each tuple only one times.
+	 * 
+	 * @return the unified query matches
+	 * @throws TMQLRuntimeException
+	 *             thrown if operation failed
+	 */
+	public QueryMatches unify() throws TMQLRuntimeException {
+		ITupleSequence<Map<String, Object>> unified = new UniqueTupleSequence<Map<String, Object>>();
+		unified.addAll(getMatches());
+		unified.unify();
+		return new QueryMatches(runtime, unified);
+	}
+
+	/**
+	 * Method count the tuples which represent a projection of the current
+	 * instance. The method will return a numeric value representing the number
+	 * of tuples which representing the count of tuples which are equal after
+	 * projection.
+	 * 
+	 * @param pattern
+	 *            the tuple which will be counted
+	 * @param mapping
+	 *            a optional mapping containing a mapping between variable names
+	 * @param countedVariable
+	 *            the variable to count
+	 * @return a numeric value as count of tuple equality
+	 * @throws TMQLRuntimeException
+	 *             thrown if count-operation fails
+	 */
+	public long count(Map<String, Object> pattern,
+			final Map<String, String> mapping, final String countedVariable)
+			throws TMQLRuntimeException {
+		long count = 0;
+		/*
+		 * create temporary tuple sequence containing all known tuples
+		 */
+		Set<Map<String, Object>> knownMatchingTuples = HashUtil.getHashSet();
+		/*
+		 * iterate over internal tuples
+		 */
+		for (Map<String, Object> tuple : matches) {
+			/*
+			 * check if tuple matches the pattern to check
+			 */
+			if (CollectionsUtility.containsAll(tuple, pattern, mapping)) {
+				/*
+				 * create temporary tuple
+				 */
+				Map<String, Object> matchingTuple = HashUtil.getHashMap();
+				/*
+				 * map variable names
+				 */
+				for (String key : pattern.keySet()) {
+					if (mapping.containsKey(key)) {
+						key = mapping.get(key);
+					}
+					matchingTuple.put(key, tuple.get(key));
+				}
+				/*
+				 * add counted variable
+				 */
+				matchingTuple.put(countedVariable, tuple.get(countedVariable));
+				/*
+				 * count
+				 */
+				if (!knownMatchingTuples.contains(matchingTuple)) {
+					knownMatchingTuples.add(matchingTuple);
+					count++;
+				}
+			}
+		}
+		return count;
+	}
+
+	/**
+	 * Method returns a list of order variables contained in the current
+	 * instance. The method only returns the set of variables of the first tuple
+	 * and order them by name.
+	 * 
+	 * @return an ordered list of variables
+	 */
+	public List<String> getOrderedKeys() {
+		List<String> keys = new LinkedList<String>();
+		if (!isEmpty()) {
+			keys.addAll(getMatches().get(0).keySet());
+			Collections.sort(keys);
+		}
+		return keys;
+	}
+
+	/**
+	 * Method checks if the current tuple is a valid tuple in context of the
+	 * TMQL draft. The method checks if the given tuple contains protected
+	 * variables and check if their values are non-equal.
+	 * 
+	 * <p>
+	 * Protected variables are variable with the same name except the number of
+	 * postfixed primes. The current TMQL draft contains the restriction that
+	 * these variable cannot be bind to the same value in the same tuple.
+	 * </p>
+	 * 
+	 * @param tuple
+	 *            the tuple to check
+	 * @return <code>true</code> if the tuple is valid, <code>false</code> if it
+	 *         contains protected variables with the same value.
+	 */
+	private final boolean isTupleAllowed(Map<String, Object> tuple) {
+		for (String key : tuple.keySet()) {
+			if (key.endsWith("'")) {
+				final String reduction = key.substring(0, key.indexOf("'"));
+				if (tuple.containsKey(reduction)
+						&& tuple.get(key).equals(tuple.get(reduction))) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Method returns the size of the internal tuple sequence.
+	 * 
+	 * @return a non-negative value as size of the tuple sequence
+	 */
+	public int size() {
+		return getMatches().size();
+	}
+
+	/**
+	 * The method extract the values of the non-scoped variable and create a new
+	 * tuple sequence containing this values bind to the given variable name.
+	 * 
+	 * @param renaming
+	 *            the new variable name of the non-scoped variable
+	 * @return the sequence containing a copy of the values
+	 * @throws TMQLRuntimeException
+	 *             thrown if transformation fails.
+	 * @see QueryMatches#extractAndRenameBindingsForVariable(String, String)
+	 */
+	public QueryMatches extractAndRenameBindingsForVariable(
+			final String renaming) throws TMQLRuntimeException {
+		return extractAndRenameBindingsForVariable(getNonScopedVariable(),
+				renaming);
+	}
+
+	/**
+	 * The method extract the values of the variable identified by the first
+	 * argument and create a new tuple sequence containing this values bind to
+	 * the variable name given as second argument.
+	 * 
+	 * @param variable
+	 *            the variable name to extract
+	 * @param renaming
+	 *            the new variable name of the variable
+	 * @return the sequence containing a copy of the values
+	 * @throws TMQLRuntimeException
+	 *             thrown if transformation fails.
+	 */
+	public QueryMatches extractAndRenameBindingsForVariable(
+			final String variable, final String renaming)
+			throws TMQLRuntimeException {
+		QueryMatches matches = new QueryMatches(runtime);
+		matches.convertToTuples(getPossibleValuesForVariable(variable),
+				renaming);
+		return matches;
+	}
+
+	/**
+	 * method return the internal tuple sequence of non-matching tuples. The
+	 * internal tuple sequence will be created during the execution of
+	 * boolean-operations but isn't complete in context of the whole topic map.
+	 * 
+	 * @return a tuple sequence containing the non-matching tuples
+	 * @throws TMQLRuntimeException
+	 *             throw if instantiation of new {@link QueryMatches} fails
+	 */
+	public QueryMatches getNegation() throws TMQLRuntimeException {
+		if (negation == null) {
+			negation = new QueryMatches(runtime);
+		}
+		return negation;
+	}
+
+	/**
+	 * Method is used to add at new tuples to the internal sequence of
+	 * non-matching tuples.
+	 * 
+	 * @param negation
+	 *            the new sequence of non-matching tuples
+	 * @throws TMQLRuntimeException
+	 *             thrown if instantiation of new {@link QueryMatches} fails
+	 * @see QueryMatches#addNegation(QueryMatches)
+	 */
+	public void addNegation(QueryMatches negation) throws TMQLRuntimeException {
+		addNegation(negation.getMatches());
+	}
+
+	/**
+	 * * Method is used to add at new tuples to the internal sequence of
+	 * non-matching tuples.
+	 * 
+	 * @param negations
+	 *            the new sequence of non-matching tuples
+	 * @throws TMQLRuntimeException
+	 *             thrown if instantiation of new {@link QueryMatches} fails
+	 * 
+	 */
+	public void addNegation(Collection<Map<String, Object>> negations)
+			throws TMQLRuntimeException {
+		if (negation == null) {
+			this.negation = new QueryMatches(runtime);
+		}
+		for (Map<String, Object> tuple : negations) {
+			this.negation.add(tuple);
+		}
+	}
+
+	/**
+	 * Method checks if the given tuple is contained in the internal tuple
+	 * sequence.
+	 * <p>
+	 * The method is redirected to {@link Collection#contains(Object)}
+	 * </p>
+	 * 
+	 * @param tuple
+	 *            the tuple to check
+	 * @return <code>true</code> if the tuple is contained, <code>false</code>
+	 *         otherwise.
+	 */
+	public boolean contains(Map<String, Object> tuple) {
+		return matches.contains(tuple);
+	}
+
+	/**
+	 * Method returns the index of the current tuple of it is contained in the
+	 * current instance.
+	 * <p>
+	 * The method is redirected to {@link List#indexOf(Object)}.
+	 * </p>
+	 * 
+	 * @param tuple
+	 *            the tuple to look for
+	 * @return the index in this tuple sequence of the first tuple matching the
+	 *         given tuple, or -1 if this sequence does not contain the given
+	 *         tuple.
+	 */
+	public int indexOf(Map<String, Object> tuple) {
+		return matches.indexOf(tuple);
+	}
+
+	/**
+	 * Method returns the indexes of the current tuple of it is contained in the
+	 * current instance.
+	 * <p>
+	 * Please note, if the tuple sequence is unique it will return a set only
+	 * containing the result of the method {@link QueryMatches#indexOf(Map)}.
+	 * </p>
+	 * 
+	 * @param tuple
+	 *            the tuple to look for
+	 * @return a set of the index of the given tuple
+	 */
+	public Set<Integer> indexesOf(Map<String, Object> tuple) {
+		Set<Integer> indexes = HashUtil.getHashSet();
+		for (int index = 0; index < size(); index++) {
+			if (get(index).equals(tuple)) {
+				indexes.add(index);
+				if (!multiple) {
+					break;
+				}
+			}
+		}
+		return indexes;
+	}
+
+	/**
+	 * Method returns the tuple at the given index if it exists.
+	 * <p>
+	 * The method will redirected to {@link List#get(int)}.
+	 * </p>
+	 * 
+	 * @param index
+	 *            the index of the tuple
+	 * @return the tuple at the given position and never <code>null</code>.
+	 * @throws IndexOutOfBoundsException
+	 *             thrown if the index is out of range (index < 0 || index >=
+	 *             size()).
+	 */
+	public Map<String, Object> get(int index) throws IndexOutOfBoundsException {
+		return matches.get(index);
+	}
+
+	/**
+	 * Method retain all tuple contained by the internal sequence which will be
+	 * contained by the given tuple sequence two.
+	 * 
+	 * @param matches
+	 *            the tuple sequence to retain
+	 * @throws TMQLRuntimeException
+	 *             thrown if operation fails
+	 */
+	public void retainAll(QueryMatches matches) throws TMQLRuntimeException {
+		QueryMatches results = new QueryMatches(runtime);
+
+		/*
+		 * iterate over internal sequence
+		 */
+		for (Map<String, Object> tupleA : this) {
+			/*
+			 * iterate over given sequence
+			 */
+			for (Map<String, Object> tupleB : matches) {
+
+				boolean satisfy = true;
+				/*
+				 * check if each entry of internal tuple are contained in given
+				 * tuple
+				 */
+				for (Entry<String, Object> entry : tupleA.entrySet()) {
+					if (tupleB.containsKey(entry.getKey())) {
+						if (!tupleB.get(entry.getKey())
+								.equals(entry.getValue())) {
+							satisfy = false;
+							break;
+						}
+					}
+				}
+				if (satisfy) {
+					/*
+					 * check if each entry of given tuple are contained in
+					 * internal tuple
+					 */
+					for (Entry<String, Object> entry : tupleB.entrySet()) {
+						if (tupleA.containsKey(entry.getKey())) {
+							if (!tupleA.get(entry.getKey()).equals(
+									entry.getValue())) {
+								satisfy = false;
+								break;
+							}
+						}
+					}
+				}
+				/*
+				 * add new tuple as combination of both tuples
+				 */
+				if (satisfy) {
+					Map<String, Object> tuple = HashUtil.getHashMap();
+					tuple.putAll(tupleB);
+					tuple.putAll(tupleA);
+					results.add(tuple);
+				}
+			}
+		}
+
+		/*
+		 * reset values
+		 */
+		this.matches.clear();
+		add(results);
+	}
+
+	/**
+	 * Method removes all tuples from the internal sequence which are contained
+	 * in the given tuple sequence.
+	 * <p>
+	 * Method will be redirected to {@link Collection#removeAll(Collection)}.
+	 * </p>
+	 * 
+	 * @param matches
+	 *            the tuples to remove
+	 * @throws TMQLRuntimeException
+	 *             thrown if deletion fails
+	 */
+	public void removeAll(QueryMatches matches) throws TMQLRuntimeException {
+		QueryMatches results = new QueryMatches(runtime);
+
+		/*
+		 * iterate over internal tuples
+		 */
+		for (Map<String, Object> tupleA : this) {
+			/*
+			 * iterate over given tuples
+			 */
+			for (Map<String, Object> tupleB : matches) {
+
+				boolean satisfy = true;
+				/*
+				 * check if each entry of internal tuple are contained in given
+				 * tuple
+				 */
+				for (Entry<String, Object> entry : tupleA.entrySet()) {
+					if (tupleB.containsKey(entry.getKey())) {
+						if (tupleB.get(entry.getKey()).equals(entry.getValue())) {
+							satisfy = false;
+							break;
+						}
+					}
+				}
+				if (satisfy) {
+					/*
+					 * check if each entry of given tuple are contained in
+					 * internal tuple
+					 */
+					for (Entry<String, Object> entry : tupleB.entrySet()) {
+						if (tupleA.containsKey(entry.getKey())) {
+							if (tupleA.get(entry.getKey()).equals(
+									entry.getValue())) {
+								satisfy = false;
+								break;
+							}
+						}
+					}
+				}
+				if (!satisfy) {
+					results.add(tupleA);
+				}
+			}
+		}
+
+		/*
+		 * reset values
+		 */
+		this.matches.removeAll(results.getMatches());
+
+	}
+
+	/**
+	 * Method renames the variable given by first argument with the name
+	 * specified by the second argument.
+	 * 
+	 * @param variable
+	 *            the variable to rename
+	 * @param renaming
+	 *            the new variable name
+	 * @return the new {@link QueryMatches} with the renamed tuples
+	 * @throws TMQLRuntimeException
+	 *             thrown if the instantiation of the new query match fails or
+	 *             the variable names are invalid
+	 */
+	public QueryMatches renameVariable(final String variable,
+			final String renaming) throws TMQLRuntimeException {
+
+		/*
+		 * get ordered keys
+		 */
+		Collection<String> keys = getOrderedKeys();
+
+		/*
+		 * check if new variable-name is already part of internal sequence
+		 */
+		if (keys.contains(renaming)) {
+			throw new TMQLRuntimeException("target variable is already used.");
+		}
+
+		/*
+		 * check if variable-name is part of internal sequence
+		 */
+		if (!keys.contains(variable)) {
+			throw new TMQLRuntimeException("source variable is unknown.");
+		}
+
+		/*
+		 * create new instance
+		 */
+		QueryMatches renamed = new QueryMatches(runtime);
+		/*
+		 * iterate over all tuples
+		 */
+		for (Map<String, Object> tuple : this) {
+			Map<String, Object> renamedTuple = HashUtil.getHashMap();
+			/*
+			 * iterate over entries
+			 */
+			for (Entry<String, Object> entry : tuple.entrySet()) {
+				/*
+				 * check if variable shall be renamed
+				 */
+				if (entry.getKey().equalsIgnoreCase(variable)) {
+					renamedTuple.put(renaming, entry.getValue());
+				} else {
+					renamedTuple.put(entry.getKey(), entry.getValue());
+				}
+			}
+			renamed.add(renamedTuple);
+		}
+
+		return renamed;
+	}
+
+	/**
+	 * Method create multiple copies of the internal tuple and expand the size
+	 * of the tuple sequence to the given value. The method only works if the
+	 * internal sequence contains exactly one tuple, otherwise an exception will
+	 * be thrown.
+	 * 
+	 * @param size
+	 *            the new size of the tuple sequence
+	 * @return a new instance containing multiple copies of the tuple
+	 * @throws TMQLRuntimeException
+	 *             thrown if instantiation fails.
+	 */
+	public final QueryMatches cloneTupleAndExpandTo(int size)
+			throws TMQLRuntimeException {
+		if (size() != 1) {
+			throw new TMQLRuntimeException(
+					"size of source matches has to be one");
+		}
+
+		QueryMatches clone = new QueryMatches(runtime);
+		for (int index = 0; index < size; index++) {
+			clone.add(getMatches().get(0));
+		}
+		return clone;
+	}
+
+	/**
+	 * Method is used to order the internal tuples by the values of the given
+	 * variable.
+	 * 
+	 * @param ascending
+	 *            the order direction
+	 * @return the ordered query match
+	 * @throws TMQLRuntimeException
+	 *             thrown if ordering failed
+	 */
+	public final QueryMatches orderBy(final boolean ascending)
+			throws TMQLRuntimeException {
+		return orderBy(ascending, getNonScopedVariable());
+	}
+
+	/**
+	 * Method is used to order the internal tuples by the values of the given
+	 * variable.
+	 * 
+	 * @param ascending
+	 *            the order direction
+	 * @param variable
+	 * @return the ordered query match
+	 * @throws TMQLRuntimeException
+	 *             thrown if ordering failed
+	 */
+	public final QueryMatches orderBy(final boolean ascending,
+			final String variable) throws TMQLRuntimeException {
+		QueryMatches matches = new QueryMatches(runtime, this);
+
+		Collections.sort(matches.matches,
+				new Comparator<Map<String, Object>>() {
+					public int compare(Map<String, Object> o1,
+							Map<String, Object> o2) {
+
+						Object v1 = o1.get(variable);
+						Object v2 = o2.get(variable);
+
+						if (v1 == null) {
+							return ascending ? -1 : 1;
+						}
+						if (v2 == null) {
+							return ascending ? 1 : -1;
+						}
+						int com = v1.toString().compareTo(v2.toString());
+						return ascending ? com : com * -1;
+					}
+				});
+
+		return matches;
+	}
+
+	/**
+	 * Getter of the internal TMQL4J runtime reference
+	 * 
+	 * @return the reference
+	 */
+	protected ITMQLRuntime getRuntime() {
+		return runtime;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public String toString() {
+		return matches.toString();
+	}
+}
