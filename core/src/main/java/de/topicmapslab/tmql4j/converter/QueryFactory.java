@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 import de.topicmapslab.tmql4j.common.core.query.TMQLQuery;
+import de.topicmapslab.tmql4j.common.core.query.TMQLQueryProcessor;
 import de.topicmapslab.tmql4j.common.model.query.IQuery;
 import de.topicmapslab.tmql4j.common.utility.HashUtil;
 
@@ -35,14 +36,18 @@ public class QueryFactory {
 	 */
 	private QueryFactory() {
 		processors = HashUtil.getHashMap();
+		
 		ServiceLoader<IQueryProcessor> loader = ServiceLoader
 				.load(IQueryProcessor.class);
 		loader.reload();
 		for (IQueryProcessor processor : loader) {
 			processors.put(processor.getLanguageName(), processor);
 		}
+		// add default processor delivered with this jar
+		TMQLQueryProcessor tmqlQueryProcessor = new TMQLQueryProcessor();
+		processors.put(tmqlQueryProcessor.getLanguageName(), tmqlQueryProcessor);
 	}
-
+		
 	/**
 	 * Returns the language specific query for the given string argument
 	 * 
@@ -76,6 +81,19 @@ public class QueryFactory {
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * This method adds a processor to the processor map. It should be used if the automatic
+	 * registration fails, e.g. in OSGi contexts.
+	 * 
+	 * The registration is a map which key is the language name. If a processor for the language of
+	 * the new processor is already used the new processor overrides the old one.
+	 * 
+	 * @param newProcessor the new processor
+	 */
+	public void addQueryProcessor(IQueryProcessor newProcessor) {
+		processors.put(newProcessor.getLanguageName(), newProcessor);
 	}
 
 	/**
