@@ -90,6 +90,17 @@ public class SimpleContentInterpreter extends
 				Set<Topic> topics = runtime.getTopicMap().getTopics();
 				anchor.convertToTuples(topics);
 			}
+			/*
+			 * special interpretation for tm:subject
+			 */
+			else if (anchor.isEmpty()
+					&& ("tm:subject".equalsIgnoreCase(a.getTokens().get(0)) || "tmdm:subject"
+							.equalsIgnoreCase(a.getTokens().get(0)))) {
+				Map<String, Object> tuple = HashUtil.getHashMap();
+				tuple.put(QueryMatches.getNonScopedVariable(), a.getTokens()
+						.get(0));
+				anchor.add(tuple);
+			}
 			QueryMatches results = new QueryMatches(runtime);
 			/*
 			 * simple-content can only contain one expression of type navigation
