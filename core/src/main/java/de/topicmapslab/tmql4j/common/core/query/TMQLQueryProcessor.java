@@ -12,7 +12,8 @@ package de.topicmapslab.tmql4j.common.core.query;
 
 import java.util.Map;
 
-import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.common.core.exception.TMQLGeneratorException;
+import de.topicmapslab.tmql4j.common.core.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntimeFactory;
 import de.topicmapslab.tmql4j.common.model.query.IQuery;
 import de.topicmapslab.tmql4j.common.utility.HashUtil;
@@ -53,7 +54,9 @@ public class TMQLQueryProcessor implements IQueryProcessor {
 		try {
 			TMQLRuntimeFactory.newFactory().newRuntime(null).parse(query);
 			return true;
-		} catch (TMQLRuntimeException e) {
+		} catch (TMQLInvalidSyntaxException e) {
+			return false;
+		} catch (TMQLGeneratorException e) {
 			return false;
 		}
 	}

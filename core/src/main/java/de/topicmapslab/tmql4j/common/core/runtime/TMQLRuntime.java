@@ -16,8 +16,11 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.Map.Entry;
 
+import org.tmapi.core.FactoryConfigurationException;
+import org.tmapi.core.TMAPIException;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
+import org.tmapi.core.TopicMapSystemFactory;
 
 import de.topicmapslab.java.tmapi.extension.impl.ExtendedTopicMapImpl;
 import de.topicmapslab.java.tmapi.extension.model.base.ExtendedTopicMap;
@@ -82,7 +85,7 @@ public class TMQLRuntime implements ITMQLRuntime {
 	 * the topic map system used to create new temporary topic maps to interpret
 	 * XTM or CTM
 	 */
-	private final TopicMapSystem topicMapSystem;
+	private TopicMapSystem topicMapSystem;
 	/**
 	 * a topic map which shall be queried
 	 */
@@ -334,6 +337,15 @@ public class TMQLRuntime implements ITMQLRuntime {
 	 * {@inheritDoc}
 	 */
 	public TopicMapSystem getTopicMapSystem() {
+		if ( topicMapSystem == null ){
+			try {
+				topicMapSystem = TopicMapSystemFactory.newInstance().newTopicMapSystem();
+			} catch (FactoryConfigurationException e) {
+				throw new TMQLRuntimeException(e);
+			} catch (TMAPIException e) {
+				throw new TMQLRuntimeException(e);
+			}
+		}
 		return topicMapSystem;
 	}
 
@@ -421,24 +433,7 @@ public class TMQLRuntime implements ITMQLRuntime {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void run(IQuery query) throws TMQLRuntimeException {
-
-		/*
-		 * check if environment already set
-		 */
-		if (environment == null) {
-			try {
-				if (environmentMap == null) {
-					environmentMap = topicMapSystem
-							.createTopicMap("http://tmql4j.topicmapslab.de/"
-									+ UUID.randomUUID());
-				}
-				this.environment = new Environment(this, environmentMap);
-			} catch (Exception e) {
-				throw new TMQLRuntimeException(
-						"Environment cannot be initialized", e);
-			}
-		}
+	public void run(IQuery query) throws TMQLRuntimeException {		
 
 		/*
 		 * read expected result type
@@ -531,15 +526,6 @@ public class TMQLRuntime implements ITMQLRuntime {
 	}
 
 	/**
-	 * Getter method of the internal Environment definition
-	 * 
-	 * @return the internal reference
-	 */
-	public Environment getEnvironment() {
-		return environment;
-	}
-
-	/**
 	 * Method returns the internal reference of the {@link IDataBridge}
 	 * instance.
 	 * 
@@ -600,6 +586,31 @@ public class TMQLRuntime implements ITMQLRuntime {
 		return adapter;
 	}
 
+	/**
+	 * Getter method of the internal Environment definition
+	 * 
+	 * @return the internal reference
+	 */
+	public Environment getEnvironment() {
+		/*
+		 * check if environment already set
+		 */
+		if (environment == null) {
+			try {
+				if (environmentMap == null) {
+					environmentMap = getTopicMapSystem()
+							.createTopicMap("http://tmql4j.topicmapslab.de/"
+									+ UUID.randomUUID());
+				}
+				this.environment = new Environment(this, environmentMap);
+			} catch (Exception e) {
+				throw new TMQLRuntimeException(
+						"Environment cannot be initialized", e);
+			}
+		}
+		return environment;
+	}
+	
 	/**
 	 * 
 	 * @param environmentMap

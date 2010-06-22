@@ -10,11 +10,8 @@ package de.topicmapslab.tmql4j.common.core.runtime;
 
 import java.io.PrintStream;
 
-import org.tmapi.core.FactoryConfigurationException;
-import org.tmapi.core.TMAPIException;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
-import org.tmapi.core.TopicMapSystemFactory;
 
 import de.topicmapslab.java.tmapi.extension.model.index.SupertypeSubtypeIndex;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
@@ -59,14 +56,7 @@ public class TMQLRuntimeFactory {
 	 */
 	public ITMQLRuntime newRuntime(final TopicMap topicMap)
 			throws TMQLRuntimeException {
-		try {
-			return newRuntime(TopicMapSystemFactory.newInstance()
-					.newTopicMapSystem(), topicMap);
-		} catch (FactoryConfigurationException e) {
-			throw new TMQLRuntimeException(e);
-		} catch (TMAPIException e) {
-			throw new TMQLRuntimeException(e);
-		}
+		return newRuntime(null, topicMap);
 	}
 
 	/**

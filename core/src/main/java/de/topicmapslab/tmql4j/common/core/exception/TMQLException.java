@@ -15,7 +15,7 @@ package de.topicmapslab.tmql4j.common.core.exception;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public abstract class TMQLException extends Exception {
+public abstract class TMQLException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
