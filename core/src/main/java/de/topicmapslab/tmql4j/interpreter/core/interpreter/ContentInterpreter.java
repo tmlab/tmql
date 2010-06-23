@@ -274,27 +274,31 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 			throws TMQLRuntimeException {
 		logger.info("Start");
 
-		QueryMatches[] content = extractArguments(runtime, PathExpression.class);
+		QueryMatches[] pathContent = extractArguments(runtime,
+				PathExpression.class);
+		QueryMatches[] content = extractArguments(runtime, Content.class);
 		/*
 		 * use else-content if exists
 		 */
-		if (content[0].isEmpty()) {
+		if (pathContent[0].isEmpty()) {
 			/*
 			 * else-content exists if first token equals IF and there are three
 			 * subexpression or if first token don't equals IF and there are two
 			 * subexpression
 			 */
 			if ((getTmqlTokens().get(0).equals(If.class) && getInterpreters(
-					runtime).size() == 3)
-					|| (!getTmqlTokens().get(0).equals(If.class) && getInterpreters(
-							runtime).size() == 2)) {
-				runtime.getRuntimeContext().peek()
-						.setValue(VariableNames.QUERYMATCHES,
-								content[content.length - 1]);
+					runtime).size() == 3)) {
+				runtime.getRuntimeContext().peek().setValue(
+						VariableNames.QUERYMATCHES, content[1]);
+				logger.info("Finished! Results: " + content[1]);
+			} else if (!getTmqlTokens().get(0).equals(If.class)
+					&& getInterpreters(runtime).size() == 2) {
+				runtime.getRuntimeContext().peek().setValue(
+						VariableNames.QUERYMATCHES,
+						pathContent[pathContent.length - 1]);
 
-				logger
-						.info("Finished! Results: "
-								+ content[content.length - 1]);
+				logger.info("Finished! Results: "
+						+ pathContent[pathContent.length - 1]);
 			}
 			/*
 			 * no else-content contained returns an empty sequence
@@ -312,18 +316,10 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 			/*
 			 * there is an else-expression
 			 */
-			if (getTmqlTokens().contains(Else.class)) {
-				runtime.getRuntimeContext().peek()
-						.setValue(VariableNames.QUERYMATCHES,
-								content[content.length - 2]);
-			}
-			/*
-			 * there is non else-expression
-			 */
-			else if (getTmqlTokens().contains(If.class)) {
-				runtime.getRuntimeContext().peek()
-						.setValue(VariableNames.QUERYMATCHES,
-								content[content.length - 1]);
+			if (getTmqlTokens().contains(If.class)) {
+				runtime.getRuntimeContext().peek().setValue(
+						VariableNames.QUERYMATCHES,
+						content[0]);
 			}
 			/*
 			 * shortcut condition
@@ -334,7 +330,7 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 						.peek()
 						.setValue(
 								VariableNames.QUERYMATCHES,
-								content[0]
+								pathContent[0]
 										.extractAndRenameBindingsForVariable(QueryMatches
 												.getNonScopedVariable()));
 			}
