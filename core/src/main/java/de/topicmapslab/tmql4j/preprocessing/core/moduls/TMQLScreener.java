@@ -72,7 +72,7 @@ public class TMQLScreener implements IScreener {
 				/*
 				 * check if $ is in front of # ==> $#
 				 */
-				if (index > 0 && line.charAt(index - 1) == ' ') {
+				if (index == 0 || line.charAt(index - 1) == ' ') {
 					/*
 					 * remove tokens after comment symbol
 					 */
