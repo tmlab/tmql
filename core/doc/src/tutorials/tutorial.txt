@@ -35,4 +35,3 @@ include::tutorial-delete-a-topic.txt[]
 include::tutorial-update-a-topic.txt[]
 
 include::tutorial-merge-topics-by-email.txt[]
-
