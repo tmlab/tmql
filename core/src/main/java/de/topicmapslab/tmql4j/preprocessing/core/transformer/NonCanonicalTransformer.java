@@ -43,7 +43,7 @@ public class NonCanonicalTransformer {
 		shortcuts.put("->", ">> players");
 		shortcuts.put("<-", "<< players");
 		shortcuts.put("<->", ">> traverse");
-		shortcuts.put("!", ">> item");
+		shortcuts.put("!", "<< item");
 		shortcuts.put("~~>", ">> reifier");
 		shortcuts.put("<~~", "<< reifier");
 	}

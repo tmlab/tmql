@@ -33,6 +33,7 @@ import de.topicmapslab.tmql4j.interpreter.core.interpreter.PredicateInvocationIn
 import de.topicmapslab.tmql4j.interpreter.model.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.interpreter.model.context.IVariableSet;
 import de.topicmapslab.tmql4j.lexer.token.Ellipsis;
+import de.topicmapslab.tmql4j.parser.core.expressions.FilterPostfix;
 import de.topicmapslab.tmql4j.parser.core.expressions.PredicateInvocation;
 import de.topicmapslab.tmql4j.parser.core.expressions.PredicateInvocationRolePlayerExpression;
 import de.topicmapslab.tmql4j.parser.core.expressions.WhereClause;
@@ -71,7 +72,9 @@ public class ExtendedPredicateInvocationInterpreter extends
 		if (getExpression().isChildOf(WhereClause.class)
 				&& !getExpression().getVariables().isEmpty()) {
 			super.interpret(runtime);
-		} else {
+		} else if ( getExpression().isChildOf(FilterPostfix.class)){
+			super.interpret(runtime);
+		}else {
 			extendedInterpret(runtime);
 		}
 	}

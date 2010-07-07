@@ -544,14 +544,14 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 	 * 
 	 * @param fromIndex
 	 *            begin index
-	 * @param limit
-	 *            maximum number of values
+	 * @param upperIndex
+	 *            the upper index 
 	 * @return a new {@link QueryMatches} instance containing the selection
 	 *         window
 	 * @throws TMQLRuntimeException
 	 *             thrown if fromIndex is out of bounds
 	 */
-	public QueryMatches select(long fromIndex, long limit)
+	public QueryMatches select(long fromIndex, long upperIndex)
 			throws TMQLRuntimeException {
 		/*
 		 * clean first index if necessary
@@ -560,14 +560,21 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 		if (fromIndex < 0) {
 			begin = 0;
 		}
+		long end = upperIndex;
+		if ( upperIndex < 0 ){
+			end = 0;
+		}else if ( end < begin ){
+			end = begin;
+		}
+		
 		/*
 		 * if index is [ 0 .. length ] return this
 		 */
-		if (begin == 0 && (limit <= 0 || limit >= matches.size())) {
+		if (begin == 0 && end >= matches.size()) {
 			return this;
 		} else {
 			QueryMatches newMatch = new QueryMatches(runtime);
-			for (long index = begin; index < begin + limit
+			for (long index = begin; index < end
 					&& index < matches.size(); index++) {
 				newMatch.add(matches.get((int) index));
 			}

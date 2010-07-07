@@ -15,17 +15,17 @@ include::tutorials/tutorial.txt[]
 
 As additional material for learning more about the language TMQL and the described engine TMQL4J we published a set of tutorial slides (in German).
 
-[cols="1,10,1"]
+[cols="1,10,3"]
 |==========================================
 |*Part No.*| *Content* | *Link*
 |1|Grammar, TMQL Meta Model, Topic Identity, Navigation Concept Part I|+++<a href="http://www.topicmapslab.de/articles/tmql-tutorial-part-1"> Link </a>+++
 |2|Navigation Concept Part II, Navigation Concept of the new Draft 2010 |+++<a href="http://www.topicmapslab.de/articles/tmql-tutorial-part-2"> Link </a>+++
 |3|Filter, Projection, Operators|+++<a href="http://www.topicmapslab.de/articles/tmql-tutorial-part-3"> Link </a>+++
-|4|Functions (Draft 2007, Draft 2010 and TMQL4J Extensions)|
-|5|Sorting Within Tuple Sequences, Environment-Clause, Select Style|
-|6|FLW(O)R Style, CTM and XTM Fragments|
-|7|Conditional Query, TMQL Part II (Insert, Delete and Merge)|
-|8|TMQL Part II (Update), Further Work|
+|4|Functions (Draft 2007, Draft 2010 and TMQL4J Extensions)|available on 2010-07-09   
+|5|Sorting Within Tuple Sequences, Environment-Clause, Select Style|available on 2010-07-12
+|6|FLW(O)R Style, CTM and XTM Fragments|available on 2010-07-16
+|7|Conditional Query, TMQL Part II (Insert, Delete and Merge)|available on 2010-07-19
+|8|TMQL Part II (Update), Further Work|available on 2010-07-23
 |==========================================
 
 ++++++++++++++++++++++++++++++++++++

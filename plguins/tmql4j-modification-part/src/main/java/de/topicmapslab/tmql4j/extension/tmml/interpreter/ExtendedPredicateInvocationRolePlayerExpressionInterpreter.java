@@ -28,6 +28,7 @@ import de.topicmapslab.tmql4j.interpreter.model.context.IVariableSet;
 import de.topicmapslab.tmql4j.lexer.model.IToken;
 import de.topicmapslab.tmql4j.lexer.token.Ellipsis;
 import de.topicmapslab.tmql4j.lexer.token.Variable;
+import de.topicmapslab.tmql4j.parser.core.expressions.FilterPostfix;
 import de.topicmapslab.tmql4j.parser.core.expressions.PredicateInvocationRolePlayerExpression;
 import de.topicmapslab.tmql4j.parser.core.expressions.WhereClause;
 
@@ -70,7 +71,9 @@ public class ExtendedPredicateInvocationRolePlayerExpressionInterpreter extends
 		if (getExpression().isChildOf(WhereClause.class)
 				&& !getExpression().getVariables().isEmpty()) {
 			super.interpret(runtime);
-		} else {
+		} else if ( getExpression().isChildOf(FilterPostfix.class)){
+			super.interpret(runtime);
+		}else {
 			extendedInterpret(runtime);
 		}
 	}

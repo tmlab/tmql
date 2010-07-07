@@ -396,6 +396,9 @@ public class SelectExpressionInterpreter extends
 	 */
 	private QueryMatches interpretSelectionWindow(QueryMatches matches,
 			long limit, long offset) throws TMQLRuntimeException {
+		if ( limit == -1 ){
+			return matches;
+		}
 		/*
 		 * redirect to QueryMatches
 		 */

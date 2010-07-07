@@ -202,7 +202,11 @@ public class SelectClauseInterpreter extends
 							 * store values
 							 */
 							countableTuple.put("$" + index, match);
-							resultTuple.put("$" + index, sequence);
+							if (sequence.size() == 1) {
+								resultTuple.put("$" + index, sequence.get(0));
+							} else {
+								resultTuple.put("$" + index, sequence);
+							}
 							index++;
 						}
 					}

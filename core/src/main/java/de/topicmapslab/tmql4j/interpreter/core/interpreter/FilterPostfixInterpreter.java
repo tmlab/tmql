@@ -508,7 +508,7 @@ public class FilterPostfixInterpreter extends
 				VariableNames.POSTFIXED);
 		if (seq instanceof QueryMatches) {
 			QueryMatches matches = (QueryMatches) seq;
-			if (index < matches.size()) {
+			if (index < matches.size() && index >= 0 ) {
 				/*
 				 * create new sequence and add the tuple at the specific index
 				 */
@@ -565,7 +565,7 @@ public class FilterPostfixInterpreter extends
 			QueryMatches matches = (QueryMatches) seq;
 			runtime.getRuntimeContext().peek().setValue(
 					VariableNames.QUERYMATCHES,
-					matches.select(lower, upper - lower));
+					matches.select(lower, upper));
 		} else {
 			throw new TMQLRuntimeException("unsupported results type");
 		}
