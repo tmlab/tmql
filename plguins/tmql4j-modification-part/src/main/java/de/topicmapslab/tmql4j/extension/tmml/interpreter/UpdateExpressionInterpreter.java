@@ -65,7 +65,7 @@ public class UpdateExpressionInterpreter extends
 
 		Map<String, Object> tuple = HashUtil.getHashMap();
 		QueryMatches results = new QueryMatches(runtime);
-
+			
 		/*
 		 * iterate over update-clauses
 		 */
@@ -86,7 +86,7 @@ public class UpdateExpressionInterpreter extends
 				throw new TMQLRuntimeException(
 						"Invalid interpretation of update clause, has to return an instance of QueryMatches.");
 			}
-
+			
 			QueryMatches match = (QueryMatches) obj;
 			tuple.put("$" + tuple.size(), match.getPossibleValuesForVariable()
 					.get(0));
@@ -123,7 +123,7 @@ public class UpdateExpressionInterpreter extends
 		if (containsExpressionsType(WhereClause.class)) {
 
 			/*
-			 * get expression interpreter for navigation
+			 * get expression interpreter for where-clause
 			 */
 			IExpressionInterpreter<WhereClause> navigation = getInterpretersFilteredByEypressionType(
 					runtime, WhereClause.class).get(0);

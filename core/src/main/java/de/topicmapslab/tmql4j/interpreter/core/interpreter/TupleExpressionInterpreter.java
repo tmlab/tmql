@@ -102,6 +102,10 @@ public class TupleExpressionInterpreter extends
 		 */
 		Map<String, Object> tuple = HashUtil.getHashMap();
 		/*
+		 * store mappings
+		 */
+		Map<String, String> origins = HashUtil.getHashMap();
+		/*
 		 * results store of singleton tuple-expressions
 		 */
 		Set<QueryMatches> matches = HashUtil.getHashSet();
@@ -153,6 +157,7 @@ public class TupleExpressionInterpreter extends
 				 */
 				tuple.put("$" + (index), values.size() == 1 ? values.get(0)
 						: values);
+				origins.put(variable,"$"+index);
 				/*
 				 * store as tuple sequence
 				 */
@@ -179,12 +184,14 @@ public class TupleExpressionInterpreter extends
 		 */
 		if (context.length == 1) {
 			results = new QueryMatches(runtime, matches);
+			results.setOrigins(origins);
 		}
 		/*
 		 * is multiple tuple-expression
 		 */
 		else {
 			results = new QueryMatches(runtime);
+			results.setOrigins(origins);
 			results.add(tuple);
 		}
 

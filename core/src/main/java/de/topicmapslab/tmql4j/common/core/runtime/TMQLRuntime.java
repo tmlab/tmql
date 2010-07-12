@@ -652,4 +652,11 @@ public class TMQLRuntime implements ITMQLRuntime {
 		return getValueStore().getParserTree();
 	}
 
+	/**
+	 * @return the environmentMap
+	 */
+	public TopicMap getEnvironmentMap() {
+		return environmentMap;
+	}
+	
 }

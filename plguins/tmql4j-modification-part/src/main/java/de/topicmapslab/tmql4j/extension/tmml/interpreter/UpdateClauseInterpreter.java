@@ -223,48 +223,80 @@ public class UpdateClauseInterpreter extends
 
 		QueryMatches matches = (QueryMatches) obj;
 
-		QueryMatches values = interpretValueExpression(runtime);
-
-		Class<? extends IToken> anchor = getExpression().getAnchor();
-
-		/*
-		 * check optionalType
-		 */
-		String optionalType_ = ((UpdateClause) getExpression())
-				.getOptionalType();
-		Topic optionalType = null;
-		if (optionalType_ != null) {
-			try {
-				optionalType = (Topic) runtime.getDataBridge()
-						.getConstructByIdentifier(runtime, optionalType_);
-			} catch (Exception e) {
-				throw new UpdateException(e);
-			}
-		}
 		/*
 		 * store of update-results
 		 */
 		QueryMatches results = new QueryMatches(runtime);
+
 		/*
-		 * iterate over all values to set or add
+		 * iterate over all tuple sequences returned by the where-clause
 		 */
-		for (Object val : values.getPossibleValuesForVariable()) {
+		for (Map<String, Object> tuple : matches) {
 			/*
-			 * iterate over all tuples and perform update
+			 * get modification context
 			 */
-			long count = 0;
-			for (Object tuple : matches.getPossibleValuesForVariable()) {
-				count += new UpdateHandler(runtime).update(tuple, val, anchor,
-						optionalType,
-						getGrammarTypeOfExpression() == UpdateClause.TYPE_SET);
+			Object context = tuple.get(getExpression().getVariableName());
+			/*
+			 * check if context variables was projected to other name by internal system method
+			 */
+			if (context == null
+					&& matches.getOrigin(getExpression().getVariableName()) != null) {
+				context = tuple.get(matches.getOrigin(getExpression()
+						.getVariableName()));
 			}
+			runtime.getRuntimeContext().push();
+			/*
+			 * swap iterated bindings to current tuple
+			 */
+			QueryMatches match = new QueryMatches(runtime);
+			match.add(tuple);
+			match.setOrigins(matches.getOrigins());
+			runtime.getRuntimeContext().peek().setValue(
+					VariableNames.ITERATED_BINDINGS, match);
 
 			/*
-			 * create result of update-expression as count of performed changes
+			 * get values to add or set
 			 */
-			Map<String, Object> result = HashUtil.getHashMap();
-			result.put(QueryMatches.getNonScopedVariable(), count);
-			results.add(result);
+			QueryMatches values = interpretValueExpression(runtime);
+
+			Class<? extends IToken> anchor = getExpression().getAnchor();
+
+			/*
+			 * check optionalType
+			 */
+			String optionalType_ = ((UpdateClause) getExpression())
+					.getOptionalType();
+			Topic optionalType = null;
+			if (optionalType_ != null) {
+				try {
+					optionalType = (Topic) runtime.getDataBridge()
+							.getConstructByIdentifier(runtime, optionalType_);
+				} catch (Exception e) {
+					throw new UpdateException(e);
+				}
+			}
+			/*
+			 * iterate over all values to set or add
+			 */
+			for (Object val : values.getPossibleValuesForVariable()) {
+				/*
+				 * perform update
+				 */
+				long count = 0;
+				count += new UpdateHandler(runtime).update(context, val,
+						anchor, optionalType,
+						getGrammarTypeOfExpression() == UpdateClause.TYPE_SET);				
+
+				/*
+				 * create result of update-expression as count of performed
+				 * changes
+				 */
+				Map<String, Object> result = HashUtil.getHashMap();
+				result.put(QueryMatches.getNonScopedVariable(), count);
+				results.add(result);
+			}
+			
+			runtime.getRuntimeContext().pop();
 		}
 
 		/*

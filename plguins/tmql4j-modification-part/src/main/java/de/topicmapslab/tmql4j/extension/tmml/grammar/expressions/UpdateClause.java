@@ -19,7 +19,9 @@ import de.topicmapslab.tmql4j.extension.tmml.grammar.tokens.Add;
 import de.topicmapslab.tmql4j.extension.tmml.grammar.tokens.Associations;
 import de.topicmapslab.tmql4j.extension.tmml.grammar.tokens.Set;
 import de.topicmapslab.tmql4j.extension.tmml.grammar.tokens.Topics;
+import de.topicmapslab.tmql4j.interpreter.core.base.QueryMatches;
 import de.topicmapslab.tmql4j.lexer.model.IToken;
+import de.topicmapslab.tmql4j.lexer.token.Variable;
 import de.topicmapslab.tmql4j.parser.core.ExpressionImpl;
 import de.topicmapslab.tmql4j.parser.core.expressions.PredicateInvocation;
 import de.topicmapslab.tmql4j.parser.core.expressions.ValueExpression;
@@ -69,6 +71,11 @@ public class UpdateClause extends ExpressionImpl {
 	private final String optionalType;
 
 	/**
+	 * the variable defining the context which should be updated
+	 */
+	private String variableName = QueryMatches.getNonScopedVariable();
+
+	/**
 	 * base constructor to create a new instance.
 	 * 
 	 * @param parent
@@ -92,10 +99,19 @@ public class UpdateClause extends ExpressionImpl {
 			TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
+		int indexOfAnchor = 1;
+
 		/*
-		 * read anchor
+		 * check if first token is a variable
 		 */
-		anchor = tmqlTokens.get(0);
+		Class<? extends IToken> token = tmqlTokens.get(0);
+		if (token.equals(Variable.class)) {
+			variableName = tokens.get(0);
+			anchor = tmqlTokens.get(1);
+		} else {
+			anchor = token;
+			indexOfAnchor = 0;
+		}
 
 		/*
 		 * get index of the keyword SET
@@ -119,8 +135,8 @@ public class UpdateClause extends ExpressionImpl {
 		/*
 		 * extract optional type parameter
 		 */
-		if (indexOfSetOrAdd == 2) {
-			optionalType = tokens.get(1);
+		if (indexOfSetOrAdd - indexOfAnchor == 2) {
+			optionalType = tokens.get(indexOfAnchor + 1);
 		} else {
 			optionalType = null;
 		}
@@ -175,6 +191,15 @@ public class UpdateClause extends ExpressionImpl {
 	 */
 	public String getOptionalType() {
 		return optionalType;
+	}
+
+	/**
+	 * Returns the variable defining the context to modifiy
+	 * 
+	 * @return the variable name
+	 */
+	public String getVariableName() {
+		return variableName;
 	}
 
 }

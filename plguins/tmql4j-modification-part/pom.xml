@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>de.topicmapslab</groupId>
 			<artifactId>tmql4j</artifactId>
-			<version>2.6.3-SNAPSHOT</version>
+			<version>2.6.4-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<distributionManagement>

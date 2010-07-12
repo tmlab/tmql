@@ -66,6 +66,11 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 	private final ITMQLRuntime runtime;
 
 	/**
+	 * map containing some origin variable names before mapping
+	 */
+	private Map<String, String> origins;
+
+	/**
 	 * constructor to create a new empty instance
 	 * 
 	 * @param runtime
@@ -173,6 +178,7 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 			Collection<QueryMatches> queryMatches) throws TMQLRuntimeException {
 		this.runtime = runtime;
 		this.matches = runtime.getProperties().newSequence();
+		this.origins = HashUtil.getHashMap();
 		multiple = this.matches instanceof MultipleTupleSequence<?>;
 		/*
 		 * create collection of iterators of given query matches
@@ -180,6 +186,7 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 		Collection<Iterator<Map<String, Object>>> iterators = new LinkedList<Iterator<Map<String, Object>>>();
 		for (QueryMatches queryMatch : queryMatches) {
 			iterators.add(queryMatch.iterator());
+			this.origins.putAll(queryMatch.getOrigins());
 		}
 		/*
 		 * iterate over all matches
@@ -249,7 +256,11 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 		if (matches == null) {
 			throw new TMQLRuntimeException("new QueryMatches can not be null");
 		}
+		if (this.origins == null) {
+			this.origins = HashUtil.getHashMap();
+		}
 		add(queryMatches.getMatches());
+		this.origins.putAll(queryMatches.getOrigins());
 	}
 
 	/**
@@ -311,6 +322,7 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 		if (!isEmpty()) {
 			throw new TMQLRuntimeException("QueryMatches are not empty");
 		}
+
 		for (Object obj : sequence) {
 			Map<String, Object> tuple = HashUtil.getHashMap();
 			tuple.put(variable, obj);
@@ -446,7 +458,7 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 				set.addAll(projectionQueryMatchA.getOrigins());
 			}
 		}
-		
+
 		/*
 		 * add reverse tuples not contained by the left side
 		 */
@@ -456,14 +468,14 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 				set.addAll(projectionQueryMatchB.getOrigins());
 			}
 		}
-		
+
 		/*
 		 * reset values
 		 */
 		this.matches.clear();
 		add(set);
 
-//		matches.addAll(queryMatches.getMatches());
+		// matches.addAll(queryMatches.getMatches());
 	}
 
 	/**
@@ -531,9 +543,10 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 			 */
 			if (tuple.containsKey(variable)) {
 				sequence.add(tuple.get(variable));
+			} else if (getOrigin(variable) != null) {
+				sequence.add(tuple.get(origins.get(variable)));
 			}
 		}
-
 		return sequence;
 	}
 
@@ -545,7 +558,7 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 	 * @param fromIndex
 	 *            begin index
 	 * @param upperIndex
-	 *            the upper index 
+	 *            the upper index
 	 * @return a new {@link QueryMatches} instance containing the selection
 	 *         window
 	 * @throws TMQLRuntimeException
@@ -561,12 +574,12 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 			begin = 0;
 		}
 		long end = upperIndex;
-		if ( upperIndex < 0 ){
+		if (upperIndex < 0) {
 			end = 0;
-		}else if ( end < begin ){
+		} else if (end < begin) {
 			end = begin;
 		}
-		
+
 		/*
 		 * if index is [ 0 .. length ] return this
 		 */
@@ -574,10 +587,10 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 			return this;
 		} else {
 			QueryMatches newMatch = new QueryMatches(runtime);
-			for (long index = begin; index < end
-					&& index < matches.size(); index++) {
+			for (long index = begin; index < end && index < matches.size(); index++) {
 				newMatch.add(matches.get((int) index));
 			}
+			newMatch.setOrigins(origins);
 			return newMatch;
 		}
 	}
@@ -748,6 +761,7 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 		QueryMatches matches = new QueryMatches(runtime);
 		matches.convertToTuples(getPossibleValuesForVariable(variable),
 				renaming);
+		matches.addOrigin(variable, renaming);
 		return matches;
 	}
 
@@ -1070,6 +1084,10 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 			renamed.add(renamedTuple);
 		}
 
+		/*
+		 * store renaming
+		 */
+		renamed.addOrigin(variable, renaming);
 		return renamed;
 	}
 
@@ -1165,5 +1183,51 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 	 */
 	public String toString() {
 		return matches.toString();
+	}
+
+	/**
+	 * Returns the origin name of the variable
+	 * 
+	 * @param var
+	 *            the variable name
+	 * @return the origin name if exists
+	 */
+	public String getOrigin(final String var) {
+		if (origins == null) {
+			return null;
+		}
+		return this.origins.get(var);
+	}
+
+	/**
+	 * Set the internal mapping table to the given one
+	 * 
+	 * @param origins
+	 *            the origins to set
+	 */
+	public void setOrigins(Map<String, String> origins) {
+		this.origins = origins;
+	}
+
+	/**
+	 * Store a new mapping between the given keys
+	 * 
+	 * @param origins
+	 *            the origins to set
+	 */
+	public void addOrigin(final String origin, final String mapping) {
+		if (this.origins == null) {
+			this.origins = HashUtil.getHashMap();
+		}
+		this.origins.put(origin, mapping);
+	}
+
+	/**
+	 * Returns the whole mapping.
+	 * 
+	 * @return the origins the mapping of origin to projected keys
+	 */
+	public Map<String, String> getOrigins() {
+		return HashUtil.getHashMap(origins);
 	}
 }

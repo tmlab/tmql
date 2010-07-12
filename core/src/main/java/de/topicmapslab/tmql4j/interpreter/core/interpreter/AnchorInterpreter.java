@@ -185,7 +185,6 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 		else if (anchor.equals(Variable.class)) {
 			final String variable = getTokens().get(0);
 			IVariableSet set = runtime.getRuntimeContext().peek();
-
 			/*
 			 * check if variable is bind on top of the stack
 			 */
@@ -211,6 +210,14 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 				 */
 				match.convertToTuples(queryMatches
 						.getPossibleValuesForVariable(variable));
+				/*
+				 * check if variable was mapped by internal operation
+				 */
+				if (match.isEmpty() && match.getOrigin(variable) != null) {
+					match.convertToTuples(queryMatches
+							.getPossibleValuesForVariable(match
+									.getOrigin(variable)));
+				}
 
 				matches.add(new QueryMatches(runtime, queryMatches, match));
 			}

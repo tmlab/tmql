@@ -138,7 +138,7 @@ public class ReturnClauseInterpreter extends
 							"Invalid interpretation of expression content. Has to return an instance of QueryMatches.");
 				}
 
-				results.add(((QueryMatches) obj).getMatches());
+				results.add(((QueryMatches) obj));
 				pos++;
 			}			
 		}
