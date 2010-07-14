@@ -209,6 +209,11 @@ public class PrefixHandler {
 				return prefix + reference.substring(index + 1);
 			}
 			throw new TMQLRuntimeException("Unknown prefix '" + id + "'!");
+		} else if (reference.indexOf("://") == -1) {
+			return defaultPrefix
+					+ (defaultPrefix.endsWith("/")
+							|| defaultPrefix.endsWith("#") ? "" : "/")
+					+ reference;
 		}
 		return reference;
 	}

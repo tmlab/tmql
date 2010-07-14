@@ -34,6 +34,8 @@ import de.topicmapslab.tmql4j.interpreter.core.interpreter.functions.string.Stri
 import de.topicmapslab.tmql4j.interpreter.core.interpreter.functions.string.StringLeqFunctionInvocationInterpreter;
 import de.topicmapslab.tmql4j.interpreter.core.interpreter.functions.string.StringLtFunctionInvocationInterpreter;
 import de.topicmapslab.tmql4j.interpreter.core.interpreter.functions.string.SubStringFunctionInvocationInterpreter;
+import de.topicmapslab.tmql4j.interpreter.core.interpreter.functions.url.UrlDecodeFunctionInterpreter;
+import de.topicmapslab.tmql4j.interpreter.core.interpreter.functions.url.UrlEncodeFunctionInterpreter;
 
 /**
  * Internal registry for function classes. Provides access to registered
@@ -98,6 +100,8 @@ public class FunctionRegistry {
 				CompareFunctionInvocationInterpreter.class);
 		registerFunction("fn:zigzag", ZigZagFunctionInvocationInterpreter.class);
 		registerFunction("fn:zagzig", ZagZigFunctionInvocationInterpreter.class);
+		registerFunction("fn:url-encode", UrlEncodeFunctionInterpreter.class);
+		registerFunction("fn:url-decode", UrlDecodeFunctionInterpreter.class);
 	}
 
 	/**

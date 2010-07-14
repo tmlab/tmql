@@ -227,7 +227,7 @@ public class UpdateClauseInterpreter extends
 		 * store of update-results
 		 */
 		QueryMatches results = new QueryMatches(runtime);
-
+		long count = 0;
 		/*
 		 * iterate over all tuple sequences returned by the where-clause
 		 */
@@ -237,7 +237,8 @@ public class UpdateClauseInterpreter extends
 			 */
 			Object context = tuple.get(getExpression().getVariableName());
 			/*
-			 * check if context variables was projected to other name by internal system method
+			 * check if context variables was projected to other name by
+			 * internal system method
 			 */
 			if (context == null
 					&& matches.getOrigin(getExpression().getVariableName()) != null) {
@@ -272,7 +273,14 @@ public class UpdateClauseInterpreter extends
 					optionalType = (Topic) runtime.getDataBridge()
 							.getConstructByIdentifier(runtime, optionalType_);
 				} catch (Exception e) {
-					throw new UpdateException(e);
+					try {
+						optionalType = runtime.getTopicMap().createTopicBySubjectIdentifier(
+								runtime.getTopicMap().createLocator(
+										runtime.getLanguageContext().getPrefixHandler().toAbsoluteIRI(optionalType_)));			
+						count++;
+					} catch (Exception e2) {
+						throw new UpdateException(e);
+					}
 				}
 			}
 			/*
@@ -282,23 +290,20 @@ public class UpdateClauseInterpreter extends
 				/*
 				 * perform update
 				 */
-				long count = 0;
 				count += new UpdateHandler(runtime).update(context, val,
 						anchor, optionalType,
 						getGrammarTypeOfExpression() == UpdateClause.TYPE_SET);				
-
-				/*
-				 * create result of update-expression as count of performed
-				 * changes
-				 */
-				Map<String, Object> result = HashUtil.getHashMap();
-				result.put(QueryMatches.getNonScopedVariable(), count);
-				results.add(result);
 			}
-			
+
 			runtime.getRuntimeContext().pop();
 		}
-
+		/*
+		 * create result of update-expression as count of performed
+		 * changes
+		 */
+		Map<String, Object> result = HashUtil.getHashMap();
+		result.put(QueryMatches.getNonScopedVariable(), count);
+		results.add(result);
 		/*
 		 * set to stack
 		 */
