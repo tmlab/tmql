@@ -10,6 +10,7 @@
  */
 package de.topicmapslab.tmql4j.optimizer.variablebinding;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -18,13 +19,13 @@ import org.tmapi.core.Construct;
 import org.tmapi.core.Topic;
 import org.tmapi.index.TypeInstanceIndex;
 
-import de.topicmapslab.java.tmapi.extension.impl.ExtendedTopicMapImpl;
-import de.topicmapslab.java.tmapi.extension.model.index.SupertypeSubtypeIndex;
 import de.topicmapslab.tmql4j.api.exceptions.DataBridgeException;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLOptimizationException;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
 import de.topicmapslab.tmql4j.common.utility.HashUtil;
+import de.topicmapslab.tmql4j.navigation.axis.SupertypesNavigationAxis;
+import de.topicmapslab.tmql4j.navigation.exception.NavigationException;
 import de.topicmapslab.tmql4j.parser.core.expressions.AKOExpression;
 import de.topicmapslab.tmql4j.parser.core.expressions.ISAExpression;
 import de.topicmapslab.tmql4j.parser.core.expressions.PathExpression;
@@ -62,6 +63,7 @@ public class PathExpressionVariableBindingOptimizer extends
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	protected Set<?> optimize(PathExpression expression, String variable)
 			throws TMQLOptimizationException {
@@ -109,17 +111,14 @@ public class PathExpressionVariableBindingOptimizer extends
 					 * check if construct is a topic
 					 */
 					if (construct instanceof Topic) {
-						/*
-						 * call super-type-sub-type-index
-						 */
-						SupertypeSubtypeIndex index = new ExtendedTopicMapImpl(
-								getTopicMap())
-								.getIndex(SupertypeSubtypeIndex.class);
-						if (!index.isOpen()) {
-							index.open();
-						}
 						Set<Topic> bindings = HashUtil.getHashSet();
-						bindings.addAll(index.getSubtypes((Topic) construct));
+						try {
+							bindings
+									.addAll((Collection<Topic>) new SupertypesNavigationAxis()
+											.navigateForward(construct));
+						} catch (NavigationException e) {
+							throw new TMQLOptimizationException(e);
+						}
 						return bindings;
 					}
 				}
@@ -160,8 +159,7 @@ public class PathExpressionVariableBindingOptimizer extends
 					 * check if construct is a topic
 					 */
 					if (construct instanceof Topic) {
-						TypeInstanceIndex index = new ExtendedTopicMapImpl(
-								getTopicMap())
+						TypeInstanceIndex index = construct.getTopicMap()
 								.getIndex(TypeInstanceIndex.class);
 						Set<Topic> bindings = HashUtil.getHashSet();
 						bindings.addAll(index.getTopics((Topic) construct));

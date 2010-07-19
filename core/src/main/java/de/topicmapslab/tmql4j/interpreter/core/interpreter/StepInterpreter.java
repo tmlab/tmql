@@ -16,8 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tmapi.core.Construct;
 
-import de.topicmapslab.java.navigation.model.INavigationAxis;
-import de.topicmapslab.java.navigation.model.ITypeHierarchyNavigationAxis;
 import de.topicmapslab.tmql4j.api.exceptions.DataBridgeException;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
@@ -26,6 +24,8 @@ import de.topicmapslab.tmql4j.interpreter.core.base.QueryMatches;
 import de.topicmapslab.tmql4j.interpreter.model.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.lexer.token.MoveForward;
 import de.topicmapslab.tmql4j.lexer.token.ShortcutAxisInstances;
+import de.topicmapslab.tmql4j.navigation.model.INavigationAxis;
+import de.topicmapslab.tmql4j.navigation.model.ITypeHierarchyNavigationAxis;
 import de.topicmapslab.tmql4j.parser.core.expressions.Step;
 
 /**

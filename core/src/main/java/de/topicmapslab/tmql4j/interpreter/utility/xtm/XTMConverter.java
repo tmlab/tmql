@@ -23,10 +23,10 @@ import org.tmapi.core.TopicMapSystemFactory;
 import org.tmapix.io.XTM20TopicMapReader;
 import org.tmapix.io.XTM20TopicMapWriter;
 
-import de.topicmapslab.java.tmapi.TMAPICloner;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
 import de.topicmapslab.tmql4j.common.model.tuplesequence.ITupleSequence;
+import de.topicmapslab.tmql4j.common.utility.TMAPICloner;
 
 /**
  * Utility class to transform topic map fragments to XML or parse XTM fragments

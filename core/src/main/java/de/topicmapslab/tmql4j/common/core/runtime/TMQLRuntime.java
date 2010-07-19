@@ -22,9 +22,6 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
 
-import de.topicmapslab.java.tmapi.extension.impl.ExtendedTopicMapImpl;
-import de.topicmapslab.java.tmapi.extension.model.base.ExtendedTopicMap;
-import de.topicmapslab.java.tmapi.extension.model.index.SupertypeSubtypeIndex;
 import de.topicmapslab.tmql4j.api.DataBridgeRegistry;
 import de.topicmapslab.tmql4j.api.model.IDataBridge;
 import de.topicmapslab.tmql4j.common.context.TMQLRuntimeProperties;
@@ -286,33 +283,6 @@ public class TMQLRuntime implements ITMQLRuntime {
 		this.topicMapSystem = topicMapSystem;
 		this.topicMap = topicMap;
 		this.properties = new TMQLRuntimeProperties(this);
-
-		/*
-		 * is auto indexing enabled
-		 */
-		if (autoReindex) {
-			/*
-			 * wrap topic map to extended topic map if necessary
-			 */
-			ExtendedTopicMap extendedTopicMap = null;
-			if (topicMap instanceof ExtendedTopicMap) {
-				extendedTopicMap = (ExtendedTopicMap) topicMap;
-			} else {
-				extendedTopicMap = new ExtendedTopicMapImpl(topicMap);
-			}
-			/*
-			 * get super-type-sub-type-index of the topic map
-			 */
-			SupertypeSubtypeIndex index = (SupertypeSubtypeIndex) extendedTopicMap
-					.getIndex(SupertypeSubtypeIndex.class);
-			if (!index.isOpen()) {
-				index.open();
-			}
-			/*
-			 * run re-indexer
-			 */
-			index.reindex(topicMap);
-		}
 		this.verbose = verbose;
 		this.printStream = printStream;
 		this.store = new TMQLValueStore();
@@ -337,9 +307,10 @@ public class TMQLRuntime implements ITMQLRuntime {
 	 * {@inheritDoc}
 	 */
 	public TopicMapSystem getTopicMapSystem() {
-		if ( topicMapSystem == null ){
+		if (topicMapSystem == null) {
 			try {
-				topicMapSystem = TopicMapSystemFactory.newInstance().newTopicMapSystem();
+				topicMapSystem = TopicMapSystemFactory.newInstance()
+						.newTopicMapSystem();
 			} catch (FactoryConfigurationException e) {
 				throw new TMQLRuntimeException(e);
 			} catch (TMAPIException e) {
@@ -433,7 +404,7 @@ public class TMQLRuntime implements ITMQLRuntime {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void run(IQuery query) throws TMQLRuntimeException {		
+	public void run(IQuery query) throws TMQLRuntimeException {
 
 		/*
 		 * read expected result type
@@ -598,8 +569,8 @@ public class TMQLRuntime implements ITMQLRuntime {
 		if (environment == null) {
 			try {
 				if (environmentMap == null) {
-					environmentMap = getTopicMapSystem()
-							.createTopicMap("http://tmql4j.topicmapslab.de/"
+					environmentMap = getTopicMapSystem().createTopicMap(
+							"http://tmql4j.topicmapslab.de/"
 									+ UUID.randomUUID());
 				}
 				this.environment = new Environment(this, environmentMap);
@@ -610,7 +581,7 @@ public class TMQLRuntime implements ITMQLRuntime {
 		}
 		return environment;
 	}
-	
+
 	/**
 	 * 
 	 * @param environmentMap
@@ -658,5 +629,5 @@ public class TMQLRuntime implements ITMQLRuntime {
 	public TopicMap getEnvironmentMap() {
 		return environmentMap;
 	}
-	
+
 }

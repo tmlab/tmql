@@ -10,10 +10,10 @@ package de.topicmapslab.tmql4j.api.model;
 
 import org.tmapi.core.Construct;
 
-import de.topicmapslab.java.navigation.model.INavigationAxis;
 import de.topicmapslab.tmql4j.api.exceptions.DataBridgeRuntimeException;
 import de.topicmapslab.tmql4j.api.exceptions.UnsupportedModuleException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
+import de.topicmapslab.tmql4j.navigation.model.INavigationAxis;
 
 /**
  * Interface definition of the data-bridge as abstraction from the underlying

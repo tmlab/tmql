@@ -12,7 +12,7 @@ package de.topicmapslab.tmql4j.resultprocessing.core.reduction;
 
 import java.util.Collection;
 
-import de.topicmapslab.java.tree.Tree;
+import de.topicmapslab.tmql4j.resultprocessing.core.reduction.tree.Tree;
 import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleTupleResult;
 
 

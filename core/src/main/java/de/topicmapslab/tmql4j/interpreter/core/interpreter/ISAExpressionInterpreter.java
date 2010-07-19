@@ -16,8 +16,6 @@ import java.util.Set;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 
-import de.topicmapslab.java.navigation.exception.NavigationException;
-import de.topicmapslab.java.navigation.model.INavigationAxis;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
 import de.topicmapslab.tmql4j.common.utility.HashUtil;
@@ -25,6 +23,8 @@ import de.topicmapslab.tmql4j.common.utility.VariableNames;
 import de.topicmapslab.tmql4j.interpreter.core.base.QueryMatches;
 import de.topicmapslab.tmql4j.interpreter.model.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.lexer.token.Variable;
+import de.topicmapslab.tmql4j.navigation.exception.NavigationException;
+import de.topicmapslab.tmql4j.navigation.model.INavigationAxis;
 import de.topicmapslab.tmql4j.parser.core.expressions.ISAExpression;
 import de.topicmapslab.tmql4j.parser.core.expressions.SimpleContent;
 

@@ -26,7 +26,6 @@ import de.topicmapslab.tmql4j.interpreter.model.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.interpreter.utility.operation.QueryMatchUtils;
 import de.topicmapslab.tmql4j.lexer.model.IToken;
 import de.topicmapslab.tmql4j.lexer.token.Combination;
-import de.topicmapslab.tmql4j.lexer.token.Else;
 import de.topicmapslab.tmql4j.lexer.token.Equality;
 import de.topicmapslab.tmql4j.lexer.token.If;
 import de.topicmapslab.tmql4j.lexer.token.Substraction;
@@ -318,8 +317,7 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 			 */
 			if (getTmqlTokens().contains(If.class)) {
 				runtime.getRuntimeContext().peek().setValue(
-						VariableNames.QUERYMATCHES,
-						content[0]);
+						VariableNames.QUERYMATCHES, content[0]);
 			}
 			/*
 			 * shortcut condition

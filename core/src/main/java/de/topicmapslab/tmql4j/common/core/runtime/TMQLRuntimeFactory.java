@@ -13,7 +13,6 @@ import java.io.PrintStream;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 
-import de.topicmapslab.java.tmapi.extension.model.index.SupertypeSubtypeIndex;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.model.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.parser.model.IExpression;

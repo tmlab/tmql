@@ -10,7 +10,6 @@
  */
 package de.topicmapslab.tmql4j.interpreter.core.interpreter;
 
-import de.topicmapslab.java.tmapi.extension.model.index.SupertypeSubtypeIndex;
 import de.topicmapslab.tmql4j.common.context.TMQLRuntimeProperties;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
@@ -71,16 +70,7 @@ public class PragmaInterpreter extends ExpressionInterpreterImpl<Pragma> {
 				 * switch type-transitivity off
 				 */
 				runtime.getProperties().setProperty(
-						TMQLRuntimeProperties.TMDM_TYPE_TRANSITIVITY, "false");
-				try {
-					SupertypeSubtypeIndex index = runtime.getTopicMap().getIndex(SupertypeSubtypeIndex.class);
-					if ( !index.isOpen()){
-						index.open();
-					}
-					index.reindex();
-				} catch (UnsupportedOperationException e) {
-					// NOTHING TO DO
-				}
+						TMQLRuntimeProperties.TMDM_TYPE_TRANSITIVITY, "false");				
 				runtime.setActsTransitive(false);
 			}
 			/*
@@ -91,13 +81,7 @@ public class PragmaInterpreter extends ExpressionInterpreterImpl<Pragma> {
 				 * switch type-transitivity on
 				 */
 				runtime.getProperties().setProperty(
-						TMQLRuntimeProperties.TMDM_TYPE_TRANSITIVITY, "true");
-				try {
-					runtime.getTopicMap().getIndex(SupertypeSubtypeIndex.class)
-							.reindex();
-				} catch (UnsupportedOperationException e) {
-					// NOTHING TO DO
-				}
+						TMQLRuntimeProperties.TMDM_TYPE_TRANSITIVITY, "true");				
 				runtime.setActsTransitive(true);
 			} else {
 				throw new TMQLRuntimeException("Unknown QIRI for taxonometry.");

@@ -14,11 +14,8 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 
-import de.topicmapslab.java.tmapi.extension.impl.ExtendedTopicImpl;
-import de.topicmapslab.java.tmapi.extension.impl.ExtendedTopicMapImpl;
-import de.topicmapslab.java.tmapi.extension.model.base.ExtendedTopic;
-import de.topicmapslab.java.tmapi.extension.model.base.ExtendedTopicMap;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
+import de.topicmapslab.tmql4j.common.utility.TmdmUtility;
 
 /**
  * TMQL predefined Environment
@@ -38,227 +35,226 @@ public class Environment {
 	/**
 	 * the internal topic map containing all predefined topics
 	 */
-	private final ExtendedTopicMap map;
-
+	private final TopicMap map;
 	/**
 	 * the tmql-concept topic
 	 */
-	private ExtendedTopic tmql_concept;
+	private Topic tmql_concept;
 	/**
 	 * the tmql-ontology topic
 	 */
-	private ExtendedTopic tmql_ontology;
+	private Topic tmql_ontology;
 	/**
 	 * the tmql-taxonometry topic
 	 */
-	private ExtendedTopic tmql_taxonometry;
+	private Topic tmql_taxonometry;
 
 	/**
 	 * the occurrence type specifies the precedence of operators
 	 */
-	private ExtendedTopic tmql_occurrences_precedence;
+	private Topic tmql_occurrences_precedence;
 	/**
 	 * the occurrence type specifies the profile of operators
 	 */
-	private ExtendedTopic tmql_occurrences_profile;
+	private Topic tmql_occurrences_profile;
 	/**
 	 * the occurrence type specifies the pattern of operators
 	 */
-	private ExtendedTopic tmql_occurrences_pattern;
+	private Topic tmql_occurrences_pattern;
 
 	/**
 	 * the topic type of all TMQL-functions
 	 */
-	private ExtendedTopic tmql_function;
+	private Topic tmql_function;
 	/**
 	 * the topic type of all predicates
 	 */
-	private ExtendedTopic tmql_predicate;
+	private Topic tmql_predicate;
 
 	/**
 	 * the topic type of all binary-operators
 	 */
-	private ExtendedTopic tmql_binary_operator;
+	private Topic tmql_binary_operator;
 	/**
 	 * the topic type of all unary operators
 	 */
-	private ExtendedTopic tmql_unary_operator;
+	private Topic tmql_unary_operator;
 	/**
 	 * topic type of all left-hand operators
 	 */
-	private ExtendedTopic tmql_prefix_operator;
+	private Topic tmql_prefix_operator;
 	/**
 	 * topic type of all right-hand operators
 	 */
-	private ExtendedTopic tmql_postfix_operator;
+	private Topic tmql_postfix_operator;
 
 	/**
 	 * the topic of the unary minus operator
 	 */
-	private ExtendedTopic tmql_decimal_unary_minus_prefix_operator;
+	private Topic tmql_decimal_unary_minus_prefix_operator;
 	/**
 	 * the topic of the binary add operator
 	 */
-	private ExtendedTopic tmql_decimal_binary_add_binary_operator;
+	private Topic tmql_decimal_binary_add_binary_operator;
 	/**
 	 * the topic of the binary minus operator
 	 */
-	private ExtendedTopic tmql_decimal_binary_minus_binary_operator;
+	private Topic tmql_decimal_binary_minus_binary_operator;
 	/**
 	 * the topic of the binary multiplication operator
 	 */
-	private ExtendedTopic tmql_decimal_binary_mul_binary_operator;
+	private Topic tmql_decimal_binary_mul_binary_operator;
 	/**
 	 * the topic of the binary division operator
 	 */
-	private ExtendedTopic tmql_decimal_binary_div_binary_operator;
+	private Topic tmql_decimal_binary_div_binary_operator;
 	/**
 	 * the topic of the binary modulo operator
 	 */
-	private ExtendedTopic tmql_decimal_binary_mod_binary_operator;
+	private Topic tmql_decimal_binary_mod_binary_operator;
 	/**
 	 * the topic of the binary lower-than operator
 	 */
-	private ExtendedTopic tmql_decimal_binary_lt_binary_operator;
+	private Topic tmql_decimal_binary_lt_binary_operator;
 	/**
 	 * the topic of the binary lower-equals operator
 	 */
-	private ExtendedTopic tmql_decimal_binary_le_binary_operator;
+	private Topic tmql_decimal_binary_le_binary_operator;
 	/**
 	 * the topic of the binary greater-than operator
 	 */
-	private ExtendedTopic tmql_decimal_binary_gt_binary_operator;
+	private Topic tmql_decimal_binary_gt_binary_operator;
 	/**
 	 * the topic of the binary greater-equals operator
 	 */
-	private ExtendedTopic tmql_decimal_binary_ge_binary_operator;
+	private Topic tmql_decimal_binary_ge_binary_operator;
 	/**
 	 * the topic of the binary string-concat operator
 	 */
-	private ExtendedTopic tmql_string_concat_binary_operator;
+	private Topic tmql_string_concat_binary_operator;
 	/**
 	 * the topic of the length function
 	 */
-	private ExtendedTopic tmql_string_length_function;
+	private Topic tmql_string_length_function;
 	/**
 	 * the topic of the binary less-than string operator
 	 */
-	private ExtendedTopic tmql_string_less_than_binary_operator;
+	private Topic tmql_string_less_than_binary_operator;
 	/**
 	 * the topic of the binary less-equal string operator
 	 */
-	private ExtendedTopic tmql_string_less_equal_than_binary_operator;
+	private Topic tmql_string_less_equal_than_binary_operator;
 	/**
 	 * the topic of the binary greater-equal string operator
 	 */
-	private ExtendedTopic tmql_string_greater_equal_than_binary_operator;
+	private Topic tmql_string_greater_equal_than_binary_operator;
 	/**
 	 * the topic of the binary greater-than string operator
 	 */
-	private ExtendedTopic tmql_string_greater_than_binary_operator;
+	private Topic tmql_string_greater_than_binary_operator;
 	/**
 	 * the topic of the binary regular expression string operator
 	 */
-	private ExtendedTopic tmql_string_regexp_match_binary_operator;
+	private Topic tmql_string_regexp_match_binary_operator;
 	/**
 	 * the topic of the has-data-type function
 	 */
-	private ExtendedTopic tmql_has_datatype_function;
+	private Topic tmql_has_datatype_function;
 	/**
 	 * the topic of the has-variant function
 	 */
-	private ExtendedTopic tmql_has_variant_function;
+	private Topic tmql_has_variant_function;
 	/**
 	 * the topic of the slice function
 	 */
-	private ExtendedTopic tmql_slice_function;
+	private Topic tmql_slice_function;
 	/**
 	 * the topic of the count function
 	 */
-	private ExtendedTopic tmql_count_function;
+	private Topic tmql_count_function;
 	/**
 	 * the topic of the unique function
 	 */
-	private ExtendedTopic tmql_uniq_function;
+	private Topic tmql_uniq_function;
 	/**
 	 * the topic of the combination operator
 	 */
-	private ExtendedTopic tmql_concat_binary_operator;
+	private Topic tmql_concat_binary_operator;
 	/**
 	 * the topic of the except operator
 	 */
-	private ExtendedTopic tmql_except_binary_operator;
+	private Topic tmql_except_binary_operator;
 	/**
 	 * the topic of the equality operator
 	 */
-	private ExtendedTopic tmql_compare_binary_operator;
+	private Topic tmql_compare_binary_operator;
 	/**
 	 * the topic of the zigzag function
 	 */
-	private ExtendedTopic tmql_zigzag_function;
+	private Topic tmql_zigzag_function;
 	/**
 	 * the topic of the zagzig function
 	 */
-	private ExtendedTopic tmql_zagzig_function;
+	private Topic tmql_zagzig_function;
 
-	private ExtendedTopic tmql_datatype;
+	private Topic tmql_datatype;
 	/**
 	 * topic type of each primitive data-type
 	 */
-	private ExtendedTopic tmql_primitive_datatype;
+	private Topic tmql_primitive_datatype;
 	/**
 	 * topic of data-type undefined
 	 */
-	private ExtendedTopic tmql_datatype_undefined;
+	private Topic tmql_datatype_undefined;
 	/**
 	 * topic of data-type boolean
 	 */
-	private ExtendedTopic tmql_datatype_boolean;
+	private Topic tmql_datatype_boolean;
 	/**
 	 * topic of data-type integer
 	 */
-	private ExtendedTopic tmql_datatype_integer;
+	private Topic tmql_datatype_integer;
 	/**
 	 * topic of data-type decimal
 	 */
-	private ExtendedTopic tmql_datatype_decimal;
+	private Topic tmql_datatype_decimal;
 	/**
 	 * topic of data-type anyIRI
 	 */
-	private ExtendedTopic tmql_datatype_iri;
+	private Topic tmql_datatype_iri;
 	/**
 	 * topic of data-type date
 	 */
-	private ExtendedTopic tmql_datatype_date;
+	private Topic tmql_datatype_date;
 	/**
 	 * topic of data-type dateTime
 	 */
-	private ExtendedTopic tmql_datatype_dateTime;
+	private Topic tmql_datatype_dateTime;
 	/**
 	 * topic of data-type string
 	 */
-	private ExtendedTopic tmql_datatype_string;
+	private Topic tmql_datatype_string;
 	/**
 	 * topic of data-type XML
 	 */
-	private ExtendedTopic tmql_datatype_xml;
+	private Topic tmql_datatype_xml;
 	/**
 	 * topic type of complex data-types
 	 */
-	private ExtendedTopic tmql_complex_datatype;
+	private Topic tmql_complex_datatype;
 	/**
 	 * topic of data-type tuple
 	 */
-	private ExtendedTopic tmql_datatype_tuple;
+	private Topic tmql_datatype_tuple;
 	/**
 	 * topic of data-type sequence
 	 */
-	private ExtendedTopic tmql_datatype_tuple_sequence;
+	private Topic tmql_datatype_tuple_sequence;
 
 	/**
 	 * topic of the only possible value of data-type undefined
 	 */
-	private ExtendedTopic tmql_topic_undef;
+	private Topic tmql_topic_undef;
 
 	/**
 	 * prefix of each topic locator
@@ -275,7 +271,7 @@ public class Environment {
 	 */
 	public Environment(TMQLRuntime runtime, TopicMap environmentMap)
 			throws Exception {
-		map = new ExtendedTopicMapImpl(environmentMap);
+		map = environmentMap;
 
 		/*
 		 * tmql-concept - "TMQL core concept"
@@ -299,14 +295,14 @@ public class Environment {
 			tmql_ontology.addSubjectIdentifier(map.createLocator(tmql4j_qname
 					+ "tmql_ontology"));
 			tmql_ontology.createName("Ontology", new Topic[0]);
-			tmql_ontology.isa(tmql_concept);
+			tmql_ontology.addType(tmql_concept);
 
 		}/*
 		 * taxonometry isa tmql-concept - "Taxonometry"
 		 */
-		Topic tmql_taxonometry_ = (Topic) map.getConstructByItemIdentifier(map
+		tmql_taxonometry = (Topic) map.getConstructByItemIdentifier(map
 				.createLocator(tmql4j_qname + "tmql_taxonometry"));
-		if (tmql_taxonometry_ == null) {
+		if (tmql_taxonometry == null) {
 			tmql_taxonometry = map.createTopic();
 			try {
 				tmql_taxonometry.addItemIdentifier(map
@@ -314,12 +310,9 @@ public class Environment {
 			} catch (Exception e) {
 				// ONTOPIA WORKAROUND
 			}
-		} else {
-			tmql_taxonometry = new ExtendedTopicImpl(tmql_taxonometry_, runtime
-					.getProperties().isTmdmTypeTransitiv());
 		}
 		tmql_taxonometry.createName("Taxonometry", new Topic[0]);
-		tmql_taxonometry.isa(tmql_concept);
+		tmql_taxonometry.addType(tmql_concept);
 
 		/*
 		 * the occurrences type of precedence of functions
@@ -379,7 +372,7 @@ public class Environment {
 			tmql_function.addSubjectIdentifier(map.createLocator(tmql4j_qname
 					+ "tmql_function"));
 			tmql_function.createName("Function", new Topic[0]);
-			tmql_function.isa(tmql_concept);
+			tmql_function.addType(tmql_concept);
 
 		}/*
 		 * predicate iko function - "Predicate"
@@ -391,7 +384,7 @@ public class Environment {
 			tmql_predicate.addSubjectIdentifier(map.createLocator(tmql4j_qname
 					+ "tmql_predicate"));
 			tmql_predicate.createName("Predicate", new Topic[0]);
-			tmql_predicate.iko(tmql_function);
+			TmdmUtility.ako(map, tmql_function, tmql_predicate);
 
 		}/*
 		 * binary-operator iko function - "Binary Operator"
@@ -403,7 +396,7 @@ public class Environment {
 			tmql_binary_operator.addSubjectIdentifier(map
 					.createLocator(tmql4j_qname + "tmql_binary_operator"));
 			tmql_binary_operator.createName("Binary Operator", new Topic[0]);
-			tmql_binary_operator.iko(tmql_function);
+			TmdmUtility.ako(map, tmql_function, tmql_binary_operator);
 
 		}/*
 		 * unary-operator iko function - "Unary Operator"
@@ -415,7 +408,7 @@ public class Environment {
 			tmql_unary_operator.addSubjectIdentifier(map
 					.createLocator(tmql4j_qname + "tmql_unary_operator"));
 			tmql_unary_operator.createName("Unary Operator", new Topic[0]);
-			tmql_unary_operator.iko(tmql_function);
+			TmdmUtility.ako(map, tmql_function, tmql_unary_operator);
 
 		}/*
 		 * prefix-operator iko unary-operator - "Prefix (unary) operator"
@@ -428,7 +421,7 @@ public class Environment {
 					.createLocator(tmql4j_qname + "tmql_prefix_operator"));
 			tmql_prefix_operator.createName("Prefix (unary) operator",
 					new Topic[0]);
-			tmql_prefix_operator.iko(tmql_unary_operator);
+			TmdmUtility.ako(map, tmql_unary_operator, tmql_prefix_operator);
 
 		}/*
 		 * postfix-operator iko unary-operator - "Postfix (unary) operator"
@@ -441,7 +434,7 @@ public class Environment {
 					.createLocator(tmql4j_qname + "tmql_postfix_operator"));
 			tmql_postfix_operator.createName("Postfix (unary) operator",
 					new Topic[0]);
-			tmql_postfix_operator.iko(tmql_unary_operator);
+			TmdmUtility.ako(map, tmql_unary_operator, tmql_postfix_operator);
 
 		}/*
 		 * for decimals
@@ -468,7 +461,8 @@ public class Environment {
 					.createLocator("fn:unary-minus-decimal"));
 			tmql_decimal_unary_minus_prefix_operator.createName(
 					"Decimal unary minus", new Topic[0]);
-			tmql_decimal_unary_minus_prefix_operator.isa(tmql_prefix_operator);
+			tmql_decimal_unary_minus_prefix_operator
+					.addType(tmql_prefix_operator);
 			tmql_decimal_unary_minus_prefix_operator.createOccurrence(
 					tmql_occurrences_precedence, "6", new Topic[0]);
 			tmql_decimal_unary_minus_prefix_operator.createOccurrence(
@@ -501,7 +495,8 @@ public class Environment {
 					.createLocator("fn:add-decimal"));
 			tmql_decimal_binary_add_binary_operator.createName(
 					"Decimal binary add", new Topic[0]);
-			tmql_decimal_binary_add_binary_operator.isa(tmql_binary_operator);
+			tmql_decimal_binary_add_binary_operator
+					.addType(tmql_binary_operator);
 			tmql_decimal_binary_add_binary_operator.createOccurrence(
 					tmql_occurrences_precedence, "2", new Topic[0]);
 			tmql_decimal_binary_add_binary_operator.createOccurrence(
@@ -533,7 +528,8 @@ public class Environment {
 					.createLocator("fn:minus-decimal"));
 			tmql_decimal_binary_minus_binary_operator.createName(
 					"Decimal binary minus", new Topic[0]);
-			tmql_decimal_binary_minus_binary_operator.isa(tmql_binary_operator);
+			tmql_decimal_binary_minus_binary_operator
+					.addType(tmql_binary_operator);
 			tmql_decimal_binary_minus_binary_operator.createOccurrence(
 					tmql_occurrences_precedence, "2", new Topic[0]);
 			tmql_decimal_binary_minus_binary_operator.createOccurrence(
@@ -566,7 +562,8 @@ public class Environment {
 					.createLocator("fn:mul-decimal"));
 			tmql_decimal_binary_mul_binary_operator.createName(
 					"Decimal binary multiplication", new Topic[0]);
-			tmql_decimal_binary_mul_binary_operator.isa(tmql_binary_operator);
+			tmql_decimal_binary_mul_binary_operator
+					.addType(tmql_binary_operator);
 			tmql_decimal_binary_mul_binary_operator.createOccurrence(
 					tmql_occurrences_precedence, "4", new Topic[0]);
 			tmql_decimal_binary_mul_binary_operator.createOccurrence(
@@ -599,7 +596,8 @@ public class Environment {
 					.createLocator("fn:div-decimal"));
 			tmql_decimal_binary_div_binary_operator.createName(
 					"Decimal binary division", new Topic[0]);
-			tmql_decimal_binary_div_binary_operator.isa(tmql_binary_operator);
+			tmql_decimal_binary_div_binary_operator
+					.addType(tmql_binary_operator);
 			tmql_decimal_binary_div_binary_operator.createOccurrence(
 					tmql_occurrences_precedence, "4", new Topic[0]);
 			tmql_decimal_binary_div_binary_operator.createOccurrence(
@@ -631,7 +629,8 @@ public class Environment {
 					.createLocator("fn:mod-decimal"));
 			tmql_decimal_binary_mod_binary_operator.createName(
 					"Decimal binary modulo", new Topic[0]);
-			tmql_decimal_binary_mod_binary_operator.isa(tmql_binary_operator);
+			tmql_decimal_binary_mod_binary_operator
+					.addType(tmql_binary_operator);
 			tmql_decimal_binary_mod_binary_operator.createOccurrence(
 					tmql_occurrences_precedence, "4", new Topic[0]);
 			tmql_decimal_binary_mod_binary_operator.createOccurrence(
@@ -663,7 +662,8 @@ public class Environment {
 					.createLocator("fn:lt-decimal"));
 			tmql_decimal_binary_lt_binary_operator.createName(
 					"Decimal binary lower than", new Topic[0]);
-			tmql_decimal_binary_lt_binary_operator.isa(tmql_binary_operator);
+			tmql_decimal_binary_lt_binary_operator
+					.addType(tmql_binary_operator);
 			tmql_decimal_binary_lt_binary_operator.createOccurrence(
 					tmql_occurrences_precedence, "5", new Topic[0]);
 			tmql_decimal_binary_lt_binary_operator.createOccurrence(
@@ -697,7 +697,8 @@ public class Environment {
 					.createLocator("fn:leq-decimal"));
 			tmql_decimal_binary_le_binary_operator.createName(
 					"Decimal binary lower euquals than", new Topic[0]);
-			tmql_decimal_binary_le_binary_operator.isa(tmql_binary_operator);
+			tmql_decimal_binary_le_binary_operator
+					.addType(tmql_binary_operator);
 			tmql_decimal_binary_le_binary_operator.createOccurrence(
 					tmql_occurrences_precedence, "5", new Topic[0]);
 			tmql_decimal_binary_le_binary_operator.createOccurrence(
@@ -730,7 +731,8 @@ public class Environment {
 					.createLocator("fn:gt-decimal"));
 			tmql_decimal_binary_gt_binary_operator.createName(
 					"Decimal binary greater than", new Topic[0]);
-			tmql_decimal_binary_gt_binary_operator.isa(tmql_binary_operator);
+			tmql_decimal_binary_gt_binary_operator
+					.addType(tmql_binary_operator);
 			tmql_decimal_binary_gt_binary_operator.createOccurrence(
 					tmql_occurrences_precedence, "5", new Topic[0]);
 			tmql_decimal_binary_gt_binary_operator.createOccurrence(
@@ -764,7 +766,8 @@ public class Environment {
 					.createLocator("fn:geq-decimal"));
 			tmql_decimal_binary_ge_binary_operator.createName(
 					"Decimal binary greater or quals than", new Topic[0]);
-			tmql_decimal_binary_ge_binary_operator.isa(tmql_binary_operator);
+			tmql_decimal_binary_ge_binary_operator
+					.addType(tmql_binary_operator);
 			tmql_decimal_binary_ge_binary_operator.createOccurrence(
 					tmql_occurrences_precedence, "5", new Topic[0]);
 			tmql_decimal_binary_ge_binary_operator.createOccurrence(
@@ -796,7 +799,7 @@ public class Environment {
 					.createLocator("fn:string-concat"));
 			tmql_string_concat_binary_operator.createName("String concat",
 					new Topic[0]);
-			tmql_string_concat_binary_operator.isa(tmql_binary_operator);
+			tmql_string_concat_binary_operator.addType(tmql_binary_operator);
 			tmql_string_concat_binary_operator.createOccurrence(
 					tmql_occurrences_precedence, "2", new Topic[0]);
 			tmql_string_concat_binary_operator.createOccurrence(
@@ -825,7 +828,7 @@ public class Environment {
 					.createLocator("fn:length"));
 			tmql_string_length_function.createName("String length",
 					new Topic[0]);
-			tmql_string_length_function.isa(tmql_function);
+			tmql_string_length_function.addType(tmql_function);
 			tmql_string_length_function.createOccurrence(
 					tmql_occurrences_pattern, "+", new Topic[0]);
 			tmql_string_length_function.createOccurrence(
@@ -854,7 +857,7 @@ public class Environment {
 					.createLocator("fn:string-lt"));
 			tmql_string_less_than_binary_operator.createName(
 					"String less than", new Topic[0]);
-			tmql_string_less_than_binary_operator.isa(tmql_binary_operator);
+			tmql_string_less_than_binary_operator.addType(tmql_binary_operator);
 			tmql_string_less_than_binary_operator.createOccurrence(
 					tmql_occurrences_precedence, "5", new Topic[0]);
 			tmql_string_less_than_binary_operator.createOccurrence(
@@ -888,7 +891,7 @@ public class Environment {
 			tmql_string_less_equal_than_binary_operator.createName(
 					"String less equal than", new Topic[0]);
 			tmql_string_less_equal_than_binary_operator
-					.isa(tmql_binary_operator);
+					.addType(tmql_binary_operator);
 			tmql_string_less_equal_than_binary_operator.createOccurrence(
 					tmql_occurrences_precedence, "5", new Topic[0]);
 			tmql_string_less_equal_than_binary_operator.createOccurrence(
@@ -922,7 +925,7 @@ public class Environment {
 			tmql_string_greater_equal_than_binary_operator.createName(
 					"String greater equal than", new Topic[0]);
 			tmql_string_greater_equal_than_binary_operator
-					.isa(tmql_binary_operator);
+					.addType(tmql_binary_operator);
 			tmql_string_greater_equal_than_binary_operator.createOccurrence(
 					tmql_occurrences_precedence, "5", new Topic[0]);
 			tmql_string_greater_equal_than_binary_operator.createOccurrence(
@@ -956,7 +959,8 @@ public class Environment {
 					.createLocator("fn:string-gt"));
 			tmql_string_greater_than_binary_operator.createName(
 					"String greater than", new Topic[0]);
-			tmql_string_greater_than_binary_operator.isa(tmql_binary_operator);
+			tmql_string_greater_than_binary_operator
+					.addType(tmql_binary_operator);
 			tmql_string_greater_than_binary_operator.createOccurrence(
 					tmql_occurrences_precedence, "5", new Topic[0]);
 			tmql_string_greater_than_binary_operator.createOccurrence(
@@ -989,7 +993,8 @@ public class Environment {
 					.createLocator("fn:regexp"));
 			tmql_string_regexp_match_binary_operator.createName(
 					"String regexp match", new Topic[0]);
-			tmql_string_regexp_match_binary_operator.isa(tmql_binary_operator);
+			tmql_string_regexp_match_binary_operator
+					.addType(tmql_binary_operator);
 			tmql_string_regexp_match_binary_operator.createOccurrence(
 					tmql_occurrences_precedence, "5", new Topic[0]);
 			tmql_string_regexp_match_binary_operator.createOccurrence(
@@ -1024,7 +1029,7 @@ public class Environment {
 			tmql_has_datatype_function.addItemIdentifier(map
 					.createLocator("fn:has-datatype"));
 			tmql_has_datatype_function.createName("has datatype", new Topic[0]);
-			tmql_has_datatype_function.isa(tmql_function);
+			tmql_has_datatype_function.addType(tmql_function);
 			tmql_has_datatype_function
 					.createOccurrence(
 							tmql_occurrences_profile,
@@ -1052,7 +1057,7 @@ public class Environment {
 			tmql_has_variant_function.addItemIdentifier(map
 					.createLocator("fn:has-variant"));
 			tmql_has_variant_function.createName("has variant", new Topic[0]);
-			tmql_has_variant_function.isa(tmql_function);
+			tmql_has_variant_function.addType(tmql_function);
 			tmql_has_variant_function.createOccurrence(
 					tmql_occurrences_profile,
 					"fn:has-variant (s: tuple-sequence, s: item-reference",
@@ -1076,7 +1081,7 @@ public class Environment {
 			tmql_slice_function
 					.addItemIdentifier(map.createLocator("fn:slice"));
 			tmql_slice_function.createName("slice", new Topic[0]);
-			tmql_slice_function.isa(tmql_function);
+			tmql_slice_function.addType(tmql_function);
 			tmql_slice_function
 					.createOccurrence(
 							tmql_occurrences_profile,
@@ -1100,7 +1105,7 @@ public class Environment {
 			tmql_count_function
 					.addItemIdentifier(map.createLocator("fn:count"));
 			tmql_count_function.createName("count", new Topic[0]);
-			tmql_count_function.isa(tmql_function);
+			tmql_count_function.addType(tmql_function);
 			tmql_count_function.createOccurrence(tmql_occurrences_profile,
 					"fn:count (s : tuple-sequence) return integer",
 					new Topic[0]);
@@ -1121,7 +1126,7 @@ public class Environment {
 							.createLocator("http://psi.topicmaps.org/tmql/1.0/functions/uniq"));
 			tmql_uniq_function.addItemIdentifier(map.createLocator("fn:uniq"));
 			tmql_uniq_function.createName("uniq", new Topic[0]);
-			tmql_uniq_function.isa(tmql_function);
+			tmql_uniq_function.addType(tmql_function);
 			tmql_uniq_function.createOccurrence(tmql_occurrences_profile,
 					"fn:uniq (s : tuple-sequence) return tuple-sequence",
 					new Topic[0]);
@@ -1148,7 +1153,7 @@ public class Environment {
 			tmql_concat_binary_operator.addItemIdentifier(map
 					.createLocator("fn:concat"));
 			tmql_concat_binary_operator.createName("concat", new Topic[0]);
-			tmql_concat_binary_operator.isa(tmql_binary_operator);
+			tmql_concat_binary_operator.addType(tmql_binary_operator);
 			tmql_concat_binary_operator.createOccurrence(
 					tmql_occurrences_precedence, "1", new Topic[0]);
 			tmql_concat_binary_operator.createOccurrence(
@@ -1181,7 +1186,7 @@ public class Environment {
 			tmql_except_binary_operator.addItemIdentifier(map
 					.createLocator("fn:except"));
 			tmql_except_binary_operator.createName("except", new Topic[0]);
-			tmql_except_binary_operator.isa(tmql_binary_operator);
+			tmql_except_binary_operator.addType(tmql_binary_operator);
 			tmql_except_binary_operator.createOccurrence(
 					tmql_occurrences_precedence, "1", new Topic[0]);
 			tmql_except_binary_operator.createOccurrence(
@@ -1214,7 +1219,7 @@ public class Environment {
 			tmql_compare_binary_operator.addItemIdentifier(map
 					.createLocator("fn:compare"));
 			tmql_compare_binary_operator.createName("compare", new Topic[0]);
-			tmql_compare_binary_operator.isa(tmql_binary_operator);
+			tmql_compare_binary_operator.addType(tmql_binary_operator);
 			tmql_compare_binary_operator.createOccurrence(
 					tmql_occurrences_precedence, "1", new Topic[0]);
 			tmql_compare_binary_operator.createOccurrence(
@@ -1244,7 +1249,7 @@ public class Environment {
 			tmql_zigzag_function.addItemIdentifier(map
 					.createLocator("fn:zigzag"));
 			tmql_zigzag_function.createName("zigzag", new Topic[0]);
-			tmql_zigzag_function.isa(tmql_function);
+			tmql_zigzag_function.addType(tmql_function);
 			tmql_zigzag_function.createOccurrence(tmql_occurrences_profile,
 					"fn:zigzag (s : tuple-sequence) return tuple-sequence",
 					new Topic[0]);
@@ -1269,7 +1274,7 @@ public class Environment {
 			tmql_zagzig_function.addItemIdentifier(map
 					.createLocator("fn:zagzig"));
 			tmql_zagzig_function.createName("zagzig", new Topic[0]);
-			tmql_zagzig_function.isa(tmql_function);
+			tmql_zagzig_function.addType(tmql_function);
 			tmql_zagzig_function.createOccurrence(tmql_occurrences_profile,
 					"fn:zagzig (s : tuple-sequence) return tuple-sequence",
 					new Topic[0]);
@@ -1299,7 +1304,7 @@ public class Environment {
 			tmql_datatype.addSubjectIdentifier(map.createLocator(tmql4j_qname
 					+ "tmql_datatype"));
 			tmql_datatype.createName("Data Type", new Topic[0]);
-			tmql_datatype.isa(tmql_concept);
+			tmql_datatype.addType(tmql_concept);
 
 		}/*
 		 * primitive-datatype iko datatype - "Primitive Data Type"
@@ -1312,7 +1317,7 @@ public class Environment {
 					.createLocator(tmql4j_qname + "tmql_primitive_datatype"));
 			tmql_primitive_datatype.createName("Primitive Data Type",
 					new Topic[0]);
-			tmql_primitive_datatype.iko(tmql_datatype);
+			TmdmUtility.ako(map, tmql_datatype, tmql_primitive_datatype);
 
 		}/*
 		 * undefined isa primitive-datatype - "Undefined Datatype" description:
@@ -1326,14 +1331,14 @@ public class Environment {
 					.createLocator(tmql4j_qname + "tmql_datatype_undefined"));
 			tmql_datatype_undefined.createName("Undefined Data Type",
 					new Topic[0]);
-			tmql_datatype_undefined.isa(tmql_primitive_datatype);
+			tmql_datatype_undefined.addType(tmql_primitive_datatype);
 
 			tmql_topic_undef = map.createTopic();
 			tmql_topic_undef.addSubjectIdentifier(map
 					.createLocator(tmql4j_qname
 							+ "tmql_datatype_undefined/undef"));
 			tmql_topic_undef.createName("undef", new Topic[0]);
-			tmql_topic_undef.isa(tmql_datatype_undefined);
+			tmql_topic_undef.addType(tmql_datatype_undefined);
 
 		}/*
 		 * boolean isa primitive-datatype
@@ -1349,7 +1354,7 @@ public class Environment {
 					.addSubjectIdentifier(map
 							.createLocator("http://www.w3.org/TR/xmlschema-2/datatypes.html#boolean"));
 			tmql_datatype_boolean.createName("Boolean", new Topic[0]);
-			tmql_datatype_boolean.isa(tmql_primitive_datatype);
+			tmql_datatype_boolean.addType(tmql_primitive_datatype);
 
 		}/*
 		 * integer isa primitive-datatype
@@ -1366,7 +1371,7 @@ public class Environment {
 					.addSubjectIdentifier(map
 							.createLocator("http://www.w3.org/TR/xmlschema-2/datatypes.html#integer"));
 			tmql_datatype_integer.createName("Integer Number", new Topic[0]);
-			tmql_datatype_integer.isa(tmql_primitive_datatype);
+			tmql_datatype_integer.addType(tmql_primitive_datatype);
 
 		}/*
 		 * decimal isa primitive-datatype
@@ -1383,7 +1388,7 @@ public class Environment {
 					.addSubjectIdentifier(map
 							.createLocator("http://www.w3.org/TR/xmlschema-2/datatypes.html#decimal"));
 			tmql_datatype_decimal.createName("Decimal Number", new Topic[0]);
-			tmql_datatype_decimal.isa(tmql_primitive_datatype);
+			tmql_datatype_decimal.addType(tmql_primitive_datatype);
 
 		}/*
 		 * iri isa primitive-datatype
@@ -1400,7 +1405,7 @@ public class Environment {
 					.addSubjectIdentifier(map
 							.createLocator("http://www.w3.org/TR/xmlschema-2/datatypes.html#anyURI"));
 			tmql_datatype_iri.createName("IRI", new Topic[0]);
-			tmql_datatype_iri.isa(tmql_primitive_datatype);
+			tmql_datatype_iri.addType(tmql_primitive_datatype);
 		}/*
 		 * date isa primitive-datatype
 		 * http://www.w3.org/TR/xmlschema-2/datatypes.html#date - "Date"
@@ -1415,7 +1420,7 @@ public class Environment {
 					.addSubjectIdentifier(map
 							.createLocator("http://www.w3.org/TR/xmlschema-2/datatypes.html#date"));
 			tmql_datatype_date.createName("Date", new Topic[0]);
-			tmql_datatype_date.isa(tmql_primitive_datatype);
+			tmql_datatype_date.addType(tmql_primitive_datatype);
 		}/*
 		 * dateTime isa primitive-datatype
 		 * http://www.w3.org/TR/xmlschema-2/datatypes.html#dateTime - "DateTime"
@@ -1430,7 +1435,7 @@ public class Environment {
 					.addSubjectIdentifier(map
 							.createLocator("http://www.w3.org/TR/xmlschema-2/datatypes.html#dateTime"));
 			tmql_datatype_dateTime.createName("DateTime", new Topic[0]);
-			tmql_datatype_dateTime.isa(tmql_primitive_datatype);
+			tmql_datatype_dateTime.addType(tmql_primitive_datatype);
 		}/*
 		 * string isa primitive-datatype
 		 * http://www.w3.org/TR/xmlschema-2/datatypes.html#string - "String"
@@ -1445,7 +1450,7 @@ public class Environment {
 					.addSubjectIdentifier(map
 							.createLocator("http://www.w3.org/TR/xmlschema-2/datatypes.html#string"));
 			tmql_datatype_string.createName("String", new Topic[0]);
-			tmql_datatype_string.isa(tmql_primitive_datatype);
+			tmql_datatype_string.addType(tmql_primitive_datatype);
 		}/*
 		 * xml isa primitive-datatype - "XML Content"
 		 */
@@ -1456,7 +1461,7 @@ public class Environment {
 			tmql_datatype_xml.addSubjectIdentifier(map
 					.createLocator(tmql4j_qname + "tmql_datatype_xml"));
 			tmql_datatype_xml.createName("XML Content", new Topic[0]);
-			tmql_datatype_xml.isa(tmql_primitive_datatype);
+			tmql_datatype_xml.addType(tmql_primitive_datatype);
 		}/*
 		 * complex-datatype iko datatype - "Complex Data Type"
 		 */
@@ -1467,7 +1472,7 @@ public class Environment {
 			tmql_complex_datatype.addSubjectIdentifier(map
 					.createLocator(tmql4j_qname + "tmql_complex_datatype"));
 			tmql_complex_datatype.createName("Complex Data Type", new Topic[0]);
-			tmql_complex_datatype.iko(tmql_datatype);
+			TmdmUtility.ako(map, tmql_datatype, tmql_complex_datatype);
 		}
 		/*
 		 * tuple isa complex-datatype - "Tuple Content" description:
@@ -1480,7 +1485,7 @@ public class Environment {
 			tmql_datatype_tuple.addSubjectIdentifier(map
 					.createLocator(tmql4j_qname + "tmql_datatype_tuple"));
 			tmql_datatype_tuple.createName("Tuple Content", new Topic[0]);
-			tmql_datatype_tuple.isa(tmql_complex_datatype);
+			tmql_datatype_tuple.addType(tmql_complex_datatype);
 		}
 		/*
 		 * tuple-sequence isa complex-datatype - "Tuple Sequence" description:
@@ -1495,7 +1500,7 @@ public class Environment {
 							+ "tmql_datatype_tuple_sequence"));
 			tmql_datatype_tuple_sequence.createName("Tuple Sequence",
 					new Topic[0]);
-			tmql_datatype_tuple_sequence.isa(tmql_complex_datatype);
+			tmql_datatype_tuple_sequence.addType(tmql_complex_datatype);
 		}
 	}
 
@@ -1514,7 +1519,7 @@ public class Environment {
 	 * tmql-concept <br />
 	 * - "TMQL core concept"
 	 */
-	public ExtendedTopic getTmqlConcept() {
+	public Topic getTmqlConcept() {
 		return tmql_concept;
 	}
 
@@ -1522,7 +1527,7 @@ public class Environment {
 	 * tmql-tanxonometry <br />
 	 * - "TMQL tanxonometry"
 	 */
-	public ExtendedTopic getTmqlTaxonometry() {
+	public Topic getTmqlTaxonometry() {
 		return tmql_taxonometry;
 	}
 
@@ -1530,7 +1535,7 @@ public class Environment {
 	 * function isa tmql-concept <br />
 	 * - "Function"
 	 */
-	public ExtendedTopic getTmqlFunction() {
+	public Topic getTmqlFunction() {
 		return tmql_function;
 	}
 
@@ -1538,28 +1543,28 @@ public class Environment {
 	 * ontology isa tmql-concept <br />
 	 * - "Ontology"
 	 */
-	public ExtendedTopic getTmqlOntology() {
+	public Topic getTmqlOntology() {
 		return tmql_ontology;
 	}
 
 	/**
 	 * type of occurrence precedence of operators
 	 */
-	public ExtendedTopic getTmqlOccurrencesPrecedence() {
+	public Topic getTmqlOccurrencesPrecedence() {
 		return tmql_occurrences_precedence;
 	}
 
 	/**
 	 * type of occurrence profile of functions
 	 */
-	public ExtendedTopic getTmqlOccurrencesProfile() {
+	public Topic getTmqlOccurrencesProfile() {
 		return tmql_occurrences_profile;
 	}
 
 	/**
 	 * type of occurrence pattern or symbol of operators
 	 */
-	public ExtendedTopic getTmqlOccurrencesPattern() {
+	public Topic getTmqlOccurrencesPattern() {
 		return tmql_occurrences_pattern;
 	}
 
@@ -1567,7 +1572,7 @@ public class Environment {
 	 * predicate iko function <br />
 	 * - "Predicate"
 	 */
-	public ExtendedTopic getTmqlPredicate() {
+	public Topic getTmqlPredicate() {
 		return tmql_predicate;
 	}
 
@@ -1578,7 +1583,7 @@ public class Environment {
 	 * the higher the precedence, the closer it binds the operands <br />
 	 * left and right
 	 */
-	public ExtendedTopic getTmqlBinaryOperator() {
+	public Topic getTmqlBinaryOperator() {
 		return tmql_binary_operator;
 	}
 
@@ -1589,7 +1594,7 @@ public class Environment {
 	 * <br />
 	 * unary prefix operators bind strongest
 	 */
-	public ExtendedTopic getTmqlUnaryOperator() {
+	public Topic getTmqlUnaryOperator() {
 		return tmql_unary_operator;
 	}
 
@@ -1597,7 +1602,7 @@ public class Environment {
 	 * prefix-operator iko unary-operator <br />
 	 * - "Prefix (unary) operator"
 	 */
-	public ExtendedTopic getTmqlPrefixOperator() {
+	public Topic getTmqlPrefixOperator() {
 		return tmql_prefix_operator;
 	}
 
@@ -1605,7 +1610,7 @@ public class Environment {
 	 * postfix-operator iko unary-operator <br />
 	 * - "Postfix (unary) operator"
 	 */
-	public ExtendedTopic getTmqlPostfixOperator() {
+	public Topic getTmqlPostfixOperator() {
 		return tmql_postfix_operator;
 	}
 
@@ -1616,7 +1621,7 @@ public class Environment {
 	 * profile: "fn:minus-decimal (a : decimal) return decimal"<br />
 	 * precedence: 6
 	 */
-	public ExtendedTopic getTmqlDecimalUnaryMinusPrefixOperator() {
+	public Topic getTmqlDecimalUnaryMinusPrefixOperator() {
 		return tmql_decimal_unary_minus_prefix_operator;
 	}
 
@@ -1627,7 +1632,7 @@ public class Environment {
 	 * profile: "fn:add-decimal (a : decimal, b : decimal) return decimal"<br />
 	 * precedence: 2
 	 */
-	public ExtendedTopic getTmqlDecimalBinaryAddBinaryOperator() {
+	public Topic getTmqlDecimalBinaryAddBinaryOperator() {
 		return tmql_decimal_binary_add_binary_operator;
 	}
 
@@ -1638,7 +1643,7 @@ public class Environment {
 	 * profile: "fn:minus-decimal (a : decimal, b : decimal) return decimal"<br />
 	 * precedence: 2
 	 */
-	public ExtendedTopic getTmqlDecimalBinaryMinusBinaryOperator() {
+	public Topic getTmqlDecimalBinaryMinusBinaryOperator() {
 		return tmql_decimal_binary_minus_binary_operator;
 	}
 
@@ -1649,7 +1654,7 @@ public class Environment {
 	 * profile: "fn:mul-decimal (a : decimal, b : decimal) return decimal"<br />
 	 * precedence: 4
 	 */
-	public ExtendedTopic getTmqlDecimalBinaryMulBinaryOperator() {
+	public Topic getTmqlDecimalBinaryMulBinaryOperator() {
 		return tmql_decimal_binary_mul_binary_operator;
 	}
 
@@ -1660,7 +1665,7 @@ public class Environment {
 	 * profile: "fn:div-decimal (a : decimal, b : decimal) return decimal"<br />
 	 * precedence: 4
 	 */
-	public ExtendedTopic getTmqlDecimalBinaryDivBinaryOperator() {
+	public Topic getTmqlDecimalBinaryDivBinaryOperator() {
 		return tmql_decimal_binary_div_binary_operator;
 	}
 
@@ -1671,7 +1676,7 @@ public class Environment {
 	 * profile: "fn:mod-decimal (a : decimal, b : decimal) return decimal"<br />
 	 * precedence: 4
 	 */
-	public ExtendedTopic getTmqlDecimalBinaryModBinaryOperator() {
+	public Topic getTmqlDecimalBinaryModBinaryOperator() {
 		return tmql_decimal_binary_mod_binary_operator;
 	}
 
@@ -1682,7 +1687,7 @@ public class Environment {
 	 * profile: "fn:lt-decimal (a : decimal, b : decimal) return tuple-sequence"<br />
 	 * precedence: 5
 	 */
-	public ExtendedTopic getTmqlDecimalBinaryLtBinaryOperator() {
+	public Topic getTmqlDecimalBinaryLtBinaryOperator() {
 		return tmql_decimal_binary_lt_binary_operator;
 	}
 
@@ -1694,7 +1699,7 @@ public class Environment {
 	 * "fn:leq-decimal (a : decimal, b : decimal) return tuple-sequence"<br />
 	 * precedence: 5
 	 */
-	public ExtendedTopic getTmqlDecimalBinaryLeBinaryOperator() {
+	public Topic getTmqlDecimalBinaryLeBinaryOperator() {
 		return tmql_decimal_binary_le_binary_operator;
 	}
 
@@ -1705,7 +1710,7 @@ public class Environment {
 	 * profile: "fn:gt-decimal (a : decimal, b : decimal) return tuple-sequence"<br />
 	 * precedence: 5
 	 */
-	public ExtendedTopic getTmqlDecimalBinaryGtBinaryOperator() {
+	public Topic getTmqlDecimalBinaryGtBinaryOperator() {
 		return tmql_decimal_binary_gt_binary_operator;
 	}
 
@@ -1717,7 +1722,7 @@ public class Environment {
 	 * "fn:geq-decimal (a : decimal, b : decimal) return tuple-sequence"<br />
 	 * precedence: 5
 	 */
-	public ExtendedTopic getTmqlDecimalBinaryGeBinaryOperator() {
+	public Topic getTmqlDecimalBinaryGeBinaryOperator() {
 		return tmql_decimal_binary_ge_binary_operator;
 	}
 
@@ -1728,7 +1733,7 @@ public class Environment {
 	 * profile: "fn:concat (a : string, b : string) return string"<br />
 	 * precedence: 2
 	 */
-	public ExtendedTopic getTmqlStringConcatBinaryOperator() {
+	public Topic getTmqlStringConcatBinaryOperator() {
 		return tmql_string_concat_binary_operator;
 	}
 
@@ -1737,7 +1742,7 @@ public class Environment {
 	 * http://psi.topicmaps.org/tmql/1.0/functions/string-length<br />
 	 * profile: "fn:length (s : string) return integer"
 	 */
-	public ExtendedTopic getTmqlStringLengthFunction() {
+	public Topic getTmqlStringLengthFunction() {
 		return tmql_string_length_function;
 	}
 
@@ -1748,7 +1753,7 @@ public class Environment {
 	 * profile: "fn:string-lt (a : string, b : string) return tuple-sequence"<br />
 	 * precedence: 5
 	 */
-	public ExtendedTopic getTmqlStringLessThanBinaryOperator() {
+	public Topic getTmqlStringLessThanBinaryOperator() {
 		return tmql_string_less_than_binary_operator;
 	}
 
@@ -1759,7 +1764,7 @@ public class Environment {
 	 * profile: "fn:string-leq (a : string, b : string) return tuple-sequence"<br />
 	 * precedence: 5
 	 */
-	public ExtendedTopic getTmqlStringLessEqualThanBinaryOperator() {
+	public Topic getTmqlStringLessEqualThanBinaryOperator() {
 		return tmql_string_less_equal_than_binary_operator;
 	}
 
@@ -1770,7 +1775,7 @@ public class Environment {
 	 * profile: "fn:string-geq (a : string, b : string) return tuple-sequence"<br />
 	 * precedence: 5
 	 */
-	public ExtendedTopic getTmqlStringGreaterEqualThanBinaryOperator() {
+	public Topic getTmqlStringGreaterEqualThanBinaryOperator() {
 		return tmql_string_greater_equal_than_binary_operator;
 	}
 
@@ -1781,7 +1786,7 @@ public class Environment {
 	 * profile: "fn:string-gt (a : string, b : string) return tuple-sequence"<br />
 	 * precedence: 5
 	 */
-	public ExtendedTopic getTmqlStringGreaterThanBinaryOperator() {
+	public Topic getTmqlStringGreaterThanBinaryOperator() {
 		return tmql_string_greater_than_binary_operator;
 	}
 
@@ -1792,7 +1797,7 @@ public class Environment {
 	 * profile: "fn:regexp (s : string, re : string) return tuple-sequence"<br />
 	 * precedence: 5
 	 */
-	public ExtendedTopic getTmqlStringRegexpMatchBinaryOperator() {
+	public Topic getTmqlStringRegexpMatchBinaryOperator() {
 		return tmql_string_regexp_match_binary_operator;
 	}
 
@@ -1805,7 +1810,7 @@ public class Environment {
 	 * type (not the type) of the occurrence value. For atoms this is the data
 	 * type of the atom. Each data type is a IRI. """
 	 */
-	public ExtendedTopic getTmqlHasDatatypeFunction() {
+	public Topic getTmqlHasDatatypeFunction() {
 		return tmql_has_datatype_function;
 	}
 
@@ -1820,7 +1825,7 @@ public class Environment {
 	 * value, if such exists. Otherwise it is undef. For all other things the
 	 * function will return undef. """
 	 */
-	public ExtendedTopic getTmqlHasVariantFunction() {
+	public Topic getTmqlHasVariantFunction() {
 		return tmql_has_variant_function;
 	}
 
@@ -1831,7 +1836,7 @@ public class Environment {
 	 * <br />
 	 * description: "selects those tuples with index between low and high-1"
 	 */
-	public ExtendedTopic getTmqlSliceFunction() {
+	public Topic getTmqlSliceFunction() {
 		return tmql_slice_function;
 	}
 
@@ -1841,7 +1846,7 @@ public class Environment {
 	 * profile: "fn:count (s : tuple-sequence) return integer"<br />
 	 * description: "returns the number of tuples in the sequence"
 	 */
-	public ExtendedTopic getTmqlCountFunction() {
+	public Topic getTmqlCountFunction() {
 		return tmql_count_function;
 	}
 
@@ -1852,7 +1857,7 @@ public class Environment {
 	 * description:
 	 * "returns a new tuple sequence with all duplicate tuples suppressed"
 	 */
-	public ExtendedTopic getTmqlUniqFunction() {
+	public Topic getTmqlUniqFunction() {
 		return tmql_uniq_function;
 	}
 
@@ -1868,7 +1873,7 @@ public class Environment {
 	 * <br />
 	 * precedence: 1
 	 */
-	public ExtendedTopic getTmqlConcatBinaryOperator() {
+	public Topic getTmqlConcatBinaryOperator() {
 		return tmql_concat_binary_operator;
 	}
 
@@ -1884,7 +1889,7 @@ public class Environment {
 	 * <br />
 	 * precedence: 1
 	 */
-	public ExtendedTopic getTmqlExceptBinaryOperator() {
+	public Topic getTmqlExceptBinaryOperator() {
 		return tmql_except_binary_operator;
 	}
 
@@ -1899,7 +1904,7 @@ public class Environment {
 	 * "produces a tuple sequence of all tuples which appear in s and t"<br />
 	 * precedence: 1
 	 */
-	public ExtendedTopic getTmqlCompareBinaryOperator() {
+	public Topic getTmqlCompareBinaryOperator() {
 		return tmql_compare_binary_operator;
 	}
 
@@ -1911,7 +1916,7 @@ public class Environment {
 	 * tuples index of tuples run faster than index within the tuple sequence
 	 * """
 	 */
-	public ExtendedTopic getTmqlZigzagFunction() {
+	public Topic getTmqlZigzagFunction() {
 		return tmql_zigzag_function;
 	}
 
@@ -1923,7 +1928,7 @@ public class Environment {
 	 * tuples index within the tuple sequence run faster than index within one
 	 * tuple """
 	 */
-	public ExtendedTopic getTmqlZagzigFunction() {
+	public Topic getTmqlZagzigFunction() {
 		return tmql_zagzig_function;
 	}
 
@@ -1931,7 +1936,7 @@ public class Environment {
 	 * datatype isa tmql-concept <br />
 	 * - "Data Type"
 	 */
-	public ExtendedTopic getTmqlDatatype() {
+	public Topic getTmqlDatatype() {
 		return tmql_datatype;
 	}
 
@@ -1939,7 +1944,7 @@ public class Environment {
 	 * primitive-datatype iko datatype <br />
 	 * - "Primitive Data Type"
 	 */
-	public ExtendedTopic getTmqlPrimitiveDatatype() {
+	public Topic getTmqlPrimitiveDatatype() {
 		return tmql_primitive_datatype;
 	}
 
@@ -1948,7 +1953,7 @@ public class Environment {
 	 * - "Undefined Datatype" <br />
 	 * description: "has only a single value"
 	 */
-	public ExtendedTopic getTmqlDatatypeUndefined() {
+	public Topic getTmqlDatatypeUndefined() {
 		return tmql_datatype_undefined;
 	}
 
@@ -1957,7 +1962,7 @@ public class Environment {
 	 * http://www.w3.org/TR/xmlschema-2/datatypes.html#boolean <br />
 	 * - "Boolean"
 	 */
-	public ExtendedTopic getTmqlDatatypeBoolean() {
+	public Topic getTmqlDatatypeBoolean() {
 		return tmql_datatype_boolean;
 	}
 
@@ -1966,7 +1971,7 @@ public class Environment {
 	 * http://www.w3.org/TR/xmlschema-2/datatypes.html#integer <br />
 	 * - "Integer Number"
 	 */
-	public ExtendedTopic getTmqlDatatypeInteger() {
+	public Topic getTmqlDatatypeInteger() {
 		return tmql_datatype_integer;
 	}
 
@@ -1975,7 +1980,7 @@ public class Environment {
 	 * http://www.w3.org/TR/xmlschema-2/datatypes.html#decimal <br />
 	 * - "Decimal Number"
 	 */
-	public ExtendedTopic getTmqlDatatypeDecimal() {
+	public Topic getTmqlDatatypeDecimal() {
 		return tmql_datatype_decimal;
 	}
 
@@ -1985,7 +1990,7 @@ public class Environment {
 	 * - "IRI" <br />
 	 * description: "RFC 3987"
 	 */
-	public ExtendedTopic getTmqlDatatypeIri() {
+	public Topic getTmqlDatatypeIri() {
 		return tmql_datatype_iri;
 	}
 
@@ -1994,7 +1999,7 @@ public class Environment {
 	 * http://www.w3.org/TR/xmlschema-2/datatypes.html#date <br />
 	 * - "Date"
 	 */
-	public ExtendedTopic getTmqlDatatypeDate() {
+	public Topic getTmqlDatatypeDate() {
 		return tmql_datatype_date;
 	}
 
@@ -2003,7 +2008,7 @@ public class Environment {
 	 * http://www.w3.org/TR/xmlschema-2/datatypes.html#dateTime <br />
 	 * - "DateTime"
 	 */
-	public ExtendedTopic getTmqlDatatypeDateTime() {
+	public Topic getTmqlDatatypeDateTime() {
 		return tmql_datatype_dateTime;
 	}
 
@@ -2012,7 +2017,7 @@ public class Environment {
 	 * http://www.w3.org/TR/xmlschema-2/datatypes.html#string <br />
 	 * - "String"
 	 */
-	public ExtendedTopic getTmqlDatatypeString() {
+	public Topic getTmqlDatatypeString() {
 		return tmql_datatype_string;
 	}
 
@@ -2020,7 +2025,7 @@ public class Environment {
 	 * xml isa primitive-datatype <br />
 	 * - "XML Content"
 	 */
-	public ExtendedTopic getTmqlDatatypeXml() {
+	public Topic getTmqlDatatypeXml() {
 		return tmql_datatype_xml;
 	}
 
@@ -2028,7 +2033,7 @@ public class Environment {
 	 * complex-datatype iko datatype <br />
 	 * - "Complex Data Type"
 	 */
-	public ExtendedTopic getTmqlComplexDatatype() {
+	public Topic getTmqlComplexDatatype() {
 		return tmql_complex_datatype;
 	}
 
@@ -2037,7 +2042,7 @@ public class Environment {
 	 * - "Tuple Content" <br />
 	 * description: "ordered collection of primitive values"
 	 */
-	public ExtendedTopic getTmqlDatatypeTuple() {
+	public Topic getTmqlDatatypeTuple() {
 		return tmql_datatype_tuple;
 	}
 
@@ -2046,7 +2051,7 @@ public class Environment {
 	 * - "Tuple Sequence" <br />
 	 * description: "a sequence of tuples -- can be ordered, or not"
 	 */
-	public ExtendedTopic getTmqlDatatypeTupleSequence() {
+	public Topic getTmqlDatatypeTupleSequence() {
 		return tmql_datatype_tuple_sequence;
 	}
 
@@ -2054,7 +2059,7 @@ public class Environment {
 	 * Topic representing the only value of datattype undefinded (
 	 * {@link #getTmqlDatatypeUndefined()})
 	 */
-	public ExtendedTopic getTmqlTopicUndef() {
+	public Topic getTmqlTopicUndef() {
 		return tmql_topic_undef;
 	}
 

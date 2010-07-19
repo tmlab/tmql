@@ -15,7 +15,6 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.core.Variant;
 import org.tmapi.index.TypeInstanceIndex;
 
-import de.topicmapslab.java.navigation.model.INavigationAxis;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
 import de.topicmapslab.tmql4j.common.model.tuplesequence.ITupleSequence;
@@ -24,6 +23,7 @@ import de.topicmapslab.tmql4j.common.utility.VariableNames;
 import de.topicmapslab.tmql4j.event.model.EventManager;
 import de.topicmapslab.tmql4j.extension.tmml.event.DeletionEvent;
 import de.topicmapslab.tmql4j.extension.tmml.exception.DeletionException;
+import de.topicmapslab.tmql4j.navigation.model.INavigationAxis;
 
 /**
  * Utility class to handle the deletion of topic map items. Class handles all
@@ -226,8 +226,6 @@ public class DeletionHandler {
 					count += deleteOccurrence(topicMap, occurrence, cascade);
 				}
 
-				// INavigationHandler handler =
-				// NavigationHandler.buildHandler();
 				INavigationAxis axis = runtime.getDataBridge()
 						.getImplementationOfTMQLAxis(runtime, "players");
 				/*

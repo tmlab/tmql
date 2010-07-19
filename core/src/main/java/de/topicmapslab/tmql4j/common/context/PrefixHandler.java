@@ -11,10 +11,10 @@ package de.topicmapslab.tmql4j.common.context;
 import java.util.Map;
 import java.util.Properties;
 
-import de.topicmapslab.java.tmdm.TmdmSubjectIdentifier;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLInitializationException;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.utility.HashUtil;
+import de.topicmapslab.tmql4j.common.utility.TmdmSubjectIdentifier;
 
 /**
  * Class representing the prefix handler to add and read the defined prefixes of

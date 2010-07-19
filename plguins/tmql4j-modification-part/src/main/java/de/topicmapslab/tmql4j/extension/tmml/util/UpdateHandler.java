@@ -23,9 +23,9 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.core.Typed;
 import org.tmapi.index.TypeInstanceIndex;
 
-import de.topicmapslab.java.tmapi.extension.impl.ExtendedTopicImpl;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
+import de.topicmapslab.tmql4j.common.utility.TmdmUtility;
 import de.topicmapslab.tmql4j.common.utility.VariableNames;
 import de.topicmapslab.tmql4j.event.model.EventManager;
 import de.topicmapslab.tmql4j.extension.tmml.event.InsertEvent;
@@ -81,8 +81,8 @@ public class UpdateHandler {
 	 */
 	public UpdateHandler(TMQLRuntime runtime) throws UpdateException {
 		try {
-			topicMap = (TopicMap) runtime.getRuntimeContext().peek()
-					.getValue(VariableNames.CURRENT_MAP);
+			topicMap = (TopicMap) runtime.getRuntimeContext().peek().getValue(
+					VariableNames.CURRENT_MAP);
 			eventManager = runtime.getEventManager();
 			this.runtime = runtime;
 		} catch (TMQLRuntimeException e) {
@@ -246,7 +246,15 @@ public class UpdateHandler {
 			Topic optionalType, boolean isSetOperation) throws UpdateException {
 		if (isSetOperation) {
 			if (entry instanceof Occurrence) {
-				((Occurrence) entry).setValue(value.toString());
+				Occurrence occurrence = (Occurrence) entry;
+				Object datatype = LiteralUtils.getDatatypeOfLiterals(runtime,
+						value);
+				if (datatype instanceof String) {
+					occurrence.setValue(value.toString(), occurrence.getTopicMap()
+									.createLocator(datatype.toString()));
+				} else {
+					occurrence.setValue(value.toString());
+				}	
 				eventManager.event(new UpdateEvent(entry, this,
 						Occurrences.class, value));
 				return 1;
@@ -468,7 +476,7 @@ public class UpdateHandler {
 			}
 
 			try {
-				new ExtendedTopicImpl(topic, true).iko(type);
+				TmdmUtility.ako(topic.getTopicMap(), topic, type);
 				eventManager.event(new UpdateEvent(topic, this,
 						AxisSubtypes.class, type));
 			} catch (Exception e) {
@@ -573,7 +581,7 @@ public class UpdateHandler {
 			}
 
 			try {
-				new ExtendedTopicImpl(subtype, true).iko(topic);
+				TmdmUtility.ako(topic.getTopicMap(), subtype, topic);
 				eventManager.event(new UpdateEvent(topic, this,
 						AxisSubtypes.class, subtype));
 			} catch (Exception e) {
@@ -651,7 +659,7 @@ public class UpdateHandler {
 		} else if (entry instanceof Topic) {
 			TypeInstanceIndex index = topicMap
 					.getIndex(TypeInstanceIndex.class);
-			if ( !index.isOpen()){
+			if (!index.isOpen()) {
 				index.open();
 			}
 			long count = 0;

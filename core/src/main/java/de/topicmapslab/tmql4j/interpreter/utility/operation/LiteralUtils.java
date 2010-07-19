@@ -28,9 +28,9 @@ import org.tmapi.core.Occurrence;
 import org.tmapi.core.Topic;
 import org.tmapi.core.Variant;
 
-import de.topicmapslab.java.xsd.XmlSchemeDatatypes;
 import de.topicmapslab.tmql4j.common.model.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.common.model.tuplesequence.ITupleSequence;
+import de.topicmapslab.tmql4j.common.utility.XmlSchemeDatatypes;
 
 /**
  * Utility class for literals. Checks the type of literals and transform string
@@ -557,9 +557,9 @@ public class LiteralUtils {
 			return ((Variant) obj).getDatatype().getReference();
 		} else if (obj instanceof String) {
 			return XmlSchemeDatatypes.XSD_STRING;
-		} else if (obj instanceof Integer || obj instanceof Long) {
+		} else if (obj instanceof Integer || obj instanceof Long || obj instanceof BigInteger) {
 			return XmlSchemeDatatypes.XSD_INTEGER;
-		} else if (obj instanceof Float || obj instanceof Double) {
+		} else if (obj instanceof Float || obj instanceof Double|| obj instanceof BigDecimal) {
 			return XmlSchemeDatatypes.XSD_DECIMAL;
 		} else if (obj instanceof Calendar) {
 			return XmlSchemeDatatypes.XSD_DATETIME;

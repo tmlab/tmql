@@ -20,11 +20,11 @@ import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 import org.tmapi.index.TypeInstanceIndex;
 
-import de.topicmapslab.java.tmdm.TmdmSubjectIdentifier;
 import de.topicmapslab.tmql4j.api.exceptions.DataBridgeException;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
 import de.topicmapslab.tmql4j.common.utility.HashUtil;
+import de.topicmapslab.tmql4j.common.utility.TmdmSubjectIdentifier;
 import de.topicmapslab.tmql4j.common.utility.VariableNames;
 import de.topicmapslab.tmql4j.extension.tmml.grammar.expressions.UpdateClause;
 import de.topicmapslab.tmql4j.interpreter.core.base.QueryMatches;

@@ -57,6 +57,12 @@
 			<groupId>de.topicmapslab</groupId>
 			<artifactId>ctm-writer</artifactId>
 			<version>1.0.8-SNAPSHOT</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>java-tools</artifactId>
+					<groupId>de.topicmapslab</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>semagia</groupId>
@@ -67,11 +73,6 @@
 			<groupId>org.tmapi</groupId>
 			<artifactId>tmapi</artifactId>
 			<version>2.0.2</version>
-		</dependency>
-		<dependency>
-			<groupId>de.topicmapslab</groupId>
-			<artifactId>java-tools</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<distributionManagement>
