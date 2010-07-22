@@ -11,13 +11,17 @@
 package de.topicmapslab.tmql4j.extension.tmml.interpreter;
 
 import java.util.Map;
+import java.util.StringTokenizer;
 
+import org.tmapi.core.Locator;
+import org.tmapi.core.MalformedIRIException;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
 import de.topicmapslab.tmql4j.common.utility.HashUtil;
 import de.topicmapslab.tmql4j.common.utility.VariableNames;
+import de.topicmapslab.tmql4j.common.utility.XmlSchemeDatatypes;
 import de.topicmapslab.tmql4j.extension.tmml.exception.UpdateException;
 import de.topicmapslab.tmql4j.extension.tmml.grammar.expressions.TopicDefinition;
 import de.topicmapslab.tmql4j.extension.tmml.grammar.expressions.UpdateClause;
@@ -27,6 +31,7 @@ import de.topicmapslab.tmql4j.interpreter.model.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.interpreter.model.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.interpreter.model.context.IVariableSet;
 import de.topicmapslab.tmql4j.lexer.model.IToken;
+import de.topicmapslab.tmql4j.lexer.token.DatatypedElement;
 import de.topicmapslab.tmql4j.parser.core.expressions.PredicateInvocation;
 import de.topicmapslab.tmql4j.parser.core.expressions.ValueExpression;
 
@@ -274,9 +279,14 @@ public class UpdateClauseInterpreter extends
 							.getConstructByIdentifier(runtime, optionalType_);
 				} catch (Exception e) {
 					try {
-						optionalType = runtime.getTopicMap().createTopicBySubjectIdentifier(
-								runtime.getTopicMap().createLocator(
-										runtime.getLanguageContext().getPrefixHandler().toAbsoluteIRI(optionalType_)));			
+						optionalType = runtime
+								.getTopicMap()
+								.createTopicBySubjectIdentifier(
+										runtime.getTopicMap().createLocator(
+												runtime.getLanguageContext()
+														.getPrefixHandler()
+														.toAbsoluteIRI(
+																optionalType_)));
 						count++;
 					} catch (Exception e2) {
 						throw new UpdateException(e);
@@ -286,20 +296,31 @@ public class UpdateClauseInterpreter extends
 			/*
 			 * iterate over all values to set or add
 			 */
-			for (Object val : values.getPossibleValuesForVariable()) {
+			for (Map<String, Object> vTuple : values) {
+				/*
+				 * missing value
+				 */
+				if (!vTuple.containsKey(QueryMatches.getNonScopedVariable())) {
+					continue;
+				}
+				Locator optionalDatatype = vTuple
+						.containsKey(VariableNames.DATATYPE) ? (Locator) vTuple
+						.get(VariableNames.DATATYPE) : null;
+
 				/*
 				 * perform update
 				 */
-				count += new UpdateHandler(runtime).update(context, val,
-						anchor, optionalType,
-						getGrammarTypeOfExpression() == UpdateClause.TYPE_SET);				
+				count += new UpdateHandler(runtime).update(context, vTuple
+						.get(QueryMatches.getNonScopedVariable()), anchor,
+						optionalType,
+						getGrammarTypeOfExpression() == UpdateClause.TYPE_SET,
+						optionalDatatype);
 			}
 
 			runtime.getRuntimeContext().pop();
 		}
 		/*
-		 * create result of update-expression as count of performed
-		 * changes
+		 * create result of update-expression as count of performed changes
 		 */
 		Map<String, Object> result = HashUtil.getHashMap();
 		result.put(QueryMatches.getNonScopedVariable(), count);
@@ -356,6 +377,23 @@ public class UpdateClauseInterpreter extends
 		if (!(obj instanceof QueryMatches)) {
 			throw new TMQLRuntimeException(
 					"Invalid interpretation of value-expression. Has to return an instance of QueryMatches");
+		}
+
+		if (value.getTmqlTokens().get(0).equals(DatatypedElement.class)
+				&& value.getTmqlTokens().size() == 1) {
+			StringTokenizer tokenizer = new StringTokenizer(value.getTokens()
+					.get(0), "^^");
+			tokenizer.nextToken();
+			try {
+				Locator loc = runtime.getTopicMap().createLocator(
+						XmlSchemeDatatypes
+								.toExternalForm(tokenizer.nextToken()));
+				for (Map<String, Object> tuple : (QueryMatches) obj) {
+					tuple.put(VariableNames.DATATYPE, loc);
+				}
+			} catch (MalformedIRIException e) {
+				return new QueryMatches(runtime);
+			}
 		}
 
 		return (QueryMatches) obj;

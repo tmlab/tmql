@@ -79,5 +79,8 @@ public final class VariableNames {
 	 * in context of not-expressions
 	 */
 	public static final String NEGATIVE_MATCHES = "%__negative_querymatches";
-	
+	/**
+	 * variable represents the datatype of a datatyped token
+	 */
+	public static final String DATATYPE = "%__datatype";
 }

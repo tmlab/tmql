@@ -33,7 +33,6 @@ import de.topicmapslab.tmql4j.extension.tmml.event.UpdateEvent;
 import de.topicmapslab.tmql4j.extension.tmml.exception.UpdateException;
 import de.topicmapslab.tmql4j.extension.tmml.grammar.tokens.Names;
 import de.topicmapslab.tmql4j.extension.tmml.grammar.tokens.Occurrences;
-import de.topicmapslab.tmql4j.interpreter.utility.operation.LiteralUtils;
 import de.topicmapslab.tmql4j.lexer.model.IToken;
 import de.topicmapslab.tmql4j.lexer.token.AxisIndicators;
 import de.topicmapslab.tmql4j.lexer.token.AxisInstances;
@@ -92,7 +91,8 @@ public class UpdateHandler {
 
 	public long update(Object entry, Object value,
 			Class<? extends IToken> anchor, Topic optionalType,
-			boolean isSetOperation) throws UpdateException {
+			boolean isSetOperation, Locator optionalDatatype)
+			throws UpdateException {
 		if (anchor.equals(AxisLocators.class)) {
 			return updateLocators(entry, value, optionalType, isSetOperation);
 		} else if (anchor.equals(AxisIndicators.class)) {
@@ -102,7 +102,8 @@ public class UpdateHandler {
 		} else if (anchor.equals(Names.class)) {
 			return updateNames(entry, value, optionalType, isSetOperation);
 		} else if (anchor.equals(Occurrences.class)) {
-			return updateOccurrences(entry, value, optionalType, isSetOperation);
+			return updateOccurrences(entry, value, optionalType,
+					isSetOperation, optionalDatatype);
 		} else if (anchor.equals(AxisScope.class)) {
 			return updateScope(entry, value, optionalType, isSetOperation);
 		} else if (anchor.equals(AxisInstances.class)) {
@@ -243,18 +244,16 @@ public class UpdateHandler {
 	}
 
 	public long updateOccurrences(Object entry, Object value,
-			Topic optionalType, boolean isSetOperation) throws UpdateException {
+			Topic optionalType, boolean isSetOperation, Locator optionalDatatype)
+			throws UpdateException {
 		if (isSetOperation) {
 			if (entry instanceof Occurrence) {
 				Occurrence occurrence = (Occurrence) entry;
-				Object datatype = LiteralUtils.getDatatypeOfLiterals(runtime,
-						value);
-				if (datatype instanceof String) {
-					occurrence.setValue(value.toString(), occurrence.getTopicMap()
-									.createLocator(datatype.toString()));
-				} else {
+				if (optionalDatatype == null) {
 					occurrence.setValue(value.toString());
-				}	
+				} else {
+					occurrence.setValue(value.toString(), optionalDatatype);
+				}
 				eventManager.event(new UpdateEvent(entry, this,
 						Occurrences.class, value));
 				return 1;
@@ -276,15 +275,10 @@ public class UpdateHandler {
 				} else {
 					type = optionalType;
 				}
-				Object datatype = LiteralUtils.getDatatypeOfLiterals(runtime,
-						value);
-
 				Occurrence occurrence = null;
-				if (datatype instanceof String) {
+				if (optionalDatatype != null) {
 					occurrence = ((Topic) entry).createOccurrence((Topic) type,
-							value.toString(), ((Topic) entry).getTopicMap()
-									.createLocator(datatype.toString()),
-							new Topic[0]);
+							value.toString(), optionalDatatype, new Topic[0]);
 				} else {
 					occurrence = ((Topic) entry).createOccurrence((Topic) type,
 							value.toString(), new Topic[0]);

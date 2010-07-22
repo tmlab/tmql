@@ -149,7 +149,7 @@ public class AtomifyNavigationAxis extends BaseNavigationAxisImpl {
 		if (construct instanceof DatatypeAware) {
 			DatatypeAware aware = (DatatypeAware) construct;
 			try {
-				set.add(aware.getValue());//deatomify(aware));
+				set.add(aware.getValue());// deatomify(aware));
 			} catch (Exception e) {
 				throw new NavigationException(e);
 			}

@@ -33,6 +33,7 @@ import de.topicmapslab.tmql4j.optimizer.variablebinding.BooleanPrimitiveVariable
 import de.topicmapslab.tmql4j.parser.core.expressions.BooleanExpression;
 import de.topicmapslab.tmql4j.parser.core.expressions.BooleanPrimitive;
 import de.topicmapslab.tmql4j.parser.core.expressions.ExistsClause;
+import de.topicmapslab.tmql4j.parser.core.expressions.FilterPostfix;
 import de.topicmapslab.tmql4j.parser.core.expressions.ForAllClause;
 
 /**
@@ -381,7 +382,7 @@ public class BooleanPrimitiveInterpreter extends
 		/*
 		 * called by filter
 		 */
-		if ( runtime.getRuntimeContext().peek().contains(VariableNames.CURRENT_TUPLE)){			
+		if ( getExpression().isChildOf(FilterPostfix.class) && runtime.getRuntimeContext().peek().contains(VariableNames.CURRENT_TUPLE)){			
 			if ( !result.isEmpty()){
 				result = new QueryMatches(runtime);
 				Map<String, Object> tuple = HashUtil.getHashMap();
