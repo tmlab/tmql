@@ -219,7 +219,8 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 		} catch (TMQLRuntimeException ex) {
 			throw ex;
 		} catch (Exception ex) {
-			throw new TMQLRuntimeException("Step navigation failed.", ex);
+			runtime.getRuntimeContext().peek().setValue(
+					VariableNames.QUERYMATCHES, new QueryMatches(runtime));
 		}
 		/**
 		 * log it :)

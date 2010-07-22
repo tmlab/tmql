@@ -24,10 +24,6 @@
 			<url>http://maven.topicmapslab.de/public</url>
 		</repository>
 		<repository>
-			<id>MOJO</id>
-			<url>http://mvnrepository.com/artifact/org.codehaus.mojo</url>
-		</repository>
-		<repository>
 			<id>tmapi</id>
 			<url>http://www.tmapi.org/maven-repository</url>
 		</repository>
@@ -57,12 +53,6 @@
 			<groupId>de.topicmapslab</groupId>
 			<artifactId>ctm-writer</artifactId>
 			<version>1.0.8-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>java-tools</artifactId>
-					<groupId>de.topicmapslab</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>semagia</groupId>

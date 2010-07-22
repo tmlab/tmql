@@ -365,12 +365,31 @@ public class BooleanPrimitiveInterpreter extends
 	 */
 	private void interpretExsistsExpression(TMQLRuntime runtime)
 			throws TMQLRuntimeException {
+		runtime.getRuntimeContext().push();
 		/*
 		 * redirect to sub-expression
 		 */
 		IExpressionInterpreter<ExistsClause> ex = getInterpretersFilteredByEypressionType(
 				runtime, ExistsClause.class).get(0);
 		ex.interpret(runtime);
+		IVariableSet set = runtime.getRuntimeContext().pop();
+		
+		/*
+		 * get result
+		 */
+		QueryMatches result = (QueryMatches)set.getValue(VariableNames.QUERYMATCHES);
+		/*
+		 * called by filter
+		 */
+		if ( runtime.getRuntimeContext().peek().contains(VariableNames.CURRENT_TUPLE)){			
+			if ( !result.isEmpty()){
+				result = new QueryMatches(runtime);
+				Map<String, Object> tuple = HashUtil.getHashMap();
+				tuple.put(QueryMatches.getNonScopedVariable(), runtime.getRuntimeContext().peek().getValue(VariableNames.CURRENT_TUPLE));
+				result.add(tuple);
+			}
+		}		
+			runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES, result);
 	}
 
 	/**
