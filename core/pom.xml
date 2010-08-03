@@ -30,34 +30,9 @@
 	</repositories>
 	<dependencies>
 		<dependency>
-			<groupId>semagia</groupId>
-			<artifactId>semagia-mio</artifactId>
-			<version>0.9.5</version>
-		</dependency>
-		<dependency>
-			<groupId>semagia</groupId>
-			<artifactId>semagia-mio-xtm</artifactId>
-			<version>0.9.4</version>
-		</dependency>
-		<dependency>
-			<groupId>semagia</groupId>
-			<artifactId>semagia-mio-ltm</artifactId>
-			<version>0.9.4</version>
-		</dependency>
-		<dependency>
-			<groupId>semagia</groupId>
-			<artifactId>semagia-mio-snello</artifactId>
-			<version>0.9.3</version>
-		</dependency>
-		<dependency>
 			<groupId>de.topicmapslab</groupId>
 			<artifactId>ctm-writer</artifactId>
 			<version>1.0.8-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-			<groupId>semagia</groupId>
-			<artifactId>semagia-mio-ctm</artifactId>
-			<version>0.9.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.tmapi</groupId>
