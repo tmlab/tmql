@@ -159,13 +159,6 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 						}
 					}
 
-					if (optional == null) {
-						runtime.getRuntimeContext().peek().setValue(
-								VariableNames.QUERYMATCHES,
-								new QueryMatches(runtime));
-						return;
-					}
-
 				}
 				/*
 				 * set direction
