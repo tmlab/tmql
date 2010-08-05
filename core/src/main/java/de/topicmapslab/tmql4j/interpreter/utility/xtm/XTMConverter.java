@@ -20,8 +20,9 @@ import org.tmapi.core.Construct;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
-import org.tmapix.io.XTM20TopicMapReader;
-import org.tmapix.io.XTM20TopicMapWriter;
+import org.tmapix.io.XTM2TopicMapWriter;
+import org.tmapix.io.XTMTopicMapReader;
+import org.tmapix.io.XTMVersion;
 
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
@@ -85,7 +86,7 @@ public class XTMConverter {
 			/*
 			 * parse the XTM fragment
 			 */
-			XTM20TopicMapReader reader = new XTM20TopicMapReader(map, file);
+			XTMTopicMapReader reader = new XTMTopicMapReader(map, file);
 			reader.read();
 
 			/*
@@ -174,8 +175,8 @@ public class XTMConverter {
 				/*
 				 * serialize topic map construct
 				 */
-				XTM20TopicMapWriter writer = new XTM20TopicMapWriter(stream,
-						"www.topicmapslab.de");
+				XTM2TopicMapWriter writer = new XTM2TopicMapWriter(stream,
+						"www.topicmapslab.de", XTMVersion.XTM_2_0);
 				TopicMapSystem tms = TopicMapSystemFactory.newInstance()
 						.newTopicMapSystem();
 				TopicMap map = tms.createTopicMap("http://xtm-conversion");
