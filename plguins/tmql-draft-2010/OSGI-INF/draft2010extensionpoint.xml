@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="draft2010extensionpoint">
+   <implementation class="de.topicmapslab.tmql4j.draft2010.extension.PathLanguageDraft2010ExtensionPoint"/>
+   <service>
+      <provide interface="de.topicmapslab.tmql4j.extensions.model.IExtensionPoint"/>
+   </service>
+</scr:component>

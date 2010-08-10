@@ -22,6 +22,7 @@ import de.topicmapslab.tmql4j.common.utility.HashUtil;
 import de.topicmapslab.tmql4j.extensions.exception.TMQLExtensionRegistryException;
 import de.topicmapslab.tmql4j.extensions.model.IExtensionPoint;
 import de.topicmapslab.tmql4j.extensions.model.ILanguageExtension;
+import de.topicmapslab.tmql4j.osgi.TMQLActivator;
 import de.topicmapslab.tmql4j.parser.model.IExpression;
 
 /**
@@ -62,10 +63,27 @@ public class ExtensionPointAdapter {
 	 */
 	public void loadExtensionPoints(ITMQLRuntime runtime)
 			throws TMQLExtensionRegistryException {
-		ServiceLoader<IExtensionPoint> loader = ServiceLoader
-				.load(IExtensionPoint.class);
-		loader.reload();
-		for (IExtensionPoint extensionPoint : loader) {
+		
+		Iterable<IExtensionPoint> pointList = null;
+		
+		// try to load the extension points via OSGi
+		try {
+			// check if we are in an OSGi environment if not an exception is thrown
+			Class.forName("org.osgi.framework.Bundle");
+			pointList = TMQLActivator.getDefault().getExtensionPoints();
+		} catch (Exception e) {
+			// we do nothing, cause we are not in an OSGi environment
+		}
+		
+		
+		// if no OSGi list found use the loader
+		if (pointList==null) {
+			ServiceLoader<IExtensionPoint> loader = ServiceLoader.load(IExtensionPoint.class);
+			loader.reload();
+			pointList = loader;
+		}
+		
+		for (IExtensionPoint extensionPoint : pointList) {
 			if (extensionPoints.containsKey(extensionPoint
 					.getExtensionPointId())) {
 				throw new TMQLExtensionRegistryException(
