@@ -35,7 +35,6 @@ public class TMQLActivator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		TMQLActivator.plugin = this;
 		this.context = context;
-		System.out.println(getExtensionPoints());
 	}
 
 

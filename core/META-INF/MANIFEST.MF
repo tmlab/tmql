@@ -100,3 +100,4 @@ Import-Package: com.semagia.mio,
  org.tmapi.index;specification-version="2.0.2",
  org.tmapix.io
 Bundle-Activator: de.topicmapslab.tmql4j.osgi.TMQLActivator
+Eclipse-AutoStart: true
