@@ -12,12 +12,12 @@ public class PathCanonizer implements ICanonizer {
 		this.query = query;
 	}
 
-	@Override
+	
 	public void canonize() throws TMQLRuntimeException {
 		// VOID
 	}
 
-	@Override
+	
 	public IQuery getCanonizedQuery() {
 		return query;
 	}

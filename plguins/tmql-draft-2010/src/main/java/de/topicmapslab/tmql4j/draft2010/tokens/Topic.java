@@ -7,7 +7,7 @@ public class Topic extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getLiteral() {
 		return "topic";
 	}

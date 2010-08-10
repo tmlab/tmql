@@ -7,7 +7,7 @@ public class Name extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getLiteral() {
 		return "name";
 	}

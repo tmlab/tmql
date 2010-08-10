@@ -37,7 +37,7 @@ public class TopicMapFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getItemIdentifier() {
 		return "topicmap";
 	}
@@ -45,7 +45,7 @@ public class TopicMapFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public long getRequiredVariableCount() {
 		return 0;
 	}
@@ -53,7 +53,7 @@ public class TopicMapFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
 
 		/*

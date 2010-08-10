@@ -19,7 +19,6 @@ public class AssociationAxis implements IAxis {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public IToken getIdentifier() {
 		return new Association();
 	}
@@ -27,7 +26,6 @@ public class AssociationAxis implements IAxis {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public Collection<?> navigate(Construct source, final Topic type)
 			throws TMQLRuntimeException {
 		Set<org.tmapi.core.Association> associations = HashUtil.getHashSet();

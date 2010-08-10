@@ -88,7 +88,7 @@ public class BooleanExpression extends ExpressionImpl {
 			 * call-back instance of parser utility
 			 */
 			IParserUtilsCallback callback = new IParserUtilsCallback() {
-				@Override
+				
 				public void newToken(List<Class<? extends IToken>> tmqlTokens,
 						List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException,
 						TMQLInvalidSyntaxException {
@@ -117,7 +117,7 @@ public class BooleanExpression extends ExpressionImpl {
 			 * call-back instance of parser utility
 			 */
 			IParserUtilsCallback callback = new IParserUtilsCallback() {
-				@Override
+				
 				public void newToken(List<Class<? extends IToken>> tmqlTokens,
 						List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException,
 						TMQLInvalidSyntaxException {
@@ -174,7 +174,7 @@ public class BooleanExpression extends ExpressionImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public boolean isValid() {
 		return true;
 	}

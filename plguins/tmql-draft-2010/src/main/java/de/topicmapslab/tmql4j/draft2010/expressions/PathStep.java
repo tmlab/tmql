@@ -186,7 +186,7 @@ public class PathStep extends ExpressionImpl {
 		}
 	}
 
-	@Override
+	
 	public boolean isValid() {
 		/*
 		 * has to contain at least 2 tokens and has to begin with the token /

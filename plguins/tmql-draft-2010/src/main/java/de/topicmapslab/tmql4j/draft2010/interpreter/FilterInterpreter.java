@@ -27,7 +27,7 @@ public class FilterInterpreter extends ExpressionInterpreterImpl<Filter> {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
 		/*
 		 * redirect to real filter expression

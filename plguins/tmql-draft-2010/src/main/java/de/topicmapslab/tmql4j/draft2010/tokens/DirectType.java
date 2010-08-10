@@ -7,7 +7,7 @@ public class DirectType extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getLiteral() {
 		return "direct-type";
 	}

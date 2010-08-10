@@ -15,12 +15,12 @@ import de.topicmapslab.tmql4j.lexer.model.IToken;
 
 public class InstanceAxis implements IAxis {
 
-	@Override
+	
 	public IToken getIdentifier() {
 		return new Instance();
 	}
 
-	@Override
+	
 	public Collection<?> navigate(Construct source, Topic type)
 			throws TMQLRuntimeException {
 		Set<Topic> instances = HashUtil.getHashSet();

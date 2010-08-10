@@ -7,7 +7,7 @@ public class DirectSupertype extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getLiteral() {
 		return "direct-supertype";
 	}

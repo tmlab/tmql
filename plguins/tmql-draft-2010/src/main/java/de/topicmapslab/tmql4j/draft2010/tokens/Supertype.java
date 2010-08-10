@@ -7,7 +7,7 @@ public class Supertype extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getLiteral() {
 		return "supertype";
 	}

@@ -7,7 +7,7 @@ public class Instance extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getLiteral() {
 		return "instance";
 	}

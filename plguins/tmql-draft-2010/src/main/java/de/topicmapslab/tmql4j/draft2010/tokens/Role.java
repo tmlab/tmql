@@ -7,7 +7,7 @@ public class Role extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getLiteral() {
 		return "role";
 	}

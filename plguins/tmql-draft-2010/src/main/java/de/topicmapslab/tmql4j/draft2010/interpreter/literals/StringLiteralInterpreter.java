@@ -34,7 +34,7 @@ public class StringLiteralInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
 		/*
 		 * convert literal

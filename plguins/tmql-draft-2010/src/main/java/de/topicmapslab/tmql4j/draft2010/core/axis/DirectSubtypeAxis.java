@@ -15,12 +15,12 @@ import de.topicmapslab.tmql4j.lexer.model.IToken;
 
 public class DirectSubtypeAxis implements IAxis {
 
-	@Override
+	
 	public IToken getIdentifier() {
 		return new DirectSubtype();
 	}
 
-	@Override
+	
 	public Collection<?> navigate(Construct source, Topic type)
 			throws TMQLRuntimeException {
 		Set<Topic> types = HashUtil.getHashSet();

@@ -37,7 +37,7 @@ public class NumericalExpressionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
 
 		/*

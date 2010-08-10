@@ -14,7 +14,7 @@ public class QueryExpressionInterpreter extends
 		super(ex);
 	}
 
-	@Override
+	
 	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
 		/*
 		 * is new expression type

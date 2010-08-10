@@ -7,7 +7,7 @@ public class Occurrence extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getLiteral() {
 		return "occurrence";
 	}

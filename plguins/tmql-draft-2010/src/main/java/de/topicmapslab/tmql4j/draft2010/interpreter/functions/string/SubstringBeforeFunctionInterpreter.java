@@ -34,7 +34,7 @@ public class SubstringBeforeFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getItemIdentifier() {
 		return "substring-before";
 	}
@@ -42,7 +42,7 @@ public class SubstringBeforeFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public long getRequiredVariableCount() {
 		return 2;
 	}
@@ -50,7 +50,7 @@ public class SubstringBeforeFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
 		/*
 		 * get arguments

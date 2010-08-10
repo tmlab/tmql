@@ -34,7 +34,7 @@ public class TranslateFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getItemIdentifier() {
 		return "translate";
 	}
@@ -42,7 +42,7 @@ public class TranslateFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public long getRequiredVariableCount() {
 		return 3;
 	}
@@ -50,7 +50,7 @@ public class TranslateFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
 		/*
 		 * get arguments

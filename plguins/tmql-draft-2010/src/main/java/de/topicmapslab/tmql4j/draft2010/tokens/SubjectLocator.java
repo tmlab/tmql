@@ -7,7 +7,7 @@ public class SubjectLocator extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getLiteral() {
 		return "subject-locator";
 	}

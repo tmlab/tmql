@@ -53,7 +53,7 @@ public class FunctionCall extends ExpressionImpl {
 		 * call-back instance of parser utility
 		 */
 		IParserUtilsCallback callback = new IParserUtilsCallback() {
-			@Override
+			
 			public void newToken(List<Class<? extends IToken>> tmqlTokens,
 					List<String> tokens, Class<? extends IToken> foundDelimer)
 					throws TMQLGeneratorException, TMQLInvalidSyntaxException {
@@ -76,7 +76,7 @@ public class FunctionCall extends ExpressionImpl {
 				.size() - 1), delimers, true);
 	}
 
-	@Override
+	
 	public boolean isValid() {
 		return !getTmqlTokens().isEmpty()
 				&& getTmqlTokens().get(0).equals(Function.class);

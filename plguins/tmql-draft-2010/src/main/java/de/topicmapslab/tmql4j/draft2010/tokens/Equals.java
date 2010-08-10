@@ -4,7 +4,7 @@ import de.topicmapslab.tmql4j.lexer.model.Token;
 
 public class Equals extends Token {
 
-	@Override
+	
 	public String getLiteral() {
 		return "=";
 	}

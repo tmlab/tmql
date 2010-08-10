@@ -28,7 +28,7 @@ public class MatchesRegExpFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getItemIdentifier() {
 		return "matches-regexp";
 	}
@@ -36,17 +36,17 @@ public class MatchesRegExpFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public long getRequiredVariableCount() {
 		return 2;
 	}
 
-	@Override
+	
 	public Method getMethod() throws NoSuchMethodException {
 		return String.class.getMethod("matches", String.class);
 	}
 
-	@Override
+	
 	public Object toResult(Object value) {
 		return Boolean.parseBoolean(value.toString());
 	}

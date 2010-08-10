@@ -16,12 +16,12 @@ import de.topicmapslab.tmql4j.lexer.token.AxisReifier;
 
 public class ReifierAxis implements IAxis {
 
-	@Override
+	
 	public IToken getIdentifier() {
 		return new AxisReifier();
 	}
 
-	@Override
+	
 	public Collection<?> navigate(Construct source, Topic type)
 			throws TMQLRuntimeException {
 		Set<Topic> reifiers = HashUtil.getHashSet();

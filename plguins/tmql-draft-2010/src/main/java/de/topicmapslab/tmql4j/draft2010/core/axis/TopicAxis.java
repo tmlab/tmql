@@ -19,7 +19,7 @@ public class TopicAxis implements IAxis {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public IToken getIdentifier() {
 		return new de.topicmapslab.tmql4j.draft2010.tokens.Topic();
 	}
@@ -27,7 +27,7 @@ public class TopicAxis implements IAxis {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public Collection<?> navigate(Construct source,
 			final org.tmapi.core.Topic type) throws TMQLRuntimeException {
 		Set<Topic> topics = HashUtil.getHashSet();

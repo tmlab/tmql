@@ -7,7 +7,7 @@ public class ItemIdentifier extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getLiteral() {
 		return "item-identifier";
 	}

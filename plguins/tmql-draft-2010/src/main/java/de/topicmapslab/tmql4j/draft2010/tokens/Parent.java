@@ -7,7 +7,7 @@ public class Parent extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getLiteral() {
 		return "parent";
 	}

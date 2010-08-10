@@ -35,7 +35,7 @@ public class NormalizeSpaceFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getItemIdentifier() {
 		return "normalize-space";
 	}
@@ -43,7 +43,7 @@ public class NormalizeSpaceFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public long getRequiredVariableCount() {
 		return 1;
 	}
@@ -51,7 +51,7 @@ public class NormalizeSpaceFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
 		/*
 		 * get arguments

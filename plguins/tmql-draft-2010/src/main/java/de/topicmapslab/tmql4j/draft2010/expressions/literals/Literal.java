@@ -18,7 +18,7 @@ public class Literal extends ExpressionImpl {
 		super(parent, tmqlTokens, tokens, runtime);		
 	}
 
-	@Override
+	
 	public boolean isValid() {
 		return getTmqlTokens().size() == 1;
 	}

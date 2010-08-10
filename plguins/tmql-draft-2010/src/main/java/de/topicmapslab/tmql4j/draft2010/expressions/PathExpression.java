@@ -54,7 +54,7 @@ public class PathExpression extends ExpressionImpl {
 		 * callback of found delimers
 		 */
 		IParserUtilsCallback callback = new IParserUtilsCallback() {
-			@Override
+			
 			public void newToken(List<Class<? extends IToken>> tmqlTokens,
 					List<String> tokens, Class<? extends IToken> foundDelimer)
 					throws TMQLGeneratorException, TMQLInvalidSyntaxException {
@@ -93,7 +93,7 @@ public class PathExpression extends ExpressionImpl {
 		
 	}
 
-	@Override
+	
 	public boolean isValid() {
 		return true;
 	}

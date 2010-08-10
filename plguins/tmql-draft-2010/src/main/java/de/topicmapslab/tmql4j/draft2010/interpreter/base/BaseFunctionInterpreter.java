@@ -27,7 +27,7 @@ public abstract class BaseFunctionInterpreter<T extends IExpression> extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	protected long getNumberOfArguments() {
 		return getRequiredVariableCount();
 	}

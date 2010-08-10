@@ -56,7 +56,7 @@ public class SetExpression extends ExpressionImpl {
 		 * callback of found delimers
 		 */
 		IParserUtilsCallback callback = new IParserUtilsCallback() {
-			@Override
+			
 			public void newToken(List<Class<? extends IToken>> tmqlTokens,
 					List<String> tokens, Class<? extends IToken> foundDelimer)
 					throws TMQLGeneratorException, TMQLInvalidSyntaxException {
@@ -80,7 +80,7 @@ public class SetExpression extends ExpressionImpl {
 		ParserUtils.split(callback, tmqlTokens, tokens, delimers, true);
 	}
 
-	@Override
+	
 	public boolean isValid() {
 		return true;
 	}

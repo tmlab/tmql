@@ -44,7 +44,7 @@ public class ScopeFilter extends ExpressionImpl {
 		super(parent, tmqlTokens, tokens, runtime);
 	}
 
-	@Override
+	
 	public boolean isValid() {
 		/*
 		 * filter has to begin with the token @ and has to contain at least 2

@@ -17,12 +17,12 @@ import de.topicmapslab.tmql4j.lexer.model.IToken;
 
 public class DefaultAxis implements IAxis {
 
-	@Override
+	
 	public IToken getIdentifier() {
 		return null;
 	}
 
-	@Override
+	
 	public Collection<?> navigate(Construct source, Topic type)
 			throws TMQLRuntimeException {
 		Set<Object> results = HashUtil.getHashSet();

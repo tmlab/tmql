@@ -17,12 +17,12 @@ public class PathLanguageDraft2010ExtensionEntry implements
 
 	private Expression root;
 
-	@Override
+	
 	public Class<? extends IExpression> getExpressionType() {
 		return PathExpression.class;
 	}
 
-	@Override
+	
 	public boolean isValidProduction(ITMQLRuntime runtime,
 			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,IExpression caller) {
 		/*
@@ -42,7 +42,7 @@ public class PathLanguageDraft2010ExtensionEntry implements
 		return true;
 	}
 
-	@Override
+	
 	public IExpression parse(ITMQLRuntime runtime,
 			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
 			IExpression caller, boolean autoAdd)

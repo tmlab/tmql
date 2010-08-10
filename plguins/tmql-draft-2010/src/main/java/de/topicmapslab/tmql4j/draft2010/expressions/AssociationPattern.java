@@ -46,7 +46,7 @@ public class AssociationPattern extends ExpressionImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public boolean isValid() {
 		return true;
 	}

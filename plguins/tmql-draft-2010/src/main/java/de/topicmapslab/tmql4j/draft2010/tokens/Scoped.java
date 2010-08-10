@@ -7,7 +7,7 @@ public class Scoped extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getLiteral() {
 		return "scoped";
 	}

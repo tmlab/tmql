@@ -12,7 +12,7 @@ public class LiteralInterpreter extends
 		super(ex);
 	}
 
-	@Override
+	
 	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
 		// TODO Auto-generated method stub
 

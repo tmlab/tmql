@@ -112,12 +112,12 @@ import de.topicmapslab.tmql4j.parser.model.IExpression;
 
 public class PathLanguageDraft2010ExtensionPoint implements ILanguageExtension {
 
-	@Override
+	
 	public String getExtensionPointId() {
 		return "path-language-draft-2010";
 	}
 
-	@Override
+	
 	public void registerExtension(ITMQLRuntime runtime)
 			throws TMQLExtensionRegistryException {
 
@@ -280,13 +280,13 @@ public class PathLanguageDraft2010ExtensionPoint implements ILanguageExtension {
 		}
 	}
 
-	@Override
+	
 	public boolean extendsExpressionType(
 			Class<? extends IExpression> expressionType) {
 		return expressionType.equals(PathExpression.class);
 	}
 
-	@Override
+	
 	public ILanguageExtensionEntry getLanguageExtensionEntry() {
 		return new PathLanguageDraft2010ExtensionEntry();
 	}

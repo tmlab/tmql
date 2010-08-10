@@ -15,12 +15,12 @@ import de.topicmapslab.tmql4j.lexer.model.IToken;
 
 public class OccurrenceAxis implements IAxis {
 
-	@Override
+	
 	public IToken getIdentifier() {
 		return new de.topicmapslab.tmql4j.draft2010.tokens.Occurrence();
 	}
 
-	@Override
+	
 	public Collection<?> navigate(Construct source, Topic type)
 			throws TMQLRuntimeException {
 		Set<Occurrence> occurrences = HashUtil.getHashSet();

@@ -33,7 +33,7 @@ public class PathStepInterpreter extends ExpressionInterpreterImpl<PathStep> {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
 
 		QueryMatches context = extractArguments(runtime,

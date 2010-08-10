@@ -29,7 +29,7 @@ public class FindFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getItemIdentifier() {
 		return "find";
 	}
@@ -37,7 +37,7 @@ public class FindFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public long getRequiredVariableCount() {
 		return 2;
 	}
@@ -45,7 +45,7 @@ public class FindFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public Method getMethod() throws NoSuchMethodException {
 		return String.class.getMethod("indexOf", String.class);
 	}
@@ -53,7 +53,7 @@ public class FindFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public Object toResult(Object value) {
 		return BigInteger.valueOf(Long.parseLong(value.toString()));
 	}

@@ -36,7 +36,7 @@ public class ExtractRegExpFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getItemIdentifier() {
 		return "extract-regexp";
 	}
@@ -44,7 +44,7 @@ public class ExtractRegExpFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public long getRequiredVariableCount() {
 		return 2;
 	}
@@ -52,7 +52,7 @@ public class ExtractRegExpFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
 		/*
 		 * get arguments

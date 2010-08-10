@@ -15,12 +15,12 @@ import de.topicmapslab.tmql4j.lexer.model.IToken;
 
 public class ParentAxis implements IAxis {
 
-	@Override
+	
 	public IToken getIdentifier() {
 		return new Parent();
 	}
 
-	@Override
+	
 	public Collection<?> navigate(Construct source, Topic type)
 			throws TMQLRuntimeException {
 		Set<Construct> parents = HashUtil.getHashSet();

@@ -7,7 +7,7 @@ public class Type extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getLiteral() {
 		return "type";
 	}

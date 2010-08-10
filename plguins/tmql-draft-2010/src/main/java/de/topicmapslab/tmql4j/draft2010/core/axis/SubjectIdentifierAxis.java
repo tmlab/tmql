@@ -15,12 +15,12 @@ import de.topicmapslab.tmql4j.lexer.model.IToken;
 
 public class SubjectIdentifierAxis implements IAxis {
 
-	@Override
+	
 	public IToken getIdentifier() {
 		return new SubjectIdentifier();
 	}
 
-	@Override
+	
 	public Collection<?> navigate(Construct source, Topic type)
 			throws TMQLRuntimeException {
 		Set<String> identifiers = HashUtil.getHashSet();

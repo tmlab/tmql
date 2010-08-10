@@ -37,7 +37,7 @@ public class PathExpressionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
 
 		QueryMatches context = null;

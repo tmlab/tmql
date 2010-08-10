@@ -71,7 +71,7 @@ public class SimpleExpression extends ExpressionImpl {
 
 	}
 
-	@Override
+	
 	public boolean isValid() {
 		/*
 		 * expression has to contain only one token

@@ -25,12 +25,12 @@ public class ComparisonExpressionInterpeter extends
 		super(ex);
 	}
 
-	@Override
+	
 	protected long getNumberOfArguments() {
 		return 2;
 	}
 
-	@Override
+	
 	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
 
 		/*

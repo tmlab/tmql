@@ -52,7 +52,7 @@ public class BooleanFilter extends ExpressionImpl {
 				runtime);
 	}
 
-	@Override
+	
 	public boolean isValid() {
 		/*
 		 * the expression has to contain at least 3 tokens and has to be

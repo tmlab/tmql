@@ -16,12 +16,12 @@ import de.topicmapslab.tmql4j.lexer.model.IToken;
 
 public class RoleAxis implements IAxis {
 
-	@Override
+	
 	public IToken getIdentifier() {
 		return new de.topicmapslab.tmql4j.draft2010.tokens.Role();
 	}
 
-	@Override
+	
 	public Collection<?> navigate(Construct source, Topic type)
 			throws TMQLRuntimeException {
 		Set<Role> roles = HashUtil.getHashSet();

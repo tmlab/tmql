@@ -16,7 +16,7 @@ public class PathWhitespacer extends TMQLWhiteSpacer {
 		super(runtime, query);
 	}
 
-	@Override
+	
 	public void execute() throws TMQLRuntimeException {
 		super.execute();
 
@@ -42,7 +42,7 @@ public class PathWhitespacer extends TMQLWhiteSpacer {
 
 	}
 
-	@Override
+	
 	public IQuery getTransformedQuery() {
 		return query;
 	}

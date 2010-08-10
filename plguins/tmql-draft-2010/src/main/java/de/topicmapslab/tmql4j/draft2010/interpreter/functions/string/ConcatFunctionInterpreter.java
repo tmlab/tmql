@@ -28,7 +28,7 @@ public class ConcatFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getItemIdentifier() {
 		return "concat";
 	}
@@ -36,7 +36,7 @@ public class ConcatFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public long getRequiredVariableCount() {
 		return 2;
 	}
@@ -44,7 +44,7 @@ public class ConcatFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public Method getMethod() throws NoSuchMethodException {
 		return String.class.getMethod("concat", String.class);
 	}
@@ -52,7 +52,7 @@ public class ConcatFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public Object toResult(Object value) {
 		return value.toString();
 	}

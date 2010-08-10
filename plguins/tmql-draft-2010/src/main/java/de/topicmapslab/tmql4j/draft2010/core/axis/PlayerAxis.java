@@ -17,12 +17,12 @@ import de.topicmapslab.tmql4j.lexer.model.IToken;
 
 public class PlayerAxis implements IAxis {
 
-	@Override
+	
 	public IToken getIdentifier() {
 		return new Player();
 	}
 
-	@Override
+	
 	public Collection<?> navigate(Construct source, Topic type)
 			throws TMQLRuntimeException {
 		Set<Topic> players = HashUtil.getHashSet();

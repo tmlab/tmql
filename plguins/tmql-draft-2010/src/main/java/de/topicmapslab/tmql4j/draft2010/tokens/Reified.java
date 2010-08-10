@@ -7,7 +7,7 @@ public class Reified extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getLiteral() {
 		return "reified";
 	}

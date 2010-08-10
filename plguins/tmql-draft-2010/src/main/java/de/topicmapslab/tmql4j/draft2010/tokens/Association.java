@@ -7,7 +7,7 @@ public class Association extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getLiteral() {
 		return "association";
 	}

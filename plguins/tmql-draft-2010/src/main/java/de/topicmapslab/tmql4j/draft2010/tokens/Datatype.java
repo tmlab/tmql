@@ -7,7 +7,7 @@ public class Datatype extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getLiteral() {
 		return "datatype";
 	}

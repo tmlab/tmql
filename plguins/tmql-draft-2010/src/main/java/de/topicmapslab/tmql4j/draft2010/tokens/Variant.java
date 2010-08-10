@@ -7,7 +7,7 @@ public class Variant extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getLiteral() {
 		return "variant";
 	}

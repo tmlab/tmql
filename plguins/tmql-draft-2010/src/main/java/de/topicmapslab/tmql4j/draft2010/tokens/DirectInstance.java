@@ -7,7 +7,7 @@ public class DirectInstance extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	
 	public String getLiteral() {
 		return "direct-instance";
 	}
