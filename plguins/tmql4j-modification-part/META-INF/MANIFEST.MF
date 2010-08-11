@@ -1,4 +1,4 @@
-Bundle-SymbolicName: de.topicmapslab.tmql4j-tmml-extension;singleton=true
+Bundle-SymbolicName: de.topicmapslab.tmql4j.tmml.extension;singleton=true
 Bundle-Version: 1.0.2.SNAPSHOT
 Bundle-Name: TMQL4J TMML Extension
 Provide-Package: de.topicmapslab.tmql4j.extension.tmml.core,

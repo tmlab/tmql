@@ -1,4 +1,4 @@
-Bundle-SymbolicName: de.topicmapslab.tmql4j-draft2010-extension;singleton=true
+Bundle-SymbolicName: de.topicmapslab.tmql4j.draft2010.extension;singleton=true
 Bundle-Version: 1.0.3.SNAPSHOT
 Bundle-Name: TMQL4J Draft 2010 Extension
 Provide-Package: de.topicmapslab.tmql4j.extension.tmml.core,
