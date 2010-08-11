@@ -174,14 +174,15 @@ public class ConstructResolver implements IConstructResolver {
 				 * Look for construct by item identifier in queried map
 				 */
 				Locator locator = map.createLocator(clean(identifier_));
+				Locator envLocator = environment.createLocator(clean(identifier_));
 				construct = map.getConstructByItemIdentifier(locator);
 				if (construct != null) {
 					return construct;
 				}
 				/*
 				 * Look for construct by item identifier in environment map
-				 */
-				construct = environment.getConstructByItemIdentifier(locator);
+				 */				
+				construct = environment.getConstructByItemIdentifier(envLocator);
 				if (construct != null) {
 					return construct;
 				}
@@ -195,7 +196,7 @@ public class ConstructResolver implements IConstructResolver {
 				/*
 				 * Look for topic by subject identifier in environment map
 				 */
-				topic = environment.getTopicBySubjectIdentifier(locator);
+				topic = environment.getTopicBySubjectIdentifier(envLocator);
 				if (topic != null) {
 					return topic;
 				}
@@ -209,7 +210,7 @@ public class ConstructResolver implements IConstructResolver {
 				/*
 				 * Look for topic by subject locator in environment map
 				 */
-				topic = environment.getTopicBySubjectLocator(locator);
+				topic = environment.getTopicBySubjectLocator(envLocator);
 				if (topic != null) {
 					return topic;
 				}
