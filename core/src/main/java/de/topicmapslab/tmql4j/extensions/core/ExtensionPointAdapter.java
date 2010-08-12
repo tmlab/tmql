@@ -69,8 +69,8 @@ public class ExtensionPointAdapter {
 		// try to load the extension points via OSGi
 		try {
 			// check if we are in an OSGi environment if not an exception is thrown
-			Class.forName("org.osgi.framework.Bundle");
-			pointList = TMQLActivator.getDefault().getExtensionPoints();
+			if (TMQLActivator.getDefault()!=null)
+				pointList = TMQLActivator.getDefault().getExtensionPoints();
 		} catch (Exception e) {
 			// we do nothing, cause we are not in an OSGi environment
 			logger.warn("No Osgi Bundle founde", e);

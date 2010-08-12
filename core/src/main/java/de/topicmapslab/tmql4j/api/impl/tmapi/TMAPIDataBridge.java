@@ -60,7 +60,10 @@ public class TMAPIDataBridge implements IDataBridge {
 		try {
 			NavigationHandler handler = NavigationHandler.buildHandler();
 			NavigationAxis axis = NavigationAxis.valueOf(identifier);
-			return handler.lookup(axis);
+			INavigationAxis axisHandler = handler.lookup(axis);
+			axisHandler.setTopicMap(runtime.getTopicMap());
+			axisHandler.setEnvironment(runtime.getEnvironmentMap());
+			return axisHandler;
 		} catch (NavigationException e) {
 			throw new DataBridgeRuntimeException(e);
 		}
