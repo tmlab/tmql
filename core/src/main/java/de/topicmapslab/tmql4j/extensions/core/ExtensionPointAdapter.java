@@ -71,7 +71,7 @@ public class ExtensionPointAdapter {
 			// check if we are in an OSGi environment if not an exception is thrown
 			if (TMQLActivator.getDefault()!=null)
 				pointList = TMQLActivator.getDefault().getExtensionPoints();
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			// we do nothing, cause we are not in an OSGi environment
 			logger.warn("No Osgi Bundle founde", e);
 		}
@@ -79,7 +79,7 @@ public class ExtensionPointAdapter {
 		
 		// if no OSGi list found use the loader
 		if (pointList==null) {
-			ServiceLoader<IExtensionPoint> loader = ServiceLoader.load(IExtensionPoint.class);
+			ServiceLoader<IExtensionPoint> loader = ServiceLoader.load(IExtensionPoint.class, getClass().getClassLoader());
 			loader.reload();
 			pointList = loader;
 		}

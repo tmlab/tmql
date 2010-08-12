@@ -37,8 +37,7 @@ public class QueryFactory {
 	private QueryFactory() {
 		processors = HashUtil.getHashMap();
 		
-		ServiceLoader<IQueryProcessor> loader = ServiceLoader
-				.load(IQueryProcessor.class);
+		ServiceLoader<IQueryProcessor> loader = ServiceLoader.load(IQueryProcessor.class, getClass().getClassLoader());
 		loader.reload();
 		for (IQueryProcessor processor : loader) {
 			processors.put(processor.getLanguageName(), processor);
