@@ -10,6 +10,7 @@
  */
 package de.topicmapslab.tmql4j.extensions.core;
 
+import java.io.InputStream;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -80,6 +81,7 @@ public class ExtensionPointAdapter {
 		// if no OSGi list found use the loader
 		if (pointList==null) {
 			ServiceLoader<IExtensionPoint> loader = ServiceLoader.load(IExtensionPoint.class, getClass().getClassLoader());
+			InputStream  is = getClass().getResourceAsStream("/META-INF/services/" + IExtensionPoint.class.getName());
 			loader.reload();
 			pointList = loader;
 		}

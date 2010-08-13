@@ -59,29 +59,55 @@ public class FlwrExpressionInterpreter extends
 	 */
 	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
 
+		boolean emptyForResults = false;
+
 		QueryMatches results = interpreteForClauses(runtime);
-
 		/*
-		 * check if where clause exists and any variable is contained
+		 * check if at least one for clause does not match to any variable
 		 */
-		if (containsExpressionsType(WhereClause.class)) {
-			results = interpreteWhereClause(runtime, results);
+		for (ForClause forClause : getExpression().getExpressionFilteredByType(
+				ForClause.class)) {
+			try {
+				String variable = forClause.getVariables().get(0);
+				if (!results.getOrderedKeys().contains(variable)) {
+					emptyForResults = true;
+					break;
+				}
+			} catch (Exception e) {
+				emptyForResults = true;
+			}
 		}
-
 		/*
-		 * check if order-by clause exists and any variable is contained
+		 * results of for-clause are not empty
 		 */
-		if (containsExpressionsType(OrderByClause.class)) {
-			results = interpreteOrderByClause(runtime, results);
+		if (!emptyForResults) {
+			/*
+			 * check if where clause exists and any variable is contained
+			 */
+			if (containsExpressionsType(WhereClause.class)) {
+				results = interpreteWhereClause(runtime, results);
+			}
+
+			/*
+			 * check if order-by clause exists and any variable is contained
+			 */
+			if (containsExpressionsType(OrderByClause.class)) {
+				results = interpreteOrderByClause(runtime, results);
+			}
+
+			results = interpretReturnClause(runtime, results);
 		}
-
-		results = interpretReturnClause(runtime, results);
-
+		/*
+		 * results of for-clause are empty
+		 */
+		else {
+			results = new QueryMatches(runtime);
+		}
 		/*
 		 * set overall results on top of the stack
 		 */
-		runtime.getRuntimeContext().peek().setValue(
-				VariableNames.QUERYMATCHES, results);
+		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
+				results);
 
 	}
 
@@ -120,8 +146,8 @@ public class FlwrExpressionInterpreter extends
 			/*
 			 * set binding to set on top of the stack, which has to order
 			 */
-			runtime.getRuntimeContext().push().setValue(
-					VariableNames.ORDER, tuples);
+			runtime.getRuntimeContext().push().setValue(VariableNames.ORDER,
+					tuples);
 
 			/*
 			 * call order-by-clause
