@@ -58,6 +58,13 @@ public class ReductionResultSet extends SimpleResultSet {
 	/**
 	 * {@inheritDoc}
 	 */
+	public Class<? extends SimpleTupleResult> getResultClass() {
+		return ReductionTupleResult.class;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean canReduceTo2Dimensions() {
 		return true;
@@ -81,11 +88,11 @@ public class ReductionResultSet extends SimpleResultSet {
 			 * check if result can be reduced
 			 */
 			if (result.canReduceTo2Dimensions()
-					&& result.getResults().size() > 1) {
+					&& !result.getResults().isEmpty()) {
 				/*
 				 * iterate over reduction result
 				 */
-				for (Collection<? extends Object> c : result
+				for (Collection<Object> c : result
 						.reduceTo2Dimensions()) {
 					/*
 					 * create new tuple result and add values

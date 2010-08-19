@@ -61,7 +61,7 @@ public abstract class Result implements IResult {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<? extends Collection<? extends Object>> reduceTo2Dimensions()
+	public Collection<Collection<Object>> reduceTo2Dimensions()
 			throws UnsupportedOperationException {
 		throw new UnsupportedOperationException();
 	}

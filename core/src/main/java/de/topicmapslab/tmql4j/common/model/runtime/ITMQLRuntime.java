@@ -188,4 +188,5 @@ public interface ITMQLRuntime {
 	 *             thrown if parser fails because of invalid syntax
 	 */
 	public IParserTree parse(final String query) throws TMQLRuntimeException;
+	
 }

@@ -90,7 +90,7 @@ public interface IResultSet<T extends IResult> extends Iterable<T> {
 	 * 
 	 * @return a class representing the type parameter T
 	 */
-	public Class<T> getResultClass();
+	public Class<? extends T> getResultClass();
 
 	/**
 	 * Reduce internal results to atomic results. If result set contains results

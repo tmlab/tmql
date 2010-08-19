@@ -118,7 +118,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<T> getResultClass() {
+	public Class<? extends T> getResultClass() {
 		return clazz;
 	}
 

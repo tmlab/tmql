@@ -97,7 +97,7 @@ public interface IResult extends Iterable<Object> {
 	 *             thrown if operation is not supported by the implementation
 	 * @see IResult#canReduceTo2Dimensions()
 	 */
-	public Collection<? extends Collection<? extends Object>> reduceTo2Dimensions()
+	public Collection<Collection<Object>> reduceTo2Dimensions()
 			throws UnsupportedOperationException;
 
 	/**

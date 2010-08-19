@@ -11,7 +11,10 @@
 package de.topicmapslab.tmql4j.resultprocessing.core.reduction;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
+import de.topicmapslab.tmql4j.resultprocessing.core.reduction.tree.Path;
 import de.topicmapslab.tmql4j.resultprocessing.core.reduction.tree.Tree;
 import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleTupleResult;
 
@@ -65,7 +68,7 @@ public class ReductionTupleResult extends SimpleTupleResult {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Collection<? extends Collection<? extends Object>> reduceTo2Dimensions()
+	public Collection<Collection<Object>> reduceTo2Dimensions()
 			throws UnsupportedOperationException {
 		/*
 		 * use utility class to generate a tree-structure of all result values
@@ -75,7 +78,15 @@ public class ReductionTupleResult extends SimpleTupleResult {
 		/*
 		 * return a list of all paths from root to leaf
 		 */
-		return tree.pathToLeaf();
+		Collection<Collection<Object>> col = new LinkedList<Collection<Object>>();
+		for ( Path path : tree.pathToLeaf()) {
+			List<Object> list = new LinkedList<Object>();
+			for (Object obj : path ){
+				list.add(obj);
+			}
+			col.add(list);
+		}
+		return col;
 	}
 
 }
