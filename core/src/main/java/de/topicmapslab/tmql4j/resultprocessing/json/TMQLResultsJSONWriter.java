@@ -47,9 +47,10 @@ public class TMQLResultsJSONWriter {
 	private Writer w;
 
 	/**
+	 * Constructor
 	 * 
-	 * @param out
-	 * @param queryResult
+	 * @param out The {@link OutputStream} to be written on
+	 * @param queryResult The {@link IResultSet} to be serialized
 	 * @throws IOException
 	 */
 	public TMQLResultsJSONWriter(OutputStream out,
@@ -59,6 +60,21 @@ public class TMQLResultsJSONWriter {
 		writer = new JSONWriter(w);
 		this.resultIterator = queryResult.iterator();
 	}
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param out The {@link Writer} to be written to
+	 * @param queryResult The {@link IResultSet} to be serialized
+	 * @throws IOException
+	 */
+	public TMQLResultsJSONWriter(Writer out,
+			IResultSet<SimpleTupleResult> queryResult) throws IOException {
+		w = new BufferedWriter(out, 1024);
+		writer = new JSONWriter(w);
+		this.resultIterator = queryResult.iterator();
+	}
+	
 
 	/**
 	 * Serializes the {@link IResultSet}
@@ -79,13 +95,8 @@ public class TMQLResultsJSONWriter {
 		w.flush();
 	}
 
-	/**
-	 * 
-	 * @param result
-	 * @param jsonObject
-	 * @throws JSONException
-	 */
-	public void handleSolution(SimpleTupleResult result, JSONWriter jsonObject)
+
+	private void handleSolution(SimpleTupleResult result, JSONWriter jsonObject)
 			throws JSONException {
 		Iterator<Object> rowIterator = result.iterator();
 		// System.err.println("row size" + result.size());
@@ -123,42 +134,27 @@ public class TMQLResultsJSONWriter {
 		oa.endObject();
 	}
 
-	/**
-	 * 
-	 * @param t
-	 * @param jsonObject
-	 * @throws JSONException
-	 */
+
 	private void writeAtom(String t, JSONWriter jsonObject) throws JSONException {
 		JSONWriter o = jsonObject.object();
-		o.key("item_type").value("Atom");
+		o.key("item_type").value("atom");
 		o.key("value").value(t);
 		o.endObject();
 	}
 
-	/**
-	 * 
-	 * @param l
-	 * @param jsonObject
-	 * @throws JSONException
-	 */
+
 	private void writeLocator(Locator l, JSONWriter jsonObject) throws JSONException {
 		JSONWriter o = jsonObject.object();
-		o.key("item_type").value("Locator");
+		o.key("item_type").value("locator");
 		o.key("value").value(l.toExternalForm());
 		o.endObject();
 	}
 
-	/**
-	 * 
-	 * @param t
-	 * @param jsonObject
-	 * @throws JSONException
-	 */
+
 	private void writeAssociation(Association t, JSONWriter jsonObject)
 			throws JSONException {
 		JSONWriter o = jsonObject.object();
-		o.key("item_type").value("Association");
+		o.key("item_type").value("association");
 		writeType(t, o);
 		o.key("scope");
 		o.array();
@@ -177,45 +173,25 @@ public class TMQLResultsJSONWriter {
 		o.endObject();
 	}
 
-	/**
-	 * 
-	 * @param t
-	 * @param jsonObject
-	 * @throws JSONException
-	 */
+
 	private void writeTopic(Topic t, JSONWriter jsonObject) throws JSONException {
 		JSONWriter o = jsonObject.object();
-		o.key("item_type").value("Topic");
+		o.key("item_type").value("topic");
 		o.key("reference").value(topicRef(t));
 		o.endObject();
 	}
 
-	/**
-	 * 
-	 * @param t
-	 * @param jsonObject
-	 * @throws JSONException
-	 */
+
 	private void writeType(Typed t, JSONWriter jsonObject) throws JSONException {
 		jsonObject.key("type").value(topicRef(t.getType()));
 	}
 
-	/**
-	 * 
-	 * @param t
-	 * @param jsonObject
-	 * @throws JSONException
-	 */
+
 	private void writeParent(Topic t, JSONWriter jsonObject) throws JSONException {
 		jsonObject.key("parent").value(topicRef(t));
 	}
 
-	/**
-	 * 
-	 * @param name
-	 * @param jsonObject
-	 * @throws JSONException
-	 */
+
 	private void writeName(Name name, JSONWriter jsonObject) throws JSONException {
 		JSONWriter o = jsonObject.object();
 		o.key("item_type").value("name");
@@ -225,12 +201,7 @@ public class TMQLResultsJSONWriter {
 		o.endObject();
 	}
 
-	/**
-	 * 
-	 * @param name
-	 * @param jsonObject
-	 * @throws JSONException
-	 */
+
 	private void writeVariant(Variant name, JSONWriter jsonObject)
 			throws JSONException {
 		JSONWriter o = jsonObject.object();
@@ -240,12 +211,7 @@ public class TMQLResultsJSONWriter {
 		o.endObject();
 	}
 
-	/**
-	 * 
-	 * @param occurence
-	 * @param jsonObject
-	 * @throws JSONException
-	 */
+
 	private void writeOccurrence(Occurrence occurence, JSONWriter jsonObject)
 			throws JSONException {
 		JSONWriter o = jsonObject.object();
@@ -260,7 +226,7 @@ public class TMQLResultsJSONWriter {
 	/**
 	 * Returns an IRI which is usable to as reference to the specified topic.
 	 * 
-	 * Modified version of JTMTopicMapWriter from Lars Heuer
+	 * Modified version of JTMTopicMapWriter#_topicRef from Lars Heuer
 	 * (heuer[at]semagia.com)
 	 * 
 	 * @param topic
