@@ -134,6 +134,13 @@ public interface IResultSet<T extends IResult> extends Iterable<T> {
 	public int size();
 
 	/**
+	 * Method returns if the number of results is 0
+	 * 
+	 * @return <code>true</code> if the result set is empty, <code>false</code> else
+	 */
+	public boolean isEmpty();
+	
+	/**
 	 * Method removes all contained results from result set and reset the
 	 * internal iterator.
 	 */

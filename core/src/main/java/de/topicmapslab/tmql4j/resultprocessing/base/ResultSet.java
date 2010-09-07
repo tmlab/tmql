@@ -169,6 +169,13 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	public int size() {
 		return results.size();
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isEmpty() {
+		return size()==0;
+	}
 
 	/**
 	 * Method return a string representation of the result set. The string
