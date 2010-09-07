@@ -154,7 +154,7 @@ public class SubStringFunctionInvocationInterpreter extends
 		 * if upper index is greater than the string size, set to the last index
 		 */
 		if (end > string.length()) {
-			end = string.length() - 1;
+			end = string.length();
 		}
 		/*
 		 * if upper index is lower than lower index set to lower index

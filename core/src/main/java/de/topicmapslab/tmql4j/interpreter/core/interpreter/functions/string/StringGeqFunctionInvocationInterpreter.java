@@ -110,17 +110,15 @@ public class StringGeqFunctionInvocationInterpreter extends
 						}
 					}
 					if (!matches.isEmpty()) {
-						result
-								.put(QueryMatches.getNonScopedVariable(),
-										matches);
+						result.put(QueryMatches.getNonScopedVariable(), matches);
 					}
 				}
 				/*
 				 * add only strings which is greater of equal
 				 */
 				else if (ComparisonUtils.isGreaterOrEquals(s, b)) {
-					result.put(QueryMatches.getNonScopedVariable(), s
-							.toString());
+					result.put(QueryMatches.getNonScopedVariable(),
+							s.toString());
 				}
 
 			} catch (ParseException e) {
@@ -128,10 +126,12 @@ public class StringGeqFunctionInvocationInterpreter extends
 						"Error during interpretation of " + getItemIdentifier()
 								+ ".", e);
 			}
-			results.add(result);
+			if (!result.isEmpty()) {
+				results.add(result);
+			}
 		}
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				results);
+		runtime.getRuntimeContext().peek()
+				.setValue(VariableNames.QUERYMATCHES, results);
 	}
 
 	/**

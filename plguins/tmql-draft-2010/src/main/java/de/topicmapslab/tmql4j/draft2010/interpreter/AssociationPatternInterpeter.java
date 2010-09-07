@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
+import org.tmapi.core.MalformedIRIException;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
@@ -59,9 +60,24 @@ public class AssociationPatternInterpeter extends
 		if (getTmqlTokens().get(0).equals(Element.class)) {
 			final String assocIdentifier = getTokens().get(0);
 			try {
-				Construct construct = runtime.getDataBridge()
-						.getConstructResolver().getConstructByIdentifier(
-								runtime, assocIdentifier, topicMap);
+				Construct construct = null;
+				try {
+					construct = runtime
+							.getDataBridge()
+							.getConstructResolver()
+							.getConstructByIdentifier(runtime, assocIdentifier,
+									topicMap);
+				} catch (MalformedIRIException e) {
+					construct = runtime
+							.getDataBridge()
+							.getConstructResolver()
+							.getConstructByIdentifier(
+									runtime,
+									runtime.getLanguageContext()
+											.getPrefixHandler()
+											.getDefaultPrefix()
+											+ assocIdentifier, topicMap);
+				}
 				if (construct instanceof Topic) {
 					associationType = (Topic) construct;
 				}
@@ -78,9 +94,24 @@ public class AssociationPatternInterpeter extends
 		if (getTmqlTokens().get(index).equals(Element.class)) {
 			String roleIdentifier = getTokens().get(index);
 			try {
-				Construct construct = runtime.getDataBridge()
-						.getConstructResolver().getConstructByIdentifier(
-								runtime, roleIdentifier, topicMap);
+				Construct construct = null;
+				try {
+					construct = runtime
+							.getDataBridge()
+							.getConstructResolver()
+							.getConstructByIdentifier(runtime, roleIdentifier,
+									topicMap);
+				} catch (MalformedIRIException e) {
+					construct = runtime
+							.getDataBridge()
+							.getConstructResolver()
+							.getConstructByIdentifier(
+									runtime,
+									runtime.getLanguageContext()
+											.getPrefixHandler()
+											.getDefaultPrefix()
+											+ roleIdentifier, topicMap);
+				}
 				if (construct instanceof Topic) {
 					roleType = (Topic) construct;
 				}
@@ -97,9 +128,24 @@ public class AssociationPatternInterpeter extends
 		if (getTmqlTokens().get(index).equals(Element.class)) {
 			String otherRoleIdentifier = getTokens().get(index);
 			try {
-				Construct construct = runtime.getDataBridge()
-						.getConstructResolver().getConstructByIdentifier(
-								runtime, otherRoleIdentifier, topicMap);
+				Construct construct = null;
+				try {
+					construct = runtime
+							.getDataBridge()
+							.getConstructResolver()
+							.getConstructByIdentifier(runtime, otherRoleIdentifier,
+									topicMap);
+				} catch (MalformedIRIException e) {
+					construct = runtime
+							.getDataBridge()
+							.getConstructResolver()
+							.getConstructByIdentifier(
+									runtime,
+									runtime.getLanguageContext()
+											.getPrefixHandler()
+											.getDefaultPrefix()
+											+ otherRoleIdentifier, topicMap);
+				}
 				if (construct instanceof Topic) {
 					otherRoleType = (Topic) construct;
 				}

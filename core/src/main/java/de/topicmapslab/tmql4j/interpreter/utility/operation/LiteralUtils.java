@@ -56,8 +56,7 @@ public class LiteralUtils {
 	 * regular expression of dateTime
 	 */
 	private final static Pattern dateTimePattern = Pattern.compile(datePattern
-			.pattern()
-			+ "T" + timePattern.pattern());
+			.pattern() + "T" + timePattern.pattern());
 	/**
 	 * regular expression of decimal
 	 */
@@ -69,19 +68,15 @@ public class LiteralUtils {
 	private final static Pattern integerPattern = Pattern
 			.compile("[+|-]?[0-9]+");
 	/**
-	 * regular expression of char
-	 */
-	private final static Pattern charPattern = Pattern.compile("[^\"\\\\]");
-	/**
 	 * regular expression of quoted strings
 	 */
-	private final static Pattern quotedStringPattern = Pattern.compile("\""
-			+ charPattern.pattern() + "*\"");
+	private final static Pattern quotedStringPattern = Pattern
+			.compile("\"[^\"\\\\]*\"");
 	/**
 	 * regular expression of triple quoted strings
 	 */
 	private final static Pattern tripleQuotedStringPattern = Pattern
-			.compile("\"\"\"((\"\"|\")?" + charPattern.pattern() + ")*\"\"\"");
+			.compile("\"\"\"((\"\"|\")?[^\"\\\\])*\"\"\"");
 
 	/**
 	 * translation patterns of date
@@ -199,7 +194,7 @@ public class LiteralUtils {
 	 *         <code>false</code> otherwise.
 	 */
 	public static final boolean isQuotedString(final String literal) {
-		return quotedStringPattern.matcher(literal).matches();
+		return literal.startsWith("\"") && literal.endsWith("\"");
 	}
 
 	/**
@@ -212,7 +207,7 @@ public class LiteralUtils {
 	 *         literal, <code>false</code> otherwise.
 	 */
 	public static final boolean isTripleQuotedString(final String literal) {
-		return tripleQuotedStringPattern.matcher(literal).matches();
+		return literal.startsWith("\"\"\"") && literal.endsWith("\"\"\"");
 	}
 
 	/**
@@ -386,10 +381,10 @@ public class LiteralUtils {
 	 * @return the string literal without quotes
 	 */
 	public static final String asString(final String literal) {
-		if (isQuotedString(literal)) {
-			return asQuotedString(literal);
-		} else if (isTripleQuotedString(literal)) {
+		if (isTripleQuotedString(literal)) {
 			return asTripleQuotedString(literal);
+		} else if (isQuotedString(literal)) {
+			return asQuotedString(literal);
 		} else {
 			return literal;
 		}
@@ -424,9 +419,8 @@ public class LiteralUtils {
 		 */
 		if (o instanceof Topic) {
 			if (!((Topic) o).getNames().isEmpty()) {
-				value = ((Topic) o).getNames().iterator().next()
-				.getValue();
-			}else if (!((Topic) o).getSubjectIdentifiers().isEmpty()) {
+				value = ((Topic) o).getNames().iterator().next().getValue();
+			} else if (!((Topic) o).getSubjectIdentifiers().isEmpty()) {
 				value = ((Topic) o).getSubjectIdentifiers().iterator().next()
 						.toExternalForm();
 			} else if (!((Topic) o).getSubjectLocators().isEmpty()) {
@@ -550,21 +544,23 @@ public class LiteralUtils {
 	public static Object getDatatypeOfLiterals(final ITMQLRuntime runtime,
 			Object obj) {
 		if (obj instanceof Occurrence) {
-			return ((Occurrence) obj).getDatatype().getReference();
+			return ((Occurrence) obj).getDatatype();
 		} else if (obj instanceof Name) {
-			return XmlSchemeDatatypes.XSD_STRING;
+			return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_STRING);
 		} else if (obj instanceof Variant) {
-			return ((Variant) obj).getDatatype().getReference();
+			return ((Variant) obj).getDatatype();
 		} else if (obj instanceof String) {
-			return XmlSchemeDatatypes.XSD_STRING;
-		} else if (obj instanceof Integer || obj instanceof Long || obj instanceof BigInteger) {
-			return XmlSchemeDatatypes.XSD_INTEGER;
-		} else if (obj instanceof Float || obj instanceof Double|| obj instanceof BigDecimal) {
-			return XmlSchemeDatatypes.XSD_DECIMAL;
+			return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_STRING);
+		} else if (obj instanceof Integer || obj instanceof Long
+				|| obj instanceof BigInteger) {
+			return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_INTEGER);
+		} else if (obj instanceof Float || obj instanceof Double
+				|| obj instanceof BigDecimal) {
+			return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_DECIMAL);
 		} else if (obj instanceof Calendar) {
-			return XmlSchemeDatatypes.XSD_DATETIME;
+			return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_DATETIME);
 		} else if (obj instanceof URI) {
-			return XmlSchemeDatatypes.XSD_ANYURI;
+			return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_ANYURI);
 		} else if (obj instanceof Collection<?>) {
 			ITupleSequence<Object> seq = runtime.getProperties().newSequence();
 			for (Object o : (Collection<?>) obj) {
@@ -572,6 +568,6 @@ public class LiteralUtils {
 			}
 			return seq;
 		}
-		return XmlSchemeDatatypes.XSD_ANY;
+		return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_ANY);
 	}
 }

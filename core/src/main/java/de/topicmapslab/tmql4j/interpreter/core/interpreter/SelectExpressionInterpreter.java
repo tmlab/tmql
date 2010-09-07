@@ -11,6 +11,7 @@
 package de.topicmapslab.tmql4j.interpreter.core.interpreter;
 
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -50,12 +51,11 @@ import de.topicmapslab.tmql4j.parser.utility.ParserUtils;
  */
 public class SelectExpressionInterpreter extends
 		ExpressionInterpreterImpl<SelectExpression> {
-	
+
 	/**
 	 * the Logger
 	 */
 	private Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
-	
 
 	/**
 	 * base constructor to create a new instance
@@ -93,11 +93,11 @@ public class SelectExpressionInterpreter extends
 		long offset = interpretOffsetClause(runtime);
 
 		QueryMatches matches = new QueryMatches(runtime);
-
+		boolean containsWhereClause = containsExpressionsType(WhereClause.class);
 		/*
 		 * interpret where-clause if exists
 		 */
-		if (containsExpressionsType(WhereClause.class)) {
+		if (containsWhereClause) {
 			matches = interpretWhereClause(runtime, context);
 		}
 
@@ -112,6 +112,44 @@ public class SelectExpressionInterpreter extends
 		 */
 		matches = interpretSelectClause(runtime, matches);
 		/*
+		 * clean results by from-clause if exists and not already cleaned by
+		 * where-clause
+		 */
+		if (!containsWhereClause && context != null) {
+			/*
+			 * create new temporary sequence to store cleared matches
+			 */
+			ITupleSequence<Object> context_ = context
+					.getPossibleValuesForVariable();
+			QueryMatches cleaned = new QueryMatches(runtime);
+			/*
+			 * iterate over all tuples
+			 */
+			for (Map<String, Object> tuple : matches) {
+				boolean add = true;
+				for (Object o : tuple.values()) {
+					if (o instanceof Collection) {
+						Collection<?> col = (Collection<?>) o;
+						col.retainAll(context_);
+						add = !col.isEmpty();
+					} else {
+						add = context_.contains(o);
+					}
+					if (!add) {
+						break;
+					}
+				}
+				/*
+				 * check if value is contained in the context
+				 */
+				if (add) {
+					cleaned.add(tuple);
+				}
+			}
+			matches = cleaned;
+		}
+
+		/*
 		 * unify if necessary
 		 */
 		if (ParserUtils.containsTokens(getTmqlTokens(), Unique.class)
@@ -124,8 +162,8 @@ public class SelectExpressionInterpreter extends
 		 */
 		matches = interpretSelectionWindow(matches, limit, offset);
 
-		runtime.getRuntimeContext().peek().setValue(
-				VariableNames.QUERYMATCHES, matches);
+		runtime.getRuntimeContext().peek()
+				.setValue(VariableNames.QUERYMATCHES, matches);
 	}
 
 	/**
@@ -297,8 +335,8 @@ public class SelectExpressionInterpreter extends
 			/*
 			 * set binding to set on top of the stack, which has to order
 			 */
-			runtime.getRuntimeContext().push().setValue(
-					VariableNames.ORDER, tuples);
+			runtime.getRuntimeContext().push()
+					.setValue(VariableNames.ORDER, tuples);
 
 			/*
 			 * call order by clause
@@ -346,16 +384,15 @@ public class SelectExpressionInterpreter extends
 				runtime, SelectClause.class).get(0);
 
 		runtime.getRuntimeContext().peek()
-				.remove(
-						VariableNames.ITERATED_BINDINGS);
+				.remove(VariableNames.ITERATED_BINDINGS);
 
 		/*
 		 * push to the top of the stack
 		 */
 		runtime.getRuntimeContext().push();
 		if (!matches.isEmpty()) {
-			runtime.getRuntimeContext().peek().setValue(
-					VariableNames.ITERATED_BINDINGS, matches);
+			runtime.getRuntimeContext().peek()
+					.setValue(VariableNames.ITERATED_BINDINGS, matches);
 		}
 
 		/*
@@ -366,8 +403,8 @@ public class SelectExpressionInterpreter extends
 		/*
 		 * pop from top of the stack
 		 */
-		Object obj = runtime.getRuntimeContext().pop().getValue(
-				VariableNames.QUERYMATCHES);
+		Object obj = runtime.getRuntimeContext().pop()
+				.getValue(VariableNames.QUERYMATCHES);
 		/*
 		 * check result type
 		 */
@@ -396,8 +433,15 @@ public class SelectExpressionInterpreter extends
 	 */
 	private QueryMatches interpretSelectionWindow(QueryMatches matches,
 			long limit, long offset) throws TMQLRuntimeException {
-		if ( limit == -1 ){
-			return matches;
+		if (limit == -1) {
+			if (offset == -1) {
+				return matches;
+			}else{
+				limit = matches.size();
+			}
+		}
+		if ( offset == -1 ){
+			offset = 0;
 		}
 		/*
 		 * redirect to QueryMatches

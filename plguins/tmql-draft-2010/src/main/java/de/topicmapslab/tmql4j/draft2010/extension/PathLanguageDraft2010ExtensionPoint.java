@@ -81,7 +81,6 @@ import de.topicmapslab.tmql4j.draft2010.tokens.DirectSupertype;
 import de.topicmapslab.tmql4j.draft2010.tokens.DirectType;
 import de.topicmapslab.tmql4j.draft2010.tokens.Div;
 import de.topicmapslab.tmql4j.draft2010.tokens.DoubleColon;
-import de.topicmapslab.tmql4j.draft2010.tokens.Equals;
 import de.topicmapslab.tmql4j.draft2010.tokens.Instance;
 import de.topicmapslab.tmql4j.draft2010.tokens.Intersect;
 import de.topicmapslab.tmql4j.draft2010.tokens.ItemIdentifier;
@@ -112,12 +111,10 @@ import de.topicmapslab.tmql4j.parser.model.IExpression;
 
 public class PathLanguageDraft2010ExtensionPoint implements ILanguageExtension {
 
-	
 	public String getExtensionPointId() {
 		return "path-language-draft-2010";
 	}
 
-	
 	public void registerExtension(ITMQLRuntime runtime)
 			throws TMQLExtensionRegistryException {
 
@@ -145,7 +142,6 @@ public class PathLanguageDraft2010ExtensionPoint implements ILanguageExtension {
 		registry.register(DirectType.class);
 		registry.register(Div.class);
 		registry.register(DoubleColon.class);
-		registry.register(Equals.class);
 		registry.register(Instance.class);
 		registry.register(Intersect.class);
 		registry.register(ItemIdentifier.class);
@@ -280,13 +276,11 @@ public class PathLanguageDraft2010ExtensionPoint implements ILanguageExtension {
 		}
 	}
 
-	
 	public boolean extendsExpressionType(
 			Class<? extends IExpression> expressionType) {
 		return expressionType.equals(PathExpression.class);
 	}
 
-	
 	public ILanguageExtensionEntry getLanguageExtensionEntry() {
 		return new PathLanguageDraft2010ExtensionEntry();
 	}

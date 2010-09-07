@@ -104,11 +104,12 @@ public class PostfixedExpression extends ExpressionImpl {
 		/*
 		 * is a tuple-expression
 		 */
-		if (isTupleExpression()) {
+		if (isTupleExpression()) {			
 			/*
 			 * tuple-expression starts with round brackets
 			 */
 			if (tmqlTokens.get(0).equals(BracketRoundOpen.class)) {
+				
 				checkForExtensions(TupleExpression.class, tmqlTokens.subList(1,
 						tmqlTokens.size() - 1), tokens.subList(1,
 						tokens.size() - 1), runtime);

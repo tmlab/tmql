@@ -7,7 +7,6 @@ import de.topicmapslab.tmql4j.common.core.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
 import de.topicmapslab.tmql4j.common.utility.HashUtil;
-import de.topicmapslab.tmql4j.draft2010.tokens.Equals;
 import de.topicmapslab.tmql4j.draft2010.tokens.MatchesRegExp;
 import de.topicmapslab.tmql4j.draft2010.tokens.Unequals;
 import de.topicmapslab.tmql4j.lexer.model.IToken;
@@ -24,7 +23,8 @@ import de.topicmapslab.tmql4j.parser.utility.IParserUtilsCallback;
 import de.topicmapslab.tmql4j.parser.utility.ParserUtils;
 
 /**
- * Class representing the production 'comparison-expression' of the new draft 2010
+ * Class representing the production 'comparison-expression' of the new draft
+ * 2010
  * 
  * @author Sven Krosse
  * @email krosse@informatik.uni-leipzig.de
@@ -62,13 +62,13 @@ public class ComparisonExpression extends ExpressionImpl {
 		 * call-back instance of parser utility
 		 */
 		IParserUtilsCallback callback = new IParserUtilsCallback() {
-			
+
 			public void newToken(List<Class<? extends IToken>> tmqlTokens,
-					List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException,
-					TMQLInvalidSyntaxException {
+					List<String> tokens, Class<? extends IToken> foundDelimer)
+					throws TMQLGeneratorException, TMQLInvalidSyntaxException {
 				checkForExtensions(Expression.class, tmqlTokens, tokens,
 						runtime);
-				if ( foundDelimer != null ){
+				if (foundDelimer != null) {
 					operator = foundDelimer;
 				}
 			}
@@ -79,7 +79,6 @@ public class ComparisonExpression extends ExpressionImpl {
 		 */
 		Set<Class<? extends IToken>> delimers = HashUtil.getHashSet();
 		delimers.add(Or.class);
-		delimers.add(Equals.class);
 		delimers.add(ShortcutAxisLocators.class);
 		delimers.add(Equality.class);
 		delimers.add(Unequals.class);
@@ -106,7 +105,6 @@ public class ComparisonExpression extends ExpressionImpl {
 		}
 	}
 
-	
 	public boolean isValid() {
 		return true;
 	}

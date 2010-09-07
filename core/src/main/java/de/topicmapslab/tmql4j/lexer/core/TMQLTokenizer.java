@@ -93,7 +93,7 @@ public class TMQLTokenizer {
 		buffer.append(lastChar);
 		for (int index = 1; index < origin.length(); index++) {
 			char c = origin.charAt(index);
-			if (c == '"') {
+			if (c == '"' ) {
 				/*
 				 * save token """
 				 */

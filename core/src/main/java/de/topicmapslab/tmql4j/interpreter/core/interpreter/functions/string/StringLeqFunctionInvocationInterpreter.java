@@ -126,7 +126,9 @@ public class StringLeqFunctionInvocationInterpreter extends
 						"Error during interpretation of " + getItemIdentifier()
 								+ ".", e);
 			}
-			results.add(result);
+			if (!result.isEmpty()) {
+				results.add(result);
+			}
 		}
 		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
 				results);

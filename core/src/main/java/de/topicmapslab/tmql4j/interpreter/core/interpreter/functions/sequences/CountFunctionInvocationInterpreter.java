@@ -11,6 +11,7 @@
 package de.topicmapslab.tmql4j.interpreter.core.interpreter.functions.sequences;
 
 import java.math.BigInteger;
+import java.util.Collection;
 import java.util.Map;
 
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
@@ -73,7 +74,9 @@ public class CountFunctionInvocationInterpreter extends
 					runtime.getRuntimeContext().peek().setValue(
 							VariableNames.ITERATED_BINDINGS, iteration);
 
-					results.add(callParameters(runtime));
+					Map<String, Object> tuple_ = HashUtil.getHashMap(tuple); 
+					tuple_.putAll(callParameters(runtime));
+					results.add(tuple_);
 				}
 			}
 		} else {
@@ -92,8 +95,18 @@ public class CountFunctionInvocationInterpreter extends
 		 */
 		QueryMatches parameters = extractArguments(runtime, Parameters.class, 0);
 		Map<String, Object> result = HashUtil.getHashMap();
-		result.put(QueryMatches.getNonScopedVariable(), BigInteger
-				.valueOf(parameters.size()));
+		int count = parameters.size();
+		if ( count == 1 && parameters.getOrderedKeys().contains("$0")){
+			Collection<?> col = parameters.getPossibleValuesForVariable("$0");
+			count = col.size();
+			if ( count == 1 ){
+				Object o = col.iterator().next();
+				if ( o instanceof Collection<?>){
+					count = ((Collection<?>) o).size();
+				}
+			}
+		}
+		result.put(QueryMatches.getNonScopedVariable(), BigInteger.valueOf(count));
 		return result;
 	}
 

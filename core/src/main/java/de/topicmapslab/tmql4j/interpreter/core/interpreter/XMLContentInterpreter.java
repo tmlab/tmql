@@ -148,7 +148,7 @@ public class XMLContentInterpreter extends
 		 */
 		QueryMatches results = new QueryMatches(runtime);
 		Map<String, Object> tuple = HashUtil.getHashMap();
-		tuple.put("$0", builder.toString());
+		tuple.put("$0", builder.toString().trim());
 		results.add(tuple);
 
 		/*

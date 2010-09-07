@@ -131,6 +131,14 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 					matches.add(tuple);
 				}
 				/*
+				 * handle special topic undef
+				 */
+				else if ( "undef".equalsIgnoreCase(anchor_)){
+					tuple.put(QueryMatches.getNonScopedVariable(),
+							runtime.getEnvironment().getTmqlTopicUndef());
+					matches.add(tuple);
+				}
+				/*
 				 * handle as topic-reference
 				 */
 				else {

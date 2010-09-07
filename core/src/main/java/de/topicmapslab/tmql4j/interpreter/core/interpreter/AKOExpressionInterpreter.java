@@ -11,6 +11,7 @@
 package de.topicmapslab.tmql4j.interpreter.core.interpreter;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.tmapi.core.Topic;
@@ -68,14 +69,29 @@ public class AKOExpressionInterpreter extends
 		 */
 		TopicMap topicMap = getQueriedTopicMap(runtime);
 
+		Object context = null;
+		String variable = null;
 		/*
-		 * check if first simple-content is a variable
+		 * context is a variable
 		 */
-		if (!getTmqlTokens().get(0).equals(Variable.class)) {
-			throw new TMQLRuntimeException(
-					"simple-content-1 has to be a variable");
+		if (getTmqlTokens().get(0).equals(Variable.class)) {
+			context = getTokens().get(0);
+			variable = getTokens().get(0);
 		}
-
+		/*
+		 * context is any other content
+		 */
+		else {
+			QueryMatches m = extractArguments(runtime, SimpleContent.class, 0);
+			/*
+			 * empty content -> return
+			 */
+			if (m.getPossibleValuesForVariable().isEmpty()) {
+				return;
+			}
+			context = m.getPossibleValuesForVariable();
+			variable = QueryMatches.getNonScopedVariable();
+		}
 		/*
 		 * call second simple-content expression representing the type
 		 */
@@ -101,7 +117,7 @@ public class AKOExpressionInterpreter extends
 				try {
 					for (Object obj_ : axis.navigateForward(o)) {
 						Map<String, Object> map = HashUtil.getHashMap();
-						map.put(getTokens().get(0), obj_);
+						map.put(variable, obj_);
 						matches.add(map);
 					}
 				} catch (NavigationException e) {
@@ -112,24 +128,49 @@ public class AKOExpressionInterpreter extends
 			}
 		}
 
+		
+		
 		/*
-		 * set negation to internal query match
+		 * context is any other query match -> create intersection
 		 */
-		TypeInstanceIndex index = topicMap.getIndex(TypeInstanceIndex.class);
-		if (!index.isOpen()) {
-			index.open();
+		if (context instanceof Collection<?>) {
+			Collection<?> col = (Collection<?>) context;
+			Collection<?> all = matches.getPossibleValuesForVariable();
+			col.retainAll(all);
+			matches = new QueryMatches(runtime);
+			matches.convertToTuples(col);
+			/*
+			 * set negation
+			 */
+			QueryMatches negation = new QueryMatches(runtime);
+			all.remove(col);
+			negation.convertToTuples(all);
+			matches.addNegation(negation);			
 		}
-		Collection<Topic> topics = index.getTopicTypes();
-		topics.removeAll(matches.getPossibleValuesForVariable(getTokens()
-				.get(0)));
-		QueryMatches negation = new QueryMatches(runtime);
-		negation.convertToTuples(topics, getTokens().get(0));
-		matches.addNegation(negation);
+		/*
+		 * context is variable
+		 */
+		else{
+			/*
+			 * set negation to internal query match
+			 */
+			TypeInstanceIndex index = topicMap.getIndex(TypeInstanceIndex.class);
+			if (!index.isOpen()) {
+				index.open();
+			}
+			Collection<Topic> topics = HashUtil.getHashSet();
+			topics.addAll(index.getTopicTypes());
+			topics.removeAll(matches.getPossibleValuesForVariable(getTokens()
+					.get(0)));
+			QueryMatches negation = new QueryMatches(runtime);
+			negation.convertToTuples(topics, getTokens().get(0));
+			matches.addNegation(negation);
+		}
 
 		/*
 		 * set to stack
 		 */
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				matches);
+		runtime.getRuntimeContext().peek()
+				.setValue(VariableNames.QUERYMATCHES, matches);
 	}
 }

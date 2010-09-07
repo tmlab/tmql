@@ -53,9 +53,9 @@ public class TMQLQueryTransformer {
 		patterns.add(",");
 		patterns.add("==");
 		patterns.add("--");
-		patterns.add("++");
+		patterns.add("+\\+");
 		patterns.add("@");
-		patterns.add("!");
+		patterns.add("!=");
 		patterns.add("(");
 		patterns.add(")");
 		patterns.add("{");
@@ -123,9 +123,7 @@ public class TMQLQueryTransformer {
 			/*
 			 * check if token is longer than two
 			 */
-			if (token.length() > 2) {
-				token = clean(runtime, token);
-			}
+			token = clean(runtime, token);
 			/*
 			 * add transformed token to buffer and insert one whitespace
 			 */
@@ -227,7 +225,13 @@ public class TMQLQueryTransformer {
 		 * save time and dateTime
 		 */
 		if (LiteralUtils.isDate(token) || LiteralUtils.isTime(token)
-				|| LiteralUtils.isDateTime(token)) {
+				|| LiteralUtils.isDateTime(token) || LiteralUtils.isInteger(token) || LiteralUtils.isDecimal(token)) {
+			return token;
+		}
+		/*
+		 * is known pattern
+		 */
+		if ( patterns.contains(token.trim())){
 			return token;
 		}
 
@@ -419,6 +423,8 @@ public class TMQLQueryTransformer {
 		if (token.startsWith("<") && token.endsWith(">")) {
 			return true;
 		} else if (token.startsWith("\"") && token.endsWith("\"")) {
+			return true;
+		} else if ( patterns.contains(token.trim())){
 			return true;
 		}
 		/*

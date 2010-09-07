@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.tmapi.core.Construct;
+import org.tmapi.core.MalformedIRIException;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 
@@ -39,7 +40,7 @@ public class SimpleExpressionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	
+
 	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
 
 		QueryMatches context = new QueryMatches(runtime);
@@ -57,11 +58,11 @@ public class SimpleExpressionInterpreter extends
 			 */
 			IVariableSet set = runtime.getRuntimeContext().peek();
 			if (set.contains(variable)) {
-				context = extractVariableValues(runtime, variable, set
-						.getValue(variable));
+				context = extractVariableValues(runtime, variable,
+						set.getValue(variable));
 			} else if (set.contains(VariableNames.ITERATED_BINDINGS)) {
-				context = extractVariableValues(runtime, variable, set
-						.getValue(VariableNames.ITERATED_BINDINGS));
+				context = extractVariableValues(runtime, variable,
+						set.getValue(VariableNames.ITERATED_BINDINGS));
 			} else {
 				throw new TMQLRuntimeException("Variable '" + variable
 						+ "' not bound.");
@@ -81,13 +82,31 @@ public class SimpleExpressionInterpreter extends
 				/*
 				 * try to resolve reference
 				 */
-				Construct construct = runtime.getDataBridge()
-						.getConstructResolver().getConstructByIdentifier(
-								runtime, identifier, topicMap);
+				Construct construct = null;
+				try {
+					construct = runtime
+							.getDataBridge()
+							.getConstructResolver()
+							.getConstructByIdentifier(runtime, identifier,
+									topicMap);
+				} catch (MalformedIRIException e) {
+					construct = runtime
+							.getDataBridge()
+							.getConstructResolver()
+							.getConstructByIdentifier(
+									runtime,
+									runtime.getLanguageContext()
+											.getPrefixHandler()
+											.getDefaultPrefix()
+											+ identifier, topicMap);
+				}
 				if (construct instanceof Topic) {
 					Map<String, Object> tuple = HashUtil.getHashMap();
 					tuple.put(QueryMatches.getNonScopedVariable(), construct);
 					context.add(tuple);
+				}else{
+					throw new TMQLRuntimeException("The topic with the reference '"
+							+ identifier + "' cannot be found.");
 				}
 			} catch (Exception e) {
 				throw new TMQLRuntimeException("The topic with the reference '"
@@ -104,8 +123,8 @@ public class SimpleExpressionInterpreter extends
 			IVariableSet set = runtime.getRuntimeContext().peek();
 			if (set.contains(VariableNames.CURRENT_TUPLE)) {
 				Map<String, Object> tuple = HashUtil.getHashMap();
-				tuple.put(QueryMatches.getNonScopedVariable(), set
-						.getValue(VariableNames.CURRENT_TUPLE));
+				tuple.put(QueryMatches.getNonScopedVariable(),
+						set.getValue(VariableNames.CURRENT_TUPLE));
 				context.add(tuple);
 			}
 			/*
@@ -132,8 +151,8 @@ public class SimpleExpressionInterpreter extends
 		/*
 		 * store results
 		 */
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				context);
+		runtime.getRuntimeContext().peek()
+				.setValue(VariableNames.QUERYMATCHES, context);
 
 	}
 

@@ -9,6 +9,7 @@
 package de.topicmapslab.tmql4j.interpreter.core.interpreter;
 
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
@@ -17,6 +18,7 @@ import de.topicmapslab.tmql4j.common.utility.VariableNames;
 import de.topicmapslab.tmql4j.interpreter.core.base.QueryMatches;
 import de.topicmapslab.tmql4j.interpreter.model.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.parser.core.expressions.NonInterpretedContent;
+import de.topicmapslab.tmql4j.parser.core.expressions.XMLContent;
 
 /**
  * Interpreter for simple non-interpreted content of XML or TM content. Simple
@@ -52,7 +54,29 @@ public class NonInterpretedContentInterpreter extends
 			builder.append(" ");
 		}
 
-		final String content = builder.toString().trim();
+		/*
+		 * clean white-spaces of XML
+		 */
+		if (getExpression().getParent() instanceof XMLContent) {
+			String origin = builder.toString();
+			StringTokenizer tokenizer = new StringTokenizer(origin, " ");
+			builder = new StringBuilder();
+			if (origin.startsWith(" ")) {
+				builder.append(" ");
+			}
+			while (tokenizer.hasMoreTokens()) {
+				String token = tokenizer.nextToken();
+				builder.append(token);
+				if (!token.endsWith("=") && tokenizer.hasMoreTokens()) {
+					builder.append(" ");
+				}
+			}
+			if (origin.endsWith(" ")) {
+				builder.append(" ");
+			}
+		}
+
+		String content = builder.toString();
 
 		/*
 		 * store text as tuple
@@ -65,8 +89,8 @@ public class NonInterpretedContentInterpreter extends
 		/*
 		 * store result
 		 */
-		runtime.getRuntimeContext().peek().setValue(
-				VariableNames.QUERYMATCHES, result);
+		runtime.getRuntimeContext().peek()
+				.setValue(VariableNames.QUERYMATCHES, result);
 	}
 
 }

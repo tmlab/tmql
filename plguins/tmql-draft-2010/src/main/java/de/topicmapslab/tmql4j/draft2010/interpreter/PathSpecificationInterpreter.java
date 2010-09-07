@@ -3,6 +3,7 @@ package de.topicmapslab.tmql4j.draft2010.interpreter;
 import java.util.Map;
 
 import org.tmapi.core.Construct;
+import org.tmapi.core.MalformedIRIException;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 
@@ -107,9 +108,24 @@ public class PathSpecificationInterpreter extends
 				 * call data-bridge to get topic type
 				 */
 				try {
-					Construct construct = runtime.getDataBridge()
-							.getConstructResolver().getConstructByIdentifier(
-									runtime, identifier, topicMap);
+					Construct construct = null;
+					try {
+						construct = runtime
+								.getDataBridge()
+								.getConstructResolver()
+								.getConstructByIdentifier(runtime, identifier,
+										topicMap);
+					} catch (MalformedIRIException e) {
+						construct = runtime
+								.getDataBridge()
+								.getConstructResolver()
+								.getConstructByIdentifier(
+										runtime,
+										runtime.getLanguageContext()
+												.getPrefixHandler()
+												.getDefaultPrefix()
+												+ identifier, topicMap);
+					}
 					if (construct instanceof Topic) {
 						type = (Topic) construct;
 					}

@@ -5,7 +5,6 @@ import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
 import de.topicmapslab.tmql4j.common.utility.VariableNames;
 import de.topicmapslab.tmql4j.draft2010.expressions.ComparisonExpression;
 import de.topicmapslab.tmql4j.draft2010.interpreter.base.BaseExpressionInterpreter;
-import de.topicmapslab.tmql4j.draft2010.tokens.Equals;
 import de.topicmapslab.tmql4j.draft2010.tokens.MatchesRegExp;
 import de.topicmapslab.tmql4j.draft2010.tokens.Unequals;
 import de.topicmapslab.tmql4j.interpreter.core.base.QueryMatches;
@@ -48,8 +47,7 @@ public class ComparisonExpressionInterpeter extends
 		/*
 		 * operator is '='
 		 */
-		if (operator.equals(Equals.class)
-				|| operator.equals(ShortcutAxisLocators.class)) {
+		if (operator.equals(ShortcutAxisLocators.class)) {
 			result = QueryMatchUtils.contains(runtime, arguments[0],
 					arguments[1]);
 		}

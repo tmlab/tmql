@@ -57,11 +57,17 @@ public class PrefixHandler {
 				TmdmSubjectIdentifier.TMDM_INSTANCE_ROLE_TYPE);
 		knownSystemIdentifiers.put("tm:subtype",
 				TmdmSubjectIdentifier.TMDM_SUBTYPE_ROLE_TYPE);
+		knownSystemIdentifiers.put("tm:subclass",
+				TmdmSubjectIdentifier.TMDM_SUBTYPE_ROLE_TYPE);
+		knownSystemIdentifiers.put("tm:superclass",
+				TmdmSubjectIdentifier.TMDM_SUPERTYPE_ROLE_TYPE);
 		knownSystemIdentifiers.put("tm:supertype",
 				TmdmSubjectIdentifier.TMDM_SUPERTYPE_ROLE_TYPE);
 		knownSystemIdentifiers.put("tm:type-instance",
 				TmdmSubjectIdentifier.TMDM_TYPE_INSTANCE_ASSOCIATION_TYPE);
 		knownSystemIdentifiers.put("tm:supertype-subtype",
+				TmdmSubjectIdentifier.TMDM_SUPERTYPE_SUBTYPE_ASSOCIATION);
+		knownSystemIdentifiers.put("tm:subclass-of",
 				TmdmSubjectIdentifier.TMDM_SUPERTYPE_SUBTYPE_ASSOCIATION);
 		knownSystemIdentifiers.put("tm:association",
 				TmdmSubjectIdentifier.TMDM_ASSOCIATION_TYPE);

@@ -100,7 +100,7 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends
 					 * set to stack
 					 */
 					runtime.getRuntimeContext().peek().setValue(
-							VariableNames.QUERYMATCHES, HashUtil.getHashMap());
+							VariableNames.QUERYMATCHES, new QueryMatches(runtime));
 					return;
 				}
 				roleType = construct;

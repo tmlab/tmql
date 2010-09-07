@@ -13,8 +13,8 @@ import static de.topicmapslab.tmql4j.extension.tmml.grammar.expressions.MergeExp
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
@@ -125,12 +125,11 @@ public class MergeExpressionInterpreter extends
 		 * iterate over all tuples
 		 */
 		QueryMatches results = new QueryMatches(runtime);
+		/*
+		 * store topics to merge
+		 */
+		Set<Topic> topics = HashUtil.getHashSet();
 		for (Map<String, Object> tuple : matches) {
-			/*
-			 * store topics to merge
-			 */
-			Set<Topic> topics = HashUtil.getHashSet();
-
 			/*
 			 * iterate over all entries
 			 */
@@ -144,52 +143,52 @@ public class MergeExpressionInterpreter extends
 					topics.add((Topic) entry.getValue());
 				}
 			}
+		}
 
-			/*
-			 * try to merge
-			 */
-			try {
-				long amount = 0;
-				Topic topic = null;
-				for (Topic t : topics) {
-					/*
-					 * Workaround because of permutations { $t = topicA , $t' =
-					 * topicB} == { $t = topicB , $t' = topicA } permutation can
-					 * only merge one-times
-					 */
-					if (cache.contains(t)) {
-						continue;
-					} else if (topic == null) {
-						topic = t;
-					} else {
-						topic.mergeIn(t);
-						cache.add(t);
-						amount++;
-					}
-				}
+		/*
+		 * try to merge
+		 */
+		try {
+			long amount = 0;
+			Topic topic = null;
+			for (Topic t : topics) {
 				/*
-				 * fire event
+				 * Workaround because of permutations { $t = topicA , $t' =
+				 * topicB} == { $t = topicB , $t' = topicA } permutation can
+				 * only merge one-times
 				 */
-				if (amount > 0) {
-					runtime.getEventManager().event(
-							new MergeEvent(topic, topics, this));
+				if (cache.contains(t)) {
+					continue;
+				} else if (topic == null) {
+					topic = t;
+				} else {
+					topic.mergeIn(t);
+					cache.add(t);
+					amount++;
 				}
-				/*
-				 * store number of merges
-				 */
-				Map<String, Object> resultTuple = HashUtil.getHashMap();
-				resultTuple.put("$0", amount);
-				results.add(resultTuple);
-			} catch (ModelConstraintException e) {
-				throw new TMQLRuntimeException(e);
 			}
+			/*
+			 * fire event
+			 */
+			if (amount > 0) {
+				runtime.getEventManager().event(
+						new MergeEvent(topic, topics, this));
+			}
+			/*
+			 * store number of merges
+			 */
+			Map<String, Object> resultTuple = HashUtil.getHashMap();
+			resultTuple.put("$0", amount);
+			results.add(resultTuple);
+		} catch (ModelConstraintException e) {
+			throw new TMQLRuntimeException(e);
 		}
 
 		/*
 		 * set results to stack
 		 */
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				results);
+		runtime.getRuntimeContext().peek()
+				.setValue(VariableNames.QUERYMATCHES, results);
 	}
 
 	/**
@@ -217,8 +216,14 @@ public class MergeExpressionInterpreter extends
 		 * no binding defined
 		 */
 		if (iteration.isEmpty()) {
-			results.add(merge(runtime, extractArguments(runtime,
-					ValueExpression.class), alreadyMerged));
+			long count = merge(runtime,
+					extractArguments(runtime, ValueExpression.class),
+					alreadyMerged);
+			if (count > 0) {
+				Map<String, Object> t = HashUtil.getHashMap();
+				t.put(QueryMatches.getNonScopedVariable(), count);
+				results.add(t);
+			}
 		}
 		/*
 		 * binding set
@@ -231,125 +236,27 @@ public class MergeExpressionInterpreter extends
 				}
 
 				runtime.getRuntimeContext().push(set);
-				results.add(merge(runtime, extractArguments(runtime,
-						ValueExpression.class), alreadyMerged));
+				long count = merge(runtime,
+						extractArguments(runtime, ValueExpression.class),
+						alreadyMerged);
+				if (count > 0) {
+					Map<String, Object> t = HashUtil.getHashMap();
+					t.put(QueryMatches.getNonScopedVariable(), count);
+					results.add(t);
+				}
 				runtime.getRuntimeContext().pop();
 			}
 		}
 
-		// /*
-		// * variable store
-		// */
-		// Set<String> variables = new HashSet<String>();
-		//
-		// /*
-		// * iterate over all contained expression interpreters to extract
-		// * variables to merge
-		// */
-		// for (IExpressionInterpreter<ValueExpression> interpreter :
-		// getInterpretersFilteredByEypressionType(
-		// runtime, ValueExpression.class)) {
-		// /*
-		// * value-expression has to contain only a variable-statement
-		// */
-		// if (!interpreter.getTmqlTokens().get(0).equals(Variable.class)) {
-		// throw new TMQLRuntimeException("variable was exprected, but "
-		// + interpreter.getTmqlTokens().get(0).getSimpleName()
-		// + " was found.");
-		// }
-		//
-		// final String variable = interpreter.getTokens().get(0);
-		// variables.add(variable);
-		// }
-		//
-		// /*
-		// * cache to store merged topics
-		// */
-		// Set<Topic> cache = new HashSet<Topic>();
-		//
-		// /*
-		// * iterate over all tuples
-		// */
-		// QueryMatches results = new QueryMatches(runtime);
-		// for (Map<String, Object> tuple : matches) {
-		// /*
-		// * store topics to merge
-		// */
-		// Set<Topic> topics = new HashSet<Topic>();
-		// /*
-		// * iterate over all variables
-		// */
-		// for (String variable : variables) {
-		// /*
-		// * tuple has to contain the variable
-		// */
-		// if (!tuple.containsKey(variable)) {
-		// throw new TMQLRuntimeException("No binding for variable '"
-		// + variable + "' found.");
-		// }
-		// /*
-		// * the contained value has to be a Topic
-		// */
-		// Object obj = tuple.get(variable);
-		// if (!(obj instanceof Topic)) {
-		// throw new TMQLRuntimeException(
-		// "Invalid binding for variable '" + variable
-		// + "'. 'Topic' was expected but '"
-		// + obj.getClass().getSimpleName()
-		// + "' was found.");
-		// }
-		// topics.add((Topic) obj);
-		// }
-		// /*
-		// * try to merge
-		// */
-		// try {
-		// long amount = 0;
-		// Topic topic = null;
-		// for (Topic t : topics) {
-		// /*
-		// * Workaround because of permutations { $t = topicA , $t' =
-		// * topicB} == { $t = topicB , $t' = topicA } permutation can
-		// * only merge one-times
-		// */
-		// if (cache.contains(t)) {
-		// continue;
-		// } else if (topic == null) {
-		// topic = t;
-		// } else {
-		// topic.mergeIn(t);
-		// cache.add(t);
-		// amount++;
-		// }
-		// }
-		// /*
-		// * fire event
-		// */
-		// if (amount > 0) {
-		// runtime.getEventManager().event(
-		// new MergeEvent(topic, topics, this));
-		// }
-		// /*
-		// * store number of merges
-		// */
-		// Map<String, Object> resultTuple = new THashMap<String, Object>();
-		// resultTuple.put("$0", amount);
-		// results.add(resultTuple);
-		// } catch (ModelConstraintException e) {
-		// throw new TMQLRuntimeException(e);
-		// }
-		// }
-
 		/*
 		 * set results to stack
 		 */
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				results);
+		runtime.getRuntimeContext().peek()
+				.setValue(VariableNames.QUERYMATCHES, results);
 	}
 
-	private Map<String, Object> merge(TMQLRuntime runtime,
-			QueryMatches[] arguments, Collection<Construct> alreadyMerged)
-			throws TMQLRuntimeException {
+	private long merge(TMQLRuntime runtime, QueryMatches[] arguments,
+			Collection<Construct> alreadyMerged) throws TMQLRuntimeException {
 		Set<Construct> candidates = HashUtil.getHashSet();
 		for (QueryMatches match : arguments) {
 			for (Object obj : match.getPossibleValuesForVariable()) {
@@ -363,9 +270,8 @@ public class MergeExpressionInterpreter extends
 				}
 			}
 		}
-		Map<String, Object> tuple = HashUtil.getHashMap();
+
 		long count = MergeHandler.doMerge(candidates, alreadyMerged);
-		tuple.put(QueryMatches.getNonScopedVariable(), count);
 		/*
 		 * fire event
 		 */
@@ -374,7 +280,7 @@ public class MergeExpressionInterpreter extends
 					new MergeEvent(candidates.iterator().next(), candidates,
 							this));
 		}
-		return tuple;
+		return count;
 	}
 
 	/**
@@ -411,8 +317,8 @@ public class MergeExpressionInterpreter extends
 			/*
 			 * pop from stack
 			 */
-			Object obj = runtime.getRuntimeContext().peek().getValue(
-					VariableNames.QUERYMATCHES);
+			Object obj = runtime.getRuntimeContext().peek()
+					.getValue(VariableNames.QUERYMATCHES);
 
 			/*
 			 * check result type, has to be an instance of ITupleSequence<?>

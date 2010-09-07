@@ -122,7 +122,9 @@ public class StringLtFunctionInvocationInterpreter extends
 								.toString());
 					}
 				}
-				results.add(result);
+				if (!result.isEmpty()) {
+					results.add(result);
+				}
 			} catch (ParseException e) {
 				throw new TMQLRuntimeException(
 						"Error during interpretation of " + getItemIdentifier()

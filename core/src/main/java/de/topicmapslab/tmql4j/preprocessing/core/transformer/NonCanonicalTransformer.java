@@ -38,7 +38,7 @@ public class NonCanonicalTransformer {
 		shortcuts.put("^", ". >> types ==");
 		shortcuts.put("\\", "<< atomify << characteristics");
 		shortcuts.put("~", "<< indicators");
-		shortcuts.put("=", "<< locators");
+//		shortcuts.put("=", "<< locators");
 		shortcuts.put("@", ". >> scope ==");
 		shortcuts.put("->", ">> players");
 		shortcuts.put("<-", "<< players");

@@ -244,14 +244,23 @@ public class QueryMatchUtils {
 				if ( values.contains(tuple.get(QueryMatches.getNonScopedVariable()))){
 					result.add(tuple);
 				}
-			} else if (tuple.containsKey("$0") && tuple.size() == 1 ){
+			} else if (tuple.containsKey("$0")  ){
 				if ( values.contains(tuple.get("$0"))){
 					result.add(tuple);
 				}
 			}else {
 				boolean add = false;
 				for (Map<String, Object> tupleB : rightHand) {
-					if (tupleB.entrySet().containsAll(tuple.entrySet())) {
+					/*
+					 * both tuples are of the same size and the right hand part contains only the key $$$$
+					 */
+					if ( tuple.size() == 1 && tupleB.size() == 1 && tupleB.containsKey(QueryMatches.getNonScopedVariable())){
+						add = tuple.values().containsAll(tupleB.values());
+					}
+					/*
+					 * else compare by key-value-pairs
+					 */
+					else if (tupleB.entrySet().containsAll(tuple.entrySet())) {
 						add = true;
 						break;
 					}

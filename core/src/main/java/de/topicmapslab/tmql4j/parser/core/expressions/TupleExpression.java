@@ -72,9 +72,9 @@ public class TupleExpression extends ExpressionImpl {
 		/*
 		 * is a null expression
 		 */
-		if (tmqlTokens.get(0).equals(Null.class)
+		if (tmqlTokens.isEmpty()  || tmqlTokens.get(0).equals(Null.class)
 				|| (tmqlTokens.size() == 2 && tmqlTokens.get(0).equals(
-						BracketRoundOpen.class))) {
+						BracketRoundOpen.class) )) {
 			setGrammarType(1);
 		}
 		/*
@@ -116,7 +116,7 @@ public class TupleExpression extends ExpressionImpl {
 	 */
 	@Override
 	public boolean isValid() {
-		return !getTmqlTokens().isEmpty();
+		return true;
 	}
 
 }

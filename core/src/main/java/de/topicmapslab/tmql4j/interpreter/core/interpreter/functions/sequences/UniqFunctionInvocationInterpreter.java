@@ -10,7 +10,6 @@
  */
 package de.topicmapslab.tmql4j.interpreter.core.interpreter.functions.sequences;
 
-import java.util.Collection;
 import java.util.Map;
 
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
@@ -75,28 +74,14 @@ public class UniqFunctionInvocationInterpreter extends
 					+ " parameter.");
 		}
 
-		/*
-		 * iterate over parameters
-		 */
-		for (Map<String, Object> tuple : parameters) {
-			Object a = tuple.get("$0");
-			Map<String, Object> result = HashUtil.getHashMap();
-			ITupleSequence<Object> unique = new UniqueTupleSequence<Object>();
-			/*
-			 * check if value is a collection
-			 */
-			if (a instanceof Collection<?>) {
-				unique.addAll((Collection<?>) a);
-				unique.unify();
-			} else {
-				unique.add(a);
-
-			}
-			result.put(QueryMatches.getNonScopedVariable(), unique);
-			results.add(result);
-		}
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				results);
+		ITupleSequence<Object> unique = new UniqueTupleSequence<Object>();
+		unique.addAll(parameters.getPossibleValuesForVariable("$0"));
+		unique.unify();
+		Map<String, Object> result = HashUtil.getHashMap();
+		result.put(QueryMatches.getNonScopedVariable(), unique);
+		results.add(result);
+		runtime.getRuntimeContext().peek()
+				.setValue(VariableNames.QUERYMATCHES, results);
 	}
 
 	/**

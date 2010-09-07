@@ -156,6 +156,9 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 						} catch (DataBridgeException e) {
 							logger.warn("Cannot find optional type argument "
 									+ getTokens().get(0));
+							runtime.getRuntimeContext().peek().setValue(
+									VariableNames.QUERYMATCHES, new QueryMatches(runtime));
+							return;
 						}
 					}
 

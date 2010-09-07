@@ -10,8 +10,8 @@
  */
 package de.topicmapslab.tmql4j.interpreter.core.interpreter.functions.sequences;
 
-import java.util.Collection;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
@@ -76,33 +76,18 @@ public class ZagZigFunctionInvocationInterpreter extends
 		/*
 		 * iterate over parameters
 		 */
-		Map<String, Object> result = HashUtil.getHashMap();
 		for (Map<String, Object> tuple : parameters) {
-			Object sequence = tuple.get("$0");
-			/*
-			 * check if value is a tuple sequence
-			 */
-			if (sequence instanceof Collection<?>) {
+			for (Entry<String, Object> entry : tuple.entrySet()) {
 				/*
 				 * iterate over all values and create singleton tuples
 				 */
-				for (Object obj : (Collection<?>) sequence) {
-					result.put("$0", obj);
-					results.add(result);
-					result = HashUtil.getHashMap();
-				}
-			}
-			/*
-			 * add value as singleton tuple
-			 */
-			else {
-				result.put("$0", sequence);
+				Map<String, Object> result = HashUtil.getHashMap();
+				result.put("$0", entry.getValue());
 				results.add(result);
-				result = HashUtil.getHashMap();
 			}
 		}
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				results);
+		runtime.getRuntimeContext().peek()
+				.setValue(VariableNames.QUERYMATCHES, results);
 	}
 
 	/**

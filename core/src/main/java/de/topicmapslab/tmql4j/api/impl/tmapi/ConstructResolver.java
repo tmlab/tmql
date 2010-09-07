@@ -224,11 +224,9 @@ public class ConstructResolver implements IConstructResolver {
 					 * materialyzation is allowed
 					 */
 					if (runtime.getProperties().isMaterializeMetaModel()) {
-						return map.createTopicBySubjectIdentifier(map
-								.createLocator(identifier_));
+						return map.createTopicBySubjectIdentifier(locator);
 					} else {
-						return environment.createTopicBySubjectIdentifier(map
-								.createLocator(identifier_));
+						return environment.createTopicBySubjectIdentifier(envLocator);
 					}
 				}
 			}

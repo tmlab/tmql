@@ -58,7 +58,7 @@ public class Postfix extends ExpressionImpl {
 			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
 			TMQLRuntime runtime) throws TMQLInvalidSyntaxException,
 			TMQLGeneratorException {
-		super(parent, tmqlTokens, tokens, runtime);
+ 		super(parent, tmqlTokens, tokens, runtime);
 
 		/*
 		 * is projection-postfix

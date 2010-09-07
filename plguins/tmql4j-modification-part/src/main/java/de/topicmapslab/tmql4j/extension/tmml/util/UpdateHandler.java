@@ -470,7 +470,7 @@ public class UpdateHandler {
 			}
 
 			try {
-				TmdmUtility.ako(topic.getTopicMap(), topic, type);
+				TmdmUtility.ako(topic.getTopicMap(), type, topic);
 				eventManager.event(new UpdateEvent(topic, this,
 						AxisSubtypes.class, type));
 			} catch (Exception e) {
@@ -575,7 +575,7 @@ public class UpdateHandler {
 			}
 
 			try {
-				TmdmUtility.ako(topic.getTopicMap(), subtype, topic);
+				TmdmUtility.ako(topic.getTopicMap(), topic, subtype);
 				eventManager.event(new UpdateEvent(topic, this,
 						AxisSubtypes.class, subtype));
 			} catch (Exception e) {

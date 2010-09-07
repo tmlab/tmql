@@ -10,6 +10,7 @@
  */
 package de.topicmapslab.tmql4j.interpreter.core.interpreter.functions.sequences;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Map;
 
@@ -85,19 +86,33 @@ public class SliceFunctionInvocationInterpreter extends
 			/*
 			 * check if 2nd and 3rd parameters are a numeric value
 			 */
-			if (low instanceof Integer && high instanceof Integer) {
+			if (low instanceof BigInteger && high instanceof BigInteger) {
 				/*
 				 * check if first parameter is a collection
 				 */
 				if (sequence instanceof Collection<?>) {
+					Object[] values = ((Collection<?>) sequence).toArray();
+					long lLow = ((BigInteger) low).longValue();
+					if (lLow < 0) {
+						lLow = 0;
+					} else if (lLow >= values.length) {
+						lLow = values.length - 1;
+					}
+					long lHigh = ((BigInteger) high).longValue();
+					if (lHigh < 0) {
+						lHigh = 0;
+					} else if (lHigh > values.length) {
+						lHigh = values.length;
+					}
 					ITupleSequence<Object> seq = runtime.getProperties()
 							.newSequence();
-					Object[] values = ((Collection<?>) sequence).toArray();
-					for (int index = (Integer) low; index < (Integer) high
-							&& index < ((Collection<?>) sequence).size(); index++) {
-						seq.add(values[index]);
+
+					for (long index = lLow; index < lHigh; index++) {
+						seq.add(values[(int) index]);
 					}
-					result.put(QueryMatches.getNonScopedVariable(), seq);
+					if (!seq.isEmpty()) {
+						result.put(QueryMatches.getNonScopedVariable(), seq);
+					}
 				}
 				/*
 				 * at value if it isn't a sequence
@@ -106,11 +121,13 @@ public class SliceFunctionInvocationInterpreter extends
 					result.put(QueryMatches.getNonScopedVariable(), sequence);
 				}
 			}
-			results.add(result);
+			if (!result.isEmpty()) {
+				results.add(result);
+			}
 		}
 
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				results);
+		runtime.getRuntimeContext().peek()
+				.setValue(VariableNames.QUERYMATCHES, results);
 	}
 
 	/**

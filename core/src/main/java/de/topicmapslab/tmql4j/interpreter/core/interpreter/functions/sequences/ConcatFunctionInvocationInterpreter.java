@@ -107,8 +107,8 @@ public class ConcatFunctionInvocationInterpreter extends
 			/*
 			 * add sequence
 			 */
-			result.put(QueryMatches.getNonScopedVariable(), sequenceA
-					.addAll(sequenceB));
+			sequenceA.addAll(sequenceB);
+			result.put(QueryMatches.getNonScopedVariable(), sequenceA);
 			results.add(result);
 		}
 		runtime.getRuntimeContext().peek().setValue(

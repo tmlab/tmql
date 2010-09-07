@@ -157,13 +157,13 @@ public class TupleExpressionInterpreter extends
 				 */
 				tuple.put("$" + (index), values.size() == 1 ? values.get(0)
 						: values);
-				origins.put(variable,"$"+index);
+				origins.put(variable, "$" + index);
 				/*
 				 * store as tuple sequence
 				 */
 				result = context[index].extractAndRenameBindingsForVariable(
 						origin, variable);
-			}
+			}			
 
 			/*
 			 * store as tuple
@@ -172,34 +172,40 @@ public class TupleExpressionInterpreter extends
 			/*
 			 * store results
 			 */
-			matches.add(result);
+			if (!result.isEmpty()) {
+				matches.add(result);
+			}else{
+				matches.add(context[index]);
+			}
 		}
 
 		/*
 		 * create result
 		 */
-		QueryMatches results = null;
+		QueryMatches results = new QueryMatches(runtime);
+		results.setOrigins(origins);
 		/*
 		 * is singleton tuple-expression
 		 */
 		if (context.length == 1) {
-			results = new QueryMatches(runtime, matches);
-			results.setOrigins(origins);
+			if (!matches.isEmpty()) {
+				results.addAll(matches);
+			} else if ( !tuple.isEmpty()){
+				results.add(tuple);
+			}
 		}
 		/*
 		 * is multiple tuple-expression
 		 */
 		else {
-			results = new QueryMatches(runtime);
-			results.setOrigins(origins);
 			results.add(tuple);
 		}
 
 		/*
 		 * set results
 		 */
-		runtime.getRuntimeContext().peek().setValue(
-				VariableNames.QUERYMATCHES, results);
+		runtime.getRuntimeContext().peek()
+				.setValue(VariableNames.QUERYMATCHES, results);
 	}
 
 	/**
@@ -222,8 +228,9 @@ public class TupleExpressionInterpreter extends
 		/*
 		 * set empty tuple sequence
 		 */
-		runtime.getRuntimeContext().peek().setValue(
-				VariableNames.QUERYMATCHES, new QueryMatches(runtime));
+		runtime.getRuntimeContext()
+				.peek()
+				.setValue(VariableNames.QUERYMATCHES, new QueryMatches(runtime));
 
 	}
 

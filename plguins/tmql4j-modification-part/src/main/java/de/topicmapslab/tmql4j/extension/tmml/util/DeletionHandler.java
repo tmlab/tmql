@@ -2,6 +2,7 @@ package de.topicmapslab.tmql4j.extension.tmml.util;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
@@ -9,6 +10,7 @@ import org.tmapi.core.Locator;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
 import org.tmapi.core.Reifiable;
+import org.tmapi.core.Role;
 import org.tmapi.core.Scoped;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
@@ -60,8 +62,8 @@ public class DeletionHandler {
 	 */
 	public DeletionHandler(TMQLRuntime runtime) throws DeletionException {
 		try {
-			topicMap = (TopicMap) runtime.getRuntimeContext().peek().getValue(
-					VariableNames.CURRENT_MAP);
+			topicMap = (TopicMap) runtime.getRuntimeContext().peek()
+					.getValue(VariableNames.CURRENT_MAP);
 			eventManager = runtime.getEventManager();
 			this.runtime = runtime;
 		} catch (TMQLRuntimeException e) {
@@ -130,6 +132,15 @@ public class DeletionHandler {
 		 * delete all role-types
 		 */
 		types.addAll(index.getRoleTypes());
+		for (Topic topic : types) {
+			amount += deleteTopic(topicMap, topic, true);
+		}
+		types.clear();
+		
+		/*
+		 * delete all type-less topics
+		 */
+		types.addAll(index.getTopics(null));
 		for (Topic topic : types) {
 			amount += deleteTopic(topicMap, topic, true);
 		}
@@ -286,6 +297,43 @@ public class DeletionHandler {
 					count += deleteScoped(topicMap, (Scoped) obj, cascade);
 				}
 
+				/*
+				 * check typed of the given topic type
+				 */
+				try {
+					TypeInstanceIndex index = topicMap
+							.getIndex(TypeInstanceIndex.class);
+					if (!index.isOpen()) {
+						index.open();
+					}
+					for (Name n : index.getNames(topic)) {
+						count += deleteName(topicMap, n, cascade);
+					}
+					for (Occurrence o : index.getOccurrences(topic)) {
+						count += deleteOccurrence(topicMap, o, cascade);
+					}
+					Set<Association> set = HashUtil.getHashSet();
+					for (Role r : index.getRoles(topic)) {
+						if (set.contains(r.getParent())) {
+							continue;
+						}
+						count += deleteAssociation(topicMap, r.getParent(),
+								cascade);
+						set.add(r.getParent());
+					}
+					for (Association a : index.getAssociations(topic)) {
+						if (set.contains(a)) {
+							continue;
+						}
+						count += deleteAssociation(topicMap, a, cascade);
+					}
+				} catch (UnsupportedOperationException e) {
+					// NOTHING TO DO
+					Logger.getLogger(getClass().getName())
+							.warning(
+									"TypeInstanceIndex not supported by the current topic map system. Deletion of cascaded typed objects not possible!");
+				}
+
 			}
 
 			/*
@@ -320,9 +368,10 @@ public class DeletionHandler {
 		/*
 		 * delete the association itself
 		 */
+		long count = association.getRoles().size();
 		association.remove();
 		eventManager.event(new DeletionEvent(association, this));
-		return 1;
+		return count+1;
 	}
 
 	/**

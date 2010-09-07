@@ -17,12 +17,15 @@ import de.topicmapslab.tmql4j.common.core.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
 import de.topicmapslab.tmql4j.common.utility.HashUtil;
+import de.topicmapslab.tmql4j.lexer.core.TMQLTokenizer;
 import de.topicmapslab.tmql4j.lexer.model.IToken;
 import de.topicmapslab.tmql4j.lexer.token.BracketAngleClose;
 import de.topicmapslab.tmql4j.lexer.token.BracketAngleOpen;
 import de.topicmapslab.tmql4j.lexer.token.Combination;
+import de.topicmapslab.tmql4j.lexer.token.Element;
 import de.topicmapslab.tmql4j.lexer.token.Else;
 import de.topicmapslab.tmql4j.lexer.token.Equality;
+import de.topicmapslab.tmql4j.lexer.token.GreaterThan;
 import de.topicmapslab.tmql4j.lexer.token.If;
 import de.topicmapslab.tmql4j.lexer.token.ShortcutCondition;
 import de.topicmapslab.tmql4j.lexer.token.Substraction;
@@ -136,9 +139,7 @@ public class Content extends ExpressionImpl {
 		/*
 		 * is xml-content
 		 */
-		else if (tmqlTokens.get(0).equals(XmlStartTag.class)
-				&& tmqlTokens.get(tmqlTokens.size() - 1)
-						.equals(XmlEndTag.class)) {
+		else if (isXmlContent(parent, tmqlTokens, tokens, runtime)) {
 			setGrammarType(TYPE_XML_EXPRESSION);
 			checkForExtensions(XMLContent.class, tmqlTokens, tokens, runtime);
 		} else {
@@ -274,5 +275,39 @@ public class Content extends ExpressionImpl {
 	 */
 	public int getIndexOfOperator() {
 		return indexOfOperator;
+	}
+	
+	private boolean isXmlContent(IExpression parent,
+			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
+			TMQLRuntime runtime){
+		/*
+		 * parent should be a RETURN clause
+		 */
+		if ( !(parent instanceof ReturnClause)){
+			return false;
+		}
+		/*
+		 * starts with XML Tag and Ends with XML Tag
+		 */
+		else if (tmqlTokens.get(0).equals(XmlStartTag.class)
+				&& tmqlTokens.get(tmqlTokens.size() - 1)
+						.equals(XmlEndTag.class)) {
+			return true;
+		}
+		/*
+		 * starts with <yml.. > and has END Tag
+		 */
+		else if (tmqlTokens.get(0).equals(Element.class) && tokens.get(0).startsWith("<")&& tmqlTokens.get(tmqlTokens.size() - 1)
+				.equals(XmlEndTag.class)){
+			Set<Class<? extends IToken>> tokensToFound = HashUtil.getHashSet();
+			tokensToFound.add(GreaterThan.class);
+			Set<Class<? extends IToken>> protectionStarts = HashUtil.getHashSet();
+			tokensToFound.add(BracketAngleOpen.class);
+			Set<Class<? extends IToken>> protectionEnds = HashUtil.getHashSet();
+			tokensToFound.add(BracketAngleClose.class);
+			int index = ParserUtils.indexOfTokens(tmqlTokens, tokensToFound, protectionStarts, protectionEnds);
+			return index != -1;
+		}
+		return false;
 	}
 }

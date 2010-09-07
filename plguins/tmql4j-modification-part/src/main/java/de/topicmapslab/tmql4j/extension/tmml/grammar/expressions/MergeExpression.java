@@ -129,6 +129,7 @@ public class MergeExpression extends ExpressionImpl {
 		delimers.add(Comma.class);
 		delimers.add(Where.class);
 		delimers.add(Merge.class);
+		delimers.add(All.class);
 
 		ParserUtils.split(callback, tmqlTokens, tokens, delimers, true);
 

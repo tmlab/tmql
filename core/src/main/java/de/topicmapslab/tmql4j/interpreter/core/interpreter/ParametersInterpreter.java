@@ -127,8 +127,8 @@ public class ParametersInterpreter extends
 		/*
 		 * set on top of stack
 		 */
-		runtime.getRuntimeContext().peek().setValue(
-				VariableNames.QUERYMATCHES, matches);
+		runtime.getRuntimeContext().peek()
+				.setValue(VariableNames.QUERYMATCHES, matches);
 	}
 
 	/**
@@ -160,16 +160,17 @@ public class ParametersInterpreter extends
 			/*
 			 * rename variables
 			 */
-			parameters[index] = parameters[index].renameVariable(QueryMatches
-					.getNonScopedVariable(), "$" + index);
+			parameters[index] = parameters[index].renameVariable(
+					QueryMatches.getNonScopedVariable(), "$" + index);
 		}
 
 		/*
 		 * set on top of stack
 		 */
-		runtime.getRuntimeContext().peek().setValue(
-				VariableNames.QUERYMATCHES,
-				new QueryMatches(runtime, parameters));
+		runtime.getRuntimeContext()
+				.peek()
+				.setValue(VariableNames.QUERYMATCHES,
+						new QueryMatches(runtime, parameters));
 
 	}
 

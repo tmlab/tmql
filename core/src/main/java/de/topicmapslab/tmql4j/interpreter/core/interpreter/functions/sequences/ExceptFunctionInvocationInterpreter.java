@@ -107,8 +107,8 @@ public class ExceptFunctionInvocationInterpreter extends
 			/*
 			 * remove value of second sequence for the first sequences
 			 */
-			result.put(QueryMatches.getNonScopedVariable(), sequenceA
-					.removeAll(sequenceB));
+			sequenceA.removeAll(sequenceB);
+			result.put(QueryMatches.getNonScopedVariable(), sequenceA);
 			results.add(result);
 		}
 		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,

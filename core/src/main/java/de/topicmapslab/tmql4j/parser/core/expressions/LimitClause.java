@@ -75,7 +75,7 @@ public class LimitClause extends ExpressionImpl {
 		 */
 		return getTmqlTokens().size() == 2
 				&& getTmqlTokens().get(0).equals(Limit.class)
-				&& LiteralUtils.isInteger(getTokens().get(0));
+				&& LiteralUtils.isInteger(getTokens().get(1));
 	}
 
 }

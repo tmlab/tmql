@@ -128,11 +128,12 @@ public class RegExpFunctionInvocationInterpreter extends
 			else if (p.matcher(s.toString()).matches()) {
 				result.put(QueryMatches.getNonScopedVariable(), s);
 			}
-
-			results.add(result);
+			if (!result.isEmpty()) {
+				results.add(result);
+			}
 		}
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				results);
+		runtime.getRuntimeContext().peek()
+				.setValue(VariableNames.QUERYMATCHES, results);
 	}
 
 	/**

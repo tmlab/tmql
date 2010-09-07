@@ -2,6 +2,7 @@ package de.topicmapslab.tmql4j.draft2010.interpreter;
 
 import java.util.Map;
 
+import org.tmapi.core.MalformedIRIException;
 import org.tmapi.core.Scoped;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
@@ -60,9 +61,16 @@ public class ScopeFilterInterpreter extends
 		try {
 			TopicMap topicMap = (TopicMap) runtime.getRuntimeContext().peek()
 					.getValue(VariableNames.CURRENT_MAP);
-			theme = (Topic) runtime.getDataBridge().getConstructResolver()
+			try{
+				theme = (Topic) runtime.getDataBridge().getConstructResolver()
 					.getConstructByIdentifier(runtime, getTokens().get(1),
 							topicMap);
+			}catch(MalformedIRIException e){
+				theme = (Topic) runtime.getDataBridge().getConstructResolver()
+				.getConstructByIdentifier(runtime, runtime.getLanguageContext().getPrefixHandler().getDefaultPrefix()
+						+ getTokens().get(1),
+						topicMap);
+			}
 		} catch (Exception e) {
 			throw new TMQLRuntimeException(e);
 		}

@@ -180,46 +180,7 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 		this.matches = runtime.getProperties().newSequence();
 		this.origins = HashUtil.getHashMap();
 		multiple = this.matches instanceof MultipleTupleSequence<?>;
-		/*
-		 * create collection of iterators of given query matches
-		 */
-		Collection<Iterator<Map<String, Object>>> iterators = new LinkedList<Iterator<Map<String, Object>>>();
-		for (QueryMatches queryMatch : queryMatches) {
-			iterators.add(queryMatch.iterator());
-			this.origins.putAll(queryMatch.getOrigins());
-		}
-		/*
-		 * iterate over all matches
-		 */
-		boolean finished = false;
-		while (!finished && !iterators.isEmpty()) {
-			/*
-			 * create temporary tuple
-			 */
-			Map<String, Object> tuple = HashUtil.getHashMap();
-			/*
-			 * iterate over all matches
-			 */
-			for (Iterator<Map<String, Object>> iterator : iterators) {
-				/*
-				 * check if next tuple is available
-				 */
-				if (iterator.hasNext()) {
-					tuple.putAll(iterator.next());
-
-				} else {
-					finished = true;
-					break;
-				}
-			}
-			/*
-			 * add new tuple
-			 */
-			if (!finished) {
-				add(tuple);
-				tuple = HashUtil.getHashMap();
-			}
-		}
+		addAll(queryMatches);
 	}
 
 	/**
@@ -261,6 +222,53 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 		}
 		add(queryMatches.getMatches());
 		this.origins.putAll(queryMatches.getOrigins());
+	}
+	
+	/**
+	 * Adding all the given query matches to the internal store map
+	 * @param queryMatches the query matches
+	 */
+	public void addAll(Collection<QueryMatches> queryMatches ){
+		/*
+		 * create collection of iterators of given query matches
+		 */
+		Collection<Iterator<Map<String, Object>>> iterators = new LinkedList<Iterator<Map<String, Object>>>();
+		for (QueryMatches queryMatch : queryMatches) {
+			iterators.add(queryMatch.iterator());
+			this.origins.putAll(queryMatch.getOrigins());
+		}
+		/*
+		 * iterate over all matches
+		 */
+		boolean finished = false;
+		while (!finished && !iterators.isEmpty()) {
+			/*
+			 * create temporary tuple
+			 */
+			Map<String, Object> tuple = HashUtil.getHashMap();
+			/*
+			 * iterate over all matches
+			 */
+			for (Iterator<Map<String, Object>> iterator : iterators) {
+				/*
+				 * check if next tuple is available
+				 */
+				if (iterator.hasNext()) {
+					tuple.putAll(iterator.next());
+
+				} else {
+					finished = true;
+					break;
+				}
+			}
+			/*
+			 * add new tuple
+			 */
+			if (!finished) {
+				add(tuple);
+				tuple = HashUtil.getHashMap();
+			}
+		}
 	}
 
 	/**
