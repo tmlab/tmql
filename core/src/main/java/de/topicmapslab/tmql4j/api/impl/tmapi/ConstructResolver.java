@@ -156,20 +156,21 @@ public class ConstructResolver implements IConstructResolver {
 			if (object instanceof TopicMap && object2 instanceof TopicMap) {
 				TopicMap map = (TopicMap) object;
 				TopicMap environment = (TopicMap) object2;
-				/*
-				 * Look for construct by Id in queried map
-				 */
-				Construct construct = map.getConstructById(identifier_);
-				if (construct != null) {
-					return construct;
-				}
-				/*
-				 * Look for construct by Id in environment map
-				 */
-				construct = environment.getConstructById(identifier_);
-				if (construct != null) {
-					return construct;
-				}
+				Construct construct;
+//				/*
+//				 * Look for construct by Id in queried map
+//				 */
+//				Construct construct = map.getConstructById(identifier_);
+//				if (construct != null) {
+//					return construct;
+//				}
+//				/*
+//				 * Look for construct by Id in environment map
+//				 */
+//				construct = environment.getConstructById(identifier_);
+//				if (construct != null) {
+//					return construct;
+//				}
 				/*
 				 * Look for construct by item identifier in queried map
 				 */
