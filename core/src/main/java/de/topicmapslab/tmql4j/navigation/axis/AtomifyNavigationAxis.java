@@ -18,8 +18,6 @@ import org.tmapi.core.Name;
 import org.tmapi.core.TopicMap;
 import org.tmapi.index.LiteralIndex;
 
-import de.topicmapslab.tmql4j.common.utility.XmlSchemeDatatypes;
-import de.topicmapslab.tmql4j.interpreter.utility.operation.LiteralUtils;
 import de.topicmapslab.tmql4j.navigation.BaseNavigationAxisImpl;
 import de.topicmapslab.tmql4j.navigation.NavigationAxis;
 import de.topicmapslab.tmql4j.navigation.exception.InvalidValueException;
@@ -193,40 +191,6 @@ public class AtomifyNavigationAxis extends BaseNavigationAxisImpl {
 			return true;
 		}
 		return false;
-	}
-
-	/**
-	 * Internal method to de-serialize the given string-representation to its
-	 * 
-	 * @param literal
-	 *            the literal to de-serialize
-	 * @return the de-serialized instance
-	 */
-	private Object deatomify(final DatatypeAware aware) throws Exception {
-		final String ref = XmlSchemeDatatypes.toExternalForm(aware
-				.getDatatype().getReference());
-		if (ref.equalsIgnoreCase(XmlSchemeDatatypes.XSD_INTEGER)) {
-			return aware.integerValue();
-		} else if (ref.equalsIgnoreCase(XmlSchemeDatatypes.XSD_INT)) {
-			return aware.intValue();
-		} else if (ref.equalsIgnoreCase(XmlSchemeDatatypes.XSD_FLOAT)) {
-			return aware.floatValue();
-		} else if (ref.equalsIgnoreCase(XmlSchemeDatatypes.XSD_ANYURI)) {
-			return aware.locatorValue();
-		} else if (ref.equalsIgnoreCase(XmlSchemeDatatypes.XSD_LONG)) {
-			return aware.longValue();
-		} else if (ref.equalsIgnoreCase(XmlSchemeDatatypes.XSD_DECIMAL)) {
-			return aware.decimalValue();
-		} else if (ref.equalsIgnoreCase(XmlSchemeDatatypes.XSD_DATE)) {
-			return LiteralUtils.asDate(aware.getValue());
-		} else if (ref.equalsIgnoreCase(XmlSchemeDatatypes.XSD_DATETIME)) {
-			return LiteralUtils.asDateTime(aware.getValue());
-		} else if (ref.equalsIgnoreCase(XmlSchemeDatatypes.XSD_TIME)) {
-			return LiteralUtils.asTime(aware.getValue());
-		} else if (ref.equalsIgnoreCase(XmlSchemeDatatypes.XSD_BOOLEAN)) {
-			return Boolean.parseBoolean(aware.getValue());
-		}
-		return aware.getValue();
 	}
 
 }

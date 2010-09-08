@@ -32,6 +32,7 @@ import de.topicmapslab.tmql4j.navigation.axis.ScopeNavigationAxis;
 import de.topicmapslab.tmql4j.navigation.axis.SubtypesNavigationAxis;
 import de.topicmapslab.tmql4j.navigation.axis.SupertypesNavigationAxis;
 import de.topicmapslab.tmql4j.navigation.axis.TraverseNavigationAxis;
+import de.topicmapslab.tmql4j.navigation.axis.TypedNavigationAxis;
 import de.topicmapslab.tmql4j.navigation.axis.TypesNavigationAxis;
 import de.topicmapslab.tmql4j.navigation.exception.NavigationException;
 import de.topicmapslab.tmql4j.navigation.exception.UnsupportedNavigationTypeException;
@@ -78,6 +79,7 @@ public class NavigationHandler implements INavigationHandler {
 		axis.put(NavigationAxis.item, ItemNavigationAxis.class);
 		axis.put(NavigationAxis.reifier, ReifierNavigationAxis.class);
 		axis.put(NavigationAxis.atomify, AtomifyNavigationAxis.class);
+		axis.put(NavigationAxis.typed, TypedNavigationAxis.class);
 	}
 
 	/**

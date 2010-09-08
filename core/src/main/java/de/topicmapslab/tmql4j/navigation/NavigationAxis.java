@@ -31,6 +31,7 @@ public enum NavigationAxis {
 	 * type
 	 */
 	types,
+	typed,
 	instances,
 
 	/**
