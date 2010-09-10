@@ -16,6 +16,7 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.Typed;
 import org.tmapi.index.TypeInstanceIndex;
 
+import de.topicmapslab.tmql4j.common.utility.HashUtil;
 import de.topicmapslab.tmql4j.navigation.BaseNavigationAxisImpl;
 import de.topicmapslab.tmql4j.navigation.NavigationAxis;
 import de.topicmapslab.tmql4j.navigation.exception.NavigationException;
@@ -82,7 +83,7 @@ public class TypedNavigationAxis extends BaseNavigationAxisImpl {
 			if (!index.isAutoUpdated()) {
 				index.reindex();
 			}
-			Collection<Typed> list = new LinkedList<Typed>();
+			Collection<Typed> list = HashUtil.getHashSet();
 			list.addAll(index.getAssociations(topic));
 			list.addAll(index.getNames(topic));
 			list.addAll(index.getRoles(topic));

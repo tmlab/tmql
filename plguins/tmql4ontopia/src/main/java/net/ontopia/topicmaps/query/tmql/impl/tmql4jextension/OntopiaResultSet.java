@@ -147,4 +147,11 @@ public class OntopiaResultSet implements IResultSet<OntopiaResult> {
 		return iterator.next();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isEmpty() {
+		return results.isEmpty();
+	}
+
 }

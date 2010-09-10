@@ -1,8 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>de.topicmapslab.tmql4j-plugins</groupId>
+	<parent>
+		<artifactId>tmql4j-parent</artifactId>
+		<groupId>de.topicmapslab.tmql4j</groupId>
+		<version>2.6.4-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+  <groupId>de.topicmapslab.tmql4j</groupId>
   <artifactId>tmql-draft-2010</artifactId>
-  <version>1.0.3-SNAPSHOT</version>
+  <name>TMQL Draft 2010 Support</name>
+  <version>${project.parent.version}</version>
   <build>
    <!--  copying the resources form the root of the directory, necessary for OSGi testing in eclipse -->
   		<resources>
@@ -34,9 +40,9 @@
   </repositories>
   <dependencies>
   	<dependency>
-  		<groupId>de.topicmapslab</groupId>
+  		<groupId>de.topicmapslab.tmql4j</groupId>
   		<artifactId>tmql4j</artifactId>
-  		<version>2.6.3</version>
+  		<version>${project.version}</version>
   	</dependency>
   </dependencies>
   <distributionManagement>

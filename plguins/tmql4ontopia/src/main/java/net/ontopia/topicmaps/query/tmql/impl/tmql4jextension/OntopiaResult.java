@@ -156,7 +156,7 @@ public class OntopiaResult implements IResult {
 		return results;
 	}
 
-	public Collection<? extends Collection<? extends Object>> reduceTo2Dimensions()
+	public Collection<Collection<Object>> reduceTo2Dimensions()
 			throws UnsupportedOperationException {
 		throw new UnsupportedOperationException();
 	}

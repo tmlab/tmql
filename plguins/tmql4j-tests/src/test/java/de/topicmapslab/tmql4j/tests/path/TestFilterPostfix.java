@@ -18,6 +18,7 @@ import org.tmapi.core.Construct;
 import org.tmapi.core.Occurrence;
 import org.tmapi.core.Scoped;
 import org.tmapi.core.Topic;
+import org.tmapi.core.TopicMap;
 
 import de.topicmapslab.tmql4j.common.utility.HashUtil;
 import de.topicmapslab.tmql4j.common.utility.XmlSchemeDatatypes;
@@ -451,6 +452,122 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		set = execute(query);
 		assertEquals(100, set.size());
 
+	}
+
+	@Test
+	public void testConjunctionFilter() throws Exception {
+			
+		Topic topic = createTopicBySI("myTopic");
+		Set<Topic> topics = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			if (i % 4 == 0) {
+				createAssociation(topic);
+			} else if (i % 4 == 1) {
+				Topic t = createTopic();
+				t.createName(topic, "Name");
+				topics.add(t);
+			} else if (i % 4 == 2) {
+				Topic t = createTopic();
+				t.createOccurrence(topic, "Value");
+				topics.add(t);
+			} else {
+				Topic t = createTopic();
+				createAssociation().createRole(topic, t);
+				topics.add(t);
+			}
+		}
+		
+		TopicMap env = factory.newTopicMapSystem().createTopicMap("http://psi.example.org/environment/");
+		runtime.setEnvironmentMap(env);
+		
+		String query = null;		
+		SimpleResultSet set = null;
+
+		query = "// tm:subject [ fn:count ( . >> instances ) == 0 AND fn:count ( . >> typed ) == 0 ]";
+		set = execute(query);
+		assertEquals(75, set.size());
+		for (IResult r : set.getResults()) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+
+//		if (factory
+//				.getFeature(FeatureStrings.TOPIC_MAPS_TYPE_INSTANCE_ASSOCIATION)) {
+//			assertNull(topicMap.getTopicBySubjectIdentifier(topicMap
+//					.createLocator(TMDMIdentifier.INSTANCE_OF_TYPE)));
+//			assertNull(topicMap.getTopicBySubjectIdentifier(topicMap
+//					.createLocator(TMDMIdentifier.INSTANCE_ROLE)));
+//			assertNull(topicMap.getTopicBySubjectIdentifier(topicMap
+//					.createLocator(TMDMIdentifier.TYPE_ROLE)));
+//		} else {
+//			System.out.println("lala");
+//		}
+//
+//		for (int i = 0; i < 10; i++) {
+//			Topic t = topics.iterator().next();
+//			topics.remove(t);
+//			topic.addType(t);
+//
+//			if (factory
+//					.getFeature(FeatureStrings.TOPIC_MAPS_TYPE_INSTANCE_ASSOCIATION)) {
+//				assertNotNull(topicMap.getTopicBySubjectIdentifier(topicMap
+//						.createLocator(TMDMIdentifier.INSTANCE_OF_TYPE)));
+//				assertNotNull(topicMap.getTopicBySubjectIdentifier(topicMap
+//						.createLocator(TMDMIdentifier.INSTANCE_ROLE)));
+//				assertNotNull(topicMap.getTopicBySubjectIdentifier(topicMap
+//						.createLocator(TMDMIdentifier.TYPE_ROLE)));
+//			}
+//
+//			query = "// tm:subject [fn:count ( . >> typed ) == 0 AND  fn:count ( . >> instances ) == 0 ]";
+//			set = execute(query);
+//			assertEquals(topics.size(), set.size());
+//			for (IResult r : set.getResults()) {
+//				assertEquals(1, r.size());
+//				assertTrue(topics.contains(r.first()));
+//			}
+//		}
+//		if (factory
+//				.getFeature(FeatureStrings.TOPIC_MAPS_SUPERTYPE_SUBTYPE_ASSOCIATION)) {
+//			assertNull(topicMap.getTopicBySubjectIdentifier(topicMap
+//					.createLocator(TMDMIdentifier.KIND_OF_TYPE)));
+//			assertNull(topicMap.getTopicBySubjectIdentifier(topicMap
+//					.createLocator(TMDMIdentifier.SUBTYPE_ROLE)));
+//			assertNull(topicMap.getTopicBySubjectIdentifier(topicMap
+//					.createLocator(TMDMIdentifier.SUPERTYPE_ROLE)));
+//		} else {
+//			System.out.println("lala");
+//		}
+//
+//		/*
+//		 * should not work transitive
+//		 */
+//		for (int i = 0; i < 10; i++) {
+//			Topic t = topics.iterator().next();
+//			addSupertype(topic, t);
+//			if (factory
+//					.getFeature(FeatureStrings.TOPIC_MAPS_SUPERTYPE_SUBTYPE_ASSOCIATION)) {
+//				assertNotNull(topicMap.getTopicBySubjectIdentifier(topicMap
+//						.createLocator(TMDMIdentifier.KIND_OF_TYPE)));
+//				assertNotNull(topicMap.getTopicBySubjectIdentifier(topicMap
+//						.createLocator(TMDMIdentifier.SUBTYPE_ROLE)));
+//				assertNotNull(topicMap.getTopicBySubjectIdentifier(topicMap
+//						.createLocator(TMDMIdentifier.SUPERTYPE_ROLE)));
+//			}
+//
+//			query = "//tm:subject[fn:count(.>>typed)==0 AND fn:count(.>>instances)==0]";
+//			set = execute(query);
+//			assertEquals(topics.size(), set.size());
+//			for (IResult r : set.getResults()) {
+//				assertEquals(1, r.size());
+//				assertTrue(topics.contains(r.first()));
+//				if (factory
+//						.getFeature(FeatureStrings.TOPIC_MAPS_SUPERTYPE_SUBTYPE_ASSOCIATION)) {
+//					assertFalse(topics
+//							.contains(topicMap.getTopicBySubjectIdentifier(topicMap
+//									.createLocator(TMDMIdentifier.KIND_OF_TYPE))));
+//				}
+//			}
+//		}
 	}
 
 }

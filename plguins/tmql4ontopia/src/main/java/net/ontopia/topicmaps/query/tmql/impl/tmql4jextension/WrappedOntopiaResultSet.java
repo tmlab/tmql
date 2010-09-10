@@ -148,5 +148,12 @@ public class WrappedOntopiaResultSet implements
 		}
 		return iterator.next();
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isEmpty() {
+		return results.isEmpty();
+	}
 
 }
