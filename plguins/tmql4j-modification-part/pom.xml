@@ -58,7 +58,7 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>de.topicmapslab</groupId>
+			<groupId>de.topicmapslab.tmql4j</groupId>
 			<artifactId>tmql4j</artifactId>
 			<version>${project.version}</version>
 		</dependency>
