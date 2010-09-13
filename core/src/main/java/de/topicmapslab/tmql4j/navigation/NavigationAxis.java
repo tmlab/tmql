@@ -115,6 +115,14 @@ public enum NavigationAxis {
 	 * subject identifier as {@link String} <br />
 	 */
 	item,
+	
+	/**
+	 * <b>navigation axis:</b> id<br />
+	 * <b>forward direction (&gt;&gt;):</b> retrieve the id of the construct as {@link String}<br />
+	 * <b>backward direction (&lt;&lt;):</b> retrieve the construct with the given
+	 * id <br />
+	 */
+	id,
 
 	/**
 	 * <b>navigation axis:</b> reifier<br />

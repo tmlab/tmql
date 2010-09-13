@@ -1256,5 +1256,103 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			assertTrue(set.getResults().get(0).first().equals(occurrences[i]));
 		}
 	}
+	
+	@Test
+	public void testIdAxis() throws Exception{
+		Topic t = createTopic();
+		Name n = t.createName("Name");
+		Variant v = n.createVariant("Value", createTopic());
+		Occurrence o = t.createOccurrence(createTopic(), "Val");
+		Association a = createAssociation();
+		Role r = a.createRole(createTopic(), createTopic());
+		
+
+		String query = null;
+		SimpleResultSet set = null;
+		
+		// for topic
+		String id = t.getId(); 
+		query =  "\"" + id + "\" << id ";
+		set = execute(query);
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(t, set.first().first());
+		
+		query =  "\"" + id + "\" << id >> id";
+		set = execute(query);
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(id, set.first().first());
+		
+		// for name
+		id = n.getId(); 
+		query =  "\"" + id + "\" << id ";
+		set = execute(query);
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(n, set.first().first());
+		
+		query =  "\"" + id + "\" << id >> id";
+		set = execute(query);
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(id, set.first().first());
+		
+		// for variant
+		id = v.getId(); 
+		query =  "\"" + id + "\" << id ";
+		set = execute(query);
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(v, set.first().first());
+		
+		query =  "\"" + id + "\" << id >> id";
+		set = execute(query);
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(id, set.first().first());
+		
+		// for occurrence
+		id = o.getId(); 
+		query =  "\"" + id + "\" << id ";
+		set = execute(query);
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(o, set.first().first());
+		
+		query =  "\"" + id + "\" << id >> id";
+		set = execute(query);
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(id, set.first().first());
+		
+		// for role
+		id = r.getId(); 
+		query =  "\"" + id + "\" << id ";
+		set = execute(query);
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(r, set.first().first());
+		
+		query =  "\"" + id + "\" << id >> id";
+		set = execute(query);
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(id, set.first().first());
+		
+		// for association
+		id = a.getId(); 
+		query =  "\"" + id + "\" << id ";
+		set = execute(query);
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(a, set.first().first());
+		
+		query =  "\"" + id + "\" << id >> id";
+		set = execute(query);
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(id, set.first().first());
+	}
 
 }

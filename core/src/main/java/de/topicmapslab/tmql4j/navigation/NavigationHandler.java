@@ -21,6 +21,7 @@ import org.tmapi.core.Construct;
 
 import de.topicmapslab.tmql4j.navigation.axis.AtomifyNavigationAxis;
 import de.topicmapslab.tmql4j.navigation.axis.CharacteristicsNavigationAxis;
+import de.topicmapslab.tmql4j.navigation.axis.IdNavigationAxis;
 import de.topicmapslab.tmql4j.navigation.axis.IndicatorsNavigationAxis;
 import de.topicmapslab.tmql4j.navigation.axis.InstancesNavigationAxis;
 import de.topicmapslab.tmql4j.navigation.axis.ItemNavigationAxis;
@@ -80,6 +81,7 @@ public class NavigationHandler implements INavigationHandler {
 		axis.put(NavigationAxis.reifier, ReifierNavigationAxis.class);
 		axis.put(NavigationAxis.atomify, AtomifyNavigationAxis.class);
 		axis.put(NavigationAxis.typed, TypedNavigationAxis.class);
+		axis.put(NavigationAxis.id, IdNavigationAxis.class);
 	}
 
 	/**

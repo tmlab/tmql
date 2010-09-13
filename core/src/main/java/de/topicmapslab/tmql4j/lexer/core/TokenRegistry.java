@@ -21,6 +21,7 @@ import de.topicmapslab.tmql4j.lexer.token.Asc;
 import de.topicmapslab.tmql4j.lexer.token.At;
 import de.topicmapslab.tmql4j.lexer.token.AxisAtomify;
 import de.topicmapslab.tmql4j.lexer.token.AxisCharacteristics;
+import de.topicmapslab.tmql4j.lexer.token.AxisId;
 import de.topicmapslab.tmql4j.lexer.token.AxisIndicators;
 import de.topicmapslab.tmql4j.lexer.token.AxisInstances;
 import de.topicmapslab.tmql4j.lexer.token.AxisItem;
@@ -174,6 +175,7 @@ public class TokenRegistry {
 			register(AxisCharacteristics.class);
 			register(AxisIndicators.class);
 			register(AxisInstances.class);
+			register(AxisId.class);
 			register(AxisItem.class);
 			register(AxisLocators.class);
 			register(AxisPlayers.class);
