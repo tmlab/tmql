@@ -17,7 +17,6 @@ import de.topicmapslab.tmql4j.common.core.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
 import de.topicmapslab.tmql4j.common.utility.HashUtil;
-import de.topicmapslab.tmql4j.lexer.core.TMQLTokenizer;
 import de.topicmapslab.tmql4j.lexer.model.IToken;
 import de.topicmapslab.tmql4j.lexer.token.BracketAngleClose;
 import de.topicmapslab.tmql4j.lexer.token.BracketAngleOpen;

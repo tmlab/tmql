@@ -134,12 +134,45 @@ public interface IResultSet<T extends IResult> extends Iterable<T> {
 	public int size();
 
 	/**
+	 * Returns the result at the given position
+	 * 
+	 * @param <T>
+	 *            the result type
+	 * @param index
+	 *            the index
+	 * @return the construct
+	 * @throws IndexOutOfBoundsException
+	 *             thrown if index is out of bounds
+	 * @throws ClassCastException
+	 *             thrown if construct at position has other type
+	 */
+	public T get(int index);
+
+	/**
+	 * Returns the item at the given cell position
+	 * 
+	 * @param <R>
+	 *            the type of item at this position
+	 * @param rowIndex
+	 *            the rowIndex
+	 * @param colIndex
+	 *            the colIndex
+	 * @return the construct
+	 * @throws IndexOutOfBoundsException
+	 *             thrown if index is out of bounds
+	 * @throws ClassCastException
+	 *             thrown if construct at position has other type
+	 */
+	public <R extends Object> R get(int rowIndex, int colIndex);
+
+	/**
 	 * Method returns if the number of results is 0
 	 * 
-	 * @return <code>true</code> if the result set is empty, <code>false</code> else
+	 * @return <code>true</code> if the result set is empty, <code>false</code>
+	 *         else
 	 */
 	public boolean isEmpty();
-	
+
 	/**
 	 * Method removes all contained results from result set and reset the
 	 * internal iterator.

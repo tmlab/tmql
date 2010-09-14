@@ -230,4 +230,23 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 		return results;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public T get(int index) {
+		if ( getResults().size() <= index ){
+			throw new IndexOutOfBoundsException("Result set does not contains an element at position '"+ index + "'.");
+		}
+		return getResults().get(index);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	public <R extends Object> R get(int rowIndex, int colIndex) {
+		T result = get(rowIndex);
+		return (R)result.get(colIndex);
+	}
+	
 }

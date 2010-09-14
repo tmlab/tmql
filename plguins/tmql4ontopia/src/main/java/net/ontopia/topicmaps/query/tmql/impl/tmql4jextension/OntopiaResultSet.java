@@ -154,4 +154,22 @@ public class OntopiaResultSet implements IResultSet<OntopiaResult> {
 		return results.isEmpty();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public OntopiaResult get(int index) {
+		if ( getResults().size() <= index ){
+			throw new IndexOutOfBoundsException("Result does not contains an element at position '"+ index + "'.");
+		}
+		return getResults().get(index);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	public <R extends Object> R get(int rowIndex, int colIndex) {
+		return (R)get(rowIndex).get(colIndex);
+	}
+
 }

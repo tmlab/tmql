@@ -118,6 +118,21 @@ public interface IResult extends Iterable<Object> {
 	public List<Object> getResults();
 
 	/**
+	 * Returns the item at the given position
+	 * 
+	 * @param <T>
+	 *            the type of item at this position
+	 * @param index
+	 *            the index
+	 * @return the construct
+	 * @throws IndexOutOfBoundsException
+	 *             thrown if index is out of bounds
+	 * @throws ClassCastException
+	 *             thrown if construct at position has other type
+	 */
+	public <T extends Object> T get(int index);
+
+	/**
 	 * Method returns the number of contained values.
 	 * 
 	 * @return the number of contained values

@@ -145,4 +145,17 @@ public class WrappedOntopiaResult implements IResult {
 		}
 		return iterator.next();
 	}
+	
+
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends Object> T get(int index) {
+		if ( getResults().size()<= index ){
+			throw new IndexOutOfBoundsException("Result does not contains an element at position '"+ index + "'.");
+		}
+		return (T) getResults().get(index);
+	}
 }
