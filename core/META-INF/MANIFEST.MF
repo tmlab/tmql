@@ -1,5 +1,5 @@
 Bundle-SymbolicName: de.topicmapslab.tmql4j;singleton=true
-Bundle-Version: 2.6.4.SNAPSHOT
+Bundle-Version: 2.6.4
 Bundle-Name: TMQL4J
 Provide-Package: de.topicmapslab.tmql4j.api,
  de.topicmapslab.tmql4j.api.exceptions,
