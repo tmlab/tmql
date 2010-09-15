@@ -5,9 +5,9 @@
 	<groupId>de.topicmapslab.tmql4j</groupId>
 	
 	<artifactId>tmql4j-parent</artifactId>
-	<version>2.6.4</version>
+	<version>2.6.5-SNAPSHOT</version>
 	<packaging>pom</packaging>	
-	<name>MaJorToM Parent Project</name>	
+	<name>TMQL4J Parent Project</name>	
 	<build>
 		<plugins>
 			<plugin>
