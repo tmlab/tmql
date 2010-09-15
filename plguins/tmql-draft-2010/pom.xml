@@ -19,6 +19,9 @@
   			<resource>
   				<directory>OSGI-INF</directory>
   				<targetPath>${project.build.directory}/classes/OSGI-INF</targetPath>
+  			</resource>  			
+  			<resource>
+  				<directory>src/main/resources</directory>
   			</resource>
   		</resources>
 		<plugins>
