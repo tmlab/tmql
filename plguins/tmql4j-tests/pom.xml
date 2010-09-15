@@ -46,7 +46,7 @@
 		<dependency>
 			<groupId>de.topicmapslab.majortom</groupId>
 			<artifactId>majortom-inMemory</artifactId>
-			<version>1.1.1</version>
+			<version>1.1.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.topicmapslab.tmql4j</groupId>
