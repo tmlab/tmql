@@ -88,6 +88,7 @@ public class TMQLQueryTransformer {
 		specials.put("/", new String[] { "//", "/>", "</" });
 		specials.put("..", new String[] { "..." });
 		specials.put("*", new String[] {});
+		specials.put("!", new String[] {"!="});
 	}
 
 	/**

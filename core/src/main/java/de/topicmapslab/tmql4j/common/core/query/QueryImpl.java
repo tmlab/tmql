@@ -11,6 +11,7 @@
 package de.topicmapslab.tmql4j.common.core.query;
 
 import de.topicmapslab.tmql4j.common.model.query.IQuery;
+import de.topicmapslab.tmql4j.common.model.runtime.ITMQLRuntime;
 
 /**
  * Abstract base implementation of {@link IQuery} to implements the core
@@ -55,4 +56,17 @@ public abstract class QueryImpl implements IQuery {
 		return queryString;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public void beforeQuery(ITMQLRuntime runtime) {
+		// NOTHING TO DO		
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void afterQuery(ITMQLRuntime runtime) {
+		// NOTHING TO DO				
+	}
 }

@@ -14,19 +14,19 @@ import de.topicmapslab.tmql4j.draft2010.expressions.literals.StringLiteral;
 import de.topicmapslab.tmql4j.draft2010.expressions.literals.TimeLiteral;
 import de.topicmapslab.tmql4j.draft2010.tokens.Div;
 import de.topicmapslab.tmql4j.draft2010.tokens.DoubleColon;
-import de.topicmapslab.tmql4j.draft2010.tokens.Intersect;
-import de.topicmapslab.tmql4j.draft2010.tokens.Minus;
-import de.topicmapslab.tmql4j.draft2010.tokens.Union;
 import de.topicmapslab.tmql4j.interpreter.utility.operation.LiteralUtils;
 import de.topicmapslab.tmql4j.lexer.model.IToken;
 import de.topicmapslab.tmql4j.lexer.token.BracketRoundClose;
 import de.topicmapslab.tmql4j.lexer.token.BracketRoundOpen;
 import de.topicmapslab.tmql4j.lexer.token.BracketSquareOpen;
 import de.topicmapslab.tmql4j.lexer.token.Function;
+import de.topicmapslab.tmql4j.lexer.token.Intersect;
 import de.topicmapslab.tmql4j.lexer.token.Modulo;
 import de.topicmapslab.tmql4j.lexer.token.Plus;
 import de.topicmapslab.tmql4j.lexer.token.ShortcutAxisAtomifyMoveForward;
 import de.topicmapslab.tmql4j.lexer.token.Star;
+import de.topicmapslab.tmql4j.lexer.token.Substraction;
+import de.topicmapslab.tmql4j.lexer.token.Union;
 import de.topicmapslab.tmql4j.lexer.token.Variable;
 import de.topicmapslab.tmql4j.parser.core.ExpressionImpl;
 import de.topicmapslab.tmql4j.parser.model.IExpression;
@@ -179,7 +179,7 @@ public class ValueExpression extends ExpressionImpl {
 			} else if (bracketCount == 0
 					&& (token.equals(Union.class)
 							|| token.equals(Intersect.class) || token
-							.equals(Minus.class))) {
+							.equals(Substraction.class))) {
 				return true;
 			}
 		}

@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.common.core.query.TMQLQuery;
+import de.topicmapslab.tmql4j.draft2010.query.TMQLQueryDraft2008;
 import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
 import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
 
@@ -21,7 +22,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = prefix + " undef  ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQueryDraft2008(query));
 		Assert.assertEquals(1,set.size()); 
 		Assert.assertEquals(1,set.first().size());
 		Assert.assertTrue(set.first().first() instanceof Topic);
@@ -170,7 +171,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " 99 - 2 - 99 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQueryDraft2008(query));
 		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -505,5 +506,61 @@ public class TestValueExpression extends Tmql4JTestCase {
 		} else {
 			Assert.fail();
 		}
+	}
+	
+	@Test
+	public void testEquals() throws Exception {
+		Topic t = createTopicBySI("myTopic");
+		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
+		String query = null;
+		SimpleResultSet set = null;
+
+		query = prefix + " myTopic [ 1 == 1 ]";
+		set = execute(new TMQLQuery(query));
+		Assert.assertEquals(1, set.size());
+		Assert.assertEquals(1, set.first().size());
+		Assert.assertEquals(t, set.first().first());
+		
+		query = prefix + " myTopic [ 1 == 2 ]";
+		set = execute(new TMQLQuery(query));
+		Assert.assertEquals(0, set.size());
+
+		query = prefix + "  myTopic [ \"a\" == \"a\" ]";
+		set = execute(new TMQLQuery(query));
+		Assert.assertEquals(1, set.size());
+		Assert.assertEquals(1, set.first().size());
+		Assert.assertEquals(t, set.first().first());
+		
+		query = prefix + "  myTopic [ \"a\" == \"b\" ] ";
+		set = execute(new TMQLQuery(query));
+		Assert.assertEquals(0, set.size());
+	}
+	
+	@Test
+	public void testUnEquals() throws Exception {
+		Topic t = createTopicBySI("myTopic");
+		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
+		String query = null;
+		SimpleResultSet set = null;
+
+		query = prefix + " myTopic [ 1 != 2 ]";
+		set = execute(new TMQLQuery(query));
+		Assert.assertEquals(1, set.size());
+		Assert.assertEquals(1, set.first().size());
+		Assert.assertEquals(t, set.first().first());
+		
+		query = prefix + " myTopic [ 1 != 1 ]";
+		set = execute(new TMQLQuery(query));
+		Assert.assertEquals(0, set.size());
+
+		query = prefix + "  myTopic [ \"a\" != \"b\"  ]";
+		set = execute(new TMQLQuery(query));
+		Assert.assertEquals(1, set.size());
+		Assert.assertEquals(1, set.first().size());
+		Assert.assertEquals(t, set.first().first());
+		
+		query = prefix + "  myTopic [ \"a\" != \"a\"  ]";
+		set = execute(new TMQLQuery(query));
+		Assert.assertEquals(0, set.size());
 	}
 }

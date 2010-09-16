@@ -4,6 +4,8 @@ import de.topicmapslab.tmql4j.common.core.exception.TMQLInitializationException;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.core.query.TMQLQuery;
 import de.topicmapslab.tmql4j.common.model.query.IQuery;
+import de.topicmapslab.tmql4j.common.model.runtime.ITMQLRuntime;
+import de.topicmapslab.tmql4j.draft2010.extension.PathLanguageDraft2010ExtensionPoint;
 import de.topicmapslab.tmql4j.preprocessing.core.moduls.TMQLCanonizer;
 import de.topicmapslab.tmql4j.preprocessing.model.ICanonizer;
 
@@ -50,6 +52,28 @@ public class TMQLQueryDraft2008 extends TMQLQuery {
 	 */
 	public String getQueryString() {
 		return canonized.getQueryString();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void beforeQuery(ITMQLRuntime runtime) {
+		super.beforeQuery(runtime);
+		/*
+		 * disable new draft
+		 */
+		runtime.getExtensionPointAdapter().disableExtensionPoint(PathLanguageDraft2010ExtensionPoint.DRAFT_2010_EXTENSIONPOINT_ID);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void afterQuery(ITMQLRuntime runtime) {		
+		super.afterQuery(runtime);
+		/*
+		 * enable new draft
+		 */
+		runtime.getExtensionPointAdapter().enableExtensionPoint(PathLanguageDraft2010ExtensionPoint.DRAFT_2010_EXTENSIONPOINT_ID);
 	}
 
 }

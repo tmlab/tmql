@@ -18,6 +18,7 @@ import de.topicmapslab.tmql4j.common.model.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.common.utility.HashUtil;
 import de.topicmapslab.tmql4j.interpreter.core.base.QueryMatches;
 import de.topicmapslab.tmql4j.lexer.model.IToken;
+import de.topicmapslab.tmql4j.lexer.token.Equality;
 import de.topicmapslab.tmql4j.lexer.token.GreaterEquals;
 import de.topicmapslab.tmql4j.lexer.token.GreaterThan;
 import de.topicmapslab.tmql4j.lexer.token.LowerEquals;
@@ -28,6 +29,7 @@ import de.topicmapslab.tmql4j.lexer.token.Percent;
 import de.topicmapslab.tmql4j.lexer.token.Plus;
 import de.topicmapslab.tmql4j.lexer.token.RegularExpression;
 import de.topicmapslab.tmql4j.lexer.token.Star;
+import de.topicmapslab.tmql4j.lexer.token.Unequals;
 
 /**
  * Utility class to handle set operations.
@@ -124,6 +126,18 @@ public class QueryMatchUtils {
 		 */
 		else if (operator.equals(RegularExpression.class)) {
 			return matchesRegExp(runtime, arguments[0], arguments[1]);
+		}
+		/*
+		 * is equality
+		 */
+		else if ( operator.equals(Equality.class)){
+			return equals(runtime, arguments[0], arguments[1]);
+		}
+		/*
+		 * is not same
+		 */
+		else if ( operator.equals(Unequals.class)){
+			return unequals(runtime, arguments[0], arguments[1]);
 		}
 
 		throw new TMQLRuntimeException("The operator '"
@@ -325,11 +339,10 @@ public class QueryMatchUtils {
 		QueryMatches result = new QueryMatches(runtime);
 
 		for (Map<String, Object> tuple : leftHand) {
-			out: for (Map<String, Object> tupleB : rightHand) {
-				if (!tuple.entrySet().containsAll(tupleB.entrySet())) {
-					continue out;
+			for (Map<String, Object> tupleB : rightHand) {
+				if (tuple.entrySet().containsAll(tupleB.entrySet())) {
+					result.add(tuple);	
 				}
-				result.add(tuple);
 				break;
 			}
 		}

@@ -11,6 +11,7 @@
 package de.topicmapslab.tmql4j.common.model.query;
 
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.common.model.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.resultprocessing.model.IResultSet;
 
 /**
@@ -42,4 +43,20 @@ public interface IQuery {
 	 *             thrown if querying process not finished yet
 	 */
 	public IResultSet<?> getResults() throws TMQLRuntimeException;
+
+	/**
+	 * Method called by the TMQL runtime after the execution querying process
+	 * 
+	 * @param runtime
+	 *            the runtime calling the method
+	 */
+	public void beforeQuery(ITMQLRuntime runtime);
+	
+	/**
+	 * Method called by the TMQL runtime after the execution querying process
+	 * 
+	 * @param runtime
+	 *            the runtime calling the method
+	 */
+	public void afterQuery(ITMQLRuntime runtime);
 }

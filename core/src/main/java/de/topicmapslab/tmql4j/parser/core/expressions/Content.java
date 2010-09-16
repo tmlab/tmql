@@ -20,16 +20,16 @@ import de.topicmapslab.tmql4j.common.utility.HashUtil;
 import de.topicmapslab.tmql4j.lexer.model.IToken;
 import de.topicmapslab.tmql4j.lexer.token.BracketAngleClose;
 import de.topicmapslab.tmql4j.lexer.token.BracketAngleOpen;
-import de.topicmapslab.tmql4j.lexer.token.Combination;
 import de.topicmapslab.tmql4j.lexer.token.Element;
 import de.topicmapslab.tmql4j.lexer.token.Else;
-import de.topicmapslab.tmql4j.lexer.token.Equality;
 import de.topicmapslab.tmql4j.lexer.token.GreaterThan;
 import de.topicmapslab.tmql4j.lexer.token.If;
+import de.topicmapslab.tmql4j.lexer.token.Intersect;
 import de.topicmapslab.tmql4j.lexer.token.ShortcutCondition;
 import de.topicmapslab.tmql4j.lexer.token.Substraction;
 import de.topicmapslab.tmql4j.lexer.token.Then;
 import de.topicmapslab.tmql4j.lexer.token.TripleQuote;
+import de.topicmapslab.tmql4j.lexer.token.Union;
 import de.topicmapslab.tmql4j.lexer.token.XmlEndTag;
 import de.topicmapslab.tmql4j.lexer.token.XmlStartTag;
 import de.topicmapslab.tmql4j.parser.core.ExpressionImpl;
@@ -41,7 +41,7 @@ import de.topicmapslab.tmql4j.parser.utility.ParserUtils;
  * <p>
  * The grammar production rule of the expression is: <code>
  * <p>
- * content ::= content ( ++ | -- | == ) content
+ * content ::= content ( UNION | MINUS | INTERSECT ) content
  * </p>
  * <p>
  * content ::= { query-expression }
@@ -147,19 +147,23 @@ public class Content extends ExpressionImpl {
 			 */
 			Set<Class<? extends IToken>> operators = HashUtil.getHashSet();
 			operators.add(Substraction.class);
-			operators.add(Equality.class);
-			operators.add(Combination.class);
+			operators.add(Intersect.class);
+			operators.add(Union.class);
 			int index = ParserUtils.indexOfTokens(tmqlTokens, operators);
 			/*
 			 * is content operator content
 			 */
 			if (index != -1) {
 				setGrammarType(TYPE_SET_OPERATION);
-				checkForExtensions(Content.class, getTmqlTokens().subList(0,
-						index), getTokens().subList(0, index), runtime);
-				checkForExtensions(Content.class, getTmqlTokens().subList(
-						index + 1, getTmqlTokens().size()), getTokens()
-						.subList(index + 1, getTokens().size()), runtime);
+				checkForExtensions(Content.class,
+						getTmqlTokens().subList(0, index),
+						getTokens().subList(0, index), runtime);
+				checkForExtensions(
+						Content.class,
+						getTmqlTokens().subList(index + 1,
+								getTmqlTokens().size()),
+						getTokens().subList(index + 1, getTokens().size()),
+						runtime);
 				indexOfOperator = index;
 			} else {
 				/*
@@ -192,22 +196,22 @@ public class Content extends ExpressionImpl {
 					 */
 					operators.clear();
 					operators.add(Then.class);
-					int iThen = ParserUtils.indexOfTokens(tmqlTokens,
-							operators);
+					int iThen = ParserUtils
+							.indexOfTokens(tmqlTokens, operators);
 					/*
 					 * get index of keyword THEN
 					 */
 					operators.clear();
 					operators.add(Else.class);
-					int iElse = ParserUtils.indexOfTokens(tmqlTokens,
-							operators);
+					int iElse = ParserUtils
+							.indexOfTokens(tmqlTokens, operators);
 
 					/*
 					 * add path-expression as condition
 					 */
-					checkForExtensions(PathExpression.class, tmqlTokens
-							.subList(1, iThen), tokens.subList(1, iThen),
-							runtime);
+					checkForExtensions(PathExpression.class,
+							tmqlTokens.subList(1, iThen),
+							tokens.subList(1, iThen), runtime);
 					/*
 					 * has else expression
 					 */
@@ -215,9 +219,9 @@ public class Content extends ExpressionImpl {
 						/*
 						 * is then-content
 						 */
-						checkForExtensions(Content.class, tmqlTokens.subList(
-								iThen + 1, iElse), tokens.subList(iThen + 1,
-								iElse), runtime);
+						checkForExtensions(Content.class,
+								tmqlTokens.subList(iThen + 1, iElse),
+								tokens.subList(iThen + 1, iElse), runtime);
 						/*
 						 * is else-content
 						 */
@@ -244,9 +248,9 @@ public class Content extends ExpressionImpl {
 						/*
 						 * add query-expression without { and }
 						 */
-						checkForExtensions(QueryExpression.class, tmqlTokens
-								.subList(1, tmqlTokens.size() - 1), tokens
-								.subList(1, tokens.size() - 1), runtime);
+						checkForExtensions(QueryExpression.class,
+								tmqlTokens.subList(1, tmqlTokens.size() - 1),
+								tokens.subList(1, tokens.size() - 1), runtime);
 					} else {
 						checkForExtensions(QueryExpression.class, tmqlTokens,
 								tokens, runtime);
@@ -275,14 +279,14 @@ public class Content extends ExpressionImpl {
 	public int getIndexOfOperator() {
 		return indexOfOperator;
 	}
-	
+
 	private boolean isXmlContent(IExpression parent,
 			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			TMQLRuntime runtime){
+			TMQLRuntime runtime) {
 		/*
 		 * parent should be a RETURN clause
 		 */
-		if ( !(parent instanceof ReturnClause)){
+		if (!(parent instanceof ReturnClause)) {
 			return false;
 		}
 		/*
@@ -296,15 +300,19 @@ public class Content extends ExpressionImpl {
 		/*
 		 * starts with <yml.. > and has END Tag
 		 */
-		else if (tmqlTokens.get(0).equals(Element.class) && tokens.get(0).startsWith("<")&& tmqlTokens.get(tmqlTokens.size() - 1)
-				.equals(XmlEndTag.class)){
+		else if (tmqlTokens.get(0).equals(Element.class)
+				&& tokens.get(0).startsWith("<")
+				&& tmqlTokens.get(tmqlTokens.size() - 1)
+						.equals(XmlEndTag.class)) {
 			Set<Class<? extends IToken>> tokensToFound = HashUtil.getHashSet();
 			tokensToFound.add(GreaterThan.class);
-			Set<Class<? extends IToken>> protectionStarts = HashUtil.getHashSet();
+			Set<Class<? extends IToken>> protectionStarts = HashUtil
+					.getHashSet();
 			tokensToFound.add(BracketAngleOpen.class);
 			Set<Class<? extends IToken>> protectionEnds = HashUtil.getHashSet();
 			tokensToFound.add(BracketAngleClose.class);
-			int index = ParserUtils.indexOfTokens(tmqlTokens, tokensToFound, protectionStarts, protectionEnds);
+			int index = ParserUtils.indexOfTokens(tmqlTokens, tokensToFound,
+					protectionStarts, protectionEnds);
 			return index != -1;
 		}
 		return false;

@@ -88,7 +88,7 @@ public class TestFromClause extends Tmql4JTestCase {
 			assertTrue(otherInstances.contains(r.first()));
 		}
 		
-		query = "SELECT // tm:subject FROM // myOtherType ++ // myType";
+		query = "SELECT // tm:subject FROM // myOtherType UNION // myType";
 		set = execute(query);
 		assertEquals(100, set.size());
 		for (IResult r : set) {

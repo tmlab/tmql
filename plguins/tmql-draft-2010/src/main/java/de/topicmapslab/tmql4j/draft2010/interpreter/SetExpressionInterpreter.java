@@ -7,13 +7,13 @@ import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
 import de.topicmapslab.tmql4j.common.utility.VariableNames;
 import de.topicmapslab.tmql4j.draft2010.expressions.Expression;
 import de.topicmapslab.tmql4j.draft2010.expressions.SetExpression;
-import de.topicmapslab.tmql4j.draft2010.tokens.Intersect;
-import de.topicmapslab.tmql4j.draft2010.tokens.Minus;
-import de.topicmapslab.tmql4j.draft2010.tokens.Union;
 import de.topicmapslab.tmql4j.interpreter.core.base.QueryMatches;
 import de.topicmapslab.tmql4j.interpreter.model.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.interpreter.utility.operation.QueryMatchUtils;
 import de.topicmapslab.tmql4j.lexer.model.IToken;
+import de.topicmapslab.tmql4j.lexer.token.Intersect;
+import de.topicmapslab.tmql4j.lexer.token.Substraction;
+import de.topicmapslab.tmql4j.lexer.token.Union;
 
 /**
  * Interpreter implementation of production 'set-expression'
@@ -63,7 +63,7 @@ public class SetExpressionInterpreter extends
 			if (operator.equals(Union.class)) {
 				leftHand = QueryMatchUtils.union(runtime, leftHand,
 						arguments[index]);
-			} else if (operator.equals(Minus.class)) {
+			} else if (operator.equals(Substraction.class)) {
 				leftHand = QueryMatchUtils.minus(runtime, leftHand,
 						arguments[index]);
 			} else if (operator.equals(Intersect.class)) {

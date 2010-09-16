@@ -13,8 +13,8 @@ package de.topicmapslab.tmql4j.common.core.runtime;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.Map;
-import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.tmapi.core.FactoryConfigurationException;
 import org.tmapi.core.TMAPIException;
@@ -405,7 +405,10 @@ public class TMQLRuntime implements ITMQLRuntime {
 	 * {@inheritDoc}
 	 */
 	public void run(IQuery query) throws TMQLRuntimeException {
-
+		/*
+		 * before-execution call to query
+		 */
+		query.beforeQuery(this);
 		/*
 		 * read expected result type
 		 */
@@ -436,6 +439,10 @@ public class TMQLRuntime implements ITMQLRuntime {
 		if (query instanceof TMQLQuery) {
 			((TMQLQuery) query).setResults(store.getResultSet());
 		}
+		/*
+		 * after-execution call to query
+		 */
+		query.afterQuery(this);
 	}
 
 	/**

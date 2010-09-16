@@ -18,7 +18,7 @@ public class Substraction extends Token {
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "--";
+		return "MINUS";
 	}
 
 }

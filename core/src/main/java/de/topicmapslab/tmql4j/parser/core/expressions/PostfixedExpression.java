@@ -25,7 +25,9 @@ import de.topicmapslab.tmql4j.lexer.token.BracketRoundClose;
 import de.topicmapslab.tmql4j.lexer.token.BracketRoundOpen;
 import de.topicmapslab.tmql4j.lexer.token.BracketSquareClose;
 import de.topicmapslab.tmql4j.lexer.token.BracketSquareOpen;
-import de.topicmapslab.tmql4j.lexer.token.Combination;
+import de.topicmapslab.tmql4j.lexer.token.Intersect;
+import de.topicmapslab.tmql4j.lexer.token.Unequals;
+import de.topicmapslab.tmql4j.lexer.token.Union;
 import de.topicmapslab.tmql4j.lexer.token.Comma;
 import de.topicmapslab.tmql4j.lexer.token.Equality;
 import de.topicmapslab.tmql4j.lexer.token.Every;
@@ -263,13 +265,14 @@ public class PostfixedExpression extends ExpressionImpl {
 		tupleExpressionIndicators.add(LowerThan.class);
 		tupleExpressionIndicators.add(LowerEquals.class);
 		tupleExpressionIndicators.add(RegularExpression.class);
+		tupleExpressionIndicators.add(Equality.class);
+		tupleExpressionIndicators.add(Unequals.class);
 		/*
 		 * set operators
 		 */
-
-		tupleExpressionIndicators.add(Equality.class);
+		tupleExpressionIndicators.add(Intersect.class);
 		tupleExpressionIndicators.add(Substraction.class);
-		tupleExpressionIndicators.add(Combination.class);
+		tupleExpressionIndicators.add(Union.class);
 		/*
 		 * special boolean keywords
 		 */

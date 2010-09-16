@@ -10,7 +10,6 @@
  */
 package de.topicmapslab.tmql4j.extensions.core;
 
-import java.io.InputStream;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -41,10 +40,21 @@ public class ExtensionPointAdapter {
 	 */
 	private final Map<String, IExtensionPoint> extensionPoints = HashUtil
 			.getHashMap();
+
+	/**
+	 * internal set of all ignored extensions
+	 */
+	private final Set<String> disabledExtensionPoints = HashUtil.getHashSet();
 	/**
 	 * internal map of all registered language extensions
 	 */
 	private final Map<Class<? extends IExpression>, Set<ILanguageExtension>> languageExtensions = HashUtil
+			.getHashMap();
+
+	/**
+	 * a map containing all language extensions of a specific extension point
+	 */
+	private final Map<IExtensionPoint, Set<ILanguageExtension>> registeredLanguageExtenstions = HashUtil
 			.getHashMap();
 
 	/**
@@ -64,28 +74,30 @@ public class ExtensionPointAdapter {
 	 */
 	public void loadExtensionPoints(ITMQLRuntime runtime)
 			throws TMQLExtensionRegistryException {
-		
+
 		Iterable<IExtensionPoint> pointList = null;
-		
+
 		// try to load the extension points via OSGi
 		try {
-			// check if we are in an OSGi environment if not an exception is thrown
-			if (TMQLActivator.getDefault()!=null)
+			// check if we are in an OSGi environment if not an exception is
+			// thrown
+			if (TMQLActivator.getDefault() != null)
 				pointList = TMQLActivator.getDefault().getExtensionPoints();
 		} catch (Throwable e) {
 			// we do nothing, cause we are not in an OSGi environment
 			logger.warn("No Osgi Bundle founde", e);
 		}
-		
-		
+
 		// if no OSGi list found use the loader
-		if (pointList==null) {
-			ServiceLoader<IExtensionPoint> loader = ServiceLoader.load(IExtensionPoint.class, getClass().getClassLoader());
-			InputStream  is = getClass().getResourceAsStream("/META-INF/services/" + IExtensionPoint.class.getName());
+		if (pointList == null) {
+			ServiceLoader<IExtensionPoint> loader = ServiceLoader.load(
+					IExtensionPoint.class, getClass().getClassLoader());
+			getClass().getResourceAsStream(
+					"/META-INF/services/" + IExtensionPoint.class.getName());
 			loader.reload();
 			pointList = loader;
 		}
-		
+
 		for (IExtensionPoint extensionPoint : pointList) {
 			if (extensionPoints.containsKey(extensionPoint
 					.getExtensionPointId())) {
@@ -114,6 +126,7 @@ public class ExtensionPointAdapter {
 				set.add((ILanguageExtension) extensionPoint);
 				languageExtensions.put(((ILanguageExtension) extensionPoint)
 						.getLanguageExtensionEntry().getExpressionType(), set);
+				registeredLanguageExtenstions.put(extensionPoint, set);
 			}
 		}
 	}
@@ -128,7 +141,68 @@ public class ExtensionPointAdapter {
 	 */
 	public Set<ILanguageExtension> getLanguageExtensions(
 			Class<? extends IExpression> expressionType) {
-		return languageExtensions.get(expressionType);
+		/*
+		 * get language extensions
+		 */
+		Set<ILanguageExtension> set = languageExtensions.get(expressionType);
+		/*
+		 * check if set is null
+		 */
+		if (set != null) {
+			/*
+			 * iterate over disabled extension points
+			 */
+			for (String extensionPointId : disabledExtensionPoints) {
+				/*
+				 * extract language extensions of the diables extension point
+				 */
+				Set<ILanguageExtension> tmp = getLanguageExtensions(extensionPoints
+						.get(extensionPointId));
+				if (tmp != null) {
+					/*
+					 * remove from set
+					 */
+					set.removeAll(tmp);
+				}
+			}
+		}
+		return set;
+	}
+
+	/**
+	 * Getter of a set of language extension registered by the given extension
+	 * point
+	 * 
+	 * @param point
+	 *            the language extension
+	 * @return a set of the language extensions or <code>null</code>
+	 */
+	public Set<ILanguageExtension> getLanguageExtensions(IExtensionPoint point) {
+		return registeredLanguageExtenstions.get(point);
+	}
+
+	/**
+	 * Enable the extension point with the given id if it exists
+	 * 
+	 * @param extensionPointId
+	 *            the id
+	 */
+	public final void enableExtensionPoint(final String extensionPointId) {
+		if (extensionPoints.containsKey(extensionPointId)) {
+			disabledExtensionPoints.remove(extensionPointId);
+		}
+	}
+
+	/**
+	 * Disable the extension point with the given id if it exists
+	 * 
+	 * @param extensionPointId
+	 *            the id
+	 */
+	public final void disableExtensionPoint(final String extensionPointId) {
+		if (extensionPoints.containsKey(extensionPointId)) {
+			disabledExtensionPoints.add(extensionPointId);
+		}
 	}
 
 }

@@ -44,7 +44,7 @@ import de.topicmapslab.tmql4j.parser.core.expressions.ValueExpression;
  * value-expression ::= content
  * </p>
  * <p>
- * infix-operator ::= + | - | * | % | mod | < | <= | > | >= | =~ | ++ | -- | ==
+ * infix-operator ::= + | - | * | % | mod | < | <= | > | >= | =~ | == | !=
  * </p>
  * <p>
  * prefix-operator ::= - |

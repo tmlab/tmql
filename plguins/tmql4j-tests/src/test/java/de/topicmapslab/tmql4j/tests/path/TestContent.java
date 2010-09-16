@@ -43,7 +43,7 @@ public class TestContent extends Tmql4JTestCase {
 			t.addType(other);
 		}
 
-		query = " // myType == // other";
+		query = " // myType INTERSECT // other";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -51,7 +51,7 @@ public class TestContent extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 
-		query = " // other == // myType";
+		query = " // other INTERSECT // myType";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -82,7 +82,7 @@ public class TestContent extends Tmql4JTestCase {
 			}
 		}
 
-		query = " // myType == // other == // another";
+		query = " // myType INTERSECT // other INTERSECT // another";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -90,7 +90,7 @@ public class TestContent extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 
-		query = " // myType == // another == // other";
+		query = " // myType INTERSECT // another INTERSECT // other";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -98,7 +98,7 @@ public class TestContent extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 
-		query = " // other == // myType == // another";
+		query = " // other INTERSECT // myType INTERSECT // another";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -106,7 +106,7 @@ public class TestContent extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 
-		query = " // other == // another == // myType";
+		query = " // other INTERSECT // another INTERSECT // myType";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -114,7 +114,7 @@ public class TestContent extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 
-		query = " // another == // myType == // other";
+		query = " // another INTERSECT // myType INTERSECT // other";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -122,7 +122,7 @@ public class TestContent extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 
-		query = " // another == // other == // myType";
+		query = " // another INTERSECT // other INTERSECT // myType";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -148,7 +148,7 @@ public class TestContent extends Tmql4JTestCase {
 			topics.add(t);
 		}
 
-		query = " // myType ++ // other";
+		query = " // myType UNION // other";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -156,7 +156,7 @@ public class TestContent extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 
-		query = " // other ++ // myType";
+		query = " // other UNION // myType";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -185,7 +185,7 @@ public class TestContent extends Tmql4JTestCase {
 			topics.add(t);
 		}
 
-		query = " // myType ++ // other ++ // another";
+		query = " // myType UNION // other UNION // another";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -193,7 +193,7 @@ public class TestContent extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 
-		query = " // myType ++ // another ++ // other";
+		query = " // myType UNION // another UNION // other";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -201,7 +201,7 @@ public class TestContent extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 
-		query = " // other ++ // myType ++ // another";
+		query = " // other UNION // myType UNION // another";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -209,7 +209,7 @@ public class TestContent extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 
-		query = " // other ++ // another ++ // myType";
+		query = " // other UNION // another UNION // myType";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -217,7 +217,7 @@ public class TestContent extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 
-		query = " // another ++ // myType ++ // other";
+		query = " // another UNION // myType UNION // other";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -225,7 +225,7 @@ public class TestContent extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 
-		query = " // another ++ // other ++ // myType";
+		query = " // another UNION // other UNION // myType";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -252,7 +252,7 @@ public class TestContent extends Tmql4JTestCase {
 			}
 		}
 
-		query = " // other -- // myType";
+		query = " // other MINUS // myType";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -260,7 +260,7 @@ public class TestContent extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 
-		query = " // myType -- // other";
+		query = " // myType MINUS // other";
 		set = execute(query);
 		assertEquals(0, set.size());
 	}
@@ -289,9 +289,9 @@ public class TestContent extends Tmql4JTestCase {
 
 		/*
 		 * second part will be interpret first 
-		 * ( // other ++ // myType )
+		 * ( // other UNION // myType )
 		 */
-		query = " // another -- // other ++ // myType";
+		query = " // another MINUS // other UNION // myType";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {

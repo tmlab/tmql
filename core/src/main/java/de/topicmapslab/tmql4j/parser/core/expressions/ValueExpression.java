@@ -21,6 +21,7 @@ import de.topicmapslab.tmql4j.lexer.model.IToken;
 import de.topicmapslab.tmql4j.lexer.token.Asc;
 import de.topicmapslab.tmql4j.lexer.token.At;
 import de.topicmapslab.tmql4j.lexer.token.Desc;
+import de.topicmapslab.tmql4j.lexer.token.Equality;
 import de.topicmapslab.tmql4j.lexer.token.Every;
 import de.topicmapslab.tmql4j.lexer.token.Exists;
 import de.topicmapslab.tmql4j.lexer.token.Function;
@@ -35,6 +36,7 @@ import de.topicmapslab.tmql4j.lexer.token.Plus;
 import de.topicmapslab.tmql4j.lexer.token.RegularExpression;
 import de.topicmapslab.tmql4j.lexer.token.Some;
 import de.topicmapslab.tmql4j.lexer.token.Star;
+import de.topicmapslab.tmql4j.lexer.token.Unequals;
 import de.topicmapslab.tmql4j.parser.core.ExpressionImpl;
 import de.topicmapslab.tmql4j.parser.model.IExpression;
 import de.topicmapslab.tmql4j.parser.utility.ParserUtils;
@@ -58,7 +60,7 @@ import de.topicmapslab.tmql4j.parser.utility.ParserUtils;
  * value-expression ::= content
  * </p>
  * <p>
- * infix-operator ::= + | - | * | % | mod | < | <= | > | >= | =~ | ++ | -- | ==
+ * infix-operator ::= + | - | * | % | mod | < | <= | > | >= | =~ | == | !=
  * </p>
  * <p>
  * prefix-operator ::= - |
@@ -257,6 +259,8 @@ public class ValueExpression extends ExpressionImpl {
 		operators.add(LowerEquals.class);
 		operators.add(GreaterThan.class);
 		operators.add(GreaterEquals.class);
+		operators.add(Equality.class);
+		operators.add(Unequals.class);
 		operators.add(RegularExpression.class);
 		return ParserUtils.indexOfTokens(tokens, operators);
 	}

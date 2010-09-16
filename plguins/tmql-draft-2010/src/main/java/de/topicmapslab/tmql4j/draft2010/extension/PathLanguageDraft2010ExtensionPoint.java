@@ -82,9 +82,7 @@ import de.topicmapslab.tmql4j.draft2010.tokens.DirectType;
 import de.topicmapslab.tmql4j.draft2010.tokens.Div;
 import de.topicmapslab.tmql4j.draft2010.tokens.DoubleColon;
 import de.topicmapslab.tmql4j.draft2010.tokens.Instance;
-import de.topicmapslab.tmql4j.draft2010.tokens.Intersect;
 import de.topicmapslab.tmql4j.draft2010.tokens.ItemIdentifier;
-import de.topicmapslab.tmql4j.draft2010.tokens.Minus;
 import de.topicmapslab.tmql4j.draft2010.tokens.Name;
 import de.topicmapslab.tmql4j.draft2010.tokens.Occurrence;
 import de.topicmapslab.tmql4j.draft2010.tokens.Parent;
@@ -98,21 +96,22 @@ import de.topicmapslab.tmql4j.draft2010.tokens.Subtype;
 import de.topicmapslab.tmql4j.draft2010.tokens.Supertype;
 import de.topicmapslab.tmql4j.draft2010.tokens.Topic;
 import de.topicmapslab.tmql4j.draft2010.tokens.Type;
-import de.topicmapslab.tmql4j.draft2010.tokens.Unequals;
-import de.topicmapslab.tmql4j.draft2010.tokens.Union;
 import de.topicmapslab.tmql4j.draft2010.tokens.Value;
 import de.topicmapslab.tmql4j.draft2010.tokens.Variant;
 import de.topicmapslab.tmql4j.extensions.exception.TMQLExtensionRegistryException;
 import de.topicmapslab.tmql4j.extensions.model.ILanguageExtension;
 import de.topicmapslab.tmql4j.extensions.model.ILanguageExtensionEntry;
 import de.topicmapslab.tmql4j.lexer.core.TokenRegistry;
+import de.topicmapslab.tmql4j.lexer.token.Unequals;
 import de.topicmapslab.tmql4j.parser.core.expressions.QueryExpression;
 import de.topicmapslab.tmql4j.parser.model.IExpression;
 
 public class PathLanguageDraft2010ExtensionPoint implements ILanguageExtension {
 
+	public static final String DRAFT_2010_EXTENSIONPOINT_ID = "path-language-draft-2010";
+	
 	public String getExtensionPointId() {
-		return "path-language-draft-2010";
+		return DRAFT_2010_EXTENSIONPOINT_ID;
 	}
 
 	public void registerExtension(ITMQLRuntime runtime)
@@ -143,9 +142,7 @@ public class PathLanguageDraft2010ExtensionPoint implements ILanguageExtension {
 		registry.register(Div.class);
 		registry.register(DoubleColon.class);
 		registry.register(Instance.class);
-		registry.register(Intersect.class);
 		registry.register(ItemIdentifier.class);
-		registry.register(Minus.class);
 		registry.register(Name.class);
 		registry.register(Occurrence.class);
 		registry.register(Parent.class);
@@ -162,7 +159,6 @@ public class PathLanguageDraft2010ExtensionPoint implements ILanguageExtension {
 		registry.register(Topic.class);
 		registry.register(Type.class);
 		registry.register(Unequals.class);
-		registry.register(Union.class);
 		registry.register(Value.class);
 		registry.register(Variant.class);
 

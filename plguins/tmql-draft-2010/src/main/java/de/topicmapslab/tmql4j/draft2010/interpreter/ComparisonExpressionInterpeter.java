@@ -6,7 +6,6 @@ import de.topicmapslab.tmql4j.common.utility.VariableNames;
 import de.topicmapslab.tmql4j.draft2010.expressions.ComparisonExpression;
 import de.topicmapslab.tmql4j.draft2010.interpreter.base.BaseExpressionInterpreter;
 import de.topicmapslab.tmql4j.draft2010.tokens.MatchesRegExp;
-import de.topicmapslab.tmql4j.draft2010.tokens.Unequals;
 import de.topicmapslab.tmql4j.interpreter.core.base.QueryMatches;
 import de.topicmapslab.tmql4j.interpreter.utility.operation.QueryMatchUtils;
 import de.topicmapslab.tmql4j.lexer.model.IToken;
@@ -16,6 +15,7 @@ import de.topicmapslab.tmql4j.lexer.token.GreaterThan;
 import de.topicmapslab.tmql4j.lexer.token.LowerEquals;
 import de.topicmapslab.tmql4j.lexer.token.LowerThan;
 import de.topicmapslab.tmql4j.lexer.token.ShortcutAxisLocators;
+import de.topicmapslab.tmql4j.lexer.token.Unequals;
 
 public class ComparisonExpressionInterpeter extends
 		BaseExpressionInterpreter<ComparisonExpression> {

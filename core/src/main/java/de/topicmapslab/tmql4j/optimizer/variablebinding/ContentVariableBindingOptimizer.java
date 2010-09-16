@@ -17,7 +17,7 @@ import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
 import de.topicmapslab.tmql4j.common.utility.HashUtil;
 import de.topicmapslab.tmql4j.lexer.model.IToken;
-import de.topicmapslab.tmql4j.lexer.token.Combination;
+import de.topicmapslab.tmql4j.lexer.token.Union;
 import de.topicmapslab.tmql4j.lexer.token.Equality;
 import de.topicmapslab.tmql4j.lexer.token.Substraction;
 import de.topicmapslab.tmql4j.parser.core.expressions.Content;
@@ -81,7 +81,7 @@ public class ContentVariableBindingOptimizer extends
 					/*
 					 * is combination
 					 */
-					if (token.equals(Combination.class)) {
+					if (token.equals(Union.class)) {
 						Set<Object> bindings = HashUtil.getHashSet();
 						/*
 						 * combine possible bindings of all contained

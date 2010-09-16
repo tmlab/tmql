@@ -14,10 +14,13 @@ import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * @author Sven Krosse
- *
+ * 
  */
 @RunWith(Suite.class)
-@SuiteClasses({TestFilterPostfix.class, TestNavigationAxis.class, TestNonCanonicalNaviagationAxis.class, TestTupleExpression.class , TestPredicateInvocation.class})
+@SuiteClasses({ TestFilterPostfix.class, TestNavigationAxis.class,
+		TestNonCanonicalNaviagationAxis.class, TestTupleExpression.class,
+		TestPredicateInvocation.class, TestContent.class,
+		TestValueExpression.class, TestFunctionInvocation.class })
 public class PathStyleTests {
 
 }

@@ -25,10 +25,10 @@ import de.topicmapslab.tmql4j.interpreter.model.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.interpreter.model.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.interpreter.utility.operation.QueryMatchUtils;
 import de.topicmapslab.tmql4j.lexer.model.IToken;
-import de.topicmapslab.tmql4j.lexer.token.Combination;
-import de.topicmapslab.tmql4j.lexer.token.Equality;
 import de.topicmapslab.tmql4j.lexer.token.If;
+import de.topicmapslab.tmql4j.lexer.token.Intersect;
 import de.topicmapslab.tmql4j.lexer.token.Substraction;
+import de.topicmapslab.tmql4j.lexer.token.Union;
 import de.topicmapslab.tmql4j.parser.core.expressions.Content;
 import de.topicmapslab.tmql4j.parser.core.expressions.PathExpression;
 
@@ -99,7 +99,7 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
 		switch (getGrammarTypeOfExpression()) {
 		/*
-		 * is content ::= content ( ++ | -- | == ) content
+		 * is content ::= content ( UNION | MINUS | INTERSECT ) content
 		 */
 		case Content.TYPE_SET_OPERATION: {
 			interpretSetOperation(runtime);
@@ -177,25 +177,25 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 
 		QueryMatches result = null;
 		/*
-		 * is ==
+		 * is INTERSECT
 		 */
-		if (operator.equals(Equality.class)) {
+		if (operator.equals(Intersect.class)) {
 			/*
 			 * only tuple contained in both sequences
 			 */
-			result = QueryMatchUtils.equality(runtime, content[0], content[1]);
+			result = QueryMatchUtils.intersect(runtime, content[0], content[1]);
 		}
 		/*
-		 * is ++
+		 * is UNION
 		 */
-		else if (operator.equals(Combination.class)) {
+		else if (operator.equals(Union.class)) {
 			/*
 			 * combination of both sequences with duplicates
 			 */
 			result = QueryMatchUtils.union(runtime, content[0], content[1]);
 		}
 		/*
-		 * is --
+		 * is MINUS
 		 */
 		else if (operator.equals(Substraction.class)) {
 			/*
@@ -219,8 +219,8 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 		/*
 		 * set overall result to %%%____
 		 */
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				result);
+		runtime.getRuntimeContext().peek()
+				.setValue(VariableNames.QUERYMATCHES, result);
 
 		/*
 		 * log it
@@ -287,14 +287,15 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 			 */
 			if ((getTmqlTokens().get(0).equals(If.class) && getInterpreters(
 					runtime).size() == 3)) {
-				runtime.getRuntimeContext().peek().setValue(
-						VariableNames.QUERYMATCHES, content[1]);
+				runtime.getRuntimeContext().peek()
+						.setValue(VariableNames.QUERYMATCHES, content[1]);
 				logger.info("Finished! Results: " + content[1]);
 			} else if (!getTmqlTokens().get(0).equals(If.class)
 					&& getInterpreters(runtime).size() == 2) {
-				runtime.getRuntimeContext().peek().setValue(
-						VariableNames.QUERYMATCHES,
-						pathContent[pathContent.length - 1]);
+				runtime.getRuntimeContext()
+						.peek()
+						.setValue(VariableNames.QUERYMATCHES,
+								pathContent[pathContent.length - 1]);
 
 				logger.info("Finished! Results: "
 						+ pathContent[pathContent.length - 1]);
@@ -303,8 +304,10 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 			 * no else-content contained returns an empty sequence
 			 */
 			else {
-				runtime.getRuntimeContext().peek().setValue(
-						VariableNames.QUERYMATCHES, new QueryMatches(runtime));
+				runtime.getRuntimeContext()
+						.peek()
+						.setValue(VariableNames.QUERYMATCHES,
+								new QueryMatches(runtime));
 				logger.info("Finished! Results are empty");
 			}
 		}
@@ -316,15 +319,14 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 			 * there is an else-expression
 			 */
 			if (getTmqlTokens().contains(If.class)) {
-				runtime.getRuntimeContext().peek().setValue(
-						VariableNames.QUERYMATCHES, content[0]);
+				runtime.getRuntimeContext().peek()
+						.setValue(VariableNames.QUERYMATCHES, content[0]);
 			}
 			/*
 			 * shortcut condition
 			 */
 			else {
-				runtime
-						.getRuntimeContext()
+				runtime.getRuntimeContext()
 						.peek()
 						.setValue(
 								VariableNames.QUERYMATCHES,
