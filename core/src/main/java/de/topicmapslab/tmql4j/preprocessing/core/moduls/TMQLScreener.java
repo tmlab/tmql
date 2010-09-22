@@ -69,10 +69,17 @@ public class TMQLScreener implements IScreener {
 			 */
 			int index = line.indexOf("#");
 			while (index != -1) {
+				String parts[] = line.substring(0, index + 1).split("\"");
+				/*
+				 * is # part of string literal?
+				 */
+				if (parts.length % 2 == 0) {
+					index = line.indexOf("#", index + 1);
+				}
 				/*
 				 * check if $ is in front of # ==> $#
 				 */
-				if (index == 0 || line.charAt(index - 1) == ' ') {
+				else if (index == 0 || line.charAt(index - 1) != '$') {
 					/*
 					 * remove tokens after comment symbol
 					 */
@@ -82,7 +89,9 @@ public class TMQLScreener implements IScreener {
 				/*
 				 * comment token is part of IRI or variable name, get next token
 				 */
-				index = line.indexOf("#", index + 1);
+				else {
+					index = line.indexOf("#", index + 1);
+				}
 			}
 			/*
 			 * add cleaned line

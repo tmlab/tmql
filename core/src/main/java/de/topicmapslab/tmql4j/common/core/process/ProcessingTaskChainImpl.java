@@ -92,24 +92,36 @@ public class ProcessingTaskChainImpl implements IProcessingTaskChain {
 		/*
 		 * run canonizer process
 		 */
-		q = doCanonizingTask(runtime, q);		
+		q = doCanonizingTask(runtime, q);
 		/*
 		 * created variables layers
 		 */
 		doLinqOperations();
-		/*
-		 * run lexical scanning process
-		 */
-		ILexer lexer = doLexicalScanningTask(runtime, q);
-		/*
-		 * run parser process
-		 */
-		IParser parser = doParsingTask(runtime, lexer);
-		/*
-		 * run interpretation process
-		 */
-		QueryMatches matches = doInterpretationTask(runtime, parser);
 
+		QueryMatches matches = null;
+		/*
+		 * query string is empty
+		 */
+		if (q.getQueryString().isEmpty()) {
+			matches = new QueryMatches(runtime);
+		}
+		/*
+		 * non-empty query string
+		 */
+		else {
+			/*
+			 * run lexical scanning process
+			 */
+			ILexer lexer = doLexicalScanningTask(runtime, q);
+			/*
+			 * run parser process
+			 */
+			IParser parser = doParsingTask(runtime, lexer);
+			/*
+			 * run interpretation process
+			 */
+			matches = doInterpretationTask(runtime, parser);
+		}
 		/*
 		 * run result processing
 		 */
@@ -127,9 +139,7 @@ public class ProcessingTaskChainImpl implements IProcessingTaskChain {
 	 */
 	private void printlnIfIsVerbose(String line) {
 		if (runtime.isVerbose()) {
-			runtime.getPrintStream().println(
-					format.format(new Date(System.currentTimeMillis())) + ": "
-							+ line);
+			runtime.getPrintStream().println(format.format(new Date(System.currentTimeMillis())) + ": " + line);
 		}
 	}
 
@@ -151,13 +161,11 @@ public class ProcessingTaskChainImpl implements IProcessingTaskChain {
 	 *             thrown if execution or initialization of the current
 	 *             processing task fails
 	 */
-	protected void doInitializationTask(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	protected void doInitializationTask(TMQLRuntime runtime) throws TMQLRuntimeException {
 		/*
 		 * create new task
 		 */
-		IProcessingTask task = new InitializationTask(runtime, runtime
-				.getTopicMapSystem(), runtime.getTopicMap());
+		IProcessingTask task = new InitializationTask(runtime, runtime.getTopicMapSystem(), runtime.getTopicMap());
 		/*
 		 * initialize task
 		 */
@@ -171,8 +179,7 @@ public class ProcessingTaskChainImpl implements IProcessingTaskChain {
 		/*
 		 * handle task results
 		 */
-		runtime.setInitialContext(((IInitializationTask) task)
-				.getInitialContext());
+		runtime.setInitialContext(((IInitializationTask) task).getInitialContext());
 	}
 
 	/**
@@ -189,8 +196,7 @@ public class ProcessingTaskChainImpl implements IProcessingTaskChain {
 	 *             thrown if execution or initialization of the current
 	 *             processing task fails
 	 */
-	protected IQuery doScreeningTask(TMQLRuntime runtime, final IQuery query)
-			throws TMQLRuntimeException {
+	protected IQuery doScreeningTask(TMQLRuntime runtime, final IQuery query) throws TMQLRuntimeException {
 		/*
 		 * create new task
 		 */
@@ -229,8 +235,7 @@ public class ProcessingTaskChainImpl implements IProcessingTaskChain {
 	 *             thrown if execution or initialization of the current
 	 *             processing task fails
 	 */
-	protected IQuery doWhitespacingTask(TMQLRuntime runtime, final IQuery query)
-			throws TMQLRuntimeException {
+	protected IQuery doWhitespacingTask(TMQLRuntime runtime, final IQuery query) throws TMQLRuntimeException {
 		/*
 		 * create new task
 		 */
@@ -268,8 +273,7 @@ public class ProcessingTaskChainImpl implements IProcessingTaskChain {
 	 *             thrown if execution or initialization of the current
 	 *             processing task fails
 	 */
-	protected IQuery doCanonizingTask(TMQLRuntime runtime, final IQuery query)
-			throws TMQLRuntimeException {
+	protected IQuery doCanonizingTask(TMQLRuntime runtime, final IQuery query) throws TMQLRuntimeException {
 		/*
 		 * create new task
 		 */
@@ -305,9 +309,7 @@ public class ProcessingTaskChainImpl implements IProcessingTaskChain {
 		/*
 		 * create new variable layer
 		 */
-		runtime.getRuntimeContext().push(
-				runtime.getInitialContext().getPredefinedVariableSet()
-						.copyWithValues());
+		runtime.getRuntimeContext().push(runtime.getInitialContext().getPredefinedVariableSet().copyWithValues());
 		/*
 		 * do LINQ operations
 		 */
@@ -329,8 +331,7 @@ public class ProcessingTaskChainImpl implements IProcessingTaskChain {
 	 *             thrown if execution or initialization of the current
 	 *             processing task fails
 	 */
-	protected ILexer doLexicalScanningTask(TMQLRuntime runtime,
-			final IQuery query) throws TMQLRuntimeException {
+	protected ILexer doLexicalScanningTask(TMQLRuntime runtime, final IQuery query) throws TMQLRuntimeException {
 		/*
 		 * create new task
 		 */
@@ -349,8 +350,7 @@ public class ProcessingTaskChainImpl implements IProcessingTaskChain {
 		 * handle task results
 		 */
 		ILexer lexer = task.getResult();
-		runtime.getValueStore()
-				.setLanguageSpecificTokens(lexer.getTmqlTokens());
+		runtime.getValueStore().setLanguageSpecificTokens(lexer.getTmqlTokens());
 		runtime.getValueStore().setStringRepresentedTokens(lexer.getTokens());
 		return lexer;
 	}
@@ -371,8 +371,7 @@ public class ProcessingTaskChainImpl implements IProcessingTaskChain {
 	 *             thrown if execution or initialization of the current
 	 *             processing task fails
 	 */
-	protected IParser doParsingTask(TMQLRuntime runtime, final ILexer lexer)
-			throws TMQLRuntimeException {
+	protected IParser doParsingTask(TMQLRuntime runtime, final ILexer lexer) throws TMQLRuntimeException {
 		/*
 		 * create new task
 		 */
@@ -410,8 +409,7 @@ public class ProcessingTaskChainImpl implements IProcessingTaskChain {
 	 *             thrown if execution or initialization of the current
 	 *             processing task fails
 	 */
-	protected QueryMatches doInterpretationTask(TMQLRuntime runtime,
-			final IParser parser) throws TMQLRuntimeException {
+	protected QueryMatches doInterpretationTask(TMQLRuntime runtime, final IParser parser) throws TMQLRuntimeException {
 		/*
 		 * create new task
 		 */
@@ -449,13 +447,11 @@ public class ProcessingTaskChainImpl implements IProcessingTaskChain {
 	 *             thrown if execution or initialization of the current
 	 *             processing task fails
 	 */
-	protected IResultSet<?> doResultProcessingTask(TMQLRuntime runtime,
-			final QueryMatches matches) throws TMQLRuntimeException {
+	protected IResultSet<?> doResultProcessingTask(TMQLRuntime runtime, final QueryMatches matches) throws TMQLRuntimeException {
 		/*
 		 * create new task
 		 */
-		ResultprocessingTaskImpl task = new ResultprocessingTaskImpl(runtime,
-				matches);
+		ResultprocessingTaskImpl task = new ResultprocessingTaskImpl(runtime, matches);
 		/*
 		 * initialize task
 		 */
@@ -477,10 +473,10 @@ public class ProcessingTaskChainImpl implements IProcessingTaskChain {
 		 */
 		runtime.getRuntimeContext().pop();
 
-//		/*
-//		 * check if binding stack of runtime context is empty
-//		 */
-//		assert runtime.getRuntimeContext().isStackEmty();
+		// /*
+		// * check if binding stack of runtime context is empty
+		// */
+		// assert runtime.getRuntimeContext().isStackEmty();
 
 		return resultSet;
 	}

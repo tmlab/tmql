@@ -89,7 +89,8 @@ public class TMQLTokenizer {
 	private final void tokenize() {
 		StringBuffer buffer = new StringBuffer();
 		char lastChar = origin.charAt(0);
-		boolean isProtected = lastChar == '"' || lastChar == '<';
+		boolean stringProtection = lastChar == '"';
+		boolean xmlProtection = lastChar == '<';
 		buffer.append(lastChar);
 		for (int index = 1; index < origin.length(); index++) {
 			char c = origin.charAt(index);
@@ -98,24 +99,24 @@ public class TMQLTokenizer {
 				 * save token """
 				 */
 				if (lastChar == '"') {
-					isProtected = false;
+					stringProtection = false;
 				}
 				/*
 				 * is string
 				 */
 				else {
-					isProtected = !isProtected;
+					stringProtection = !stringProtection;
 				}
 				buffer.append(c);
 			}
 			/*
 			 * can be XML content
 			 */
-			else if (c == '<' && origin.indexOf(">", index) != -1
+			else if (!stringProtection && c == '<' && origin.indexOf(">", index) != -1
 					&& lastChar != '<') {
 				char next = origin.charAt(index + 1);
 				if (next != '<' && next != '=' && next != ' ') {
-					isProtected = true;
+					xmlProtection = true;
 					if (buffer.toString().length() > 0) {
 						tokens.add(buffer.toString());
 						buffer = new StringBuffer();
@@ -126,8 +127,8 @@ public class TMQLTokenizer {
 			/*
 			 * is XML content end
 			 */
-			else if (c == '>' && isProtected) {
-				isProtected = false;
+			else if (!stringProtection && c == '>' && xmlProtection) {
+				xmlProtection = false;
 				buffer.append(c);
 				tokens.add(buffer.toString());
 				buffer = new StringBuffer();
@@ -135,7 +136,7 @@ public class TMQLTokenizer {
 			/*
 			 * is space character and not a part of a string
 			 */
-			else if (c == ' ' && !isProtected) {
+			else if (c == ' ' && !xmlProtection && !stringProtection) {
 				if (buffer.toString().length() != 0) {
 					tokens.add(buffer.toString());
 					buffer = new StringBuffer();
@@ -144,9 +145,8 @@ public class TMQLTokenizer {
 			/*
 			 * '{' and '}' are always stand-alone characters
 			 */
-			else if (c == '{' || c == '}') {
+			else if (!stringProtection && c == '{' || c == '}') {
 				if (!buffer.toString().isEmpty()) {
-					isProtected = false;
 					tokens.add(buffer.toString());
 					buffer = new StringBuffer();					
 				}
