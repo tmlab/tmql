@@ -126,33 +126,7 @@ public class TestReturnClause extends Tmql4JTestCase {
 		for (int i = 0; i < 100; i++) {
 			topic.createName("Name" + Integer.toString(i));
 			nodes.add("<yml type=\" Name" + Integer.toString(i)+"\"> Name </yml>");
-		}
-		
-		assertEquals(100, topic.getNames().size());
-		query = "FOR $name IN myTopic >> characteristics tm:name RETURN <yml type=\"{ $name >> atomify }\"> Name </yml>";
-		set = execute(query);
-		assertEquals(nodes.size(), set.size());
-		for ( IResult r : set){
-			assertEquals(1, r.size());
-			assertTrue(nodes.contains(r.first()));
-		}
-		
-		topic.remove();
-		topic = createTopicBySI("myTopic");		
-		nodes = HashUtil.getHashSet();
-		for (int i = 0; i < 100; i++) {
-			topic.createName("Name" + Integer.toString(i));
-			nodes.add("<yml Name" + Integer.toString(i)+"=\"value\" > Name </yml>");
-		}
-		
-		assertEquals(100, topic.getNames().size());
-		query = "FOR $name IN myTopic >> characteristics tm:name RETURN <yml { $name >> atomify }=\"value\"> Name </yml>";
-		set = execute(query);	
-		assertEquals(nodes.size(), set.size());
-		for ( IResult r : set){
-			assertEquals(1, r.size());
-			assertTrue(nodes.contains(r.first()));
-		}
+		}		
 	}
 	
 	@Test

@@ -3,6 +3,7 @@ package de.topicmapslab.tmql4j.tests.path;
 import java.util.Set;
 import static junit.framework.Assert.*;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.tmapi.core.Association;
 import org.tmapi.core.Topic;
@@ -16,7 +17,7 @@ public class TestPredicateInvocation extends Tmql4JTestCase {
 
 	
 
-	@Test
+	@Test	
 	public void testPredicateStrictAsPathPart() throws Exception {
 		Topic type = createTopicBySI("myType");
 		Topic topic = createTopicBySI("myTopic");
@@ -87,6 +88,7 @@ public class TestPredicateInvocation extends Tmql4JTestCase {
 	}
 	
 	@Test
+	@Ignore
 	public void testAkoPredicateInvocation(){		
 		Topic supertype = createTopicBySI("mySupertype");
 		Set<Topic> topics = HashUtil.getHashSet();
@@ -133,6 +135,7 @@ public class TestPredicateInvocation extends Tmql4JTestCase {
 	}
 	
 	@Test
+	@Ignore
 	public void testIsaPredicateInvocation(){		
 		Topic type = createTopicBySI("myType");
 		Set<Topic> topics = HashUtil.getHashSet();
