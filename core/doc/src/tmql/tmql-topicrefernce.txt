@@ -1,0 +1,22 @@
+=== Topic Identification ===
+
+The identification of topic items or topic types is one of the fundamental parts of a query language for topic maps. In this case the current draft has to support a simple way to address topics as parts of the query. The current draft currently supports two different types for identification of topics.
+
+Similar to the CTM syntax a topic item can be addressed by using one of its identifiers, its subject-identifier, subject-locator or item-identifier. The identifier will be transformed automatically by the query processor the represented topic item.
+
+[NOTE]
+If there are two topics using the same identifier IRI as different identifiers -  one as locators and the other as subject-identifier. The processor can not descide which topic item should be extracted. In this case the engine always prefers subject-identifiers before subject-locators and subject-locators before item-identifies.
+
+.Address a topic by its subjectz-identifier
+
+-------------------------
+http://psi.ontopedia.net/Puccini
+-------------------------
+
+As alternative a topic item can be addressed by the literal of its identifiers. The string literal of the IRI can be used to address a topic directly. The ambiguousness are resolved by using one of the three identification axes 'item' , 'indicators' or 'locators'. For more information see the chapter about navigation concepts.
+
+.Address a topic by the string literal of its subjectz-identifier
+
+-------------------------
+"http://psi.ontopedia.net/Puccini" << indicators
+-------------------------

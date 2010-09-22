@@ -1,0 +1,37 @@
+=== Merge expressions ===
+
+The part II of the topic maps query language specification contains the modifcation expressions of the language. The modifcation part supports four different expression types representing the four operation types modifying a topic map. Merge operation is one them and enables the controlled merging of topic map items. Merge operations are represented by 'merge expressions'.
+
+-----------------------
+1:	merge-expression ::= MERGE path-expression
+2:	
+3:	merge-expression ::= MERGE < value-expression > WHERE boolean-expression
+4:
+5:	merge-expression ::= MERGE ALL WHERE boolean-expression
+-----------------------
+
+There are three different grammatical productions of a merge-expression. Each merge expression starts with the symbolic keyword 'MERGE' which will be used by the engine to indentify the expression type. 
+
+==== Processing model ====
+
+The processing model of a merge expression is quite simple. If there is an where clause it will be interpreted in the same way like as a part of a select expression or flwr expression. The where clause is used to evalute a sub set of possible variables bindings which should be used in the content of the delete clause. The result of the evalutation will be a set of variables bindings.
+
+The merge clause will be execute for each valid variable binding of the where-clause. The merge clause contains a set of value expressions or one path-expression to define exactly the information resources to merge. Normally a value expression only define a variable to remove the bound value or use a navigation to navigate to the item to remove. The keyword 'ALL' can be used instead of contained expressions to indicates the merging process of all result items of the where-clause.
+
+The overall result of the query will be a singleton sequence of a singleton tuple containing the number of merged items.
+
+==== Merge clause ====
+
+The merge clause can contain a set of value expressions only containing variables which have to be bind by the where-clause. The second possibility is to add a path-expression defining the items to merge, in this case a where clause is not supported.
+
+All constructs will be merged according to the merging-rules of the TMDM.
+
+==== Where clause ====
+
+The 'where clause' define a boolean condition to evalutate the variable bindings. The clause can contain every boolean expression which was discussed in the previous chapters. A where clause returns a set of satisfying variable bindings. 
+
+The merge expression can only use variable bound in the context of the where clause. If it is missing the usage of any variable is invalid.
+
+==== The keyword ALL ====
+
+The keyword 'ALL' can be used instead of a value-expression in the context of a merge-clause to merge all items of the queried topic map. The keyword 'CASCADE' is mandatory.

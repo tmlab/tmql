@@ -1,0 +1,37 @@
+=== The meta model of TMQL ===
+
+The meta or data model of TMQL is quite different than the meta model of the topic maps ( TMDM ). There are many differnces which are useful and show the different meanings and the huge discussion about the topic maps meta model. Currently the meta model of the query language includes concepts of the topic map reference model ( TMRM ) like the navigation concept which looks similar to the proxy concept of the reference model. Other import inputs are discussion about some changes of the topic maps meta model. As editors of the current draft some changes in context of the TMDM affected the current draft of the query language. 
+
+This chapter tries to highlight the main differences between both conceptions the TMQL meta model on the one hand and the TMDM on the other hand.
+
+==== No topic map construct ====
+
+In contrast to the topic maps meta model the topic map construct can not access directly. So it it impossible to get all topics or all associations starting a navigation at the 'root' node. If we look at the topic map API ( TMAPI ) the 'root' node seems to be the topic map construct. As two main methods the topic map provides access to all topics and all associations. The TMAPI currently based on the TMDM conception.
+
+The main problem of this drawback is the missing possiblity to get this informations quite simple like it is supported by the TMAPI.
+
+The concept of missing the direct addressing of the topic maps item is similar to the concept of the CTM syntax. A topic map will never addressed directly using a CTM pattern, it will represented indirectly as the whole document. In this case TMQL addresses the topic map item indirectly as the querying context. There is only one possibility to use the topic maps item in the context of a query, the environment variable '%_' representing the queried topic map. But there is no possiblity to use it as navigation startpoint.
+
+==== Only one item-identifier ====
+
+As a fundamental part of the current version of the TMDM all is a topic map construct including names, occurrence, topics, associations, roles and the topic map itself. The TMDM construct can be identified by a number of item-identifiers exect topic items, because they can identified by subject-identifiers and locators too. In this relation a topic map construct can have more than one item-identifier.
+
+To get access to the item-identifiers of a construct the query language supports a navigations axis called 'item'. The navigation axis has to return only one item-identifier, which means that a construct in the concept of the meta model of the query language can only have one item-identifier and not a set of them. If a construct has more than one, only one can be queries and it is haphazardly which of them are returned.
+
+==== No variants ====
+
+In the concept of the topic maps meta model, a name item can contains a number of variants which representing a variation of this name as different datatypes like an audio-file or an other spelling. 
+
+In TMQL there is no axis supporting variants. It seems to be impossible to get variants of name items. In this case variants are removed from the meta model of the query language. The only way to access variants is to use the function 'has-variant' which returns a set of all variants of a name item. The main problem is the fact, that variants can not be used as navigation nodes, so it is impossible to get the reification or the scope of variants. 
+
+==== Merging the concept of names and occurrences ====
+
+The topic maps meta model differs the two concepts of names and occurrences. Names are used as human readable identification of topic items. A name item representing a name of a subject of the real world and will be represented as a string literal. Occurrences representing the relationship of subjects and an information resource. An occurrence can be used to bind a characteristic information resource to the topic item including the occurrence, for example its email address or its date of birth.
+
+In the context of information modelling the differences of names and occurrences are quite simple. Names can have variants and are always represented as a string literal which means names have the datatype 'string' everytime. Occurrences have no variants and can have different datatypes, but also the datatype 'string'. Because of removing variants from the meta model, names and occurrence are quite the same except the datatype because of the fact that occurrences can be a string literal too, this difference has no relevance. As a result of this discussion the current draft of the topic maps query language does not differs between names and occurrences. Both concepts are merged to the concept of 'characteristics'. A characteristic item representing some relation of the topic item and an information resource which also can be a name, if the name type is used.
+
+==== No association role item ====
+
+The relation between topic items are modelled as an association item. The roles of associations are represented as special association role items, containing the role type, the role player and can be reified. This concept is defined by the topic maps meta model.
+
+In contrast to this concept the meta model of the query language does not contain a construct similar to the association role. The role as real construct can not materialized or queried. By using the navigation axis 'roles' or 'players' the role type or the role player can only accessed as topic item. The reification of roles lost.

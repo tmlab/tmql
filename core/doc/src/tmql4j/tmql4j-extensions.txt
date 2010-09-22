@@ -1,0 +1,250 @@
+=== TMQL4J Extensions ===
+
+The tmql4j engine provides a framework to include your own extensions quite simple. Using Java Service Providers the extension will be registered automatically if the implementation class is in the class path.
+
+The engine currently supports two different extension types - language extensions and engine extensions.
+
+==== Engine Extensions ====
+
+An engine extension simple add or change some functionality of the querying process or the engine workflow. To learn how to integrate your own extensions, the following example showing an extension implementing a multi-threaded expression interpreter for quantified-expressions of TMQL.
+
+To intergrate an engine extension the plugin has to contain an implementation of the 'IExtensionPoint' interface representing the entry point of the plugin itselfs. An extension point is used by the runtime to initialize and register the plugin. Using Java services the extension adapter will find all implementations of the 'IExtensionPoint' interface. 
+
+---------------------------------
+1:	public interface IExtensionPoint {
+2:
+3:		/**
+4:	 	* Method called by the runtime to register the extension endpoint before
+5:	 	* running the query process.
+6:	 	* 
+7:	 	* @param runtime
+8:	 	*            the calling runtime
+9:	 	* @throws TMQLExtensionRegistryException
+10:	 	*             thrown if an exception caused by the internal runtime
+11:	 	*/
+12:		public void registerExtension(ITMQLRuntime runtime)
+13:			throws TMQLExtensionRegistryException;
+14:
+15:		/**
+16:	 	* Each extension point has to define an unique extension point id used to
+17:	 	* represent the extension point in context of the current TMQL runtime. If
+18:	 	* two extension points has the same identifier the extension adpater will
+19:	 	* throw an exception during the initialization time of extension points on
+20:	 	* startup.
+21:	 	* 
+22:	 	* @return the unique id
+23:	 	*/
+24:		public String getExtensionPointId();
+25:
+26:	}
+---------------------------------
+
+An extension point has to implement only two methods of the interface to realize the usage as a part of the tmql4j engine. The method 'getExtensionPointId' has to return a string-represented and unique identification of the plugin. The unique ID will be used by the runtime to identify the plugin during the runtime process. If the plugins are integrate using the same identification string, an exception will be raised. 
+
+The main method of the extension point handled by the method 'registerExtension'. The method will be called by the extension adapter and get a reference of the current runtime container, which tries to load the plugin. Using this method the developer can creates changes or integrate new interpreters for existing expression types. To register your own interpreter class, the interpreter registry has to be used which is managed by the runtime properties of the current runtime container. 
+
+----------------------------------
+1:	public class MultiThreadExtensionPoint implements IExtensionPoint {
+2:
+3:		/**
+4:		 * {@inheritDoc}
+5:	 	 */
+6:		@Override
+7:		public void registerExtension(ITMQLRuntime runtime)
+8:			throws TMQLExtensionRegistryException {
+9:				try {
+10:						runtime.getLanguageContext().getInterpreterRegistry().registerInterpreterClass( ExistsClause.class,	
+								MultiThreadExistsClauseInterpreter.class);
+11:				} catch (TMQLException e) {
+12:					throw new TMQLExtensionRegistryException(e);
+13:				}
+14:		}
+15:
+16:		/**
+17:		 * {@inheritDoc}
+18:		 */
+19:		@Override
+20:		public String getExtensionPointId() {
+21:			return "tmql4j.extension.mutlithreaded";
+22:		}
+23:
+24:	}
+----------------------------------
+
+==================================
+This extension point implementations is used as entry point of the multithread extension for quantified-expression. In line 21 the class return the string literal 'tmql4j.extension.mutlithreaded' as identification for the current plugin. In code line 10 the interpreter class 'MultiThreadExistsClauseInterpreter' is registered as the interpreter for all expressions of the type 'ExistsClause'. After this registration the tmql4j engine will create an instance of the interpreter class for each exists clause in the context of the parsing tree.
+
+To register the interpreter class the runtime reference is used to get the runtime properties calling the method 'getProperties'. The property handler provides the method 'getRegistry' to get the internal interpreter registry instance which should be used to add new interpreters. To realize that the method 'registerInterpreterClass' with two arguments is used. The first argument represents the expression type as Java class and the second argument is a Java class representing the interpreter.
+==================================
+
+Please note that plugins can interfere with each other. Sometimes a plugin functionalty is overlapped by another plugin. It can not be predict which plugin will be used or which function, because the order of including is haphazardly. Plugins allways covers functionality of the core engine which cannot be used if the plugin is intergrated. Take care!
+
+To use Java service provider technology, the jar file must be include a file named 'de.topicmapslab.tmql4j.extensions.model.IExtensionPoint' only includes one text line with the full qualified name of the extension point implementation.  The file has to be located in the folder 'META-INF\services'.
+
+==== Language Extensions ====
+
+As second plugin type, the tmql4j engine supports language extensions. A language extension should be used to add some additional productions to the core language defined in the current draft. The extension may not overwrite some functionality of the current engine, it only has to add some new expression types and all which seems to be necessary to realize the interpretation and the usage of the language extension.
+
+To migrate a language extension the plugin has to implement the abstract interface 'ILanguageExtension'. A language extension is a extension point and has to implement the same methods. An extension point is used by the runtime to initialize and register the plugin. Using Java services the extension adapter will find all implementations of the 'IExtensionPoint' interface. 
+
+--------------------------------------
+1:	public interface ILanguageExtension extends IExtensionPoint {
+2:
+3:		/**
+4:	 	 * Checks if the language extension extends the given expression type. If
+5:	 	 * the language extension add new productions starting with the given
+6:	 	 * expression type it has to return <code>true</code>, <code>false</code>
+7:	 	 * otherwise.
+8:	 	 * 
+9:	 	 * @param expressionType
+10:	 	 *            the extended expression type
+11:	 	 * @return <code>true</code> if the extension based on the expression type.
+12:	 	 */
+13:		public boolean extendsExpressionType(
+14:			final Class<? extends IExpression> expressionType);
+15:
+16:		/**
+17:		 * Return the language extension entry defining the entry point for using
+18:	 	 * the extension during the querying process.
+19:	 	 * 
+20:	 	 * @return the extension entry
+21:	 	 */
+22:		public ILanguageExtensionEntry getLanguageExtensionEntry();
+23:
+24:	}
+--------------------------------------
+
+A langugae extension has to implement the two method defined in line 13 and 22. The method 'extendsExpressionType' seems to be used by the runtime to check if the extension is based on the current expression type. If the langauge extension add some functionality based on a query-expression, like a new sub-expression for creating new content, it has to return true if the parameter 'expressionType' bind to the 'QueryExpression' class.
+
+The method 'getLanguageExtensionEntry' returns a reference of the language extension entry. A language extension entry is used to migrate the new productions.
+
+--------------------------------------
+1:	public interface ILanguageExtensionEntry {
+2:	
+3:		/**
+4:	 	 * Returns the expression type used as anchor in the parsing tree.
+5:		 * 
+6:		 * @return the expression type as anchor in the parsing tree
+7:		 */
+8:		public Class<? extends IExpression> getExpressionType();
+9:
+10:		/**
+11:		 * Checks if the given language-specific tokens matching the new production
+12:	 	 * of the language extension. The method has to check if the extension an be
+13:	 	 * used for the given sub-query.
+14:	 	 * 
+15:	 	 * @param runtime
+16:		 *            the current runtime container
+17:		 * @param tmqlTokens
+18:		 *            the language-specific tokens
+19:		 * @param tokens
+20:		 *            the string-represented tokens
+21:		 * @return <code>true</code> if the productions can be used,
+22:		 *         <code>false</code> otherwise.
+23:		 */
+24:		public boolean isValidProduction(final ITMQLRuntime runtime,
+25:			final List<Class<? extends IToken>> tmqlTokens,
+26:			final List<String> tokens);
+27:
+28:		/**
+29:		 * Called by the parser to add new sub-tree nodes using the extension
+30:		 * anchor.
+31:		 * 
+32:		 * @param runtime
+33:		 *            the runtime container
+34:		 * @param tmqlTokens
+35:	 	 *            the language-specific tokens
+36:		 * @param tokens
+37:		 *            the string-represented tokens
+38:		 * @param caller
+39:		 *            the calling expression
+40:		 * @param autoAdd
+41:		 *            flag representing if the sub-tree should add automatically
+42:		 * @return the created expression
+43:		 * @throws TMQLInvalidSyntaxException
+44:		 *             thrown if the expression is invalid
+45:		 * @throws TMQLGeneratorException
+46:		 *             thrown if the expression can not be created
+47:		 */
+48:		public IExpression parse(final ITMQLRuntime runtime,
+49:			final List<Class<? extends IToken>> tmqlTokens,
+50:			final List<String> tokens, IExpression caller, boolean autoAdd)
+51:			throws TMQLInvalidSyntaxException, TMQLGeneratorException;
+52:	}
+--------------------------------------
+
+The language extension entry representing the handler of the language extension. The entry will be called during the parsing process for the specified type returned by the method 'getExpressionType' to migrate the new extension ad the current tree node of the parsing tree. The migration takes place in two steps. At first the runtime calls the method 'isValidProduction' with the current list of language-specific tokens. The method is used to check if the current tokens matches to the represented production rule. If the method is true, the method returns 'true', the method 'parse' will called. The method should create the new sub-tree starting with the current node. The expression has to be added to the parsing tree automatically if the flag 'autoAdd' is true.
+
+Please note that the interpreter class and new tokens has to register first during the registration of the extension point. The following example register new tokens and new interpreter classes for a new expression representing an insert statement.
+
+--------------------------------------
+1:	/**
+2:	 * {@inheritDoc}
+3:	 */
+4:	@Override
+5:	public void registerExtension(ITMQLRuntime runtime)
+6:			throws TMQLExtensionRegistryException {
+7:		/*
+8:		 * register tokens
+9:		 */
+10:		TokenRegistry registry = runtime.getLanguageContext().getTokenRegistry();
+11:		registry.register(Insert.class);
+12:
+13:		/*
+14:		 * register expression interpreter
+15:		 */
+16:		InterpreterRegistry interpreterRegistry = runtime.getLanguageContext()
+17:				.getInterpreterRegistry();
+18:		try {			
+19:			interpreterRegistry.registerInterpreterClass(InsertClause.class,
+20:					InsertClauseInterpreter.class);
+21:			interpreterRegistry.registerInterpreterClass(
+22:					InsertExpression.class, InsertExpressionInterpreter.class);
+23:			interpreterRegistry
+24:					.registerInterpreterClass(
+25:							de.topicmapslab.tmql4j.extension.tmml.grammar.expressions.QueryExpression.class,
+26:							QueryExpressionInterpreter.class);
+27:		} catch (TMQLException e) {
+28:			throw new TMQLExtensionRegistryException(e);
+29:		}
+30:
+31:		entry = new ModificationPartLanguageExtensionEntry();
+32:	}
+--------------------------------------
+
+======================================
+The snippet is an abstract of the extension point implementation of the modification part extension of TMQL. The code snippet register a new insert-expression type to the current runtime. First a new language-specific token added in line 11 using the token registry. a new token will be represented by a class extending the interface 'IToken'. In line 19 and 21 two new interpreter class added to the current interpreter registry. The interpreter classes will be used to interpret the expression during the querying process. As you can see the extension register an extended implementation of a query-expression in line 23. After the registration of this language extension, there are two different query-expressions - the origin one and the modification extension. In this case, the core implementation wont be effected by the extension.
+======================================
+
+At last we take a look at the 'IToken' interface.
+
+---------------------------------------
+1:	public interface IToken {
+2:
+3:		/**
+4:		 * Method checks if the token can be represented by the given string literal
+5:		 * 
+6:		 * @param literal
+7:		 *            the string literal
+8:		 * @param runtime
+9:		 *            the contained runtime
+10:		 * @return <code>true</code> if the literal can be represented by this
+11:		 *         expression type
+12:		 */
+13:		public boolean isToken(final ITMQLRuntime runtime, final String literal);
+14:
+15:		/**
+16:		 * Method returns the string representation of the current language token
+17:		 * 
+18:		 * @return the literal
+19:		 */
+20:		public String getLiteral();
+21:	
+22:	}
+---------------------------------------
+
+=======================================
+The interface represents a specific token of the language of TMQL or some extensions. The method 'isToken' checks if the given literal can be represented as a token of this type. The method 'getLiteral' will return a string-representation of the token type.
+=======================================
+
+To use Java service provider technology, the jar file must be include a file named 'de.topicmapslab.tmql4j.extensions.model.IExtensionPoint' only includes one text line with the full qualified name of the extension point implementation.  The file has to be located in the folder 'META-INF\services'.

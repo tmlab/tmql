@@ -1,0 +1,77 @@
+=== RTM-TMQL integration ===
+
+Ruby Topic Maps (RTM) is a Topic Maps engine for Ruby which allows querying using TMQL using the RTM-TMQL extension. To do so, Ruby Topic Maps must be run using http://jruby.org[JRuby] which runs on the http://java.com[JVM] and allows using Java libraries like TMQL4J.
+
+==== Installation ====
+
+http://rubygems.org/gems/rtm-tmql[RTM-TMQL] is available through RubyGems, the official Ruby package management system. Assuming JRuby installed and configured it can be installed using
+
+.Installing RTM-TMQL
+ gem install rtm-tmql
+
+If there are multiple versions of Ruby installed on the system, the JRuby version is usually available as +jgem+. Alternatively it can be called from JRuby using the parameter +-S+. If JRuby was installed with as administrator, also the gem must be installed as administrator using +sudo+.
+
+.Alternatives for Installation
+ jgem install rtm-tmql
+ jruby -S gem install rtm-tmql
+ sudo jgem install rtm-tmql
+ sudo jruby -S gem install rtm-tmql
+
+The above command installs RTM-TMQL and all its dependencies. RTM-TMQL includes TMQL4J, so there is no need to install it manually. To query something, also a Topic Maps engine is needed. In the following we assume RTM-Ontopia but others should work, too. RTM-Ontopia can be installed the same way as RTM-TMQL:
+
+.Installing RTM-Ontopia
+ gem install rtm-ontopia
+
+==== Loading ====
+
+To be used in an application, RTM-TMQL has to be loaded. As usual in Ruby this is done using the +require+ statement. RTM-TMQL was installed via RubyGems which is consequently needed to find the library. As said above, we will use RTM-Ontopia in the example, so we will load it, too.
+
+.Loading RTM-TMQL
+ require 'rubygems'
+ require 'rtm/tmql'
+ require 'rtm/ontopia'
+
+==== Usage ====
+
+To address common usage, RTM prepares one TMQL engine per topic map automatically. Once loaded, TMQL queries can be run using the +tmql+ method:
+
+.Running a TMQL query
+ topic_map.tmql("the query")
+
+The above example assumes a topic map is already available in the variable +topic_map+. The following example shows the creation of such a topic map using a default in-memory connection. Within a Topic Maps engine, each topic map must have a base address which is an IRI according to http://www.ietf.org/rfc/rfc3987.txt[RFC3987]. The topic map contains the letters _a_ to _z_; each is an instance of _letter_. The identifier is also used as the default name in this example.
+
+.Creating a simple topic map, the letter-map
+ connection = RTM.connect
+ letter_map = connection.create "http://example.org/my_tm"
+ letter_type = letter_map.get!("letter")
+ ('a'..'z').each do |letter|
+    topic = letter_map.get!(letter)
+    letter_type.add_instance(topic)
+    topic["-"] = letter
+  end
+
+Now that we have a map, we can run a query for all instances of the topic _letter_. Within a single call +tmql+, the query is run and the results are returned.
+
+// TODO: As soon as we have a default prefix (#2253), it should be used and described here.
+
+.Querying all letters from the letter-map
+  letter_map.tmql("%prefix lm http://example.org/my_tm // lm:letter")
+
+When first needed, the TMQL runtime is initialized automatically. It is available from the topic map using the +tmql_engine+ method. Using the engine object, the TMQL4J properties can be modified. Currently there are two properties available: The topics of the meta model, like the generic tm:name topic can be materialized into the topic map. The following example shows how to enable this setting:
+
+.Setting TMQL properties: Materialize Meta Model
+ topic_map.tmql_engine.enable_materialize_meta_model(true)
+
+For restricted environments it may be useful to disable updates, so the topic map can only be queried but not modified:
+
+.Setting TMQL properties: Disable Updates.
+ topic_map.tmql_engine.enable_updates(false)
+
+Once new properties become available and are not yet implemented in RTM-TMQL, the TMQL4J-internal properties object can be accessed using the +properties+ method from the TMQL engine. The following example shows how to disable updates if the direct setter was not available:
+
+.Setting TMQL properties: Disable Updates; directly in TMQL4J
+ topic_map.tmql_engine.properties.enableLanguageExtensionTmqlUl(false)
+
+The same is true for the TMQLRuntime, which is available using the +runtime+ method. If there is anything to changed with the runtime or a method to be called directly, it can be accessed using this method.
+
+Concluding, RTM-TMQL is just a very thin wrapper layer around TMQL4J which makes calls to the library easier and is closely integrated with RTM.
