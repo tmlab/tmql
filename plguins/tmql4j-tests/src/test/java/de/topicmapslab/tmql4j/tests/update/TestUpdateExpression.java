@@ -21,6 +21,7 @@ import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.identifier.TmdmSubjectIdentifier;
+import de.topicmapslab.identifier.XmlSchemeDatatypes;
 import de.topicmapslab.tmql4j.common.core.query.TMQLQuery;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntimeFactory;
 import de.topicmapslab.tmql4j.common.model.runtime.ITMQLRuntime;
@@ -166,6 +167,17 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals(1, topic.getOccurrences().size());
 		assertEquals("New Value", topic.getOccurrences().iterator().next()
 				.getValue());
+		
+		query = " UPDATE occurrences SET \"New Value\"^^"+ XmlSchemeDatatypes.XSD_BOOLEAN +" WHERE \"" + topic.getOccurrences().iterator().next().getId() +"\" << id ";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals(1, topic.getOccurrences().size());
+		assertEquals("New Value", topic.getOccurrences().iterator().next()
+				.getValue());
+		assertEquals(XmlSchemeDatatypes.XSD_BOOLEAN, topic.getOccurrences().iterator().next()
+				.getDatatype().getReference());
 	}
 
 	@Test

@@ -10,6 +10,8 @@
  */
 package de.topicmapslab.tmql4j.preprocessing.core.moduls;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.StringTokenizer;
 
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
@@ -79,7 +81,8 @@ public class TMQLScreener implements IScreener {
 				/*
 				 * check if $ is in front of # ==> $#
 				 */
-				else if (index == 0 || line.charAt(index - 1) != '$') {
+				else if ((index == 0 || line.charAt(index - 1) != '$') && !isIRI(line, index)) {
+					
 					/*
 					 * remove tokens after comment symbol
 					 */
@@ -112,4 +115,35 @@ public class TMQLScreener implements IScreener {
 		return this.screenedQuery;
 	}
 
+	/**
+	 * Method checks if the hash is part of an IRI
+	 * @param string the string
+	 * @param index the location of the URI
+	 * @return <code>true</code> if the string is an IRI otherwise <code>false</code>
+	 */
+	private boolean isIRI(final String string, int index){
+		int whiteSpaceBefore = string.lastIndexOf(' ',index);
+		int whiteSpaceAfter = string.indexOf(' ',index);
+		if ( whiteSpaceBefore != -1 && whiteSpaceAfter != -1 ){
+			String candidate = string.substring(whiteSpaceBefore+1, whiteSpaceAfter);
+			try{
+				new URL(candidate);
+				return true;
+			}catch(MalformedURLException e){
+				// NOTHING TO DO
+			}
+		}
+		int dataTypeIndex = string.lastIndexOf("^^",index);
+		if ( dataTypeIndex != -1 && whiteSpaceAfter != -1 ){
+			String candidate = string.substring(dataTypeIndex+2, whiteSpaceAfter);
+			try{
+				new URL(candidate);
+				return true;
+			}catch(MalformedURLException e){
+				// NOTHING TO DO
+			}
+		}
+		return false;
+	}
+	
 }

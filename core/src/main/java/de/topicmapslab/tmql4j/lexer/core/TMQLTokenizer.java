@@ -145,7 +145,7 @@ public class TMQLTokenizer {
 			/*
 			 * '{' and '}' are always stand-alone characters
 			 */
-			else if (!stringProtection && c == '{' || c == '}') {
+			else if ( c == '{' || c == '}') {
 				if (!buffer.toString().isEmpty()) {
 					tokens.add(buffer.toString());
 					buffer = new StringBuffer();					
