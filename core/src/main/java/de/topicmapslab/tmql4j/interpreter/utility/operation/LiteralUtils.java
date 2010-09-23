@@ -270,6 +270,26 @@ public class LiteralUtils {
 	}
 
 	/**
+	 * Method transform the given object to a double value
+	 * 
+	 * @param object
+	 *            the object
+	 * @return the double value and never <code>null</code>
+	 * @throws NumberFormatException
+	 * @since 2.6.5
+	 */
+	public static final Double asDouble(final Object object)
+			throws NumberFormatException {
+		if (object instanceof Double) {
+			return (Double) object;
+		} else if (object instanceof BigDecimal) {
+			return ((BigDecimal) object).doubleValue();
+		} else {
+			return Double.parseDouble(object.toString());
+		}
+	}
+
+	/**
 	 * Method formats the given literal as date literal.
 	 * 
 	 * @param literal
@@ -546,21 +566,27 @@ public class LiteralUtils {
 		if (obj instanceof Occurrence) {
 			return ((Occurrence) obj).getDatatype();
 		} else if (obj instanceof Name) {
-			return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_STRING);
+			return runtime.getTopicMap().createLocator(
+					XmlSchemeDatatypes.XSD_STRING);
 		} else if (obj instanceof Variant) {
 			return ((Variant) obj).getDatatype();
 		} else if (obj instanceof String) {
-			return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_STRING);
+			return runtime.getTopicMap().createLocator(
+					XmlSchemeDatatypes.XSD_STRING);
 		} else if (obj instanceof Integer || obj instanceof Long
 				|| obj instanceof BigInteger) {
-			return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_INTEGER);
+			return runtime.getTopicMap().createLocator(
+					XmlSchemeDatatypes.XSD_INTEGER);
 		} else if (obj instanceof Float || obj instanceof Double
 				|| obj instanceof BigDecimal) {
-			return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_DECIMAL);
+			return runtime.getTopicMap().createLocator(
+					XmlSchemeDatatypes.XSD_DECIMAL);
 		} else if (obj instanceof Calendar) {
-			return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_DATETIME);
+			return runtime.getTopicMap().createLocator(
+					XmlSchemeDatatypes.XSD_DATETIME);
 		} else if (obj instanceof URI) {
-			return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_ANYURI);
+			return runtime.getTopicMap().createLocator(
+					XmlSchemeDatatypes.XSD_ANYURI);
 		} else if (obj instanceof Collection<?>) {
 			ITupleSequence<Object> seq = runtime.getProperties().newSequence();
 			for (Object o : (Collection<?>) obj) {

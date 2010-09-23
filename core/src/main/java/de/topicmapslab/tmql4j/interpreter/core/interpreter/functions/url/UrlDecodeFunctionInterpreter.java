@@ -56,10 +56,9 @@ public class UrlDecodeFunctionInterpreter extends
 		/*
 		 * check count of variables
 		 */
-		if (parameters.getOrderedKeys().size() < getRequiredVariableCount()) {
+		if (!isExpectedNumberOfParameters(parameters.getOrderedKeys().size())) {
 			throw new TMQLRuntimeException(getItemIdentifier()
-					+ "() requieres " + getRequiredVariableCount()
-					+ " parameter.");
+					+ "() requieres 1 parameter.");
 		}
 
 		/*
@@ -133,12 +132,12 @@ public class UrlDecodeFunctionInterpreter extends
 	public String getItemIdentifier() {
 		return "fn:url-decode";
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
-	public long getRequiredVariableCount() {
-		return 1;
+	public boolean isExpectedNumberOfParameters(long numberOfParameters) {
+		return numberOfParameters == 1;
 	}
 
 }

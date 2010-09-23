@@ -22,13 +22,5 @@ public abstract class BaseFunctionInterpreter<T extends IExpression> extends
 	 */
 	public BaseFunctionInterpreter(T ex) {
 		super(ex);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	
-	protected long getNumberOfArguments() {
-		return getRequiredVariableCount();
-	}
+	}	
 }

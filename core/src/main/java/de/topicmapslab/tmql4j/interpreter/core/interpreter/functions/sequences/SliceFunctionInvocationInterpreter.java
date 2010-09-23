@@ -69,10 +69,9 @@ public class SliceFunctionInvocationInterpreter extends
 		/*
 		 * check count of variables
 		 */
-		if (parameters.getOrderedKeys().size() < getRequiredVariableCount()) {
+		if (!isExpectedNumberOfParameters(parameters.getOrderedKeys().size())) {
 			throw new TMQLRuntimeException(getItemIdentifier()
-					+ "() requieres " + getRequiredVariableCount()
-					+ " parameter.");
+					+ "() requieres 3 parameters.");
 		}
 
 		/*
@@ -140,7 +139,7 @@ public class SliceFunctionInvocationInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public long getRequiredVariableCount() {
-		return 3;
+	public boolean isExpectedNumberOfParameters(long numberOfParameters) {
+		return numberOfParameters == 3;
 	}
 }

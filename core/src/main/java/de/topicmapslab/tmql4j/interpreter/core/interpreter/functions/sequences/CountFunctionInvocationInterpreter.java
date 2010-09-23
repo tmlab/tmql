@@ -120,7 +120,7 @@ public class CountFunctionInvocationInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public long getRequiredVariableCount() {
-		return 1;
+	public boolean isExpectedNumberOfParameters(long numberOfParameters) {
+		return numberOfParameters == 1;
 	}
 }

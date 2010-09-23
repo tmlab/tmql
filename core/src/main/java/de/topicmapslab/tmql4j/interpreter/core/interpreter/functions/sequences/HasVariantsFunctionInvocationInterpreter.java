@@ -70,10 +70,9 @@ public class HasVariantsFunctionInvocationInterpreter extends
 		/*
 		 * check count of variables
 		 */
-		if (parameters.getOrderedKeys().size() < getRequiredVariableCount()) {
+		if (!isExpectedNumberOfParameters(parameters.getOrderedKeys().size())) {
 			throw new TMQLRuntimeException(getItemIdentifier()
-					+ "() requieres " + getRequiredVariableCount()
-					+ " parameter.");
+					+ "() requieres 2 parameters.");
 		}
 
 		/*
@@ -152,8 +151,8 @@ public class HasVariantsFunctionInvocationInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public long getRequiredVariableCount() {
-		return 2;
+	public boolean isExpectedNumberOfParameters(long numberOfParameters) {
+		return numberOfParameters == 2;
 	}
 
 }

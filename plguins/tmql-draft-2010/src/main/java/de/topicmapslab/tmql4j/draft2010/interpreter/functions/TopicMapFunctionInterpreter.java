@@ -45,9 +45,8 @@ public class TopicMapFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	
-	public long getRequiredVariableCount() {
-		return 0;
+	public boolean isExpectedNumberOfParameters(long numberOfParameters) {
+		return numberOfParameters == 1;
 	}
 
 	/**
