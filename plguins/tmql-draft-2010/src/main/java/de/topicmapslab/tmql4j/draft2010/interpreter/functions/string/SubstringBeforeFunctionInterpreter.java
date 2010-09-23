@@ -42,9 +42,8 @@ public class SubstringBeforeFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	
-	public long getRequiredVariableCount() {
-		return 2;
+	public boolean isExpectedNumberOfParameters(long numberOfParameters) {
+		return numberOfParameters == 2;
 	}
 
 	/**

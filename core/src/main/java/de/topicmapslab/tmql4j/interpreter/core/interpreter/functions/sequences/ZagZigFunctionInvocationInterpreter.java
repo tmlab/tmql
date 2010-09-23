@@ -65,15 +65,6 @@ public class ZagZigFunctionInvocationInterpreter extends
 		QueryMatches parameters = extractArguments(runtime, Parameters.class, 0);
 
 		/*
-		 * check count of variables
-		 */
-		if (parameters.getOrderedKeys().size() < getRequiredVariableCount()) {
-			throw new TMQLRuntimeException(getItemIdentifier()
-					+ "() requieres " + getRequiredVariableCount()
-					+ " parameter.");
-		}
-
-		/*
 		 * iterate over parameters
 		 */
 		for (Map<String, Object> tuple : parameters) {
@@ -100,7 +91,7 @@ public class ZagZigFunctionInvocationInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public long getRequiredVariableCount() {
-		return 1;
+	public boolean isExpectedNumberOfParameters(long numberOfParameters) {
+		return numberOfParameters == 1;
 	}
 }

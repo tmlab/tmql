@@ -44,5 +44,6 @@
 		<module>plguins/tmql4j-tests</module>
 		<module>plguins/tmql4j-modification-part</module>
 		<module>plguins/tmql4ontopia</module>
+		<module>plguins/tmql4majortom</module>
 	</modules>
 </project>

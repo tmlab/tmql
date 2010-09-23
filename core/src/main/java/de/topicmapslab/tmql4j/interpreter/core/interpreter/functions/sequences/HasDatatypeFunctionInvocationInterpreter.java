@@ -69,10 +69,9 @@ public class HasDatatypeFunctionInvocationInterpreter extends
 		/*
 		 * check count of variables
 		 */
-		if (parameters.getOrderedKeys().size() < getRequiredVariableCount()) {
+		if (!isExpectedNumberOfParameters(parameters.getOrderedKeys().size())) {
 			throw new TMQLRuntimeException(getItemIdentifier()
-					+ "() requieres " + getRequiredVariableCount()
-					+ " parameter.");
+					+ "() requieres 1 parameters.");
 		}
 		/*
 		 * iterate over all parameters
@@ -114,7 +113,7 @@ public class HasDatatypeFunctionInvocationInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public long getRequiredVariableCount() {
-		return 1;
+	public boolean isExpectedNumberOfParameters(long numberOfParameters) {
+		return numberOfParameters == 1;
 	}
 }

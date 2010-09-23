@@ -25,13 +25,20 @@ import de.topicmapslab.tmql4j.parser.model.IExpression;
 public interface IFunctionInvocationInterpreter<T extends IExpression> extends
 		IExpressionInterpreter<T> {
 
+//	/**
+//	 * Method returns the number of required parameters. The number will be
+//	 * specified by the current draft.
+//	 * 
+//	 * @return the number of required variables
+//	 */
+//	public long getRequiredVariableCount();
+	
 	/**
-	 * Method returns the number of required parameters. The number will be
-	 * specified by the current draft.
-	 * 
-	 * @return the number of required variables
+	 * Checks if the number of parameters is valid for the current function implementation.
+	 * @param numberOfParameters the current number of parameters
+	 * @return <code>true</code> if the number of parameters is supported, <code>false</code> otherwise.
 	 */
-	public long getRequiredVariableCount();
+	public boolean isExpectedNumberOfParameters(long numberOfParameters);
 
 	/**
 	 * Method return the internal subject-identifier of the TMQL-function which

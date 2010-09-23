@@ -42,9 +42,8 @@ public class TranslateFunctionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	
-	public long getRequiredVariableCount() {
-		return 3;
+	public boolean isExpectedNumberOfParameters(long numberOfParameters) {
+		return numberOfParameters == 3;
 	}
 
 	/**
