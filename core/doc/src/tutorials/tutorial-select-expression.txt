@@ -1,0 +1,308 @@
+=== Section: Select expressions ===
+
+In the previous tutorials we only use the path expression style of the TMQL query. Sometimes our use case become to complex to handle it with this expression type and we have to use one of the other types 'SELECT' or 'FLWR'.
+
+==== Tutorial: How to use the select style ====
+
+===== Use Case =====
+
+First we try to get all composer using the select style.
+
+===== Solution =====
+
+In remembrance of a previous tutorial we look at the following query realizing our use case, but make use of the path expression style.
+
+-----------------------------
+1:	%prefix psi http://psi.ontopedia.net/ // psi:Composer 
+-----------------------------
+
+Now we want to use a select expression to realize the same use case. The results should be equal for both queries. At first we take a look to the grammar rule of the select expression.
+
+---------------------------
+1:	SELECT < value-expression >
+2:		WHERE boolean-expression
+3:		ORDER BY < value-expression >
+4:		UNIQUE
+5:		LIMIT interger
+6:		OFFSET interger
+---------------------------
+
+For our example we only need a select clause and a boolean expression. 
+
+-------------------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	SELECT $composer
+3:		WHERE $composer ISA psi:Composer
+-------------------------------------
+
+The first line only defines a simple prefix which we use in line 3. The where-clause starting with the keyword 'WHERE' contains a boolean condition which will be check for each value or item which can be bound to the variable. In line 3 we see the boolean condition '$composer ISA psi:Composer'. 
+
+The keyword 'ISA' represents a type restriction for the left-hand arguments. The left-hand argument '$composer' will bind to each topic exists in the topic map and the binding will be check if it is an instance of the right-hand argument 'psi:Composer'. The result of this condition will be a set of topic items of the type Composer. 
+
+After the validation of the boolean-expression, each binding will be interpret by the select clause ( 'SELECT' keyword ). In line 2 the select clause only adds the binding of the variable '$composer' to the tuple sequence representing the result of this query.
+
+The overall result will contain exactly all instances of the type composer.
+
+===== Summary =====
+
+We learn how to use the select expressions and how to use variables in the context of such expressions. A variable will be bind to each possible value of the topic map and will be validated by the condition contained in the boolean expression. The overall result of valid variables bindings will be passed through the select clause and will be transformed or projected to the results the user want. The select clause can contains more than one value expression similar to the projection of path expressions and can use filters too.
+
+==== Tutorial: Ordering results ====
+
+===== Use Case =====
+
+Now we want to order the results of the last tutorial by there first name.
+
+===== Solution =====
+
+To realize this task we make use of the tuple ordering syntax of the path expression. A tuple expression can be ordered by using the keywords 'ASC' and 'DESC'. Similar to tuple expressions a selection expressions containes an order-by clause symbolized by the keywords 'ORDER BY'. The order-by clause can contain a set of value expressions separated by a simple comma and the keyword 'ASC' can be left out.
+
+To order our results we need a short path expression describing the values we used for ordering our result tuples.
+
+--------------------------
+1:	$composer >> characteristics tm:name >> atomify [ 0 ]
+--------------------------
+
+============================
+Our task is to order the composers by their first name. A composer instance is bound to the variable '$composer'. The name of the composer can be extracted by using the navigation '>> characteristics tm:name >> atomify'. Because there are a set of names contained by a topic item, we use the filter '[ 0 ]' to get the first one.
+============================
+
+Now we know the expression to get the first name of a composer. We still have to add the expressions as a part of the order-by clause to our previous select-expression to realize our current use case.
+
+---------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	SELECT $composer
+3:		WHERE $composer ISA psi:Composer
+4:		ORDER BY $composer >> characteristics tm:name >> atomify [ 0 ]
+---------------------------
+
+============================
+In line 4 we see the order by clause containing our short navigation getting the first name of a composer.
+============================
+
+===== Summary =====
+
+Currently we take use of the order-by clause to order the variable bindings which are valid to the boolean condition. The overall result will be ordered by the given expression. The order-by clause can contain more than one expression to order a result sequence. The second ordering expression will be used if at least two values of the first will be equal.
+
+==== Tutorial: Getting values of specific index range ====
+
+===== Use Case =====
+
+We want to realize a simple website displaying all composers by their name. Because of the hugh number of composers we want to implement a paging algorithm, which should be based on TMQL queries. We need a query to extract only the values for the next page between 10 and 20.
+
+===== Solution =====
+
+Based on the last query, we have to make two changes. At first we have to extract only the names of the composer instances. The second step is to add a limit and an offset clause to get only the values between the index 10 and 20.
+
+To extract the names we can use the navigation axis 'characteristics' and 'atomify'.
+
+--------------------------
+1:	$composer >> characteristics tm:name >> atomify [ 0 ]
+--------------------------
+
+The next step is to add simple a selection range to get all tuples between the index 10 and 20.
+
+--------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	SELECT $composer >> characteristics tm:name >> atomify [ 0 ]
+3:		WHERE $composer ISA psi:Composer
+4:		ORDER BY $composer >> characteristics tm:name >> atomify [ 0 ]
+5:		OFFSET	10
+6:		LIMIT 10
+--------------------------
+
+==========================
+The shown syntax is similar to SQL. In line 2 we add the navigation to our select clause to get only the name literals of a composer and not the topic itselfs. To realize the selection range we add a offset-clause with the keyword 'OFFSET' in line 5. The interger value after the keyword represents the first index to select. The limit clause with the keyword 'LIMIT' defines a number of elements which should be selected at most.
+==========================
+
+===== Summary =====
+The keyword 'OFFSET' defines an offset-clause which can be used to extract the tuples starting at a specific index, given as literal after the keyword. To extract only a specific number of elements the limit-clause can be used. The limit-clause is defined by the keyword 'LIMIT' and contains a simple interger literal two. If the number of avaible elements is smaller than the limit expect, the result will be smaller than the limit value.
+
+==== Tutorial: Use disjunction ====
+
+===== Use Case =====
+
+Extract all operas and all composers as one result set.
+
+===== Solution =====
+
+In this use case we have to bind the variable to instances of different types, so we have to use a disjunction in combination with two instance-of expressions.
+
+--------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	SELECT $composerOrOpera
+3:		WHERE 
+4:				$composerOrOpera ISA psi:Composer
+5:			OR
+6:				$composerOrOpera ISA psi:Opera
+--------------------------
+
+============================
+The where-clause contains two instance-of expressions in line 4 and 6. The expression in line 4 checks if the variable is bind to a topic item of the type composer and the expression in line 6 checks if it is bound to an instance of opera. By using the keyword 'OR' we define a disjunction which means that at least on of this expression has to satisfy our condition. The interpreter finishes after the first satisfied expression.
+============================
+
+===== Summary =====
+
+The keyword 'OR' defines a disjunction and the runtime will be finished with iteration step if at least one expression will be satisfied. In reverse the keyword 'AND' symbolize a conjunction of boolean expression.
+
+==== Tutorial: Quantified Expression ====
+
+===== Use Case =====
+
+The next task is more complex than the other one. We try to extract only composers who has composed at least 10 operas.
+
+===== Solution =====
+
+Now we want to extract only a subset of composers. The subset is defined by a new restriction, that the composer has composed at least 10 operas.
+
+The semantic pattern 'at least' suggest us, that this is a quantified restriction. The restriction isn't unquantified in that meaning that the existing of a fact satisfies the condition. The satisfaction is bind to a numerical bound, which suggests a quantified expression. Quantified expressions are realized as exists-clause in TMQL. A exists clause can be un-quantified like the 'ISA' keyword or can be quantified which we need here. The syntax of a quantified expression is similar to human speach: "at least some satisfies something". The production of a quantified expressions looks like the following one
+
+---------------------------------
+1:	AT LEAST < number > < binding-set > SATISFIES < boolean-expression >
+---------------------------------
+
+The next step is to get the informations missing in the production rule. The 'number' will be 10. The boolean expression has to check the restriction of composing an opera. This is modelled as an association in the topic map of the type 'psi:composed_by'. The roles are 'psi:Composer' for the composer and 'psi:Work' for the opera or something else. The condition will look like 'psi:composed_by ( psi:Work : $opera , psi:Composer : $composer )'. The boolean condition dependent on two variables '$composer' and '$opera'. The first variable '$composer' will be bound by the 'ISA' statement of our last query. To bind the variable 'opera' we will use a binding set as we see in the given production.
+
+A bindings set is defined as a variable in the context of a sequence of possible values. In our example the variable '$opera' as an instance of all operas. The production rule of a binding set looks like the following one
+
+-------------------------------
+1:	< variable > IN < context > 
+-------------------------------
+
+Our context will be the navigation pattern results in all instances of the topic type 'psi:Opera'. The final quantified expression looks like this:
+
+---------------------------------
+1:	AT LEAST 10 $opera IN // psi:Opera SATISFIES psi:composed_by ( psi:Work : $opera , psi:Composer : $composer )
+---------------------------------
+
+After defining the quantified condition, we have to add them to our select expression as a part of the where clause. Because of the fact that the variable '$composer' has to bound to an instance of a composer and has to satisfy the quantified expression, we make use of boolean conjunctions.
+
+--------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	SELECT $composer >> characteristics tm:name >> atomify [ 0 ]
+3:		WHERE 
+4:				$composer ISA psi:Composer
+5:			AND
+6:				AT LEAST 10 $opera IN // psi:Opera SATISFIES psi:composed_by ( psi:Work : $opera , psi:Composer : $composer )
+--------------------------
+
+If we change our use case to get all composers composed at most 10 expression, the query is similar the same except the keyword 'LEAST' will be exchanged with the keyword 'MOST'.
+
+--------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	SELECT $composer >> characteristics tm:name >> atomify [ 0 ]
+3:		WHERE 
+4:				$composer ISA psi:Composer
+5:			AND
+6:				AT MOST 10 $opera IN // psi:Opera SATISFIES psi:composed_by ( psi:Work : $opera , psi:Composer : $composer )
+--------------------------
+
+===== Summary =====
+
+The tutorial explain the syntax and interpretation of quantified expressions. Quantified expression can restrict an upper or lower number of satisfying bindings. A quantfied expression with the keyword 'AT LEAST' creates the restriction with a lower bound. The keyword 'AT MOST' describe the reverse case. In addition if the number of satisfying elements is not important the keyword 'SOME' can also used.
+
+==== Tutorial: Use the forall clause ====
+
+===== Use Case =====
+
+Getting all operas which only has name items at the scope italian.
+
+===== Solution =====
+
+In reverse to the non quantified expression using the keyword 'SOME' we need an expression checks that all variable bindings satisfy our condition. This type of expression is called forall-clause and will be represented by the keyword 'EVERY'. The syntax of the forall clause is similar to the quantified expression except the quantification expression at the beginning of the sub-expression.
+
+----------------------------
+1:	EVERY < binding-set > SATISFIES boolean-expression
+----------------------------
+
+============================
+As you see there is no numerical restriction at the beginning of the expression, because every binding of the following binding set has to satisfy the condition.
+============================
+
+As next step we have to define the condition our variable bindings has to satisfy. At first we need all names of all operas in the scope Italian. To get all names of a opera we can use the 'characteristics' axis.
+
+--------------------------------------
+1:	$opera >> characteristics tm:name
+--------------------------------------
+
+To get the themes of a name element we use the 'scope' axis.
+
+--------------------------------------
+1:	$name >> scope
+--------------------------------------
+
+Now we have to check if the theme contains the topic with the identifier 'psi:Italian'.
+
+--------------------------------------
+1:	$name >> scope == psi:Italian
+--------------------------------------
+
+In combination the forall clause look like the following example.
+
+--------------------------------------
+1:	EVERY $name IN $opera >> characteristics tm:name SATISFIES $name >> scope == psi:Italian
+--------------------------------------
+
+=======================================
+The binding set '$name IN $opera >> characteristics tm:name' binds each name item of the topic bind to the variable '$opera' to the variable '$name'. Each of this bindings has to satisfy the condition '$name >> scope == psi:Italian'. The overall result contains all operas which has only name items at the scope Italian.
+=======================================
+
+As last step we have to add the forall clause to our select expression.
+
+--------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	SELECT $composer >> characteristics tm:name >> atomify [ 0 ]
+3:		WHERE 
+4:				$composer ISA psi:Composer
+5:			AND
+6:				AT MOST 10 $opera IN // psi:Opera 
+7:					SATISFIES 
+8:							psi:composed_by ( psi:Work : $opera , psi:Composer : $composer )
+9:						AND
+10:							EVERY $name IN $opera >> characteristics tm:name SATISFIES $name >> scope == psi:Italian								
+--------------------------
+
+===== Summary =====
+
+The forall clause is the reverse expression of the exists clause an checks if every binding of a subset satisfies a given condition. If not the origin variable binding is invalid. A forall clause starts with the keyword 'EVERY'.
+
+==== Tutorial: Unique results ====
+
+===== Use Case =====
+
+Extract all co-players of any composer instance, but each elements only onetimes.
+
+===== Solution =====
+
+At first we have to get all co-players of a specific topic item. There are different possibilities to realize this use case with path expression. We can use the 'players' axis two times each direction one times starting in backward direction.
+
+------------------------
+1:	$composer << players >> players
+------------------------
+
+The problem of this expression is that the starting node of the navigation is contained by the result set, but we only wants the co-players and not the items itselfs. The solution of our problem is to use the 'traverse' axis retrieving exacatly the co-players of our topic item.
+
+------------------------
+1:	$composer >> traverse
+------------------------
+
+The overall select expression looks like the following one using the sub query defined by the last example.
+
+--------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	SELECT $composer >> traverse
+3:		WHERE $composer ISA psi:Composer
+--------------------------
+
+If we check the result set, we will found multiple instances of the same topic item. The cause of that is the fact that a topic item can be a co-player of different topic items. For example a opera can be composed by two composers. To solve this problem we can add the keyword 'UNIQUE' which realize a reduction of the result set to a unique tuple sequence contains each item only onetimes.
+
+--------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	SELECT $composer >> traverse
+3:		WHERE $composer ISA psi:Composer
+4:		UNIQUE
+--------------------------
+
+===== Summary =====
+
+Each item can be contained multiple times by the result set because of the strong linkage between the items of a topic map construct. To extract each element only onetime the keyword 'UNIQUE' can be add to the select expression.

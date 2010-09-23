@@ -1,0 +1,53 @@
+=== Tutorial: Getting a topic ===
+
+===== Use Case =====
+
+We try to get the topic of the topic map representing the composer Puccini.
+
+===== Solution =====
+
+In relation to the topic maps data model we know, that a topic can be identified by a subject-locator, subject-identifier or item-identifier. In the context of a TMQL query this identifiers can be used as item references to identify a topic map construct.
+
+Because of that the first we need a identifier of the topic representing the composer Puccini like 'http://psi.ontopedia.net/Puccini' and the identifier type. We know that the IRI is a subject-identifier of the topic Puccini.
+
+The next question we have to answer is the type of expression we have to use to gain our use case. Because of the fact the query is quite simple, we decide to use the path expression style.
+
+---------------------------------
+1:	htpp://psi.ontopedia.net/Puccini
+---------------------------------
+
+=================================
+The query is quite short, because it only contains the item reference of the wanted topic item Puccini.
+=================================
+
+In relation to the identifier type, we also can use one of the 'indicators' axis to get a topic by the string-represented IRI if the IRI is used as subject-identifier.
+
+---------------------------------
+1:	"http://psi.ontopedia.net/Puccini" << indicators
+---------------------------------
+
+=================================
+Strings are represented by using double quotes as we see at the beginning of the query. Starting at the literal node of the abstract topic map we can use the 'indicators' axis in backward direction to get the topic using this IRI as subject-identifier.
+=================================
+
+If the IRI is of type subject-locator or item-identifier the using query is similar to the last one except the name of the used axis.
+
+---------------------------------
+1:	"http://psi.ontopedia.net/Puccini" << item
+---------------------------------
+
+=================================
+Returns the topic item using the string literal 'http://psi.ontopedia.net/Puccini' as item-identifier.
+=================================
+
+---------------------------------
+1:	"http://psi.ontopedia.net/Puccini" << locators
+---------------------------------
+
+=================================
+Returns the topic item using the string literal 'http://psi.ontopedia.net/Puccini' as subject-locator.
+=================================
+
+===== Summary =====
+
+We learn that a topic can represented by a item reference as a part of the query. In addition to that we also can use the string-literal of the IRI as start node of the navigation over the identifier axes ( 'indicators', 'locators' or 'item' ) in relation to the identifier type.
