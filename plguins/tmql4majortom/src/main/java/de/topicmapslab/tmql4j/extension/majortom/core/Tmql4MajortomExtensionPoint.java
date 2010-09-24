@@ -1,6 +1,7 @@
 package de.topicmapslab.tmql4j.extension.majortom.core;
 
 import de.topicmapslab.tmql4j.common.model.runtime.ITMQLRuntime;
+import de.topicmapslab.tmql4j.extension.majortom.expression.GetBestLabel;
 import de.topicmapslab.tmql4j.extension.majortom.expression.GetCoordinatesInDistance;
 import de.topicmapslab.tmql4j.extension.majortom.expression.GetDates;
 import de.topicmapslab.tmql4j.extension.majortom.expression.GetDatesAfter;
@@ -58,6 +59,10 @@ public class Tmql4MajortomExtensionPoint implements ILanguageExtension {
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetDatesAfter.GetDatesAfterIdentifier, GetDatesAfter.class);
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetDatesBefore.GetDatesBeforeIdentifier, GetDatesBefore.class);
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetDatesInRange.GetDatesInRangeIdentifier, GetDatesInRange.class);
+		/*
+		 * best label function
+		 */
+		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetBestLabel.GETBESTLABEL, GetBestLabel.class);
 
 		entry = new Tmql4MajortomLanguageExtensionEntry();
 	}
