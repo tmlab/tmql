@@ -140,6 +140,16 @@ public class TestGeographicalFunctions extends Tmql4JTestCase {
 			assertEquals(1, r.size());
 			assertTrue(r.first().equals(topic) || r.first().equals(otherTopic));
 		}
+
+		query = "FOR $c IN " + GetCoordinatesInDistance.GetCoordinatesInDistanceIdentifier + "( \"" + coordinate.toString() + "\" , " + coordinate.getDistance(other)
+				+ " ) RETURN $c << characteristics , fn:distance ( \"" + coordinate.toString() + "\" , $c >> atomify )";
+		set = execute(query);
+		assertEquals(2, set.size());
+		for (IResult r : set) {
+			assertEquals(2, r.size());
+			assertTrue(r.first().equals(topic) || r.first().equals(otherTopic));
+			assertTrue(r.get(1).equals(0D) || r.get(1).equals(coordinate.getDistance(other)));
+		}
 	}
 
 	@Test

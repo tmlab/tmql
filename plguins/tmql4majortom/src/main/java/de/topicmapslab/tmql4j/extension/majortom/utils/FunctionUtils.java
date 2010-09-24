@@ -40,12 +40,12 @@ public class FunctionUtils {
 			return (Calendar) DatatypeAwareUtils.toValue(tuple.get("$0"), Calendar.class);
 		} else if (tuple.size() == 3) {
 			int year = (Integer) DatatypeAwareUtils.toValue(tuple.get("$0"), Integer.class);
-			int month = (Integer) DatatypeAwareUtils.toValue(tuple.get("$1"), Integer.class);
+			int month = ((Integer) DatatypeAwareUtils.toValue(tuple.get("$1"), Integer.class))-1;
 			int day = (Integer) DatatypeAwareUtils.toValue(tuple.get("$2"), Integer.class);
 			return new GregorianCalendar(year, month, day);
 		} else if (tuple.size() == 6) {
 			int year = (Integer) DatatypeAwareUtils.toValue(tuple.get("$0"), Integer.class);
-			int month = (Integer) DatatypeAwareUtils.toValue(tuple.get("$1"), Integer.class);
+			int month = ((Integer) DatatypeAwareUtils.toValue(tuple.get("$1"), Integer.class))-1;
 			int day = (Integer) DatatypeAwareUtils.toValue(tuple.get("$2"), Integer.class);
 			int hour = (Integer) DatatypeAwareUtils.toValue(tuple.get("$3"), Integer.class);
 			int min = (Integer) DatatypeAwareUtils.toValue(tuple.get("$4"), Integer.class);
@@ -74,16 +74,16 @@ public class FunctionUtils {
 				calendars[i] = (Calendar) DatatypeAwareUtils.toValue(tuple.get("$" + Integer.toString(i)), Calendar.class);
 			} else if (tuple.size() == 3 * count) {
 				int year = (Integer) DatatypeAwareUtils.toValue(tuple.get("$" + Integer.toString(3 * i)), Integer.class);
-				int month = (Integer) DatatypeAwareUtils.toValue(tuple.get("$" + Integer.toString(3 * i + 1)), Integer.class);
+				int month = (Integer) DatatypeAwareUtils.toValue(tuple.get("$" + Integer.toString(3 * i + 1)), Integer.class)-1;
 				int day = (Integer) DatatypeAwareUtils.toValue(tuple.get("$" + Integer.toString(3 * i + 2)), Integer.class);
 				calendars[i] = new GregorianCalendar(year, month, day);
 			} else if (tuple.size() == 6 * count) {
-				int year = (Integer) DatatypeAwareUtils.toValue(tuple.get("$" + Integer.toString(3 * i)), Integer.class);
-				int month = (Integer) DatatypeAwareUtils.toValue(tuple.get("$" + Integer.toString(3 * i + 1)), Integer.class);
-				int day = (Integer) DatatypeAwareUtils.toValue(tuple.get("$" + Integer.toString(3 * i + 2)), Integer.class);
-				int hour = (Integer) DatatypeAwareUtils.toValue(tuple.get("$" + Integer.toString(3 * i + 3)), Integer.class);
-				int min = (Integer) DatatypeAwareUtils.toValue(tuple.get("$" + Integer.toString(3 * i + 4)), Integer.class);
-				int sec = (Integer) DatatypeAwareUtils.toValue(tuple.get("$" + Integer.toString(3 * i + 5)), Integer.class);
+				int year = (Integer) DatatypeAwareUtils.toValue(tuple.get("$" + Integer.toString(6 * i)), Integer.class);
+				int month = (Integer) DatatypeAwareUtils.toValue(tuple.get("$" + Integer.toString(6 * i + 1)), Integer.class)-1;
+				int day = (Integer) DatatypeAwareUtils.toValue(tuple.get("$" + Integer.toString(6 * i + 2)), Integer.class);
+				int hour = (Integer) DatatypeAwareUtils.toValue(tuple.get("$" + Integer.toString(6 * i + 3)), Integer.class);
+				int min = (Integer) DatatypeAwareUtils.toValue(tuple.get("$" + Integer.toString(6 * i + 4)), Integer.class);
+				int sec = (Integer) DatatypeAwareUtils.toValue(tuple.get("$" + Integer.toString(6 * i + 5)), Integer.class);
 				calendars[i] = new GregorianCalendar(year, month, day, hour, min, sec);
 			} else {
 				throw new TMQLRuntimeException("Unexpected number of arguments: " + tuple.size());
