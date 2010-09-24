@@ -8,21 +8,23 @@
  */
 package de.topicmapslab.tmql4j.extension.majortom.expression;
 
+import java.net.URISyntaxException;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Map;
 
-import de.topicmapslab.geotype.wgs84.Wgs84Coordinate;
 import de.topicmapslab.majortom.model.core.ICharacteristics;
+import de.topicmapslab.majortom.model.core.IOccurrence;
 import de.topicmapslab.majortom.model.index.ILiteralIndex;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
 import de.topicmapslab.tmql4j.common.utility.HashUtil;
 import de.topicmapslab.tmql4j.common.utility.VariableNames;
+import de.topicmapslab.tmql4j.common.utility.XmlSchemeDatatypes;
 import de.topicmapslab.tmql4j.extension.majortom.utils.FunctionUtils;
 import de.topicmapslab.tmql4j.interpreter.core.base.QueryMatches;
 import de.topicmapslab.tmql4j.interpreter.core.interpreter.functions.IFunctionInvocationInterpreter;
 import de.topicmapslab.tmql4j.interpreter.model.ExpressionInterpreterImpl;
-import de.topicmapslab.tmql4j.interpreter.utility.operation.LiteralUtils;
 import de.topicmapslab.tmql4j.parser.core.expressions.FunctionInvocation;
 import de.topicmapslab.tmql4j.parser.core.expressions.Parameters;
 
@@ -30,16 +32,14 @@ import de.topicmapslab.tmql4j.parser.core.expressions.Parameters;
  * @author Sven Krosse
  * 
  */
-public class GetCoordinatesInDistance extends
-		ExpressionInterpreterImpl<FunctionInvocation> implements
-		IFunctionInvocationInterpreter<FunctionInvocation> {
+public class GetDatesBefore extends ExpressionInterpreterImpl<FunctionInvocation> implements IFunctionInvocationInterpreter<FunctionInvocation> {
 
-	public static final String GetCoordinatesInDistanceIdentifier = "fn:coordinates-in-distance";
+	public static final String GetDatesBeforeIdentifier = "fn:dates-before";
 
 	/**
 	 * @param ex
 	 */
-	public GetCoordinatesInDistance(FunctionInvocation ex) {
+	public GetDatesBefore(FunctionInvocation ex) {
 		super(ex);
 	}
 
@@ -56,8 +56,7 @@ public class GetCoordinatesInDistance extends
 		 * check count of variables
 		 */
 		if (!isExpectedNumberOfParameters(parameters.getOrderedKeys().size())) {
-			throw new TMQLRuntimeException(getItemIdentifier()
-					+ "() requieres 2 or 3 parameters.");
+			throw new TMQLRuntimeException(getItemIdentifier() + "() requieres 1,3 or 6 parameters.");
 		}
 		QueryMatches results = new QueryMatches(runtime);
 		/*
@@ -65,58 +64,43 @@ public class GetCoordinatesInDistance extends
 		 */
 		for (Map<String, Object> tuple : parameters) {
 			try {
-				Double distance = null;
-				Wgs84Coordinate coordinate = FunctionUtils.getWgs84Coordinate(tuple,1);
-				/*
-				 * is parameter-list String, double
-				 */
-				if (tuple.size() == 2) {
-					Object oDistance = tuple.get("$1");
-					distance = LiteralUtils.asDouble(oDistance);
-				} else {
-					Object oDistance = tuple.get("$2");
-					distance = LiteralUtils.asDouble(oDistance);
-				}
-
-				ILiteralIndex index = runtime.getTopicMap().getIndex(
-						ILiteralIndex.class);
+				Calendar calendar = FunctionUtils.getCalendar(tuple);
+				ILiteralIndex index = runtime.getTopicMap().getIndex(ILiteralIndex.class);
 				if (!index.isOpen()) {
 					index.open();
 				}
-				for (ICharacteristics c : index.getCoordinates(coordinate,
-						distance)) {
-					Map<String, Object> result = HashUtil.getHashMap();
-					result.put(QueryMatches.getNonScopedVariable(), c);
-					results.add(result);
+				for (ICharacteristics c : index.getCharacteristics(runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_DATETIME))) {
+					if ( ((IOccurrence)c).dateTimeValue().before(calendar)){
+						Map<String, Object> result = HashUtil.getHashMap();
+						result.put(QueryMatches.getNonScopedVariable(), c);
+						results.add(result);
+					}
 				}
 			} catch (NumberFormatException e) {
-				throw new TMQLRuntimeException(
-						"Given argument has to be a double value", e);
+				throw new TMQLRuntimeException("Given argument has to be a integer value", e);
 			} catch (ParseException e) {
-				throw new TMQLRuntimeException(
-						"Given argument has to be a string coordinate value", e);
+				throw new TMQLRuntimeException("Given argument has to be a string date value", e);
 			} catch (UnsupportedOperationException e) {
-				throw new TMQLRuntimeException(
-						"Function only supported by MaJorToM Topic Map Engines",
-						e);
+				throw new TMQLRuntimeException("Function only supported by MaJorToM Topic Map Engines", e);
+			} catch (URISyntaxException e) {
+				throw new TMQLRuntimeException("Given argument has to be a string date value", e);
 			}
 		}
-		runtime.getRuntimeContext().peek()
-				.setValue(VariableNames.QUERYMATCHES, results);
+		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES, results);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getItemIdentifier() {
-		return GetCoordinatesInDistanceIdentifier;
+		return GetDatesBeforeIdentifier;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public boolean isExpectedNumberOfParameters(long numberOfParameters) {
-		return numberOfParameters == 2 || numberOfParameters == 3;
+		return numberOfParameters == 1 || numberOfParameters == 3 || numberOfParameters == 6;
 	}
 
 }

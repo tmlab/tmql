@@ -2,6 +2,10 @@ package de.topicmapslab.tmql4j.extension.majortom.core;
 
 import de.topicmapslab.tmql4j.common.model.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.extension.majortom.expression.GetCoordinatesInDistance;
+import de.topicmapslab.tmql4j.extension.majortom.expression.GetDates;
+import de.topicmapslab.tmql4j.extension.majortom.expression.GetDatesAfter;
+import de.topicmapslab.tmql4j.extension.majortom.expression.GetDatesBefore;
+import de.topicmapslab.tmql4j.extension.majortom.expression.GetDatesInRange;
 import de.topicmapslab.tmql4j.extension.majortom.expression.GetDistance;
 import de.topicmapslab.tmql4j.extensions.exception.TMQLExtensionRegistryException;
 import de.topicmapslab.tmql4j.extensions.model.ILanguageExtension;
@@ -16,8 +20,7 @@ public class Tmql4MajortomExtensionPoint implements ILanguageExtension {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean extendsExpressionType(
-			Class<? extends IExpression> expressionType) {
+	public boolean extendsExpressionType(Class<? extends IExpression> expressionType) {
 		return false;
 	}
 
@@ -41,18 +44,20 @@ public class Tmql4MajortomExtensionPoint implements ILanguageExtension {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void registerExtension(ITMQLRuntime runtime)
-			throws TMQLExtensionRegistryException {
+	public void registerExtension(ITMQLRuntime runtime) throws TMQLExtensionRegistryException {
 
-		runtime.getLanguageContext()
-				.getFunctionRegistry()
-				.registerFunction(
-						GetCoordinatesInDistance.GetCoordinatesInDistanceIdentifier,
-						GetCoordinatesInDistance.class);
-		runtime.getLanguageContext()
-				.getFunctionRegistry()
-				.registerFunction(GetDistance.GetDistanceIdentifier,
-						GetDistance.class);
+		/*
+		 * geographical-functions 
+		 */
+		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetCoordinatesInDistance.GetCoordinatesInDistanceIdentifier, GetCoordinatesInDistance.class);
+		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetDistance.GetDistanceIdentifier, GetDistance.class);
+		/*
+		 * temporal-functions
+		 */
+		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetDates.GetDatesIdentifier, GetDates.class);
+		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetDatesAfter.GetDatesAfterIdentifier, GetDatesAfter.class);
+		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetDatesBefore.GetDatesBeforeIdentifier, GetDatesBefore.class);
+		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetDatesInRange.GetDatesInRangeIdentifier, GetDatesInRange.class);
 
 		entry = new Tmql4MajortomLanguageExtensionEntry();
 	}
