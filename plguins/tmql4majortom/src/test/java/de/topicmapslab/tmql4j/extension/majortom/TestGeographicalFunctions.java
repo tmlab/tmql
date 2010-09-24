@@ -142,7 +142,7 @@ public class TestGeographicalFunctions extends Tmql4JTestCase {
 		}
 
 		query = "FOR $c IN " + GetCoordinatesInDistance.GetCoordinatesInDistanceIdentifier + "( \"" + coordinate.toString() + "\" , " + coordinate.getDistance(other)
-				+ " ) RETURN $c << characteristics , fn:distance ( \"" + coordinate.toString() + "\" , $c >> atomify )";
+				+ " ) RETURN ( $c << characteristics , fn:distance ( \"" + coordinate.toString() + "\" , $c >> atomify [0] ) )";
 		set = execute(query);
 		assertEquals(2, set.size());
 		for (IResult r : set) {
@@ -150,6 +150,7 @@ public class TestGeographicalFunctions extends Tmql4JTestCase {
 			assertTrue(r.first().equals(topic) || r.first().equals(otherTopic));
 			assertTrue(r.get(1).equals(0D) || r.get(1).equals(coordinate.getDistance(other)));
 		}
+		System.out.println(set);
 	}
 
 	@Test

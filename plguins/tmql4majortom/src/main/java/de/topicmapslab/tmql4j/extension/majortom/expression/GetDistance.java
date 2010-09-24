@@ -58,6 +58,9 @@ public class GetDistance extends ExpressionInterpreterImpl<FunctionInvocation> i
 		 * iterate over parameters
 		 */
 		for (Map<String, Object> tuple : parameters) {
+			if (!isExpectedNumberOfParameters(tuple.size())) {
+				continue;
+			}
 			try {
 				Wgs84Coordinate[] coordinates = FunctionUtils.getWgs84Coordinates(tuple,2);
 				Map<String, Object> result = HashUtil.getHashMap();
