@@ -78,7 +78,6 @@ Import-Package: de.topicmapslab.geotype.wgs84,
  de.topicmapslab.tmql4j.resultprocessing.core.simple,
  de.topicmapslab.tmql4j.resultprocessing.core.xml,
  de.topicmapslab.tmql4j.resultprocessing.model,
- junit.framework;optional=true;specification-version="3.8.0",
  org.osgi.framework,
  org.tmapi.core;specification-version="2.0.2",
  org.tmapi.index;specification-version="2.0.2"
