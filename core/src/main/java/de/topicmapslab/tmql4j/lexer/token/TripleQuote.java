@@ -18,7 +18,7 @@ public class TripleQuote extends Token {
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "\"\"\"";
+		return "'''";
 	}
 
 }

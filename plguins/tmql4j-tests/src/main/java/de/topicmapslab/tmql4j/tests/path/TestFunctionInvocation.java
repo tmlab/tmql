@@ -82,6 +82,17 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first().equals("This is a string."));
 	}
+	
+	@Test
+	public void testDoubleStringConcatFunction() throws Exception {
+		String query;
+		SimpleResultSet set = null;
+		query = "fn:string-concat ( \"This is \", \"a string.\" ) ";
+		set = execute(new TMQLQueryDraft2008(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertTrue(set.first().first().equals("This is a string."));
+	}
 
 	@Test
 	public void testLengthFunction() throws Exception {

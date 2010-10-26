@@ -14,6 +14,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
+
+import de.topicmapslab.tmql4j.common.core.exception.TMQLLexerException;
+import de.topicmapslab.tmql4j.common.utility.HashUtil;
 
 /**
  * TMQL tokenizer class. String secure tokenizer of TMQL queries, splitting
@@ -25,6 +29,15 @@ import java.util.NoSuchElementException;
  * 
  */
 public class TMQLTokenizer {
+
+	private static Set<Character> nonXmlMarger = HashUtil.getHashSet();
+	static {
+		nonXmlMarger.add('-');
+		nonXmlMarger.add('<');
+		nonXmlMarger.add('=');
+		nonXmlMarger.add('>');
+		nonXmlMarger.add(' ');
+	}
 
 	/**
 	 * the origin string
@@ -54,7 +67,8 @@ public class TMQLTokenizer {
 		/*
 		 * call method to tokenize
 		 */
-		tokenize();
+		// tokenize();
+		newTokenize();
 
 		this.iterator = this.tokens.iterator();
 	}
@@ -81,6 +95,173 @@ public class TMQLTokenizer {
 		return iterator.next();
 	}
 
+	private final void newTokenize() {
+		StringBuilder buffer = new StringBuilder();
+		boolean isProtected = false;
+		String protectionPattern = "";
+		for (int index = 0; index < origin.length(); index++) {
+			char c = origin.charAt(index);
+			/*
+			 * whitespace and not protected
+			 */
+			if (c == ' ' && !isProtected) {
+				if (!buffer.toString().isEmpty()) {
+					tokens.add(buffer.toString().trim());
+					buffer = new StringBuilder();
+				}
+				continue;
+			}
+			/*
+			 * check escaping symbol
+			 */
+			if (c == '\\' && isProtected) {
+				/*
+				 * next character is missing
+				 */
+				if (index + 1 >= origin.length()) {
+					throw new TMQLLexerException(
+							"Invalid character sequence at position '"
+									+ index
+									+ "'. Expected '\"' or '\\' but no character was found!");
+				}
+				char next = origin.charAt(index+1);
+				/*
+				 * only " and \ are allowed after escape symbol
+				 */
+				if (next == '"' || next == '\\') {
+					buffer.append(next);
+					index++;
+					continue;
+				}
+				throw new TMQLLexerException(
+						"Invalid character sequence at position '" + index
+								+ "'. Expected '\"' or '\\' but '" + next
+								+ "' was found!");
+			}
+			buffer.append(c);
+			String currentPattern = buffer.toString();
+			/*
+			 * is end of protection
+			 */
+			if (isProtected && currentPattern.endsWith(protectionPattern)) {
+				/*
+				 * special handling for XML end
+				 */
+				if (protectionPattern.equalsIgnoreCase(">")) {
+					/*
+					 * is embed content axis
+					 */
+					if (origin.length() > index + 1
+							&& !nonXmlMarger.contains(origin.charAt(index + 1))
+							&& !nonXmlMarger.contains(origin.charAt(index - 1))) {
+						continue;
+					}
+				}
+				/*
+				 * special handling for data-typed literals
+				 */
+				else if (protectionPattern.equalsIgnoreCase("\"\"\"")
+						|| protectionPattern.equalsIgnoreCase("\"")) {
+					if (origin.length() > index + 2
+							&& "^^".equalsIgnoreCase(origin.substring(
+									index + 1, index + 3))) {
+						/*
+						 * change protection pattern to whitespace
+						 */
+						protectionPattern = " ";
+						continue;
+					}
+					/*
+					 * if next character is also an quote ignore current existence of quotes
+					 */
+					else if (origin.length() > index + 1 && origin.charAt(index+1) == '"'){
+						continue;
+					}
+					/*
+					 * protected quotes at the beginning of a string
+					 */
+					else if ( buffer.length() < protectionPattern.length()*2){
+						continue;
+					}
+				}
+				if (!buffer.toString().isEmpty()) {
+					tokens.add(buffer.toString().trim());
+					buffer = new StringBuilder();
+				}
+				isProtected = false;
+				continue;
+			}
+			/*
+			 * is single quoted string
+			 */
+			if ("'''".equalsIgnoreCase(currentPattern)) {
+				if (!buffer.toString().isEmpty()) {
+					tokens.add(buffer.toString().trim());
+					buffer = new StringBuilder();
+				}
+			}
+			/*
+			 * beginning of new protection?
+			 */
+			if (!isProtected) {
+				/*
+				 * is triple quoted string
+				 */
+				if ("\"\"\"".equalsIgnoreCase(currentPattern)) {
+					protectionPattern = "\"\"\"";
+					isProtected = true;
+				}
+				/*
+				 * could be XML
+				 */
+				else if ("<".equalsIgnoreCase(currentPattern)) {
+					/*
+					 * is XML if next char is not <
+					 */
+					if (origin.length() > index + 1
+							&& !nonXmlMarger.contains(origin.charAt(index + 1))) {
+						isProtected = true;
+						protectionPattern = ">";
+					}
+				}
+				/*
+				 * could be simple double quote string
+				 */
+				else if ("\"".equalsIgnoreCase(currentPattern)) {
+					/*
+					 * is XML if next char is not "
+					 */
+					if (origin.length() > index + 1
+							&& !"\"".equalsIgnoreCase(String.valueOf(origin
+									.charAt(index + 1)))) {
+						isProtected = true;
+						protectionPattern = "\"";
+					}
+				}
+				/*
+				 * could be simple single quote string
+				 */
+				else if ("'".equalsIgnoreCase(currentPattern)) {
+					/*
+					 * is XML if next char is not '
+					 */
+					if (origin.length() > index + 1
+							&& !"'".equalsIgnoreCase(String.valueOf(origin
+									.charAt(index + 1)))) {
+						isProtected = true;
+						protectionPattern = "'";
+					}
+				}
+			}
+		}
+		/*
+		 * add last string
+		 */
+		if (buffer.toString().length() != 0) {
+			tokens.add(buffer.toString().trim());
+		}
+	}
+
 	/**
 	 * Internal method to split the origin string into internal token
 	 * representation. Tokenizer class split the query at whitespace except of
@@ -94,7 +275,7 @@ public class TMQLTokenizer {
 		buffer.append(lastChar);
 		for (int index = 1; index < origin.length(); index++) {
 			char c = origin.charAt(index);
-			if (c == '"' ) {
+			if (c == '"') {
 				/*
 				 * save token """
 				 */
@@ -112,8 +293,8 @@ public class TMQLTokenizer {
 			/*
 			 * can be XML content
 			 */
-			else if (!stringProtection && c == '<' && origin.indexOf(">", index) != -1
-					&& lastChar != '<') {
+			else if (!stringProtection && c == '<'
+					&& origin.indexOf(">", index) != -1 && lastChar != '<') {
 				char next = origin.charAt(index + 1);
 				if (next != '<' && next != '=' && next != ' ') {
 					xmlProtection = true;
@@ -145,10 +326,10 @@ public class TMQLTokenizer {
 			/*
 			 * '{' and '}' are always stand-alone characters
 			 */
-			else if ( c == '{' || c == '}') {
+			else if (c == '{' || c == '}') {
 				if (!buffer.toString().isEmpty()) {
 					tokens.add(buffer.toString());
-					buffer = new StringBuffer();					
+					buffer = new StringBuffer();
 				}
 				buffer.append(c);
 				tokens.add(buffer.toString());

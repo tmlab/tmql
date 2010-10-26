@@ -64,6 +64,9 @@ public class GetCoordinatesInDistance extends
 		 * iterate over parameters
 		 */
 		for (Map<String, Object> tuple : parameters) {
+			if (!isExpectedNumberOfParameters(tuple.size())) {
+				continue;
+			}
 			try {
 				Double distance = null;
 				Wgs84Coordinate coordinate = FunctionUtils.getWgs84Coordinate(tuple,1);

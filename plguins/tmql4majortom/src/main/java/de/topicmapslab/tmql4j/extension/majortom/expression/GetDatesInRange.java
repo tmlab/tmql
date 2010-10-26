@@ -63,6 +63,9 @@ public class GetDatesInRange extends ExpressionInterpreterImpl<FunctionInvocatio
 		 * iterate over parameters
 		 */
 		for (Map<String, Object> tuple : parameters) {
+			if (!isExpectedNumberOfParameters(tuple.size())) {
+				continue;
+			}
 			try {
 				Calendar calendars[] = FunctionUtils.getCalendars(tuple, 2);
 				ILiteralIndex index = runtime.getTopicMap().getIndex(ILiteralIndex.class);

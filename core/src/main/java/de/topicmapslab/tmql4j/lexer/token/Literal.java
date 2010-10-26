@@ -20,7 +20,7 @@ public class Literal extends Token {
 	 */
 	@Override
 	public boolean isToken(final ITMQLRuntime runtime, final String literal) {
-		return literal.matches("\"[^\"]*\"");
+		return literal.matches("\"[^\"]*\"") || literal.matches("\"\"\".*\"\"\"");
 	}
 
 	/**

@@ -61,6 +61,9 @@ public class GetDates extends ExpressionInterpreterImpl<FunctionInvocation> impl
 		 * iterate over parameters
 		 */
 		for (Map<String, Object> tuple : parameters) {
+			if (!isExpectedNumberOfParameters(tuple.size())) {
+				continue;
+			}
 			try {
 				Calendar calendar = FunctionUtils.getCalendar(tuple);
 				ILiteralIndex index = runtime.getTopicMap().getIndex(ILiteralIndex.class);

@@ -131,7 +131,7 @@ public class TestReturnClause extends Tmql4JTestCase {
 	
 	@Test
 	public void testReturnCtm() throws Exception {
-		String query = "RETURN \"\"\" Name \"\"\"";
+		String query = "RETURN ''' Name '''";
 		CTMResult set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
@@ -144,7 +144,7 @@ public class TestReturnClause extends Tmql4JTestCase {
 			nodes.add("Name" + Integer.toString(i)+"");
 		}
 		assertEquals(100, topic.getNames().size());
-		query = "FOR $name IN myTopic >> characteristics tm:name RETURN \"\"\" { $name >> atomify } \"\"\"";
+		query = "FOR $name IN myTopic >> characteristics tm:name RETURN ''' { $name >> atomify } '''";
 		set = execute(query);
 		assertEquals(nodes.size(), set.size());
 		for ( IResult r : set){

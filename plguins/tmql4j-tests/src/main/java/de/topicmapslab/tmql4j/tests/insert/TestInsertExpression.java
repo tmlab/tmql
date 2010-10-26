@@ -37,7 +37,7 @@ public class TestInsertExpression extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = " INSERT \"\"\" " + subjectIdentifier + ". \"\"\"";
+		query = " INSERT ''' " + subjectIdentifier + ". '''";
 		set = execute(new TMQLQuery(query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
@@ -57,8 +57,8 @@ public class TestInsertExpression extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = " INSERT \"\"\" " + base + "myType ( " + base + "myType : "
-				+ base + "myTopic ) \"\"\"";
+		query = " INSERT ''' " + base + "myType ( " + base + "myType : "
+				+ base + "myTopic ) '''";
 		set = execute(new TMQLQuery(query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());

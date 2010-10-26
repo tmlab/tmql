@@ -15,15 +15,14 @@ import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
 
 import de.topicmapslab.tmql4j.common.context.PrefixHandler;
 import de.topicmapslab.tmql4j.common.model.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.common.utility.HashUtil;
 import de.topicmapslab.tmql4j.interpreter.utility.operation.LiteralUtils;
 import de.topicmapslab.tmql4j.lexer.core.TMQLTokenizer;
-
 
 /**
  * Query transformer class to cleaned query by removing unnecessary white-spaces
@@ -88,7 +87,7 @@ public class TMQLQueryTransformer {
 		specials.put("/", new String[] { "//", "/>", "</" });
 		specials.put("..", new String[] { "..." });
 		specials.put("*", new String[] {});
-		specials.put("!", new String[] {"!="});
+		specials.put("!", new String[] { "!=" });
 	}
 
 	/**
@@ -226,13 +225,15 @@ public class TMQLQueryTransformer {
 		 * save time and dateTime
 		 */
 		if (LiteralUtils.isDate(token) || LiteralUtils.isTime(token)
-				|| LiteralUtils.isDateTime(token) || LiteralUtils.isInteger(token) || LiteralUtils.isDecimal(token)) {
+				|| LiteralUtils.isDateTime(token)
+				|| LiteralUtils.isInteger(token)
+				|| LiteralUtils.isDecimal(token)) {
 			return token;
 		}
 		/*
 		 * is known pattern
 		 */
-		if ( patterns.contains(token.trim())){
+		if (patterns.contains(token.trim())) {
 			return token;
 		}
 
@@ -260,8 +261,8 @@ public class TMQLQueryTransformer {
 					 * method add cleaned token before detected candidate
 					 */
 					if (windowStart > 0) {
-						tmp += uriProtectionAlgorithm(runtime, cleaned
-								.substring(0, windowStart));
+						tmp += uriProtectionAlgorithm(runtime,
+								cleaned.substring(0, windowStart));
 					}
 					tmp += WHITESPACE;
 					tmp += candidate;
@@ -270,8 +271,8 @@ public class TMQLQueryTransformer {
 					 * method add cleaned token after detected candidate
 					 */
 					if (windowStart + windowSize < cleaned.length()) {
-						tmp += uriProtectionAlgorithm(runtime, cleaned
-								.substring(windowStart + windowSize));
+						tmp += uriProtectionAlgorithm(runtime,
+								cleaned.substring(windowStart + windowSize));
 					}
 					return tmp;
 
@@ -425,7 +426,7 @@ public class TMQLQueryTransformer {
 			return true;
 		} else if (token.startsWith("\"") && token.endsWith("\"")) {
 			return true;
-		} else if ( patterns.contains(token.trim())){
+		} else if (patterns.contains(token.trim())) {
 			return true;
 		}
 		/*

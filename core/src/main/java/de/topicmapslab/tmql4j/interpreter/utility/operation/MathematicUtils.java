@@ -25,7 +25,7 @@ import java.util.Date;
 public class MathematicUtils {
 
 	/**
-	 * Generic method to call mathematic operation by method name.
+	 * Generic method to call mathematical operation by method name.
 	 * 
 	 * @param method
 	 *            the name of the method

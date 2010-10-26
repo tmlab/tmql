@@ -355,8 +355,7 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		set = execute(query);
 		assertEquals(100, set.size());
 
-		query = "RETURN // tm:subject >> characteristics type [  . >> atomify =~ \""
-				+ value.replaceAll("\\+", "\\\\+") + "\" ]";
+		query = "RETURN // tm:subject >> characteristics type [  . >> atomify =~ \"Wed Jun 23 19:11:23 \\\\\\\\\\\\\\\\+0200 2010\" ]";
 		set = execute(query);
 		assertEquals(100, set.size());
 
@@ -369,8 +368,7 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		set = execute(query);
 		assertEquals(100, set.size());
 
-		query = "RETURN // tm:subject >> characteristics type [ fn:count ( . >> scope ) == 0 AND . >> atomify =~ \""
-				+ value.replaceAll("\\+", "\\\\+") + "\" ]";
+		query = "RETURN // tm:subject >> characteristics type [ fn:count ( . >> scope ) == 0 AND . >> atomify =~ \"Wed Jun 23 19:11:23 \\\\\\\\\\\\\\\\+0200 2010\" ]";
 		set = execute(query);
 		assertEquals(100, set.size());
 

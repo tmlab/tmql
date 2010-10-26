@@ -169,6 +169,33 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals("New Value", topic.getOccurrences().iterator().next()
 				.getValue());
 		
+		query = " UPDATE occurrences SET \"\"\"New\"'Value\"\"\" WHERE \"" + topic.getOccurrences().iterator().next().getId() +"\" << id  ";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals(1, topic.getOccurrences().size());
+		assertEquals("New\"'Value", topic.getOccurrences().iterator().next()
+				.getValue());
+		
+		query = " UPDATE occurrences SET \"\"\"New\"'Value\"\"\"\" WHERE \"" + topic.getOccurrences().iterator().next().getId() +"\" << id  ";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals(1, topic.getOccurrences().size());
+		assertEquals("New\"'Value\"", topic.getOccurrences().iterator().next()
+				.getValue());
+		
+		query = " UPDATE occurrences SET \"\"\"\\\"New\"'Value\"\"\"\" WHERE \"" + topic.getOccurrences().iterator().next().getId() +"\" << id  ";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals(1, topic.getOccurrences().size());
+		assertEquals("\"New\"'Value\"", topic.getOccurrences().iterator().next()
+				.getValue());
+		
 		query = " UPDATE occurrences SET \"New Value\"^^"+ XmlSchemeDatatypes.XSD_BOOLEAN +" WHERE \"" + topic.getOccurrences().iterator().next().getId() +"\" << id ";
 		set = execute(new TMQLQuery(query));
 		assertEquals(1, set.size());
