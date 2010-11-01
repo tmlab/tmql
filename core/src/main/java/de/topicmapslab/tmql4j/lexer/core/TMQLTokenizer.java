@@ -129,6 +129,7 @@ public class TMQLTokenizer {
 				 * only " and \ are allowed after escape symbol
 				 */
 				if (next == '"' || next == '\\') {
+					buffer.append(c);
 					buffer.append(next);
 					index++;
 					continue;

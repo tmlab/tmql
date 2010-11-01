@@ -388,7 +388,37 @@ The function 'zagzig' is the reverse function of 'zigzag' and returns a tuple se
 
 -------------------------------------
 1:	fn:zagzig  ( s =>  [ "a" , "b" , "a" , "b" ] )
-2:	=> [ [ "a" ] , [ "a" ] , [ "a" ] , [ "a" ] )
+2:	=> ( [ "a" ] , [ "a" ] , [ "a" ] , [ "a" ] )
+-------------------------------------
+
+===== url-decode =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/url-decode
+|*profile*|fn:url-decode (s : string) return string
+|================
+
+The function 'url-decode' decodes the given URL reference. The result will be the reference without any encoded characters.
+
+-------------------------------------
+1:	fn:url-decode  ( s =>  "http://psi.example.org/Hello%20World" )
+2:	=> ( "http://psi.example.org/Hello World" )
+-------------------------------------
+
+===== url-encode =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/url-encode
+|*profile*|fn:url-encode (s : string) return string
+|================
+
+The function 'url-encode' encodes the given string literal as an URI reference and escape all forbidden characters of the URI syntax.
+
+-------------------------------------
+1:	fn:url-encode  ( s =>  "http://psi.example.org/Hello World" )
+2:	=> ( "http://psi.example.org/Hello%20World" )
 -------------------------------------
 
 ==== Predefined topic references ====

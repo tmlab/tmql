@@ -94,48 +94,42 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 				 * handle as date?
 				 */
 				if (LiteralUtils.isDate(anchor_)) {
-					tuple.put(QueryMatches.getNonScopedVariable(), LiteralUtils
-							.asDate(anchor_));
+					tuple.put(QueryMatches.getNonScopedVariable(), LiteralUtils.asDate(anchor_));
 					matches.add(tuple);
 				}
 				/*
 				 * handle as time?
 				 */
 				else if (LiteralUtils.isTime(anchor_)) {
-					tuple.put(QueryMatches.getNonScopedVariable(), LiteralUtils
-							.asTime(anchor_));
+					tuple.put(QueryMatches.getNonScopedVariable(), LiteralUtils.asTime(anchor_));
 					matches.add(tuple);
 				}
 				/*
 				 * handle as dateTime?
 				 */
 				else if (LiteralUtils.isDateTime(anchor_)) {
-					tuple.put(QueryMatches.getNonScopedVariable(), LiteralUtils
-							.asDateTime(anchor_));
+					tuple.put(QueryMatches.getNonScopedVariable(), LiteralUtils.asDateTime(anchor_));
 					matches.add(tuple);
 				}
 				/*
 				 * handle as decimal?
 				 */
 				else if (LiteralUtils.isDecimal(anchor_)) {
-					tuple.put(QueryMatches.getNonScopedVariable(), LiteralUtils
-							.asDecimal(anchor_));
+					tuple.put(QueryMatches.getNonScopedVariable(), LiteralUtils.asDecimal(anchor_));
 					matches.add(tuple);
 				}
 				/*
 				 * handle as integer?
 				 */
 				else if (LiteralUtils.isInteger(anchor_)) {
-					tuple.put(QueryMatches.getNonScopedVariable(), LiteralUtils
-							.asInteger(anchor_));
+					tuple.put(QueryMatches.getNonScopedVariable(), LiteralUtils.asInteger(anchor_));
 					matches.add(tuple);
 				}
 				/*
 				 * handle special topic undef
 				 */
-				else if ( "undef".equalsIgnoreCase(anchor_)){
-					tuple.put(QueryMatches.getNonScopedVariable(),
-							runtime.getEnvironment().getTmqlTopicUndef());
+				else if ("undef".equalsIgnoreCase(anchor_)) {
+					tuple.put(QueryMatches.getNonScopedVariable(), runtime.getEnvironment().getTmqlTopicUndef());
 					matches.add(tuple);
 				}
 				/*
@@ -143,19 +137,15 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 				 */
 				else {
 					try {
-						Construct construct = runtime.getDataBridge()
-								.getConstructByIdentifier(runtime, anchor_);
-						tuple.put(QueryMatches.getNonScopedVariable(),
-								construct);
+						Construct construct = runtime.getDataBridge().getConstructByIdentifier(runtime, anchor_);
+						tuple.put(QueryMatches.getNonScopedVariable(), construct);
 						matches.add(tuple);
 					} catch (DataBridgeException e) {
-						logger.warn("Cannot interpret given anchor '" + anchor_
-								+ "'.");
+						logger.warn("Cannot interpret given anchor '" + anchor_ + "'.");
 					}
 				}
 			} catch (Exception ex) {
-				throw new TMQLRuntimeException(
-						"Cannot interpret given anchor '" + anchor_ + "'.", ex);
+				throw new TMQLRuntimeException("Cannot interpret given anchor '" + anchor_ + "'.", ex);
 			}
 		}
 		/*
@@ -165,25 +155,19 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 			/*
 			 * check if current tuple is on top of the stack
 			 */
-			if (runtime.getRuntimeContext().peek().contains(
-					VariableNames.CURRENT_TUPLE)) {
+			if (runtime.getRuntimeContext().peek().contains(VariableNames.CURRENT_TUPLE)) {
 				/*
 				 * store current tuple
 				 */
 				Map<String, Object> currentTuple = HashUtil.getHashMap();
-				currentTuple.put(QueryMatches.getNonScopedVariable(), runtime
-						.getRuntimeContext().peek().getValue(
-								VariableNames.CURRENT_TUPLE));
+				currentTuple.put(QueryMatches.getNonScopedVariable(), runtime.getRuntimeContext().peek().getValue(VariableNames.CURRENT_TUPLE));
 				matches.add(currentTuple);
 			}
 			/*
 			 * check if context is given by upper-expression
 			 */
-			else if (runtime.getRuntimeContext().peek().contains(
-					VariableNames.ITERATED_BINDINGS)) {
-				QueryMatches queryMatches = (QueryMatches) runtime
-						.getRuntimeContext().peek().getValue(
-								VariableNames.ITERATED_BINDINGS);
+			else if (runtime.getRuntimeContext().peek().contains(VariableNames.ITERATED_BINDINGS)) {
+				QueryMatches queryMatches = (QueryMatches) runtime.getRuntimeContext().peek().getValue(VariableNames.ITERATED_BINDINGS);
 				matches = queryMatches;
 			}
 		}
@@ -197,8 +181,7 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 			 * check if variable is bind on top of the stack
 			 */
 			if (set.contains(variable)) {
-				ITupleSequence<Object> sequence = runtime.getProperties()
-						.newSequence();
+				ITupleSequence<Object> sequence = runtime.getProperties().newSequence();
 				sequence.add(set.getValue(variable));
 				/*
 				 * save binding as tuple
@@ -209,22 +192,17 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 			 * check if context is given by upper-expression
 			 */
 			else if (set.contains(VariableNames.ITERATED_BINDINGS)) {
-				QueryMatches queryMatches = (QueryMatches) runtime
-						.getRuntimeContext().peek().getValue(
-								VariableNames.ITERATED_BINDINGS);
+				QueryMatches queryMatches = (QueryMatches) runtime.getRuntimeContext().peek().getValue(VariableNames.ITERATED_BINDINGS);
 				QueryMatches match = new QueryMatches(runtime);
 				/*
 				 * save binding as tuple
 				 */
-				match.convertToTuples(queryMatches
-						.getPossibleValuesForVariable(variable));
+				match.convertToTuples(queryMatches.getPossibleValuesForVariable(variable));
 				/*
 				 * check if variable was mapped by internal operation
 				 */
 				if (match.isEmpty() && match.getOrigin(variable) != null) {
-					match.convertToTuples(queryMatches
-							.getPossibleValuesForVariable(match
-									.getOrigin(variable)));
+					match.convertToTuples(queryMatches.getPossibleValuesForVariable(match.getOrigin(variable)));
 				}
 
 				matches.add(new QueryMatches(runtime, queryMatches, match));
@@ -235,8 +213,7 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 		 */
 		else if (anchor.equals(Literal.class)) {
 			Map<String, Object> tuple = HashUtil.getHashMap();
-			tuple.put(QueryMatches.getNonScopedVariable(), LiteralUtils
-					.asString(anchor_));
+			tuple.put(QueryMatches.getNonScopedVariable(), LiteralUtils.asString(anchor_));
 			matches.add(tuple);
 		}
 		/*
@@ -244,26 +221,21 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 		 */
 		else if (anchor.equals(DatatypedElement.class)) {
 			final StringTokenizer tokenizer = new StringTokenizer(anchor_, "^^");
-			String value = tokenizer.nextToken();
-			value = value.substring(1, value.length() - 1);
+			String value = LiteralUtils.asString(tokenizer.nextToken());			
 			String datatype = tokenizer.nextToken();
 			try {
 				Map<String, Object> tuple = HashUtil.getHashMap();
-				tuple.put(QueryMatches.getNonScopedVariable(), LiteralUtils
-						.asLiteral(value, datatype));
+				tuple.put(QueryMatches.getNonScopedVariable(), LiteralUtils.asLiteral(value, datatype));
 				matches.add(tuple);
 			} catch (Exception ex) {
-				throw new TMQLRuntimeException(
-						"Cannot interpret given literal '" + value
-								+ "' with datatype '" + datatype + "'.", ex);
+				throw new TMQLRuntimeException("Cannot interpret given literal '" + value + "' with datatype '" + datatype + "'.", ex);
 			}
 		}
 
 		/*
 		 * store result
 		 */
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				matches);
+		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES, matches);
 
 	}
 }

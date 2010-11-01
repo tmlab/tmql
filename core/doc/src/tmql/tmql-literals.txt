@@ -16,5 +16,5 @@ Constant literals are called atoms and representing the internal datatypes which
 |date|'-'? yyyy '-' mm '-' dd zzzzzz?
 |dateTime| '-'? yyyy '-' mm '-' dd 'T' hh ':' mm ':' ss ('.' s+)? (zzzzzz)?
 |iri| "   QIRI   " 
-|string| +++"([^"]\|\")*"/   \|   /'([^']\|\')*'+++
+|string| +++"([^"]\|\")*"/   \| """([^"]\|\")*""" \|   /'([^']\|\')*'+++
 |=====

@@ -47,6 +47,15 @@ If the current node is a string literal the backward navigation returns the cons
 [NOTE]
 There is a shortcut definition contained by the non-canonical level based on the CTM syntax. The shortcut '^' returns the construct represented by the following literal used as item-identifier.
 
+==== The id axis ====
+
+The 'id' axis represents the relationship between a topic map construct and its id. It does not support any optional type arguments and can be navigate in both directions.
+
+If the current node is a construct the forward navigation returns the id of the current construct.
+
+If the current node is a string literal the backward navigation returns the construct represented by this id or an empty set if there is no construct contained.
+
+
 ==== The types axis ====
 
 The 'types' axis represents the relationship between topic types and its instances. It does not support any optional type arguments and can be navigated in both directions.

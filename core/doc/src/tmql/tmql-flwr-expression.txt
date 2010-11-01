@@ -107,7 +107,7 @@ By using an tm-content' expression inside the return clause the flwr expression 
 The 'tm-content' simply defined by the enclosing triple quotes symbolizing the CTM stream creating by the return clause.
 
 ------------------------------
-1:	RETURN """ Text """
+1:	RETURN ''' Text '''
 ------------------------------
 
 The interpretation of the CTM content contained by the return clause depends on their type. Whitespaces and simple text will keep uninterpreted and will be add to the final CTM stream.
@@ -124,7 +124,7 @@ Embed queries can be used at every position which expected topic map content, li
 ------------------------
 1:	# create a sequence of CTM fragments containing one topic block for each person topic
 2:	FOR $p IN // person
-3:	RETURN """ { $p } """ 
+3:	RETURN ''' { $p } ''' 
 ------------------------
 
 or as association items ...
@@ -132,7 +132,7 @@ or as association items ...
 ------------------------
 1:	# create a sequence of CTM fragments containing one association for each played association
 2:	FOR $p IN // person
-3:	RETURN """ { $p << players } """
+3:	RETURN ''' { $p << players } '''
 ------------------------
 
 or simple as a subject-identifier.
@@ -140,6 +140,6 @@ or simple as a subject-identifier.
 ------------------------
 1:	# create a sequence of CTM fragments containing one association definition using the indicator of each person topic
 2:	FOR $p IN // person
-3:	RETURN """ life-in ( city : leipzig , person : { $p >> indicators >> atomify [0] } """
+3:	RETURN ''' life-in ( city : leipzig , person : { $p >> indicators >> atomify [0] } '''
 ------------------------
 

@@ -1,33 +1,33 @@
 === Insert expressions ===
 
-The part II of the topic maps query language specification contains the modifcation expressions of the language. The modifcation part supports four different expression types representing the four operation types modifying a topic map. Insert operation is one them and enables the creation of new topic map items. Insert operations are represented by 'insert expressions'.
+The part II of the topic maps query language specification contains the modification expressions of the language. The modification part supports four different expression types representing the four operation types modifying a topic map. Insert operation is one them and enables the creation of new topic map items. Insert operations are represented by 'insert expressions'.
 
 ------------------------------
-1:	insert-expression ::= INSERT """ ctm-stream """ { WHERE query-expression }
+1:	insert-expression ::= INSERT ''' ctm-stream ''' { WHERE query-expression }
 ------------------------------
 
 The only mandatory part of an 'insert' expression is the 'insert clause' symbolized by the keyword 'INSERT'. The content which want to be added to the current topic map instance will be represented as CTM fragment similar to the CTM-stream of a 'return clause'.
 
-It is possbile to use embeded queries to create connections between existing content and the new items.
+It is possible to use embedded queries to create connections between existing content and the new items.
 
 ==== Processing model ====
 
 The processing model of insert expressions is quite simple. If there is an where clause it will be interpreted in the same way like as a part of a select expression or flwr expression. The where clause is used to evalute a sub set of possible variables bindings which should be used in the content of the insert clause. The result of the evalutation will be a set of variables bindings.
 
-Then the insert clause will be interpreted for each variable binding returned by the where-clause. If the CTM fragment contains an embeded query it will be interpreted and the result will be added to the CTM stream. If the result is an topic map information item it will be serialized to CTM. Literals will keep unmodified. Each variable binding creates one CTM fragment which will be deserialized to the corresponding topic map fragment and will be added to the queried topic map.
+Then the insert clause will be interpreted for each variable binding returned by the where-clause. If the CTM fragment contains an embedded query it will be interpreted and the result will be added to the CTM stream. If the result is an topic map information item it will be serialized to CTM. Literals will keep unmodified. Each variable binding creates one CTM fragment which will be deserialized to the corresponding topic map fragment and will be added to the queried topic map.
 
 The overall result of the query will be a singleton sequence of a singleton tuple containing the number of created items.
 
 ==== Insert clause ====
 
-The insert clause only contains the keyword 'INSERT' followed by a CTM stream enclosing by the triple quotes '""""'. 
+The insert clause only contains the keyword 'INSERT' followed by a CTM stream enclosing by triple single quotes. 
 
-By using embeded queries the CTM fragment can use the bounded variables of the 'where clause' or embed an independent sub-query. An embeded query expression symbolized by the enclosing angle brackets '{' and '}'. The content of this query expression can be represented by every expression type described by the whole draft like an other flwr expression or a path expression. At first the sub-query will be interpreted in the normal way except the dependency of inherit variable bindings by the enclosing expression, which means that the embeded query can use all variables bound by the enclosing expression, too. 
+By using embedded queries the CTM fragment can use the bounded variables of the 'where clause' or embed an independent sub-query. An embedded query expression symbolized by the enclosing angle brackets '{' and '}'. The content of this query expression can be represented by every expression type described by the whole draft like an other flwr expression or a path expression. At first the sub-query will be interpreted in the normal way except the dependency of inherit variable bindings by the enclosing expression, which means that the embeded query can use all variables bound by the enclosing expression, too. 
 
 If the 'insert clause' creates an invalid CTM fragment in relation to the current CTM draft an error will be raised.
 
 [NOTE]
-The embeded query may not overwrite the inherit variables of the enclosing flwr expression.
+The embedded query may not overwrite the inherit variables of the enclosing flwr expression.
 
 The result of the embed query will be interpreted and added to the final CTM stream. If the embed query returns any topic map construct it will be transformed to valid CTM content using the CTM syntax. If the query returns literal values they will keep unmodified an will be added to the CTM stream as simple text content.
 
@@ -35,7 +35,7 @@ Embed queries can be used at every position which expected topic map content, li
 
 ------------------------
 1:	# create a copy of each person topic
-2:	INSERT """ { $p } """ 
+2:	INSERT ''' { $p } ''' 
 3:	WHERE $p ISA person
 ------------------------
 
@@ -43,7 +43,7 @@ or as association items ...
 
 ------------------------
 1:	# add a reification to the first association played by each person topic
-2:	INSERT """ { $p << players } ~ reifier"""
+2:	INSERT ''' { $p << players } ~ reifier '''
 3:	WHERE $p ISA person
 ------------------------
 
@@ -51,12 +51,12 @@ or simple as a subject-identifier.
 
 ------------------------
 1:	# create a new association played by the each person topic
-2:	INSERT """ life-in ( city : leipzig , person : { $p >> indicators >> atomify [0] } """
+2:	INSERT ''' life-in ( city : leipzig , person : { $p >> indicators >> atomify [0] } '''
 3:	WHERE $p ISA person
 ------------------------
 
 ==== Where clause ====
 
-The 'where clause' define a boolean condition to evalutate the variable bindings. The clause can contain every boolean expression which was discussed in the previous chapters. A where clause returns a set of satisfying variable bindings. 
+The 'where clause' define a boolean condition to evaluate the variable bindings. The clause can contain every boolean expression which was discussed in the previous chapters. A where clause returns a set of satisfying variable bindings. 
 
 The insert expression can only use variable bound in the context of the where clause. If it is missing the usage of any variable is invalid.

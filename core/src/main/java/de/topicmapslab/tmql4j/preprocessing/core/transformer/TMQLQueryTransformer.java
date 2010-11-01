@@ -370,8 +370,7 @@ public class TMQLQueryTransformer {
 		 * protect strings
 		 */
 		if (token.length() > 2 && token.startsWith("\"")
-				&& token.endsWith("\"") && token.charAt(1) != '"'
-				&& token.charAt(token.length() - 2) != '"') {
+				&& token.endsWith("\"")) {
 			return token;
 		}
 

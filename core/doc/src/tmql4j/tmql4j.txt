@@ -68,6 +68,8 @@ TMQL4J Extensions
 
 include::tmql4j-extensions.txt[]
 
+include::tmql4majortom.txt[]
+
 //////////////////////
 TMQL4J RTM integration
 //////////////////////

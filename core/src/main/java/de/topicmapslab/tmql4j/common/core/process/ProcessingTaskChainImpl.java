@@ -92,7 +92,7 @@ public class ProcessingTaskChainImpl implements IProcessingTaskChain {
 		/*
 		 * run canonizer process
 		 */
-		q = doCanonizingTask(runtime, q);
+//		q = doCanonizingTask(runtime, q);
 		/*
 		 * created variables layers
 		 */

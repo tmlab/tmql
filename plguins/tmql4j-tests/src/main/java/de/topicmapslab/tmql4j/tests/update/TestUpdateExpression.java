@@ -123,7 +123,8 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		Topic topic = createTopicBySL("myTopic");
 		topic.createName("Name");
 		assertEquals(1, topic.getNames().size());
-		assertEquals("Name", topic.getNames().iterator().next().getValue());
+		Name name = topic.getNames().iterator().next();
+		assertEquals("Name", name.getValue());
 
 		String query = " UPDATE names SET \"New Name\" WHERE myTopic >> characteristics tm:name ";
 		SimpleResultSet set = execute(new TMQLQuery(query));
@@ -131,7 +132,77 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals(1, set.first().size());
 		assertEquals(1L, set.first().first());
 		assertEquals(1, topic.getNames().size());
-		assertEquals("New Name", topic.getNames().iterator().next().getValue());
+		assertEquals("New Name", name.getValue());
+		
+		query = " UPDATE names SET \"\"\"\\\"Abra\\\"\"\"\" WHERE \"" + name.getId() + "\" << id";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals("\"Abra\"", name.getValue());
+		
+		query = " UPDATE names SET \"\\\"Abra\\\"\" WHERE \"" + name.getId() + "\" << id";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals("\"Abra\"", name.getValue());
+		
+		query = " UPDATE names SET \"Abr\\\"a\" WHERE \"" + name.getId() + "\" << id";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals("Abr\"a", name.getValue());
+		
+		query = " UPDATE names SET \"\"\"Abr\\\"a\"\"\" WHERE \"" + name.getId() + "\" << id";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals("Abr\"a", name.getValue());
+		
+		query = " UPDATE names SET \"Abra\\\"\" WHERE \"" + name.getId() + "\" << id";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals("Abra\"", name.getValue());
+		
+		query = " UPDATE names SET \"\"\"Abra\\\"\"\"\" WHERE \"" + name.getId() + "\" << id";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals("Abra\"", name.getValue());
+		
+		query = " UPDATE names SET \"Abra\\\\\" WHERE \"" + name.getId() + "\" << id";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals("Abra\\", name.getValue());
+		
+		query = " UPDATE names SET \"\"\"Abra\\\\\"\"\" WHERE \"" + name.getId() + "\" << id";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals("Abra\\", name.getValue());
+		
+		query = " UPDATE names SET \"\\\\\\\"Abra\\\\\\\"\" WHERE \"" + name.getId() + "\" << id";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals("\\\"Abra\\\"", name.getValue());
+		
+		query = " UPDATE names SET \"\"\"\\\\\\\"Abra\\\\\\\"\"\"\" WHERE \"" + name.getId() + "\" << id";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals("\\\"Abra\\\"", name.getValue());
 	}
 
 	@Test
@@ -205,6 +276,72 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals("New Value", topic.getOccurrences().iterator().next()
 				.getValue());
 		assertEquals(XmlSchemeDatatypes.XSD_BOOLEAN, topic.getOccurrences().iterator().next()
+				.getDatatype().getReference());
+		
+		query = " UPDATE occurrences SET \"2'11\"^^"+ XmlSchemeDatatypes.XSD_STRING +" WHERE \"" + topic.getOccurrences().iterator().next().getId() +"\" << id ";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals(1, topic.getOccurrences().size());
+		assertEquals("2'11", topic.getOccurrences().iterator().next()
+				.getValue());
+		assertEquals(XmlSchemeDatatypes.XSD_STRING, topic.getOccurrences().iterator().next()
+				.getDatatype().getReference());
+		
+		query = " UPDATE occurrences SET \"\"\"2'11\"\"\"^^"+ XmlSchemeDatatypes.XSD_STRING +" WHERE \"" + topic.getOccurrences().iterator().next().getId() +"\" << id ";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals(1, topic.getOccurrences().size());
+		assertEquals("2'11", topic.getOccurrences().iterator().next()
+				.getValue());
+		assertEquals(XmlSchemeDatatypes.XSD_STRING, topic.getOccurrences().iterator().next()
+				.getDatatype().getReference());
+		
+		query = " UPDATE occurrences SET \"Abra\"\"^^"+ XmlSchemeDatatypes.XSD_STRING +" WHERE \"" + topic.getOccurrences().iterator().next().getId() +"\" << id ";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals(1, topic.getOccurrences().size());
+		assertEquals("Abra\"", topic.getOccurrences().iterator().next()
+				.getValue());
+		assertEquals(XmlSchemeDatatypes.XSD_STRING, topic.getOccurrences().iterator().next()
+				.getDatatype().getReference());
+		
+		query = " UPDATE occurrences SET \"\"\"Abra\"\"\"\"^^"+ XmlSchemeDatatypes.XSD_STRING +" WHERE \"" + topic.getOccurrences().iterator().next().getId() +"\" << id ";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals(1, topic.getOccurrences().size());
+		assertEquals("Abra\"", topic.getOccurrences().iterator().next()
+				.getValue());
+		assertEquals(XmlSchemeDatatypes.XSD_STRING, topic.getOccurrences().iterator().next()
+				.getDatatype().getReference());
+		
+		query = " UPDATE occurrences SET \"Abra\\\\\"^^"+ XmlSchemeDatatypes.XSD_STRING +" WHERE \"" + topic.getOccurrences().iterator().next().getId() +"\" << id ";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals(1, topic.getOccurrences().size());
+		assertEquals("Abra\\", topic.getOccurrences().iterator().next()
+				.getValue());
+		assertEquals(XmlSchemeDatatypes.XSD_STRING, topic.getOccurrences().iterator().next()
+				.getDatatype().getReference());
+		
+		query = " UPDATE occurrences SET \"\"\"Abra\\\\\"\"\"^^"+ XmlSchemeDatatypes.XSD_STRING +" WHERE \"" + topic.getOccurrences().iterator().next().getId() +"\" << id ";
+		set = execute(new TMQLQuery(query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+		assertEquals(1, topic.getOccurrences().size());
+		assertEquals("Abra\\", topic.getOccurrences().iterator().next()
+				.getValue());
+		assertEquals(XmlSchemeDatatypes.XSD_STRING, topic.getOccurrences().iterator().next()
 				.getDatatype().getReference());
 	}
 

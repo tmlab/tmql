@@ -28,6 +28,7 @@ import org.tmapi.core.Occurrence;
 import org.tmapi.core.Topic;
 import org.tmapi.core.Variant;
 
+import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.model.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.common.model.tuplesequence.ITupleSequence;
 import de.topicmapslab.tmql4j.common.utility.XmlSchemeDatatypes;
@@ -45,38 +46,31 @@ public class LiteralUtils {
 	/**
 	 * regular expression of date
 	 */
-	private final static Pattern datePattern = Pattern
-			.compile("[-]?[0-9][0-9][0-9][0-9][0-9]*[-](0[1-9]|1[0-2])[-](0[1-9]|[1-2][0-9]|3[0-1])");
+	private final static Pattern datePattern = Pattern.compile("[-]?[0-9][0-9][0-9][0-9][0-9]*[-](0[1-9]|1[0-2])[-](0[1-9]|[1-2][0-9]|3[0-1])");
 	/**
 	 * regular expression of time
 	 */
-	private final static Pattern timePattern = Pattern
-			.compile("[0-9][0-9]:[0-9][0-9]:[0-9][0-9](\\.[0-9]+)?(Z|[+|-][0-9][0-9]:[0-9][0-9])?");
+	private final static Pattern timePattern = Pattern.compile("[0-9][0-9]:[0-9][0-9]:[0-9][0-9](\\.[0-9]+)?(Z|[+|-][0-9][0-9]:[0-9][0-9])?");
 	/**
 	 * regular expression of dateTime
 	 */
-	private final static Pattern dateTimePattern = Pattern.compile(datePattern
-			.pattern() + "T" + timePattern.pattern());
+	private final static Pattern dateTimePattern = Pattern.compile(datePattern.pattern() + "T" + timePattern.pattern());
 	/**
 	 * regular expression of decimal
 	 */
-	private final static Pattern decimalPattern = Pattern
-			.compile("[+|-]?([0-9]+[.][0-9]+|[.][0-9]+)(E[+|-]?[0-9]{1,5})?");
+	private final static Pattern decimalPattern = Pattern.compile("[+|-]?([0-9]+[.][0-9]+|[.][0-9]+)(E[+|-]?[0-9]{1,5})?");
 	/**
 	 * regular expression of integer
 	 */
-	private final static Pattern integerPattern = Pattern
-			.compile("[+|-]?[0-9]+");
+	private final static Pattern integerPattern = Pattern.compile("[+|-]?[0-9]+");
 	/**
 	 * regular expression of quoted strings
 	 */
-	private final static Pattern quotedStringPattern = Pattern
-			.compile("\"[^\"\\\\]*\"");
+	private final static Pattern quotedStringPattern = Pattern.compile("\"[^\"\\\\]*\"");
 	/**
 	 * regular expression of triple quoted strings
 	 */
-	private final static Pattern tripleQuotedStringPattern = Pattern
-			.compile("\"\"\"((\"\"|\")?[^\"\\\\])*\"\"\"");
+	private final static Pattern tripleQuotedStringPattern = Pattern.compile("\"\"\"((\"\"|\")?[^\"\\\\])*\"\"\"");
 
 	/**
 	 * translation patterns of date
@@ -250,8 +244,7 @@ public class LiteralUtils {
 	 * @throws NumberFormatException
 	 *             thrown if literal cannot be format as number
 	 */
-	public static final BigInteger asInteger(final String literal)
-			throws NumberFormatException {
+	public static final BigInteger asInteger(final String literal) throws NumberFormatException {
 		return BigInteger.valueOf(Long.parseLong(literal));
 	}
 
@@ -264,8 +257,7 @@ public class LiteralUtils {
 	 * @throws NumberFormatException
 	 *             thrown if literal cannot be format as number
 	 */
-	public static final BigDecimal asDecimal(final String literal)
-			throws NumberFormatException {
+	public static final BigDecimal asDecimal(final String literal) throws NumberFormatException {
 		return BigDecimal.valueOf(Double.parseDouble(literal));
 	}
 
@@ -278,8 +270,7 @@ public class LiteralUtils {
 	 * @throws NumberFormatException
 	 * @since 2.6.5
 	 */
-	public static final Double asDouble(final Object object)
-			throws NumberFormatException {
+	public static final Double asDouble(final Object object) throws NumberFormatException {
 		if (object instanceof Double) {
 			return (Double) object;
 		} else if (object instanceof BigDecimal) {
@@ -298,8 +289,7 @@ public class LiteralUtils {
 	 * @throws ParseException
 	 *             thrown if literal cannot be format as date
 	 */
-	public static final Calendar asDate(final String literal)
-			throws ParseException {
+	public static final Calendar asDate(final String literal) throws ParseException {
 		Date date = null;
 		for (String pattern : datePatterns) {
 			try {
@@ -325,8 +315,7 @@ public class LiteralUtils {
 	 * @throws ParseException
 	 *             thrown if literal cannot be format as time
 	 */
-	public static final Calendar asTime(final String literal)
-			throws ParseException {
+	public static final Calendar asTime(final String literal) throws ParseException {
 		Date date = null;
 		for (String pattern : timePatterns) {
 			try {
@@ -352,8 +341,7 @@ public class LiteralUtils {
 	 * @throws ParseException
 	 *             thrown if literal cannot be format as dateTime
 	 */
-	public static final Calendar asDateTime(final String literal)
-			throws ParseException {
+	public static final Calendar asDateTime(final String literal) throws ParseException {
 		Date date = null;
 		for (String dp : datePatterns) {
 			for (String tp : timePatterns)
@@ -402,12 +390,40 @@ public class LiteralUtils {
 	 */
 	public static final String asString(final String literal) {
 		if (isTripleQuotedString(literal)) {
-			return asTripleQuotedString(literal);
+			return unescape(asTripleQuotedString(literal));
 		} else if (isQuotedString(literal)) {
-			return asQuotedString(literal);
+			return unescape(asQuotedString(literal));
 		} else {
-			return literal;
+			return unescape(literal);
 		}
+	}
+
+	/**
+	 * Method to clean the given string. The method removes all escaping
+	 * characters
+	 * 
+	 * @param literal
+	 *            the literal
+	 * @return the cleaned string
+	 */
+	public static final String unescape(final String literal) {
+		StringBuffer buffer = new StringBuffer();
+		for (int index = 0; index < literal.length(); index++) {
+			char c = literal.charAt(index);
+			/*
+			 * is escaping sequence
+			 */
+			if (c == '\\') {
+				if (index + 1 == literal.length() || (literal.charAt(index + 1) != '\\' && literal.charAt(index + 1) != '\"')) {
+					throw new TMQLRuntimeException("Invalid character sequence at position '" + index + "'. Expected '\"' or '\\' but '" + literal.charAt(index + 1) + "' was found!");
+				}
+				buffer.append(Character.toString(literal.charAt(index + 1)));
+				index++;
+			} else {
+				buffer.append(Character.toString(c));
+			}
+		}
+		return buffer.toString();
 	}
 
 	/**
@@ -419,8 +435,7 @@ public class LiteralUtils {
 	 * @throws URISyntaxException
 	 *             thrown if given literal isn't a valid IRI
 	 */
-	public static final URI asIri(final String literal)
-			throws URISyntaxException {
+	public static final URI asIri(final String literal) throws URISyntaxException {
 		return new URI(literal);
 	}
 
@@ -441,14 +456,11 @@ public class LiteralUtils {
 			if (!((Topic) o).getNames().isEmpty()) {
 				value = ((Topic) o).getNames().iterator().next().getValue();
 			} else if (!((Topic) o).getSubjectIdentifiers().isEmpty()) {
-				value = ((Topic) o).getSubjectIdentifiers().iterator().next()
-						.toExternalForm();
+				value = ((Topic) o).getSubjectIdentifiers().iterator().next().toExternalForm();
 			} else if (!((Topic) o).getSubjectLocators().isEmpty()) {
-				value = ((Topic) o).getSubjectLocators().iterator().next()
-						.toExternalForm();
+				value = ((Topic) o).getSubjectLocators().iterator().next().toExternalForm();
 			} else if (!((Topic) o).getItemIdentifiers().isEmpty()) {
-				value = ((Topic) o).getItemIdentifiers().iterator().next()
-						.toExternalForm();
+				value = ((Topic) o).getItemIdentifiers().iterator().next().toExternalForm();
 			} else {
 				value = o.toString();
 			}
@@ -499,50 +511,42 @@ public class LiteralUtils {
 	 * @throws Exception
 	 *             thrown if transformation fails
 	 */
-	public static Object asLiteral(final String literal, final String datatType)
-			throws Exception {
+	public static Object asLiteral(final String literal, final String datatType) throws Exception {
 		final String dataType_ = XmlSchemeDatatypes.toExternalForm(datatType);
 		/*
 		 * handle as date?
 		 */
-		if (dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_DATE)
-				&& isDate(literal)) {
+		if (dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_DATE) && isDate(literal)) {
 			return asDate(literal);
 		}
 		/*
 		 * handle as time?
 		 */
-		else if (dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_TIME)
-				&& isTime(literal)) {
+		else if (dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_TIME) && isTime(literal)) {
 			return asTime(literal);
 		}
 		/*
 		 * handle as dateTime?
 		 */
-		else if (dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_DATETIME)
-				&& isDateTime(literal)) {
+		else if (dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_DATETIME) && isDateTime(literal)) {
 			return asDateTime(literal);
 		}
 		/*
 		 * handle as integer?
 		 */
-		else if (dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_INTEGER)
-				&& isInteger(literal)) {
+		else if (dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_INTEGER) && isInteger(literal)) {
 			return asInteger(literal);
 		}
 		/*
 		 * handle as decimal?
 		 */
-		else if ((dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_DECIMAL) || dataType_
-				.equalsIgnoreCase(XmlSchemeDatatypes.XSD_FLOAT))
-				&& isDecimal(literal)) {
+		else if ((dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_DECIMAL) || dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_FLOAT)) && isDecimal(literal)) {
 			return asDecimal(literal);
 		}
 		/*
 		 * handle as URI?
 		 */
-		else if (dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_ANYURI)
-				&& isIri(literal)) {
+		else if (dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_ANYURI) && isIri(literal)) {
 			return asIri(literal);
 		}
 		/*
@@ -561,32 +565,23 @@ public class LiteralUtils {
 	 * @return a IRI representing the data-type of given item or a sequence of
 	 *         IRIs but never <code>null</code>.
 	 */
-	public static Object getDatatypeOfLiterals(final ITMQLRuntime runtime,
-			Object obj) {
+	public static Object getDatatypeOfLiterals(final ITMQLRuntime runtime, Object obj) {
 		if (obj instanceof Occurrence) {
 			return ((Occurrence) obj).getDatatype();
 		} else if (obj instanceof Name) {
-			return runtime.getTopicMap().createLocator(
-					XmlSchemeDatatypes.XSD_STRING);
+			return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_STRING);
 		} else if (obj instanceof Variant) {
 			return ((Variant) obj).getDatatype();
 		} else if (obj instanceof String) {
-			return runtime.getTopicMap().createLocator(
-					XmlSchemeDatatypes.XSD_STRING);
-		} else if (obj instanceof Integer || obj instanceof Long
-				|| obj instanceof BigInteger) {
-			return runtime.getTopicMap().createLocator(
-					XmlSchemeDatatypes.XSD_INTEGER);
-		} else if (obj instanceof Float || obj instanceof Double
-				|| obj instanceof BigDecimal) {
-			return runtime.getTopicMap().createLocator(
-					XmlSchemeDatatypes.XSD_DECIMAL);
+			return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_STRING);
+		} else if (obj instanceof Integer || obj instanceof Long || obj instanceof BigInteger) {
+			return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_INTEGER);
+		} else if (obj instanceof Float || obj instanceof Double || obj instanceof BigDecimal) {
+			return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_DECIMAL);
 		} else if (obj instanceof Calendar) {
-			return runtime.getTopicMap().createLocator(
-					XmlSchemeDatatypes.XSD_DATETIME);
+			return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_DATETIME);
 		} else if (obj instanceof URI) {
-			return runtime.getTopicMap().createLocator(
-					XmlSchemeDatatypes.XSD_ANYURI);
+			return runtime.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_ANYURI);
 		} else if (obj instanceof Collection<?>) {
 			ITupleSequence<Object> seq = runtime.getProperties().newSequence();
 			for (Object o : (Collection<?>) obj) {
