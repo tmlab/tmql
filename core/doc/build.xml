@@ -1,9 +1,10 @@
-<project basedir="." name="Onotoa Documentation" default="html">
+<project basedir="." name="Documentation" default="html">
+
 
 	<property file="build.properties"/>
-	
+
 	<property name="asciidoc" value="${dir.lib}/asciidoc/asciidoc.py" />
-	<property name="filename" value="index" />
+	<property name="filename" value="doc" />
 	<property name="src" value="src/main.txt" />
 	<property name="doc" value="doc" />
 	<property name="doc.html" value="${doc}/html" />
@@ -15,9 +16,10 @@
 	      - Configure basic properties that will be used in the file.
 	      -->
 	<!-- libs-->
-	<property name="docbook.xsl.dir" value="${dir.lib}/docbook-xsl-1.75.2" />
+	<property name="docbook.xsl.dir" value="${dir.lib}/docbook-xsl-1.76.1" />
 	<property name="html.stylesheet" value="${docbook.xsl.dir}/html/docbook.xsl" />
-	<property name="fo.stylesheet" value="${dir.lib}/mydocbook/docbook.xsl" />
+	<property name="fo.stylesheet" value="${docbook.xsl.dir}/fo/docbook.xsl" />
+	<property name="epub.stylesheet" value="${docbook.xsl.dir}/epub/docbook.xsl" />
 	<property name="xalan.lib.dir" value="${dir.lib}/" />
 
 	<property name="src.dir" value="src" />
@@ -29,6 +31,7 @@
 	<property name="doc.docbook.latex" value="${doc.docbook}/latex" />
 	<property name="doc.docbook.html.images" value="${doc.docbook.html}/images" />
 	<property name="doc.docbook.pdf" value="${doc.docbook}/pdf" />
+	<property name="doc.docbook.epub" value="${doc.docbook}/epub" />
 
 	<property name="build" value="${doc.docbook}/build" />
 	<property name="build.fo" value="${build}/fo" />
@@ -56,8 +59,12 @@
 		<delete dir="${doc.dir.html}" />
 	</target>
 
+	<target name="clean.epub" description="Cleans up generated files.">
+		<delete dir="${doc.docbook.epub}" />
+	</target>
+
 	<target name="clean.pdf" description="Cleans up generated files.">
-		<delete dir="${doc.dir.pdf}" />
+		<delete dir="${doc.docbook.pdf}" />
 		<delete dir="${build.fo}" />
 	</target>
 
@@ -83,11 +90,11 @@
 	      -     .xml files into .html files using the DocBook XSL.
 	      -->
 	<target name="docbook.html" depends="clean.html, docbook" description="Generates HTML files from DocBook XML">
-		<xslt  style="${html.stylesheet}" extension=".html" basedir="${doc.docbook}" destdir="${doc.docbook.html}">
+		<xslt style="${html.stylesheet}" extension=".html" basedir="${doc.docbook}" destdir="${doc.docbook.html}">
 			<classpath refid="xalan.classpath" />
 			<include name="${filename}.xml" />
 			<param name="html.stylesheet.type" expression="text/css" />
-			<param name="html.stylesheet" expression="css/rtm.css" />
+			<param name="html.stylesheet" expression="css/onotoa.css" />
 			<param name="generate.toc" expression="
 						 appendix  nop
 						 article   toc,title
@@ -105,8 +112,8 @@
 				example before
 				equation after
 				table before
-				procedure before"/>
-			<outputproperty name="encoding" value="UTF-8"/>
+				procedure before" />
+			<outputproperty name="encoding" value="UTF-8" />
 		</xslt>
 
 		<copy todir="${doc.docbook.html}">
@@ -114,9 +121,9 @@
 				<include name="css/*" />
 			</fileset>
 		</copy>
-		
+
 		<antcall target="copyimages">
-			<param name="copy.imagedir" value="${doc.docbook.html}"/>
+			<param name="copy.imagedir" value="${doc.docbook.html}" />
 		</antcall>
 		<!-- <copy todir="${doc.docbook.html}">
 			<fileset dir="${src.dir}">
@@ -124,12 +131,59 @@
 			</fileset>
 		</copy>-->
 	</target>
-	
-	<target name="all" depends="html, pdf, docbook.eclipse, docbook.html, docbook.pdf"/>
-	
+
+	<target name="docbook.epub" depends="clean.epub, docbook" description="Generates EPUB file from DocBook XML">
+		<xslt style="${epub.stylesheet}" extension=".html" basedir="${doc.docbook}" destdir="${doc.docbook.epub}/tmp">
+			<classpath refid="xalan.classpath" />
+			<include name="${filename}.xml" />
+			<param name="generate.toc" expression="
+							 appendix  nop
+							 article   toc,title
+							 book      toc,title,figure,table,example,equation
+							 chapter   nop
+							 part      nop
+							 preface   nop
+							 qandadiv  nop
+							 qandaset  nop
+							 reference toc,title
+							 section   nop
+							 set       toc" />
+			<param name="formal.title.placement" expression="
+					figure after
+					example before
+					equation after
+					table before
+					procedure before" />
+			<outputproperty name="encoding" value="UTF-8" />
+		</xslt>
+		<!--
+			<copy todir="${doc.docbook.html}">
+				<fileset dir="${src.dir}">
+					<include name="css/*" />
+				</fileset>
+			</copy>
+			-->
+		
+			<antcall target="copyimages">
+				<param name="copy.imagedir" value="${doc.docbook.epub}/tmp/OEBPS"/>
+			</antcall>
+			
+			<zip basedir="${doc.docbook.epub}/tmp/" destfile="${doc.docbook.epub}/doc.epub" />
+
+		<!--
+			 <copy todir="${doc.docbook.html}">
+				<fileset dir="${src.dir}">
+					<include name="images/*" />
+				</fileset>
+			</copy>
+		-->
+	</target>
+
+	<target name="all" depends="html, pdf, docbook.eclipse, docbook.html, docbook.pdf" />
+
 	<target name="docbook.pdf" depends="clean.pdf,depends, docbook" description="Generate PDF file from docbook XML">
-		<property name="fop.home" value="${dir.lib}/fop-0.95" />
-		<xslt style="${fo.stylesheet}" extension=".fo" basedir="${doc.docbook}" destdir="${build.fo}" >
+		<property name="fop.home" value="${dir.lib}/fop-1.0" />
+		<xslt style="${fo.stylesheet}" extension=".fo" basedir="${doc.docbook}" destdir="${build.fo}">
 			<param name="paper.type" expression="${paper.type}" />
 			<classpath refid="xalan.classpath" />
 			<include name="${filename}.xml" />
@@ -151,17 +205,17 @@
 				example before
 				equation after
 				table before
-				procedure before"/>
-			<param name="fop1.extensions" expression="1"/>
-			<param name="double.sided" expression="1"/>
-			<param name="crop.marks" expression="1"/>
-			<param name="crop.marks.width" expression="0.5pt"/>
-			<param name="crop.marks.bleed" expression="6pt"/>
-			
-			<param name="body.font.family" expression="Helvetica"/>
-			
+				procedure before" />
+			<param name="fop1.extensions" expression="1" />
+			<param name="double.sided" expression="1" />
+			<param name="crop.marks" expression="1" />
+			<param name="crop.marks.width" expression="0.5pt" />
+			<param name="crop.marks.bleed" expression="6pt" />
+
+			<param name="body.font.family" expression="Helvetica" />
+
 		</xslt>
-		
+
 		<taskdef name="fop" classname="org.apache.fop.tools.anttasks.Fop">
 			<classpath>
 				<fileset dir="${fop.home}/lib">
@@ -174,7 +228,7 @@
 			</classpath>
 		</taskdef>
 
-		<fop messagelevel="debug" format="application/pdf" basedir="${doc.docbook}" fofile="${build.fo}/index.fo" outfile="${doc.docbook.pdf}/${filename}.pdf" />
+		<fop messagelevel="debug" format="application/pdf" basedir="${doc.docbook}" fofile="${build.fo}/doc.fo" outfile="${doc.docbook.pdf}/${filename}.pdf" />
 	</target>
 
 	<!-- XSLT Chunking Properties -->
@@ -187,10 +241,10 @@
 	<target name="docbook.eclipse" depends="clean.eclipse, docbook">
 
 		<property name="xalan" value="org.apache.xalan.processor.TransformerFactoryImpl" />
-		
+
 		<mkdir dir="${doc.docbook.eclipse}" />
 		<mkdir dir="${doc.docbook.eclipse}/html" />
-		
+
 		<xslt style="${docbook.xsl.dir}/eclipse/eclipse.xsl" in="${doc.docbook}/doc.xml" destdir="${doc.docbook.eclipse}" out="${doc.docbook.eclipse}/test.xml">
 			<factory name="${xalan}" />
 			<param name="navig.showtitles" expression="0" />
@@ -201,7 +255,7 @@
 			section   title" />
 
 		</xslt>
- 		<copy todir="../de.topicmapslab.tmcledit.doc/html">
+		<copy todir="../de.topicmapslab.tmcledit.doc/html">
 			<fileset dir="${src.dir}">
 				<include name="images/**" />
 				<include name="css/**" />
@@ -225,7 +279,7 @@
 
 	<target name="html" depends="init">
 		<exec executable="python">
-			<arg value="${asciidoc}"/>
+			<arg value="${asciidoc}" />
 			<arg value="-v" />
 			<arg value="-n" />
 			<arg value="-a" />
@@ -240,7 +294,7 @@
 		</exec>
 
 		<antcall target="copyimages">
-			<param name="copy.imagedir" value="${doc.html}"/>
+			<param name="copy.imagedir" value="${doc.html}" />
 		</antcall>
 		<!-- <copy todir="${doc.html}">
 			<fileset dir="src">
@@ -248,10 +302,10 @@
 			</fileset>
 		</copy>-->
 	</target>
-	
+
 	<target name="docbook" depends="init">
 		<exec executable="python">
-			<arg value="${asciidoc}"/>
+			<arg value="${asciidoc}" />
 			<arg value="-v" />
 			<arg value="-a" />
 			<arg value="docinfo" />
@@ -264,17 +318,17 @@
 			<arg value="${src}" />
 		</exec>
 
-<!-- 		<copy todir="${doc.docbook}">
+		<!-- 		<copy todir="${doc.docbook}">
 			<fileset dir="src">
 				<include name="images/*" />
 			</fileset>
 		</copy>-->
-		
+
 		<antcall target="copyimages">
-			<param name="copy.imagedir" value="${doc.docbook}"/>
+			<param name="copy.imagedir" value="${doc.docbook}" />
 		</antcall>
 	</target>
-	
+
 	<target name="copyimages">
 		<copy todir="${copy.imagedir}">
 			<fileset dir="src">
@@ -282,7 +336,7 @@
 			</fileset>
 		</copy>
 	</target>
-	
+
 	<target name="pdf" depends="init">
 		<exec executable="a2x">
 			<arg value="-f" />
