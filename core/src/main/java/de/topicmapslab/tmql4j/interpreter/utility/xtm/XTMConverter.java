@@ -19,7 +19,8 @@ import java.util.UUID;
 import org.tmapi.core.Construct;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
-import org.tmapi.core.TopicMapSystemFactory;
+import org.tmapix.io.XTM20TopicMapReader;
+import org.tmapix.io.XTM20TopicMapWriter;
 import org.tmapix.io.XTM2TopicMapWriter;
 import org.tmapix.io.XTMTopicMapReader;
 import org.tmapix.io.XTMVersion;
@@ -66,8 +67,7 @@ public class XTMConverter {
 	 * @throws TMQLRuntimeException
 	 *             thrown if XTM parsing fails
 	 */
-	public static TopicMap toTopicMap(final String xtm, final TopicMapSystem tms)
-			throws TMQLRuntimeException {
+	public static TopicMap toTopicMap(final String xtm, final TopicMapSystem tms) throws TMQLRuntimeException {
 		try {
 			/*
 			 * create a temporary file containing the CTM fragment
@@ -81,8 +81,7 @@ public class XTMConverter {
 			/*
 			 * create a new topic map
 			 */
-			TopicMap map = tms.createTopicMap("http://xtm-snippet-"
-					+ UUID.randomUUID().toString());
+			TopicMap map = tms.createTopicMap("http://xtm-snippet-" + UUID.randomUUID().toString());
 			/*
 			 * parse the XTM fragment
 			 */
@@ -95,8 +94,7 @@ public class XTMConverter {
 			file.deleteOnExit();
 			return map;
 		} catch (Exception ex) {
-			throw new TMQLRuntimeException("Cannot convert construct to XTM",
-					ex);
+			throw new TMQLRuntimeException("Cannot convert construct to XTM", ex);
 		}
 	}
 
@@ -113,15 +111,14 @@ public class XTMConverter {
 	 * @throws TMQLRuntimeException
 	 *             thrown if items can not be serialized
 	 */
-	public static String toXTMString(Collection<?> values, TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	public static String toXTMString(Collection<?> values, TMQLRuntime runtime) throws TMQLRuntimeException {
 		StringBuilder builder = new StringBuilder();
 
-		for ( Object o : values){
-			builder.append(getReplacement(o));
+		for (Object o : values) {
+			builder.append(getReplacement(runtime, o));
 		}
 		return builder.toString();
-	}	
+	}
 
 	/**
 	 * Internal method which transform the given value of the matches to their
@@ -152,15 +149,14 @@ public class XTMConverter {
 	 * @throws TMQLRuntimeException
 	 *             thrown if serialization fails
 	 */
-	private static final String getReplacement(Object value)
-			throws TMQLRuntimeException {
+	private static final String getReplacement(TMQLRuntime runtime, Object value) throws TMQLRuntimeException {
 		StringBuilder builder = new StringBuilder();
 		/*
 		 * check if value is a tuple sequence
 		 */
 		if (value instanceof ITupleSequence<?>) {
 			for (Object object : (ITupleSequence<?>) value) {
-				builder.append(getReplacement(object) + "\r\n");
+				builder.append(getReplacement(runtime, object) + "\r\n");
 			}
 		}
 		/*
@@ -175,17 +171,14 @@ public class XTMConverter {
 				/*
 				 * serialize topic map construct
 				 */
-				XTM2TopicMapWriter writer = new XTM2TopicMapWriter(stream,
-						"www.topicmapslab.de", XTMVersion.XTM_2_0);
-				TopicMapSystem tms = TopicMapSystemFactory.newInstance()
-						.newTopicMapSystem();
-				TopicMap map = tms.createTopicMap("http://xtm-conversion");
+				XTM2TopicMapWriter writer = new XTM2TopicMapWriter(stream, "www.topicmapslab.de", XTMVersion.XTM_2_0);
+				TopicMapSystem tms = runtime.getTopicMapSystem();
+				TopicMap map = tms.createTopicMap("http://xtm-conversion/tmId=" + Double.toString(Math.random()));
 				writer.write(new TMAPICloner(map).clone((Construct) value));
 				builder.append(cleanXTM2(stream.toString(encoding)));
 				map.remove();
 			} catch (Exception e) {
-				throw new TMQLRuntimeException(
-						"Cannot convert construct to XTM.", e);
+				throw new TMQLRuntimeException("Cannot convert construct to XTM.", e);
 			}
 		} else if (value != null) {
 			builder.append(value.toString());

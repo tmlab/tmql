@@ -10,7 +10,7 @@ import de.topicmapslab.tmql4j.draft2010.query.TMQLQueryDraft2010;
 import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
 import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
 
-public class NumericalExpressionTest extends Tmql4JTestCase {
+public class NumericalExpressionTest extends Draft2010Tmql4JTestCase {
 	
 	@Test
 	public void testAddition() throws Exception {

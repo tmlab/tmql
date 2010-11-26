@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>tmql4j-parent</artifactId>
 		<groupId>de.topicmapslab.tmql4j</groupId>
-		<version>2.6.5-SNAPSHOT</version>
+		<version>2.6.5</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
   <groupId>de.topicmapslab.tmql4j</groupId>
@@ -73,11 +73,4 @@
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
-	<distributionManagement>
-		<repository>
-			<id>topicmapslab-public</id>
-			<name>Topic Maps Lab Repositiory</name>
-			<url>scpexe://topicmapslab.de/home/maven/webdir/maven.topicmapslab.de/public/public</url>
-		</repository>
-	</distributionManagement>
 </project>

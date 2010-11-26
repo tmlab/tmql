@@ -16,7 +16,7 @@ import de.topicmapslab.tmql4j.common.core.query.TMQLQuery;
 import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
 import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
 
-public class LiteralTest extends Tmql4JTestCase {
+public class LiteralTest extends Draft2010Tmql4JTestCase {
 
 	private static final List<String> integers = new LinkedList<String>();
 	static {

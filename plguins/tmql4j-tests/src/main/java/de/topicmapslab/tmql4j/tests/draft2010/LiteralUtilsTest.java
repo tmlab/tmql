@@ -10,7 +10,7 @@ import de.topicmapslab.tmql4j.common.utility.HashUtil;
 import de.topicmapslab.tmql4j.interpreter.utility.operation.LiteralUtils;
 import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
 
-public class LiteralUtilsTest extends Tmql4JTestCase {
+public class LiteralUtilsTest extends Draft2010Tmql4JTestCase {
 	@Test
 	public void testIntegerLiteral() throws Exception {
 		final Set<String> literals = HashUtil.getHashSet();

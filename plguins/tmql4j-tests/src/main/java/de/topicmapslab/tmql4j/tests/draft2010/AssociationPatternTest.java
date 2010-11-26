@@ -14,7 +14,7 @@ import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
 import de.topicmapslab.tmql4j.resultprocessing.model.IResult;
 import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
 
-public class AssociationPatternTest extends Tmql4JTestCase {
+public class AssociationPatternTest extends Draft2010Tmql4JTestCase {
 
 	@Test
 	public void testFullQualifiedAssociationPattern() throws Exception {
