@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tmapi.core.Construct;
 
-import de.topicmapslab.tmql4j.api.exceptions.DataBridgeException;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
 import de.topicmapslab.tmql4j.common.utility.HashUtil;
@@ -75,39 +74,46 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends
 
 			final Object roleType;
 			if (containsExpressionsType(de.topicmapslab.tmql4j.parser.core.expressions.Variable.class)) {
-				if (runtime.getRuntimeContext().peek().contains(
-						getVariables().get(0))) {
-					roleType = runtime.getRuntimeContext().peek().getValue(
-							getVariables().get(0));
+				if (runtime.getRuntimeContext().peek()
+						.contains(getVariables().get(0))) {
+					roleType = runtime.getRuntimeContext().peek()
+							.getValue(getVariables().get(0));
 				} else {
 					roleType = getVariables().get(0);
 				}
 			} else {
-				/*
-				 * Look up role type representing by given anchor
-				 */
-				Construct construct = null;
-				final String anchor = getTokens().get(0);
-				try {
-					construct = runtime.getDataBridge()
-							.getConstructByIdentifier(runtime, anchor);
-				} catch (DataBridgeException e) {
-					logger.warn("Cannot read topic type of assocaition '"
-							+ anchor);
-				}
-				if (construct == null) {
+				QueryMatches matches = extractArguments(runtime,
+						ValueExpression.class, 0);
+
+				if (matches.isEmpty()) {
 					/*
 					 * set to stack
 					 */
-					runtime.getRuntimeContext().peek().setValue(
-							VariableNames.QUERYMATCHES, new QueryMatches(runtime));
+					runtime.getRuntimeContext()
+							.peek()
+							.setValue(VariableNames.QUERYMATCHES,
+									new QueryMatches(runtime));
 					return;
+				} else {
+					Construct construct = (Construct) matches.get(0).get(
+							QueryMatches.getNonScopedVariable());
+					if (construct == null) {
+						/*
+						 * set to stack
+						 */
+						runtime.getRuntimeContext()
+								.peek()
+								.setValue(VariableNames.QUERYMATCHES,
+										new QueryMatches(runtime));
+						return;
+					} else {
+						roleType = construct;
+					}
 				}
-				roleType = construct;
 			}
 			final Object player;
 			IExpressionInterpreter<ValueExpression> interpreter = getInterpretersFilteredByEypressionType(
-					runtime, ValueExpression.class).get(0);
+					runtime, ValueExpression.class).get(1);
 			if (interpreter.getTmqlTokens().get(0).equals(Variable.class)) {
 				String var = interpreter.getTokens().get(0);
 				if (runtime.getRuntimeContext().peek().contains(var)) {
@@ -117,7 +123,7 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends
 				}
 			} else {
 				QueryMatches players = extractArguments(runtime,
-						ValueExpression.class, 0);
+						ValueExpression.class, 1);
 				/*
 				 * Transform result to mapping between role type an possible
 				 * players
@@ -127,15 +133,15 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends
 
 			QueryMatches matches = new QueryMatches(runtime);
 			Map<String, Object> tuple = HashUtil.getHashMap();
-			tuple.put("$0",roleType);
+			tuple.put("$0", roleType);
 			tuple.put("$1", player);
 			matches.add(tuple);
 
 			/*
 			 * set to stack
 			 */
-			runtime.getRuntimeContext().peek().setValue(
-					VariableNames.QUERYMATCHES, matches);
+			runtime.getRuntimeContext().peek()
+					.setValue(VariableNames.QUERYMATCHES, matches);
 		}
 	}
 

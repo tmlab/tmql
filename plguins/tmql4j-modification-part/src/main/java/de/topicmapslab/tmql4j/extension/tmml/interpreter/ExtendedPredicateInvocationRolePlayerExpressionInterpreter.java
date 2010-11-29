@@ -24,12 +24,14 @@ import de.topicmapslab.tmql4j.common.utility.VariableNames;
 import de.topicmapslab.tmql4j.extension.tmml.grammar.expressions.UpdateClause;
 import de.topicmapslab.tmql4j.interpreter.core.base.QueryMatches;
 import de.topicmapslab.tmql4j.interpreter.core.interpreter.PredicateInvocationRolePlayerExpressionInterpreter;
+import de.topicmapslab.tmql4j.interpreter.model.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.interpreter.model.context.IVariableSet;
 import de.topicmapslab.tmql4j.lexer.model.IToken;
 import de.topicmapslab.tmql4j.lexer.token.Ellipsis;
 import de.topicmapslab.tmql4j.lexer.token.Variable;
 import de.topicmapslab.tmql4j.parser.core.expressions.FilterPostfix;
 import de.topicmapslab.tmql4j.parser.core.expressions.PredicateInvocationRolePlayerExpression;
+import de.topicmapslab.tmql4j.parser.core.expressions.ValueExpression;
 import de.topicmapslab.tmql4j.parser.core.expressions.WhereClause;
 
 /**
@@ -71,9 +73,9 @@ public class ExtendedPredicateInvocationRolePlayerExpressionInterpreter extends
 		if (getExpression().isChildOf(WhereClause.class)
 				&& !getExpression().getVariables().isEmpty()) {
 			super.interpret(runtime);
-		} else if ( getExpression().isChildOf(FilterPostfix.class)){
+		} else if (getExpression().isChildOf(FilterPostfix.class)) {
 			super.interpret(runtime);
-		}else {
+		} else {
 			extendedInterpret(runtime);
 		}
 	}
@@ -101,8 +103,10 @@ public class ExtendedPredicateInvocationRolePlayerExpressionInterpreter extends
 	private void interpretAsCondition(TMQLRuntime runtime)
 			throws TMQLRuntimeException {
 		if (getTmqlTokens().get(0).equals(Ellipsis.class)) {
-			runtime.getRuntimeContext().peek().setValue(
-					VariableNames.QUERYMATCHES, new QueryMatches(runtime));
+			runtime.getRuntimeContext()
+					.peek()
+					.setValue(VariableNames.QUERYMATCHES,
+							new QueryMatches(runtime));
 		} else {
 			getDefinitionPart(runtime, false);
 		}
@@ -140,10 +144,8 @@ public class ExtendedPredicateInvocationRolePlayerExpressionInterpreter extends
 		 */
 		QueryMatches results = new QueryMatches(runtime);
 		Map<String, Object> tuple = HashUtil.getHashMap();
-		tuple.put("$0", getOrCreateTopic(runtime, getTmqlTokens().get(0),
-				getTokens().get(0), createNotExistings));
-		tuple.put("$1", getOrCreateTopic(runtime, getTmqlTokens().get(2),
-				getTokens().get(2), createNotExistings));
+		tuple.put("$0", getOrCreateTopic(runtime, 0, createNotExistings));
+		tuple.put("$1", getOrCreateTopic(runtime, 1, createNotExistings));
 		tuple.put(QueryMatches.getNonScopedVariable(), count);
 		results.add(tuple);
 
@@ -161,8 +163,8 @@ public class ExtendedPredicateInvocationRolePlayerExpressionInterpreter extends
 	 * 
 	 * @param runtime
 	 *            the runtime
-	 * @param reference
-	 *            the reference
+	 * @param index
+	 *            the index of the expression to call
 	 * @param createNotExistings
 	 *            flag indicates, if non existing topics should be created
 	 * @return the object
@@ -170,44 +172,61 @@ public class ExtendedPredicateInvocationRolePlayerExpressionInterpreter extends
 	 *             thrown if found construct isn't a topic or the variable is
 	 *             not set
 	 */
-	private final Object getOrCreateTopic(TMQLRuntime runtime,
-			Class<? extends IToken> token, String reference,
+	private final Object getOrCreateTopic(TMQLRuntime runtime, int index,
 			boolean createNotExistings) throws TMQLRuntimeException {
 
+		IExpressionInterpreter<?> interpreter = getInterpreters(runtime).get(index);
+		
 		/*
-		 * do not create a system topic
+		 * is singleton token
 		 */
-		if (reference.equalsIgnoreCase(TmdmSubjectIdentifier.TMDM_SUBJECT)) {
-			return reference;
-		}
-
-		IVariableSet set = runtime.getRuntimeContext().peek();
-
-		if (token.equals(Variable.class)) {
-			if (!set.contains(reference)
-					|| !(set.getValue(reference) instanceof Topic)) {
-				throw new TMQLRuntimeException("Variable '" + reference
-						+ "' is not set or is not a topic!");
+		if ( interpreter.getTokens().size() == 1 ){
+			Class<? extends IToken> token = interpreter.getTmqlTokens().get(0);
+			String reference = interpreter.getTokens().get(0);
+			/*
+			 * do not create a system topic
+			 */
+			if (reference.equalsIgnoreCase(TmdmSubjectIdentifier.TMDM_SUBJECT)) {
+				return reference;
 			}
-			return (Topic) set.getValue(reference);
-		}
 
-		try {
-			Construct c = runtime.getDataBridge().getConstructByIdentifier(
-					runtime, reference);
-			if (c instanceof Topic) {
-				return (Topic) c;
+			IVariableSet set = runtime.getRuntimeContext().peek();
+
+			if (token.equals(Variable.class)) {
+				if (!set.contains(reference)
+						|| !(set.getValue(reference) instanceof Topic)) {
+					throw new TMQLRuntimeException("Variable '" + reference
+							+ "' is not set or is not a topic!");
+				}
+				return (Topic) set.getValue(reference);
 			}
-			throw new TMQLRuntimeException("Construct is not a topic!");
-		} catch (DataBridgeException e) {
-			count++;
-			if (createNotExistings) {
-				return runtime.getTopicMap().createTopicBySubjectIdentifier(
-						runtime.getTopicMap().createLocator(
-								runtime.getLanguageContext().getPrefixHandler()
-										.toAbsoluteIRI(reference)));
+
+			try {
+				Construct c = runtime.getDataBridge().getConstructByIdentifier(
+						runtime, reference);
+				if (c instanceof Topic) {
+					return (Topic) c;
+				}
+				throw new TMQLRuntimeException("Construct is not a topic!");
+			} catch (DataBridgeException e) {
+				count++;
+				if (createNotExistings) {
+					return runtime.getTopicMap().createTopicBySubjectIdentifier(
+							runtime.getTopicMap().createLocator(
+									runtime.getLanguageContext().getPrefixHandler()
+											.toAbsoluteIRI(reference)));
+				}
+			}
+		}else{
+			System.out.println("Execute value expression");
+			QueryMatches matches = extractArguments(runtime, ValueExpression.class, index);
+			if ( !matches.isEmpty()){
+				System.out.println("Found topic: " + matches.get(0).get(QueryMatches.getNonScopedVariable()));
+				return matches.get(0).get(QueryMatches.getNonScopedVariable());
 			}
 		}
+		
+		
 		return null;
 	}
 

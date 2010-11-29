@@ -11,14 +11,19 @@
 package de.topicmapslab.tmql4j.parser.core.expressions;
 
 import java.util.List;
+import java.util.Set;
 
 import de.topicmapslab.tmql4j.common.core.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.common.core.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntime;
+import de.topicmapslab.tmql4j.common.utility.HashUtil;
 import de.topicmapslab.tmql4j.lexer.model.IToken;
+import de.topicmapslab.tmql4j.lexer.token.Colon;
 import de.topicmapslab.tmql4j.lexer.token.Ellipsis;
 import de.topicmapslab.tmql4j.parser.core.ExpressionImpl;
 import de.topicmapslab.tmql4j.parser.model.IExpression;
+import de.topicmapslab.tmql4j.parser.utility.IParserUtilsCallback;
+import de.topicmapslab.tmql4j.parser.utility.ParserUtils;
 
 /**
  * Special implementation of {@link ExpressionImpl} representing a
@@ -66,7 +71,7 @@ public class PredicateInvocationRolePlayerExpression extends ExpressionImpl {
 	 */
 	public PredicateInvocationRolePlayerExpression(IExpression parent,
 			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			TMQLRuntime runtime) throws TMQLInvalidSyntaxException,
+			final TMQLRuntime runtime) throws TMQLInvalidSyntaxException,
 			TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
@@ -80,13 +85,41 @@ public class PredicateInvocationRolePlayerExpression extends ExpressionImpl {
 		 * is anchor : value-expression
 		 */
 		else {
-			if ( tmqlTokens.get(0).equals(de.topicmapslab.tmql4j.lexer.token.Variable.class)){
-				checkForExtensions(Variable.class, tmqlTokens.subList(0,1), tokens.subList(0,1),
-						runtime);
-			}
-			checkForExtensions(ValueExpression.class, tmqlTokens.subList(2,
-					tmqlTokens.size()), tokens.subList(2, tokens.size()),
-					runtime);
+			/*
+			 * call-back instance of parser utility
+			 */
+			IParserUtilsCallback callback = new IParserUtilsCallback() {
+				@Override
+				public void newToken(List<Class<? extends IToken>> tmqlTokens,
+						List<String> tokens,
+						Class<? extends IToken> foundDelimer)
+						throws TMQLGeneratorException,
+						TMQLInvalidSyntaxException {
+					if (tmqlTokens.size() == 1
+							&& tmqlTokens
+									.get(0)
+									.equals(de.topicmapslab.tmql4j.lexer.token.Variable.class)) {
+						checkForExtensions(Variable.class, tmqlTokens, tokens,
+								runtime);
+					} else {
+						checkForExtensions(ValueExpression.class, tmqlTokens,
+								tokens, runtime);
+					}
+				}
+			};
+
+			/*
+			 * create set containing all delimers
+			 */
+			Set<Class<? extends IToken>> delimers = HashUtil.getHashSet();
+			delimers.add(Colon.class);
+
+			/*
+			 * split expression
+			 */
+			ParserUtils.split(callback, tmqlTokens, tokens, delimers, true);
+
+			setGrammarType(0);
 			setGrammarType(TYPE_ROLE_PLAYER_COMBINATION);
 		}
 	}
