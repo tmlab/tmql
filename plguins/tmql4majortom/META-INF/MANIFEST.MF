@@ -81,5 +81,5 @@ Import-Package: de.topicmapslab.geotype.wgs84,
  org.osgi.framework,
  org.tmapi.core;specification-version="2.0.2",
  org.tmapi.index;specification-version="2.0.2"
-Service-Component: OSGI-INF/draft2010extensionpoint.xml
+Service-Component: OSGI-INF/tmql4majortomextensionpoint.xml
 Bundle-ActivationPolicy: lazy
