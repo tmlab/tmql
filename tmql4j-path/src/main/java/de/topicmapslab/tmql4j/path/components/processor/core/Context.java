@@ -8,10 +8,12 @@
  */
 package de.topicmapslab.tmql4j.path.components.processor.core;
 
+import java.util.Collections;
 import java.util.Map;
 
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.query.IQuery;
 
 /**
@@ -24,6 +26,9 @@ public class Context implements IContext {
 	private QueryMatches context;
 	private int iterationIndex = -1;
 	private Map<String, Object> currentTuple;
+	private Object currentNode;
+	private boolean transitive;
+	private Map<String, String> prefixes;
 
 	/**
 	 * constructor
@@ -46,6 +51,9 @@ public class Context implements IContext {
 		this.context = clone.getContextBindings();
 		this.currentTuple = clone.getCurrentTuple();
 		this.iterationIndex = clone.getCurrentIndex();
+		this.currentNode = clone.getCurrentNode();
+		this.transitive = clone.isTransitive();
+		this.prefixes = clone.getPrefixes();
 	}
 
 	/**
@@ -101,6 +109,68 @@ public class Context implements IContext {
 	 */
 	public void setCurrentTuple(Map<String, Object> currentTuple) {
 		this.currentTuple = currentTuple;
+	}
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public Object getCurrentNode() {
+		return currentNode;
+	}
+
+	/**
+	 * @param currentNode
+	 *            the currentNode to set
+	 */
+	public void setCurrentNode(Object currentNode) {
+		this.currentNode = currentNode;
+	}
+	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public boolean isTransitive() {
+		return transitive;
+	}
+	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public void setTransitive(boolean transitive) {
+		this.transitive = transitive;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getPrefix(String qiri) {
+		if ( prefixes == null ){
+			return null;
+		}
+		return prefixes.get(qiri);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public Map<String, String> getPrefixes() {
+		if ( prefixes == null ){
+			return Collections.emptyMap();
+		}
+		return Collections.unmodifiableMap(prefixes);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setPrefix(String qiri, String reference) {
+		if ( prefixes == null ){
+			prefixes = HashUtil.getHashMap();
+		}
+		prefixes.put(qiri, reference);
 	}
 
 }

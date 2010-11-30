@@ -11,24 +11,27 @@
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.productions.Directive;
 
 /**
-*
-* Special interpreter class to interpret directives.
-* 
-* <p>
+ * 
+ * Special interpreter class to interpret directives.
+ * 
+ * <p>
  * The grammar production rule of the expression is: <code>
  * <p>
  * directive ::= prefix-directive
  * </p>
  * </code> </p>
-* 
-* @author Sven Krosse
-* @email krosse@informatik.uni-leipzig.de
-*
-*/
+ * 
+ * @author Sven Krosse
+ * @email krosse@informatik.uni-leipzig.de
+ * 
+ */
 public class DirectiveInterpreter extends ExpressionInterpreterImpl<Directive> {
 
 	/**
@@ -44,11 +47,9 @@ public class DirectiveInterpreter extends ExpressionInterpreterImpl<Directive> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
-		/*
-		 * redirect to sub-expression
-		 */
-		getInterpreters(runtime).get(0).interpret(runtime);
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		return getInterpreters(runtime).get(0).interpret(runtime, context, optionalArguments);
 	}
 
 }

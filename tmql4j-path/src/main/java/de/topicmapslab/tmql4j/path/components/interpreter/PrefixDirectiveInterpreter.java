@@ -11,6 +11,9 @@
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.productions.PrefixDirective;
 
@@ -30,8 +33,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.PrefixDirective;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class PrefixDirectiveInterpreter extends
-		ExpressionInterpreterImpl<PrefixDirective> {
+public class PrefixDirectiveInterpreter extends ExpressionInterpreterImpl<PrefixDirective> {
 
 	/**
 	 * base constructor to create a new instance
@@ -43,23 +45,25 @@ public class PrefixDirectiveInterpreter extends
 		super(ex);
 	}
 
-	/*
+	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
-		 * get QName
+		 * get reference
 		 */
-		String identifier = getTokens().get(1);
+		String reference = getTokens().get(1);
 		/*
-		 * get IRI
+		 * get QIRI
 		 */
 		String qiri = getTokens().get(2);
-
 		/*
 		 * store prefix
 		 */
-		runtime.getLanguageContext().getPrefixHandler().registerPrefix(identifier, qiri);
+		context.setPrefix(qiri, reference);
+		
+		return QueryMatches.emptyMatches();
 	}
 
 }

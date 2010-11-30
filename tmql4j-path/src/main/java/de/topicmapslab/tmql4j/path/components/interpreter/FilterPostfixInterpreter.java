@@ -11,6 +11,18 @@
  */
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
+import static de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix.TYPE_BOOLEAN_EXPRESSION;
+import static de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix.TYPE_BOUNDS_FILTER;
+import static de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix.TYPE_INDEX_FILTER;
+import static de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix.TYPE_SCOPE_FILTER;
+import static de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix.TYPE_SHORTCUT_BOUNDS_FILTER;
+import static de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix.TYPE_SHORTCUT_INDEX_FILTER;
+import static de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix.TYPE_SHORTCUT_SCOPE_FILTER;
+import static de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix.TYPE_SHORTCUT_TYPE_FILTER;
+import static de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix.TYPE_TYPE_FILTER;
+
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -20,10 +32,16 @@ import org.tmapi.core.Scoped;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
-import de.topicmapslab.tmql4j.exception.DataBridgeException;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
+import de.topicmapslab.tmql4j.path.components.navigation.NavigationHandler;
+import de.topicmapslab.tmql4j.path.components.navigation.model.INavigationAxis;
+import de.topicmapslab.tmql4j.path.components.processor.core.Context;
+import de.topicmapslab.tmql4j.path.exception.NavigationException;
 import de.topicmapslab.tmql4j.path.grammar.productions.BooleanExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix;
 
@@ -54,8 +72,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class FilterPostfixInterpreter extends
-		ExpressionInterpreterImpl<FilterPostfix> {
+public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPostfix> {
 
 	/**
 	 * the Logger
@@ -75,50 +92,45 @@ public class FilterPostfixInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		switch (getGrammarTypeOfExpression()) {
 		/*
 		 * is boolean-expression
 		 */
 		case TYPE_BOOLEAN_EXPRESSION: {
-			interpretBooleanExpression(runtime);
+			return interpretBooleanExpression(runtime, context, optionalArguments);
 		}
-			break;
-		/*
-		 * is @ anchor or [ @ anchor]
-		 */
+			/*
+			 * is @ anchor or [ @ anchor]
+			 */
 		case TYPE_SHORTCUT_SCOPE_FILTER:
 		case TYPE_SCOPE_FILTER: {
-			interpreScopeFilter(runtime);
-			break;
+			return interpreScopeFilter(runtime, context, optionalArguments);
 		}
 			/*
 			 * is // anchor or [ ^ anchor]
 			 */
 		case TYPE_SHORTCUT_TYPE_FILTER:
 		case TYPE_TYPE_FILTER: {
-			interpretTypesAnchor(runtime);
+			return interpretTypesAnchor(runtime, context, optionalArguments);
 		}
-			break;
-		/*
-		 * is [integer] or [$# == #integer]
-		 */
+			/*
+			 * is [integer] or [$# == #integer]
+			 */
 		case TYPE_SHORTCUT_INDEX_FILTER:
 		case TYPE_INDEX_FILTER: {
-			interpretIntegerIndex(runtime);
+			return interpretIntegerIndex(runtime, context, optionalArguments);
 		}
-			break;
-		/*
-		 * is [integer .. integer] or [#integer <= $# & $# < #integer]
-		 */
+			/*
+			 * is [integer .. integer] or [#integer <= $# & $# < #integer]
+			 */
 		case TYPE_BOUNDS_FILTER:
 		case TYPE_SHORTCUT_BOUNDS_FILTER: {
-			interpretIntegerBounds(runtime);
+			return interpretIntegerBounds(runtime, context, optionalArguments);
 		}
-			break;
-		default:
-			throw new TMQLRuntimeException("Unknown state");
 		}
+		return QueryMatches.emptyMatches();
 	}
 
 	/**
@@ -134,158 +146,88 @@ public class FilterPostfixInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretBooleanExpression(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretBooleanExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		/*
+		 * return empty matches if context is empty
+		 */
+		if (context.getContextBindings() == null) {
+			return QueryMatches.emptyMatches();
+		}
 		/*
 		 * Extract Boolean-expression
 		 */
-		IExpressionInterpreter<BooleanExpression> ex = getInterpretersFilteredByEypressionType(
-				runtime, BooleanExpression.class).get(0);
-		/*
-		 * Extract current tuple-sequence
-		 */
-		Object seq = runtime.getRuntimeContext().peek().getValue(
-				VariableNames.POSTFIXED);
+		IExpressionInterpreter<BooleanExpression> ex = getInterpretersFilteredByEypressionType(runtime, BooleanExpression.class).get(0);
 		/*
 		 * Iterate over all tuple of current sequence
 		 */
-		if (seq instanceof QueryMatches) {
+		QueryMatches storedMatches = context.getContextBindings();
+		QueryMatches filteredMatches = new QueryMatches(runtime);
 
-			QueryMatches storedMatches = (QueryMatches) seq;
-			QueryMatches filteredMatches = new QueryMatches(runtime);
+		for (int index = 0; index < storedMatches.getMatches().size(); index++) {
 
-			for (int index = 0; index < storedMatches.getMatches().size(); index++) {
+			Map<String, Object> filteredTuple = HashUtil.getHashMap();
 
-				Map<String, Object> filteredTuple = HashUtil.getHashMap();
-
-				for (final String variable : storedMatches.getOrderedKeys()) {
-					Object object = storedMatches.getMatches().get(index).get(
-							variable);
-					ITupleSequence<Object> results = runtime.getProperties()
-							.newSequence();
-
+			for (final String variable : storedMatches.getOrderedKeys()) {
+				Object object = storedMatches.getMatches().get(index).get(variable);
+				List<Object> results = HashUtil.getList();
+				Context newContext = new Context(context);
+				newContext.setContextBindings(null);
+				newContext.setCurrentIndex(index);
+				/*
+				 * check if value is a sequence
+				 */
+				if (object instanceof Collection<?>) {
 					/*
-					 * create new variable set on top of the stack
+					 * iterate over sequence
 					 */
-					runtime.getRuntimeContext().push();
-					runtime.getRuntimeContext().peek().remove(
-							VariableNames.ITERATED_BINDINGS);
-
-					/*
-					 * check if value is a sequence
-					 */
-					if (object instanceof ITupleSequence<?>) {
-						boolean firstCall = true;
-						/*
-						 * iterate over sequence
-						 */
-						for (Object object_ : (ITupleSequence<?>) object) {
-							if (!firstCall) {
-								runtime.getRuntimeContext().push();
-								runtime.getRuntimeContext().peek().remove(
-										VariableNames.ITERATED_BINDINGS);
-							}
-							/*
-							 * Set value to $#
-							 */
-							runtime.getRuntimeContext().peek().setValue(
-									VariableNames.CURRENT_POISTION, index);
-
-							/*
-							 * set current tuple to @_
-							 */
-							runtime.getRuntimeContext().peek().setValue(
-									VariableNames.CURRENT_TUPLE, object_);
-							/*
-							 * check boolean expression
-							 */
-							ex.interpret(runtime);
-
-							/*
-							 * pop from stack
-							 */
-							Object obj = runtime.getRuntimeContext().pop()
-									.getValue(VariableNames.QUERYMATCHES);
-
-							/*
-							 * check result type, has to be an instance of
-							 * ITupleSequence<?>
-							 */
-							if (obj == null || !(obj instanceof QueryMatches)) {
-								throw new TMQLRuntimeException(
-										"Invalid interpretation of expression boolean-expression, has to return a result of QueryMatches");
-							}
-
-							if (!((QueryMatches) obj).isEmpty()) {
-								results.add(object_);
-							}
-							firstCall = false;
-						}
-					}
-					/*
-					 * value is not a sequence and not null
-					 */
-					else if (object != null) {
-
-						/*
-						 * Set value to $#
-						 */
-						runtime.getRuntimeContext().peek().setValue(
-								VariableNames.CURRENT_POISTION, index);
-						/*
-						 * set current tuple to @_
-						 */
-						runtime.getRuntimeContext().peek().setValue(
-								VariableNames.CURRENT_TUPLE, object);
+					for (Object object_ : (Collection<?>) object) {
+						newContext.setCurrentNode(object_);
 						/*
 						 * check boolean expression
 						 */
-						ex.interpret(runtime);
-
-						/*
-						 * pop from stack
-						 */
-						Object obj = runtime.getRuntimeContext().pop()
-								.getValue(VariableNames.QUERYMATCHES);
-
-						/*
-						 * check result type, has to be an instance of
-						 * ITupleSequence<?>
-						 */
-						if (obj == null || !(obj instanceof QueryMatches)) {
-							throw new TMQLRuntimeException(
-									"Invalid interpretation of expression boolean-expression, has to return a result of QueryMatches");
+						QueryMatches iteration = ex.interpret(runtime, newContext, optionalArguments);
+						if (!iteration.isEmpty()) {
+							results.add(object_);
 						}
-						if (!((QueryMatches) obj).isEmpty()) {
-							results.add(object);
-						}
-					}
-
-					/*
-					 * check if tuple-sequence is not empty
-					 */
-					if (!results.isEmpty()) {
-						filteredTuple.put(variable,
-								results.size() == 1 ? results.get(0) : results);
 					}
 				}
 				/*
-				 * check if tuple is empty
+				 * value is not a sequence and not null
 				 */
-				if (!filteredTuple.isEmpty()) {
-					filteredMatches.add(filteredTuple);
+				else if (object != null) {
+					newContext.setCurrentNode(object);
+					/*
+					 * check boolean expression
+					 */
+					QueryMatches iteration = ex.interpret(runtime, newContext, optionalArguments);
+					if (!iteration.isEmpty()) {
+						results.add(object);
+					}
 				}
 
+				/*
+				 * check if tuple-sequence is not empty
+				 */
+				if (!results.isEmpty()) {
+					filteredTuple.put(variable, results.size() == 1 ? results.get(0) : results);
+				}
 			}
 			/*
-			 * set overall results to variable stack
+			 * check if tuple is empty
 			 */
-			runtime.getRuntimeContext().peek().setValue(
-					VariableNames.QUERYMATCHES, filteredMatches);
+			if (!filteredTuple.isEmpty()) {
+				filteredMatches.add(filteredTuple);
+			}
 		}
+		return filteredMatches;
 	}
 
 	/**
@@ -301,11 +243,15 @@ public class FilterPostfixInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretTypesAnchor(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretTypesAnchor(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * Extract value of anchor specified the type to match
 		 */
@@ -326,52 +272,37 @@ public class FilterPostfixInterpreter extends
 		/*
 		 * Try to resolve item of current topic map
 		 */
-		Construct construct = null;
-		try {
-			construct = runtime.getDataBridge().getConstructByIdentifier(
-					runtime, anchor);
-		} catch (DataBridgeException e) {
-			logger.warn("Cannot find specified type " + anchor);
-		}
-		/*
-		 * return empty result if type is unknown
-		 */
+		Construct construct = runtime.getConstructResolver().getConstructByIdentifier(context, anchor);
 		if (construct == null) {
-			runtime.getRuntimeContext().peek().setValue(
-					VariableNames.QUERYMATCHES, new QueryMatches(runtime));
-			return;
+			logger.warn("Cannot interpret given anchor '" + anchor + "'.");
+			return QueryMatches.emptyMatches();
 		}
 
 		/*
 		 * Iterate over all values of tuple sequence and match to resolved type
 		 */
-		Object seq = runtime.getRuntimeContext().peek().getValue(
-				VariableNames.POSTFIXED);
-		QueryMatches results = new QueryMatches(runtime);
-		if (seq instanceof QueryMatches) {
-			QueryMatches matches = (QueryMatches) seq;
-			INavigationAxis axis = runtime.getDataBridge()
-					.getImplementationOfTMQLAxis(runtime, "types");
-			/*
-			 * iterate over all values of non-scoped variable
-			 */
-			for (Object object : matches.getPossibleValuesForVariable()) {
+		if (context.getContextBindings() != null) {
+			try {
+				INavigationAxis axis = NavigationHandler.buildHandler().lookup(NavigationAxis.types);
+				List<Object> values = HashUtil.getList();
 				/*
-				 * check if value is a topic and a type of the current item
+				 * iterate over all values of non-scoped variable
 				 */
-				try {
+				for (Object object : context.getContextBindings().getPossibleValuesForVariable()) {
+					/*
+					 * check if value is a topic and a type of the current item
+					 */
 					if (axis.navigateForward(object).contains(construct)) {
-						Map<String, Object> tuple = HashUtil.getHashMap();
-						tuple.put(QueryMatches.getNonScopedVariable(), object);
-						results.add(tuple);
+						values.add(object);
 					}
-				} catch (NavigationException e) {
-					throw new TMQLRuntimeException(e);
 				}
+				return QueryMatches.asQueryMatch(runtime, values.toArray());
+
+			} catch (NavigationException e) {
+				throw new TMQLRuntimeException(e);
 			}
 		}
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				results);
+		return QueryMatches.emptyMatches();
 	}
 
 	/**
@@ -387,11 +318,15 @@ public class FilterPostfixInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpreScopeFilter(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpreScopeFilter(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * Extract value of anchor specified the type to match
 		 */
@@ -412,49 +347,32 @@ public class FilterPostfixInterpreter extends
 		/*
 		 * Try to resolve item of current topic map
 		 */
-		Construct construct = null;
-		try {
-			construct = runtime.getDataBridge().getConstructByIdentifier(
-					runtime, anchor);
-		} catch (DataBridgeException e) {
+		Construct construct = runtime.getConstructResolver().getConstructByIdentifier(context, anchor);
+		if (construct == null) {
 			logger.warn("Cannot interpret given anchor '" + anchor + "'.");
+			return QueryMatches.emptyMatches();
 		}
-		QueryMatches results = new QueryMatches(runtime);
-		if (construct != null) {
+
+		/*
+		 * Iterate over all values of tuple sequence and match to resolved type
+		 */
+		if (context.getContextBindings() != null) {
+			List<Object> values = HashUtil.getList();
 			/*
-			 * Iterate over all values of tuple sequence and match to resolved
-			 * type
+			 * iterate over all values of non-scoped variable
 			 */
-			Object seq = runtime.getRuntimeContext().peek().getValue(
-					VariableNames.POSTFIXED);
-			if (seq instanceof QueryMatches) {
-				QueryMatches matches = (QueryMatches) seq;
+			for (Object object : context.getContextBindings()) {
 				/*
-				 * iterate over all values of non-scoped variable
+				 * check if value is a scoped item and the scope contains the
+				 * given theme
 				 */
-				for (Object object : matches.getPossibleValuesForVariable()) {
-					/*
-					 * check if value is a scoped item and the scope contains
-					 * the given theme
-					 */
-					if (object instanceof Scoped
-							&& ((Scoped) object).getScope().contains(construct)) {
-						Map<String, Object> tuple = HashUtil.getHashMap();
-						tuple.put(QueryMatches.getNonScopedVariable(), object);
-						results.add(tuple);
-					}
+				if (object instanceof Scoped && ((Scoped) object).getScope().contains(construct)) {
+					values.add(object);
 				}
 			}
+			return QueryMatches.asQueryMatch(runtime, values.toArray());
 		}
-		/*
-		 * add values to new instance of tuple sequence
-		 */
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				results);
-		/*
-		 * log it :)
-		 */
-		logger.info("Finished! Results: " + results);
+		return QueryMatches.emptyMatches();
 	}
 
 	/**
@@ -470,12 +388,15 @@ public class FilterPostfixInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretIntegerIndex(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
-
+	private QueryMatches interpretIntegerIndex(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		int index = -1;
 		/*
 		 * extract index by grammar type
@@ -485,27 +406,15 @@ public class FilterPostfixInterpreter extends
 		} else {
 			index = Integer.parseInt(getTokens().get(3));
 		}
-
-		QueryMatches results = new QueryMatches(runtime);
 		/*
 		 * extract sequence from the top of the stack
 		 */
-		Object seq = runtime.getRuntimeContext().peek().getValue(
-				VariableNames.POSTFIXED);
-		if (seq instanceof QueryMatches) {
-			QueryMatches matches = (QueryMatches) seq;
-			if (index < matches.size() && index >= 0) {
-				/*
-				 * create new sequence and add the tuple at the specific index
-				 */
-				results.add(matches.get(index));
+		if (context.getContextBindings() != null) {
+			if (index < context.getContextBindings().size() && index >= 0) {
+				return context.getContextBindings().select(index, index + 1);
 			}
-			runtime.getRuntimeContext().peek().setValue(
-					VariableNames.QUERYMATCHES, results);
-		} else {
-			throw new TMQLRuntimeException("unsupported results type");
 		}
-
+		return QueryMatches.emptyMatches();
 	}
 
 	/**
@@ -521,11 +430,15 @@ public class FilterPostfixInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretIntegerBounds(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretIntegerBounds(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 
 		int upper = -1;
 		int lower = -1;
@@ -542,17 +455,9 @@ public class FilterPostfixInterpreter extends
 		/*
 		 * extract sequence from the top of the stack
 		 */
-		Object seq = runtime.getRuntimeContext().peek().getValue(
-				VariableNames.POSTFIXED);
-		if (seq instanceof QueryMatches) {
-			/*
-			 * create a new sequence and add all tuples in the selection-window
-			 */
-			QueryMatches matches = (QueryMatches) seq;
-			runtime.getRuntimeContext().peek().setValue(
-					VariableNames.QUERYMATCHES, matches.select(lower, upper));
-		} else {
-			throw new TMQLRuntimeException("unsupported results type");
+		if (context.getContextBindings() != null) {
+			return context.getContextBindings().select(lower, upper);
 		}
+		return QueryMatches.emptyMatches();
 	}
 }

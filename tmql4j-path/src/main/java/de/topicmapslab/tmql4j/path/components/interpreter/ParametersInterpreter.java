@@ -11,11 +11,11 @@
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import java.util.Collection;
-import java.util.Map;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.productions.ParameterPair;
 import de.topicmapslab.tmql4j.path.grammar.productions.Parameters;
@@ -36,8 +36,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.TupleExpression;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class ParametersInterpreter extends
-		ExpressionInterpreterImpl<Parameters> {
+public class ParametersInterpreter extends ExpressionInterpreterImpl<Parameters> {
 
 	/**
 	 * base constructor to create a new instance
@@ -52,7 +51,8 @@ public class ParametersInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * switch by grammar type
 		 */
@@ -61,16 +61,14 @@ public class ParametersInterpreter extends
 		 * is tuple-expression
 		 */
 		case 0: {
-			interpreteTupleExpression(runtime);
+			return interpreteTupleExpression(runtime, context, optionalArguments);
 		}
-			break;
 		/*
 		 * is parameters-pair
 		 */
 		case 1: {
-			interpreteParameterPairs(runtime);
+			return interpreteParameterPairs(runtime, context, optionalArguments);
 		}
-			break;
 		default:
 			throw new TMQLRuntimeException("Unknown state.");
 		}
@@ -89,14 +87,17 @@ public class ParametersInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpreteTupleExpression(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpreteTupleExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 
-		QueryMatches matches = extractArguments(runtime, TupleExpression.class,
-				0);
+		QueryMatches matches = extractArguments(runtime, TupleExpression.class, 0, context, optionalArguments);
 		Collection<String> keys = matches.getOrderedKeys();
 		int index = 0;
 		/*
@@ -114,19 +115,16 @@ public class ParametersInterpreter extends
 			 */
 			if (matches.getOrderedKeys().contains(variable)) {
 				matches = matches.renameVariable(variable, "$" + index);
-			} else {
-				Map<String, Object> tuple = HashUtil.getHashMap();
-				tuple.put("$" + index, runtime.getProperties().newSequence());
-				matches.add(tuple);
 			}
+			// else {
+			// Map<String, Object> tuple = HashUtil.getHashMap();
+			// tuple.put("$" + index, runtime.getProperties().newSequence());
+			// matches.add(tuple);
+			// }
 			index++;
 		}
 
-		/*
-		 * set on top of stack
-		 */
-		runtime.getRuntimeContext().peek()
-				.setValue(VariableNames.QUERYMATCHES, matches);
+		return matches;
 	}
 
 	/**
@@ -142,14 +140,17 @@ public class ParametersInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpreteParameterPairs(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpreteParameterPairs(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 
-		QueryMatches[] parameters = extractArguments(runtime,
-				ParameterPair.class);
+		QueryMatches[] parameters = extractArguments(runtime, ParameterPair.class, context, optionalArguments);
 
 		/*
 		 * iterate over subexpressions
@@ -158,18 +159,10 @@ public class ParametersInterpreter extends
 			/*
 			 * rename variables
 			 */
-			parameters[index] = parameters[index].renameVariable(
-					QueryMatches.getNonScopedVariable(), "$" + index);
+			parameters[index] = parameters[index].renameVariable(QueryMatches.getNonScopedVariable(), "$" + index);
 		}
 
-		/*
-		 * set on top of stack
-		 */
-		runtime.getRuntimeContext()
-				.peek()
-				.setValue(VariableNames.QUERYMATCHES,
-						new QueryMatches(runtime, parameters));
-
+		return new QueryMatches(runtime, parameters);
 	}
 
 }

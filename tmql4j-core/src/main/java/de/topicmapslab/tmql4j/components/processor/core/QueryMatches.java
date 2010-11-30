@@ -1272,6 +1272,12 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 		for (Object o : values) {
 			if (o instanceof Map<?, ?>) {
 				match.add((Map<String, Object>) o);
+			} else if (o instanceof Collection<?>) {
+				for (Object o_ : (Collection<?>) o) {
+					Map<String, Object> tuple = HashUtil.getHashMap();
+					tuple.put(variable, o_);
+					match.add(tuple);
+				}
 			} else {
 				Map<String, Object> tuple = HashUtil.getHashMap();
 				tuple.put(variable, o);

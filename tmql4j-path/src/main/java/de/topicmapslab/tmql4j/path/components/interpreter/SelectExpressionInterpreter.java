@@ -11,17 +11,18 @@
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import java.math.BigInteger;
-import java.util.Collection;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
+import de.topicmapslab.tmql4j.path.components.processor.core.Context;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Unique;
 import de.topicmapslab.tmql4j.path.grammar.productions.FromClause;
 import de.topicmapslab.tmql4j.path.grammar.productions.LimitClause;
@@ -46,8 +47,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.WhereClause;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class SelectExpressionInterpreter extends
-		ExpressionInterpreterImpl<SelectExpression> {
+public class SelectExpressionInterpreter extends ExpressionInterpreterImpl<SelectExpression> {
 
 	/**
 	 * the Logger
@@ -68,99 +68,111 @@ public class SelectExpressionInterpreter extends
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
-
-		logger.info("Start");
-
-		runtime.getRuntimeContext().push();
-
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		Context newContext = new Context(context);
 		/*
-		 * extract context defined by from-clause if exists
+		 * check if from-clause exists
 		 */
-		QueryMatches context = interpretFromClause(runtime);
+		if (containsExpressionsType(FromClause.class)) {
+			QueryMatches matches = interpretFromClause(runtime, newContext, optionalArguments);
+			if (matches.isEmpty()) {
+				logger.warn("Interpretation of from clause return no results!");
+				return QueryMatches.emptyMatches();
+			}
+			newContext.setContextBindings(matches);
+		}
 
 		/*
 		 * get limit value of limit-clause if exists
 		 */
-		long limit = interpretLimitClause(runtime);
+		long limit = -1;
+		if (containsExpressionsType(LimitClause.class)) {
+			limit = interpretLimitClause(runtime, newContext, optionalArguments);
+		}
 
 		/*
 		 * get offset value of offset-clause if exists
 		 */
-		long offset = interpretOffsetClause(runtime);
-
-		QueryMatches matches = new QueryMatches(runtime);
-		boolean containsWhereClause = containsExpressionsType(WhereClause.class);
+		long offset = 0;
+		if (containsExpressionsType(OffsetClause.class)) {
+			offset = interpretOffsetClause(runtime, newContext, optionalArguments);
+		}
 		/*
 		 * interpret where-clause if exists
 		 */
-		if (containsWhereClause) {
-			matches = interpretWhereClause(runtime, context);
+		if (containsExpressionsType(WhereClause.class)) {
+			QueryMatches matches = interpretWhereClause(runtime, newContext, optionalArguments);
+			if (matches.isEmpty()) {
+				logger.warn("Interpretation of where clause return no results!");
+				return QueryMatches.emptyMatches();
+			}
+			newContext.setContextBindings(matches);
 		}
 
 		/*
 		 * interpret order-by-clause if exists
 		 */
-		if (!matches.isEmpty() && containsExpressionsType(OrderByClause.class)) {
-			matches = interpreteOrderByClause(runtime, matches);
+		if (containsExpressionsType(OrderByClause.class)) {
+			QueryMatches matches = interpreteOrderByClause(runtime, newContext, optionalArguments);
+			if (matches.isEmpty()) {
+				logger.warn("Interpretation of order-by clause return no results!");
+				return QueryMatches.emptyMatches();
+			}
+			newContext.setContextBindings(matches);
 		}
 		/*
 		 * interpret select-clause if exists
 		 */
-		matches = interpretSelectClause(runtime, matches);
-		/*
-		 * clean results by from-clause if exists and not already cleaned by
-		 * where-clause
-		 */
-		if (!containsWhereClause && context != null) {
-			/*
-			 * create new temporary sequence to store cleared matches
-			 */
-			ITupleSequence<Object> context_ = context
-					.getPossibleValuesForVariable();
-			QueryMatches cleaned = new QueryMatches(runtime);
-			/*
-			 * iterate over all tuples
-			 */
-			for (Map<String, Object> tuple : matches) {
-				boolean add = true;
-				for (Object o : tuple.values()) {
-					if (o instanceof Collection) {
-						Collection<?> col = (Collection<?>) o;
-						col.retainAll(context_);
-						add = !col.isEmpty();
-					} else {
-						add = context_.contains(o);
-					}
-					if (!add) {
-						break;
-					}
-				}
-				/*
-				 * check if value is contained in the context
-				 */
-				if (add) {
-					cleaned.add(tuple);
-				}
-			}
-			matches = cleaned;
-		}
+		QueryMatches matches = interpretSelectClause(runtime, newContext, optionalArguments);
+		// /*
+		// * clean results by from-clause if exists and not already cleaned by
+		// * where-clause
+		// */
+		// if (!containsWhereClause && context != null) {
+		// /*
+		// * create new temporary sequence to store cleared matches
+		// */
+		// ITupleSequence<Object> context_ = context
+		// .getPossibleValuesForVariable();
+		// QueryMatches cleaned = new QueryMatches(runtime);
+		// /*
+		// * iterate over all tuples
+		// */
+		// for (Map<String, Object> tuple : matches) {
+		// boolean add = true;
+		// for (Object o : tuple.values()) {
+		// if (o instanceof Collection) {
+		// Collection<?> col = (Collection<?>) o;
+		// col.retainAll(context_);
+		// add = !col.isEmpty();
+		// } else {
+		// add = context_.contains(o);
+		// }
+		// if (!add) {
+		// break;
+		// }
+		// }
+		// /*
+		// * check if value is contained in the context
+		// */
+		// if (add) {
+		// cleaned.add(tuple);
+		// }
+		// }
+		// matches = cleaned;
+		// }
 
 		/*
 		 * unify if necessary
 		 */
-		if (ParserUtils.containsTokens(getTmqlTokens(), Unique.class)
-				|| runtime.getProperties().newSequence().isUniqueSet()) {
+		if (ParserUtils.containsTokens(getTmqlTokens(), Unique.class)) {
 			matches = matches.unify();
 		}
 
 		/*
 		 * reduce query-matches to selection window
 		 */
-		matches = interpretSelectionWindow(matches, limit, offset);
-
-		runtime.getRuntimeContext().peek()
-				.setValue(VariableNames.QUERYMATCHES, matches);
+		return interpretSelectionWindow(matches, limit, offset);
 	}
 
 	/**
@@ -172,20 +184,17 @@ public class SelectExpressionInterpreter extends
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
 	 * @return a query match containing the results of the from-clause
 	 *         interpretation or <code>null</code> if from-clause is missing.
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private QueryMatches interpretFromClause(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
-		/*
-		 * check if from-clause exists
-		 */
-		if (containsExpressionsType(FromClause.class)) {
-			return extractArguments(runtime, FromClause.class, 0);
-		}
-		return null;
+	private QueryMatches interpretFromClause(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		return extractArguments(runtime, FromClause.class, 0, context, optionalArguments);
 	}
 
 	/**
@@ -195,27 +204,18 @@ public class SelectExpressionInterpreter extends
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
 	 * @return the limit defined by the limit-clause or -1 if limit-clause is
 	 *         missing.
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private long interpretLimitClause(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
-		long limit = -1;
-		/*
-		 * check if limit-clause is contained
-		 */
-		if (containsExpressionsType(LimitClause.class)) {
-			/*
-			 * call limit-clause
-			 */
-			QueryMatches context = extractArguments(runtime, LimitClause.class,
-					0);
-			limit = ((BigInteger) context.get(0).get(VariableNames.LIMIT))
-					.longValue();
-		}
-		return limit;
+	private long interpretLimitClause(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		BigInteger limit = getInterpretersFilteredByEypressionType(runtime, LimitClause.class).get(0).interpret(runtime, context, optionalArguments);
+		return limit.longValue();
 	}
 
 	/**
@@ -226,27 +226,18 @@ public class SelectExpressionInterpreter extends
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
 	 * @return the offset defined by the offset-clause or 0 if offset-clause is
 	 *         missing.
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private long interpretOffsetClause(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
-		long offset = 0;
-		/*
-		 * check if offset-clause is contained
-		 */
-		if (containsExpressionsType(OffsetClause.class)) {
-			/*
-			 * call offset-clause
-			 */
-			QueryMatches context = extractArguments(runtime,
-					OffsetClause.class, 0);
-			offset = ((BigInteger) context.get(0).get(VariableNames.OFFSET))
-					.longValue();
-		}
-		return offset;
+	private long interpretOffsetClause(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		BigInteger limit = getInterpretersFilteredByEypressionType(runtime, OffsetClause.class).get(0).interpret(runtime, context, optionalArguments);
+		return limit.longValue();
 	}
 
 	/**
@@ -259,55 +250,48 @@ public class SelectExpressionInterpreter extends
 	 * @param runtime
 	 *            the TMQL4J runtime
 	 * @param context
-	 *            the context defined by the from-clause
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
 	 * @return the results of the where-clause
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private QueryMatches interpretWhereClause(TMQLRuntime runtime,
-			QueryMatches context) throws TMQLRuntimeException {
-
+	private QueryMatches interpretWhereClause(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
-		 * check if where-clause is contained
+		 * call where-clause
 		 */
-		if (containsExpressionsType(WhereClause.class)) {
-			/*
-			 * call where-clause
-			 */
-			QueryMatches matches = extractArguments(runtime, WhereClause.class,
-					0);
-
-			/*
-			 * check if context is given by from-clause
-			 */
-			if (context == null) {
-				return matches;
-			}
-			/*
-			 * context defined by from-clause
-			 */
-			else {
-				/*
-				 * create new temporary sequence to store cleared matches
-				 */
-				ITupleSequence<Object> context_ = context
-						.getPossibleValuesForVariable();
-				QueryMatches cleaned = new QueryMatches(runtime);
-				/*
-				 * iterate over all tuples
-				 */
-				for (Map<String, Object> tuple : matches) {
-					/*
-					 * check if value is contained in the context
-					 */
-					if (context_.containsAll(tuple.values())) {
-						cleaned.add(tuple);
-					}
-				}
-				return cleaned;
-			}
-		}
-		return null;
+		return extractArguments(runtime, WhereClause.class, 0, context, optionalArguments);
+		//
+		// /*
+		// * check if context is given by from-clause
+		// */
+		// if (context == null) {
+		// return matches;
+		// }
+		// /*
+		// * context defined by from-clause
+		// */
+		// else {
+		// /*
+		// * create new temporary sequence to store cleared matches
+		// */
+		// ITupleSequence<Object> context_ = context
+		// .getPossibleValuesForVariable();
+		// QueryMatches cleaned = new QueryMatches(runtime);
+		// /*
+		// * iterate over all tuples
+		// */
+		// for (Map<String, Object> tuple : matches) {
+		// /*
+		// * check if value is contained in the context
+		// */
+		// if (context_.containsAll(tuple.values())) {
+		// cleaned.add(tuple);
+		// }
+		// }
+		// return cleaned;
+		// }
 	}
 
 	/**
@@ -317,37 +301,19 @@ public class SelectExpressionInterpreter extends
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
-	 * @param tuples
-	 *            the tuple to order
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
 	 * @return the order tuple sequence
 	 * @throws TMQLRuntimeException
 	 *             thrown if ordering fails
 	 */
-	private QueryMatches interpreteOrderByClause(TMQLRuntime runtime,
-			QueryMatches tuples) throws TMQLRuntimeException {
+	private QueryMatches interpreteOrderByClause(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
-		 * check if order-by clause exists and any variable is contained
+		 * call order by clause
 		 */
-		if (containsExpressionsType(OrderByClause.class) && !tuples.isEmpty()) {
-			/*
-			 * set binding to set on top of the stack, which has to order
-			 */
-			runtime.getRuntimeContext().push()
-					.setValue(VariableNames.ORDER, tuples);
-
-			/*
-			 * call order by clause
-			 */
-			QueryMatches ordered = extractArguments(runtime,
-					OrderByClause.class, 0);
-
-			/*
-			 * remove top variable layer
-			 */
-			runtime.getRuntimeContext().pop();
-			return ordered;
-		}
-		return tuples;
+		return extractArguments(runtime, OrderByClause.class, 0, context, optionalArguments);
 	}
 
 	/**
@@ -357,60 +323,30 @@ public class SelectExpressionInterpreter extends
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
-	 * @param matches
-	 *            the satisfying variable bindings of the where-clause
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
 	 * @return the over all result of the select-clause
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private QueryMatches interpretSelectClause(TMQLRuntime runtime,
-			QueryMatches matches) throws TMQLRuntimeException {
-
+	private QueryMatches interpretSelectClause(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * only one select clause has to be contained
 		 */
 		if (!containsExpressionsType(SelectClause.class)) {
-			throw new TMQLRuntimeException(
-					"Invalid structure. not select clause.");
+			throw new TMQLRuntimeException("Invalid structure. not select clause.");
 		}
 
 		/*
 		 * extract the select clause
 		 */
-		IExpressionInterpreter<SelectClause> selectClause = getInterpretersFilteredByEypressionType(
-				runtime, SelectClause.class).get(0);
-
-		runtime.getRuntimeContext().peek()
-				.remove(VariableNames.ITERATED_BINDINGS);
-
-		/*
-		 * push to the top of the stack
-		 */
-		runtime.getRuntimeContext().push();
-		if (!matches.isEmpty()) {
-			runtime.getRuntimeContext().peek()
-					.setValue(VariableNames.ITERATED_BINDINGS, matches);
-		}
-
+		IExpressionInterpreter<SelectClause> selectClause = getInterpretersFilteredByEypressionType(runtime, SelectClause.class).get(0);
 		/*
 		 * call sub expression
 		 */
-		selectClause.interpret(runtime);
-
-		/*
-		 * pop from top of the stack
-		 */
-		Object obj = runtime.getRuntimeContext().pop()
-				.getValue(VariableNames.QUERYMATCHES);
-		/*
-		 * check result type
-		 */
-		if (!(obj instanceof QueryMatches)) {
-			throw new TMQLRuntimeException(
-					"Invalid interpretation of expression select-clause. Has to return an instance of Query<?>.");
-		}
-
-		return (QueryMatches) obj;
+		return selectClause.interpret(runtime, context, optionalArguments);
 	}
 
 	/**
@@ -428,16 +364,15 @@ public class SelectExpressionInterpreter extends
 	 * @throws TMQLRuntimeException
 	 *             thrown if indexes are invalid
 	 */
-	private QueryMatches interpretSelectionWindow(QueryMatches matches,
-			long limit, long offset) throws TMQLRuntimeException {
+	private QueryMatches interpretSelectionWindow(QueryMatches matches, long limit, long offset) throws TMQLRuntimeException {
 		if (limit == -1) {
 			if (offset == -1) {
 				return matches;
-			}else{
+			} else {
 				limit = matches.size();
 			}
 		}
-		if ( offset == -1 ){
+		if (offset == -1) {
 			offset = 0;
 		}
 		/*

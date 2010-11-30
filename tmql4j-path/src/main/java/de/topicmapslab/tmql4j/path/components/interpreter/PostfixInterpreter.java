@@ -12,6 +12,9 @@ package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix;
 import de.topicmapslab.tmql4j.path.grammar.productions.Postfix;
@@ -47,7 +50,8 @@ public class PostfixInterpreter extends ExpressionInterpreterImpl<Postfix> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * switch by grammar type
 		 */
@@ -56,19 +60,16 @@ public class PostfixInterpreter extends ExpressionInterpreterImpl<Postfix> {
 		 * is filter-postfix
 		 */
 		case 0: {
-			interpretFilterPostfix(runtime);
+			return interpretFilterPostfix(runtime, context, optionalArguments);
 		}
-			break;
-		/*
-		 * is projection postfix
-		 */
+			/*
+			 * is projection postfix
+			 */
 		case 1: {
-			interpretProjectionPostfix(runtime);
+			return interpretProjectionPostfix(runtime, context, optionalArguments);
 		}
-			break;
-		default:
-			throw new TMQLRuntimeException("unknown state");
 		}
+		return QueryMatches.emptyMatches();
 	}
 
 	/**
@@ -84,17 +85,20 @@ public class PostfixInterpreter extends ExpressionInterpreterImpl<Postfix> {
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretFilterPostfix(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretFilterPostfix(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * redirect to subexpression
 		 */
-		IExpressionInterpreter<FilterPostfix> ex = getInterpretersFilteredByEypressionType(
-				runtime, FilterPostfix.class).get(0);
-		ex.interpret(runtime);
+		IExpressionInterpreter<FilterPostfix> ex = getInterpretersFilteredByEypressionType(runtime, FilterPostfix.class).get(0);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 
 	/**
@@ -110,17 +114,20 @@ public class PostfixInterpreter extends ExpressionInterpreterImpl<Postfix> {
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretProjectionPostfix(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretProjectionPostfix(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * redirect to subexpression
 		 */
-		IExpressionInterpreter<ProjectionPostfix> ex = getInterpretersFilteredByEypressionType(
-				runtime, ProjectionPostfix.class).get(0);
-		ex.interpret(runtime);
+		IExpressionInterpreter<ProjectionPostfix> ex = getInterpretersFilteredByEypressionType(runtime, ProjectionPostfix.class).get(0);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 
 }

@@ -11,7 +11,9 @@
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.productions.ParameterPair;
 import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
@@ -32,8 +34,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class ParameterPairInterpreter extends
-		ExpressionInterpreterImpl<ParameterPair> {
+public class ParameterPairInterpreter extends ExpressionInterpreterImpl<ParameterPair> {
 
 	/**
 	 * base constructor to create a new instance
@@ -48,17 +49,12 @@ public class ParameterPairInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * execute value-expression to extract values of identifier
 		 */
-		QueryMatches bindings = extractArguments(runtime,
-				ValueExpression.class, 0);
-		/*
-		 * set to stack
-		 */
-		runtime.getRuntimeContext().peek().setValue(
-				VariableNames.QUERYMATCHES, bindings);
+		return extractArguments(runtime, ValueExpression.class, 0, context, optionalArguments);
 
 	}
 

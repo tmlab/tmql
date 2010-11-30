@@ -13,11 +13,12 @@ package de.topicmapslab.tmql4j.path.components.interpreter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.grammar.productions.IFunction;
 import de.topicmapslab.tmql4j.path.grammar.productions.FunctionInvocation;
 
 /**
@@ -36,20 +37,12 @@ import de.topicmapslab.tmql4j.path.grammar.productions.FunctionInvocation;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class FunctionInvocationInterpreter extends
-		ExpressionInterpreterImpl<FunctionInvocation> {
+public class FunctionInvocationInterpreter extends ExpressionInterpreterImpl<FunctionInvocation> {
 
 	/**
 	 * internal function interpreter
 	 */
-	private IFunctionInvocationInterpreter<?> interpreter;
-	
-	
-	/**
-	 * the Logger
-	 */
-	private Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
-	
+	private IFunction<?> interpreter;
 
 	/**
 	 * base constructor to create a new instance
@@ -64,69 +57,36 @@ public class FunctionInvocationInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
-
-		logger.info("Start");
-
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		final String identifier = getTokens().get(0);
 
 		/*
 		 * try to extract interpreter for given identifier
 		 */
 		if (interpreter == null) {
-			Class<? extends IFunctionInvocationInterpreter<?>> clazz = runtime
-					.getLanguageContext().getFunctionRegistry().getFunction(
-							identifier);
+			Class<? extends IFunction<?>> clazz = runtime.getLanguageContext().getFunctionRegistry().getFunction(identifier);
 
 			try {
 				/*
 				 * try to instantiate the responsible function interpreter
 				 */
-				Constructor<? extends IFunctionInvocationInterpreter<?>> constructor = clazz
-						.getConstructor(FunctionInvocation.class);
+				Constructor<? extends IFunction<?>> constructor = clazz.getConstructor(FunctionInvocation.class);
 				interpreter = constructor.newInstance(getExpression());
-
 			} catch (SecurityException e) {
-				throw new TMQLRuntimeException(
-						"Internal error, during initilaization of function-invocation-interpreter of "
-								+ getTokens().get(0), e);
+				throw new TMQLRuntimeException("Internal error, during initilaization of function-invocation-interpreter of " + getTokens().get(0), e);
 			} catch (NoSuchMethodException e) {
-				throw new TMQLRuntimeException(
-						"Internal error, during initilaization of function-invocation-interpreter of "
-								+ getTokens().get(0), e);
+				throw new TMQLRuntimeException("Internal error, during initilaization of function-invocation-interpreter of " + getTokens().get(0), e);
 			} catch (IllegalArgumentException e) {
-				throw new TMQLRuntimeException(
-						"Internal error, during initilaization of function-invocation-interpreter of "
-								+ getTokens().get(0), e);
+				throw new TMQLRuntimeException("Internal error, during initilaization of function-invocation-interpreter of " + getTokens().get(0), e);
 			} catch (InstantiationException e) {
-				throw new TMQLRuntimeException(
-						"Internal error, during initilaization of function-invocation-interpreter of "
-								+ getTokens().get(0), e);
+				throw new TMQLRuntimeException("Internal error, during initilaization of function-invocation-interpreter of " + getTokens().get(0), e);
 			} catch (IllegalAccessException e) {
-				throw new TMQLRuntimeException(
-						"Internal error, during initilaization of function-invocation-interpreter of "
-								+ getTokens().get(0), e);
+				throw new TMQLRuntimeException("Internal error, during initilaization of function-invocation-interpreter of " + getTokens().get(0), e);
 			} catch (InvocationTargetException e) {
-				throw new TMQLRuntimeException(
-						"Internal error, during initilaization of function-invocation-interpreter of "
-								+ getTokens().get(0), e);
+				throw new TMQLRuntimeException("Internal error, during initilaization of function-invocation-interpreter of " + getTokens().get(0), e);
 			}
 		}
-
-		/*
-		 * call interpreter
-		 */
-		runtime.getRuntimeContext().push();
-
-		interpreter.interpret(runtime);
-
-		/*
-		 * redirect results
-		 */
-		IVariableSet set = runtime.getRuntimeContext().pop();
-		runtime.getRuntimeContext().peek().setValue(
-				VariableNames.QUERYMATCHES,
-				set.getValue(VariableNames.QUERYMATCHES));
-
+		return interpreter.interpret(runtime, context);
 	}
 }

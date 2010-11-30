@@ -41,10 +41,57 @@ public interface IContext {
 	public Map<String, Object> getCurrentTuple();
 
 	/**
+	 * Returns the current node of iteration
+	 * 
+	 * @return the current node of iteration
+	 */
+	public Object getCurrentNode();
+
+	/**
 	 * Returns the current index of iteration.
 	 * 
 	 * @return the current index
 	 */
 	public int getCurrentIndex();
+
+	/**
+	 * Checks if the current context is transitive
+	 * 
+	 * @return <code>true</code> if the pragma definition for transitivity was
+	 *         set, <code>false</code> otherwise
+	 */
+	public boolean isTransitive();
+
+	/**
+	 * @param transitive
+	 *            the transitive to set
+	 */
+	public void setTransitive(boolean transitive);
+
+	/**
+	 * Returns the known prefix for the given reference
+	 * 
+	 * @param qiri
+	 *            the QIRI of the prefix
+	 * @return the stored reference of the prefix or <code>null</code>
+	 */
+	public String getPrefix(final String qiri);
+
+	/**
+	 * Add a new prefix to the map of known prefixes
+	 * 
+	 * @param qiri
+	 *            the QIRI of the prefix
+	 * @param reference
+	 *            the reference
+	 */
+	public void setPrefix(final String qiri, final String reference);
+
+	/**
+	 * Returns the all known prefixes
+	 * 
+	 * @return a unmodifiable map of all known prefixes
+	 */
+	public Map<String, String> getPrefixes();
 
 }

@@ -62,7 +62,8 @@ public class AKOExpressionInterpreter extends ExpressionInterpreterImpl<AKOExpre
 
 	/**
 	 * {@inheritDoc}
-	 */
+	 */	
+	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * get queried topic map

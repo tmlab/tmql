@@ -11,6 +11,9 @@
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.productions.Variable;
 
@@ -40,16 +43,17 @@ public class VariableInterpreter extends ExpressionInterpreterImpl<Variable> {
 	public VariableInterpreter(Variable ex) {
 		super(ex);
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
-		/*
-		 * Create new variable definition on top of the stack
-		 */
-		runtime.getRuntimeContext().peek().setValue(
-				getTokens().get(0), null);
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		final String variable =getTokens().get(0);
+		if ( context.getCurrentTuple() != null && context.getCurrentTuple().containsValue(variable)){
+			return QueryMatches.asQueryMatch(runtime, context.getCurrentTuple().get(variable));
+		}
+		return QueryMatches.emptyMatches();
 	}
 
 }

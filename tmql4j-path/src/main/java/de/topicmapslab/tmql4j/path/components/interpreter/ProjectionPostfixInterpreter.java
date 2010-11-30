@@ -12,8 +12,11 @@ package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.path.components.processor.core.Context;
 import de.topicmapslab.tmql4j.path.grammar.productions.ProjectionPostfix;
 import de.topicmapslab.tmql4j.path.grammar.productions.TupleExpression;
 
@@ -31,8 +34,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.TupleExpression;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class ProjectionPostfixInterpreter extends
-		ExpressionInterpreterImpl<ProjectionPostfix> {
+public class ProjectionPostfixInterpreter extends ExpressionInterpreterImpl<ProjectionPostfix> {
 
 	/**
 	 * base constructor to create a new instance
@@ -47,48 +49,30 @@ public class ProjectionPostfixInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
-
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
-		 * get current context
+		 * return empty matches if current context is empty
 		 */
-		Object obj = runtime.getRuntimeContext().peek().getValue(
-				VariableNames.POSTFIXED);
-		if (!(obj instanceof QueryMatches)) {
-			throw new TMQLRuntimeException(
-					"Missing projection context, variable %_projection not set.");
+		if (context.getContextBindings() == null) {
+			return QueryMatches.emptyMatches();
 		}
-
 		QueryMatches projection = new QueryMatches(runtime);
 
 		/*
 		 * iterate over tuples
 		 */
-		for (Object tuple : ((QueryMatches) obj).getPossibleValuesForVariable()) {
-			runtime.getRuntimeContext().push();
-			/*
-			 * set current tuple to stack
-			 */
-			runtime.getRuntimeContext().peek().setValue(
-					VariableNames.CURRENT_TUPLE, tuple);
-
+		for (Object node : context.getContextBindings().getPossibleValuesForVariable()) {
+			Context newContext = new Context(context);
+			newContext.setContextBindings(null);
+			newContext.setCurrentNode(node);
 			/*
 			 * call subexpression
 			 */
-			IExpressionInterpreter<TupleExpression> ex = getInterpretersFilteredByEypressionType(
-					runtime, TupleExpression.class).get(0);
-			ex.interpret(runtime);
-
-			/*
-			 * get results
-			 */
-			IVariableSet set = runtime.getRuntimeContext().pop();
-			projection.add((QueryMatches) set
-					.getValue(VariableNames.QUERYMATCHES));
+			IExpressionInterpreter<TupleExpression> ex = getInterpretersFilteredByEypressionType(runtime, TupleExpression.class).get(0);
+			QueryMatches matches = ex.interpret(runtime, newContext, optionalArguments);
+			projection.add(matches);
 		}
-
-		runtime.getRuntimeContext().peek().setValue(
-				VariableNames.QUERYMATCHES, projection);
-
+		return projection;
 	}
 }

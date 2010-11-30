@@ -11,11 +11,10 @@
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import java.math.BigInteger;
-import java.util.Map;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
-import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.productions.LimitClause;
 
@@ -33,8 +32,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.LimitClause;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class LimitClauseInterpreter extends
-		ExpressionInterpreterImpl<LimitClause> {
+public class LimitClauseInterpreter extends ExpressionInterpreterImpl<LimitClause> {
 
 	/**
 	 * base constructor to create a new instance
@@ -49,19 +47,8 @@ public class LimitClauseInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {		
-		/*
-		 * set value of OFFSET to $_limit
-		 */
-		Map<String, Object> tuple = HashUtil.getHashMap();
-		tuple.put(VariableNames.LIMIT,new BigInteger(getTokens().get(1)));
-		QueryMatches result = new QueryMatches(runtime);
-		result.add(tuple);
-		/*
-		 * store on top of the variable layer
-		 */
-		runtime.getRuntimeContext().peek().setValue(
-				VariableNames.QUERYMATCHES, result);
-
+	@SuppressWarnings("unchecked")
+	public BigInteger interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		return new BigInteger(getTokens().get(1));
 	}
 }

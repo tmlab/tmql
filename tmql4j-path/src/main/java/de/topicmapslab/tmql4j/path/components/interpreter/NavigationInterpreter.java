@@ -10,11 +10,18 @@
  */
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
+import java.util.List;
+
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
+import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.path.components.processor.core.Context;
 import de.topicmapslab.tmql4j.path.grammar.productions.Navigation;
+import de.topicmapslab.tmql4j.path.grammar.productions.Step;
 
 /**
  * 
@@ -32,8 +39,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.Navigation;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class NavigationInterpreter extends
-		ExpressionInterpreterImpl<Navigation> {
+public class NavigationInterpreter extends ExpressionInterpreterImpl<Navigation> {
 
 	/**
 	 * base constructor to create a new instance
@@ -48,59 +54,32 @@ public class NavigationInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
-		/*
-		 * peek from stack
-		 */
-		Object at_ = runtime.getRuntimeContext().peek().getValue(
-				VariableNames.CURRENT_TUPLE);
-
-		QueryMatches matches = new QueryMatches(runtime);
-		ITupleSequence<Object> sequence = runtime.getProperties().newSequence();
-		sequence.add(at_);
-		matches.convertToTuples(sequence);
-
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		List<Object> values = HashUtil.getList();
+		values.add(context.getCurrentNode());
 		/*
 		 * Iterate over all contained steps
 		 */
-		for (IExpressionInterpreter<Step> nextExpression : getInterpretersFilteredByEypressionType(
-				runtime, Step.class)) {
-			QueryMatches iterationMatches = new QueryMatches(runtime);
+		for (IExpressionInterpreter<Step> nextExpression : getInterpretersFilteredByEypressionType(runtime, Step.class)) {
+			List<Object> results = HashUtil.getList();
 			/*
 			 * Iterate over all possible bindings and navigate over axis
 			 */
-			for (Object match : matches.getPossibleValuesForVariable()) {
-				/*
-				 * push new instance of @_ to variable stack
-				 */
-				runtime.getRuntimeContext().push()
-						.setValue(VariableNames.CURRENT_TUPLE,
-								match);
+			for (Object currentNode : values) {
+				Context newContext = new Context(context);
+				newContext.setCurrentNode(currentNode);
 				/*
 				 * call next expression
 				 */
-				nextExpression.interpret(runtime);
-				/*
-				 * pull results from stack --> read %%%___
-				 */
-				IVariableSet set = runtime.getRuntimeContext().pop();
-				if (!set.contains(VariableNames.QUERYMATCHES)) {
-					throw new TMQLRuntimeException(
-							"Missing interpretation result of step.");
-				}
-
-				iterationMatches.add((QueryMatches) set
-						.getValue(VariableNames.QUERYMATCHES));
-
+				QueryMatches matches = nextExpression.interpret(runtime, context, optionalArguments);
+				results.addAll(matches.getPossibleValuesForVariable());
 			}
-			runtime.getRuntimeContext().peek().setValue(
-					VariableNames.QUERYMATCHES, iterationMatches);
-
 			/*
 			 * Combine sequences to one new sequence
 			 */
-			matches = iterationMatches;
+			values = results;
 		}
-
+		return QueryMatches.asQueryMatch(runtime, values.toArray());
 	}
 }

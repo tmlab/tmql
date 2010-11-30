@@ -21,10 +21,12 @@ import org.tmapi.core.Scoped;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
-import de.topicmapslab.tmql4j.exception.DataBridgeException;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.path.components.processor.core.Context;
 import de.topicmapslab.tmql4j.path.grammar.productions.BooleanExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.BooleanPrimitive;
 import de.topicmapslab.tmql4j.path.grammar.productions.ExistsClause;
@@ -63,8 +65,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.ForAllClause;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class BooleanPrimitiveInterpreter extends
-		ExpressionInterpreterImpl<BooleanPrimitive> {
+public class BooleanPrimitiveInterpreter extends ExpressionInterpreterImpl<BooleanPrimitive> {
 
 	/**
 	 * the Logger
@@ -84,46 +85,41 @@ public class BooleanPrimitiveInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
-
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		switch (getGrammarTypeOfExpression()) {
 		/*
 		 * is cramped-boolean expression
 		 */
 		case BooleanPrimitive.TYPE_BOOLEAN_EXPRESSION: {
-			interpretCrampedBooleanExpression(runtime);
+			return interpretCrampedBooleanExpression(runtime, context, optionalArguments);
 		}
-			break;
-		/*
-		 * is not-expression
-		 */
+			/*
+			 * is not-expression
+			 */
 		case BooleanPrimitive.TYPE_NOT_EXPRESSION: {
-			interpretNotExpression(runtime);
+			return interpretNotExpression(runtime, context, optionalArguments);
 		}
-			break;
-		/*
-		 * is for-all-clause
-		 */
+			/*
+			 * is for-all-clause
+			 */
 		case BooleanPrimitive.TYPE_EVERY_CLAUSE: {
-			interpretForAllExpression(runtime);
+			return interpretForAllExpression(runtime, context, optionalArguments);
 		}
-			break;
-		/*
-		 * is exists-clause
-		 */
+			/*
+			 * is exists-clause
+			 */
 		case BooleanPrimitive.TYPE_EXISTS_CLAUSE: {
-			interpretExsistsExpression(runtime);
+			return interpretExsistsExpression(runtime, context, optionalArguments);
 		}
-			break;
-		/*
-		 * is scoped-expression
-		 */
+			/*
+			 * is scoped-expression
+			 */
 		case BooleanPrimitive.TYPE_SCOPED_EXPRESSION: {
-			interpretScopedExpression(runtime);
+			return interpretScopedExpression(runtime, context, optionalArguments);
 		}
-			break;
 		}
-
+		return QueryMatches.emptyMatches();
 	}
 
 	/**
@@ -139,18 +135,21 @@ public class BooleanPrimitiveInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretCrampedBooleanExpression(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretCrampedBooleanExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 
 		/*
 		 * redirect to sub-expression
 		 */
-		IExpressionInterpreter<BooleanExpression> ex = getInterpretersFilteredByEypressionType(
-				runtime, BooleanExpression.class).get(0);
-		ex.interpret(runtime);
+		IExpressionInterpreter<BooleanExpression> ex = getInterpretersFilteredByEypressionType(runtime, BooleanExpression.class).get(0);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 
 	/**
@@ -166,76 +165,46 @@ public class BooleanPrimitiveInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	@SuppressWarnings("unchecked")
-	private void interpretNotExpression(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
-
-		QueryMatches iterations = null;
-		/*
-		 * check if iteration results of pre-proceeded expressions are existing
-		 */
-		if (runtime.getRuntimeContext().peek().contains(
-				VariableNames.ITERATED_BINDINGS)) {
-			iterations = (QueryMatches) runtime.getRuntimeContext().peek()
-					.getValue(VariableNames.ITERATED_BINDINGS);
-		} else {
-			iterations = new QueryMatches(runtime);
-		}
-
+	// TODO refactor
+	private QueryMatches interpretNotExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		Context newContext = new Context(context);
 		/*
 		 * get interpreter of sub-expression
 		 */
-		IExpressionInterpreter ex = getInterpreters(runtime).get(0);
-
-		/*
-		 * push new set on the top of the stack and remove unimportant
-		 * information
-		 */
-		runtime.getRuntimeContext().push();
-		runtime.getRuntimeContext().peek().remove(
-				VariableNames.ITERATED_BINDINGS);
+		IExpressionInterpreter<?> ex = getInterpreters(runtime).get(0);
+		newContext.setContextBindings(QueryMatches.emptyMatches());
 		/*
 		 * Call subexpression
 		 */
-		ex.interpret(runtime);
-
-		/*
-		 * pop variable set containing results from stack
-		 */
-		IVariableSet set = runtime.getRuntimeContext().pop();
-
-		/*
-		 * get matches
-		 */
-		QueryMatches negatives = (QueryMatches) set
-				.getValue(VariableNames.QUERYMATCHES);
-
-		QueryMatches results = new QueryMatches(runtime);
+		QueryMatches results = ex.interpret(runtime, newContext, optionalArguments);
+		QueryMatches negation = new QueryMatches(runtime);
 		/*
 		 * solution a: check if iteration results of pre-proceeded expression
 		 * are available
 		 */
-		if (!iterations.isEmpty()) {
+		if (context.getContextBindings() != null) {
 			/*
 			 * iterate over pre-proceeded results and remove matches of
 			 * contained boolean-expression
 			 */
-			for (Map<String, Object> tuple : iterations) {
+			for (Map<String, Object> tuple : context.getContextBindings()) {
 				boolean satisfy = true;
 				for (Entry<String, Object> entry : tuple.entrySet()) {
-					if (!runtime.isSystemVariable(entry.getKey())) {
-						if (negatives.getPossibleValuesForVariable(
-								entry.getKey()).contains(entry.getValue())) {
-							satisfy = false;
-							break;
-						}
+					if (results.getPossibleValuesForVariable(entry.getKey()).contains(entry.getValue())) {
+						satisfy = false;
+						break;
 					}
 				}
 				if (satisfy) {
-					results.add(tuple);
+					negation.add(tuple);
 				}
 			}
 
@@ -243,8 +212,8 @@ public class BooleanPrimitiveInterpreter extends
 		/*
 		 * check if contained boolean-expression returns negative matches
 		 */
-		else if (!negatives.getNegation().isEmpty()) {
-			results.add(negatives.getNegation());
+		else if (!results.getNegation().isEmpty()) {
+			negation.add(results.getNegation());
 		}
 		/*
 		 * 
@@ -256,65 +225,38 @@ public class BooleanPrimitiveInterpreter extends
 			 */
 			for (final String variable : getVariables()) {
 				/*
-				 * check if variable is a system variable
+				 * add possible variable bindings
 				 */
-				if (!runtime.isSystemVariable(variable)) {
-					/*
-					 * add possible variable bindings
-					 */
-					QueryMatches match = new QueryMatches(runtime);
-					match
-							.convertToTuples(
-									(Set<Object>) new BooleanPrimitiveVariableBindingOptimizer(
-											runtime).optimize(ex, variable),
-									variable);
-					matches.add(match);
-
-				}
+				QueryMatches match = new QueryMatches(runtime);
+				// match.convertToTuples((Set<Object>) new
+				// BooleanPrimitiveVariableBindingOptimizer(runtime).optimize(ex,
+				// variable), variable);
+				match.convertToTuples(context.getQuery().getTopicMap().getTopics(), variable);
+				matches.add(match);
 			}
 
 			/*
 			 * iterate over all possible variable bindings
 			 */
 			for (Map<String, Object> tuple : new QueryMatches(runtime, matches)) {
-				if (negatives.getMatches().contains(tuple)) {
+				if (results.getMatches().contains(tuple)) {
 					continue;
 				}
 				/*
 				 * push new set on the top of the stack and set @_
 				 */
-				runtime.getRuntimeContext().push();
-
-				QueryMatches iteration = new QueryMatches(runtime);
-				iteration.add(tuple);
-
-				/*
-				 * push content to the top of the stack
-				 */
-				runtime.getRuntimeContext().peek().setValue(
-						VariableNames.ITERATED_BINDINGS, iteration);
-
+				newContext = new Context(context);
+				newContext.setCurrentTuple(tuple);
 				/*
 				 * call sub-expression
 				 */
-				ex.interpret(runtime);
-
-				set = runtime.getRuntimeContext().pop();
-
-				/*
-				 * extract results
-				 */
-				QueryMatches result = (QueryMatches) set
-						.getValue(VariableNames.QUERYMATCHES);
-				if (!result.isEmpty()) {
-					results.add(result);
+				QueryMatches set = ex.interpret(runtime, newContext, optionalArguments);
+				if (!set.isEmpty()) {
+					negation.add(set);
 				}
 			}
 		}
-
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				results);
-
+		return negation;
 	}
 
 	/**
@@ -330,17 +272,20 @@ public class BooleanPrimitiveInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretForAllExpression(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretForAllExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * redirect to sub-expression
 		 */
-		IExpressionInterpreter<ForAllClause> ex = getInterpretersFilteredByEypressionType(
-				runtime, ForAllClause.class).get(0);
-		ex.interpret(runtime);
+		IExpressionInterpreter<ForAllClause> ex = getInterpretersFilteredByEypressionType(runtime, ForAllClause.class).get(0);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 
 	/**
@@ -356,36 +301,31 @@ public class BooleanPrimitiveInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretExsistsExpression(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
-		runtime.getRuntimeContext().push();
+	private QueryMatches interpretExsistsExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * redirect to sub-expression
 		 */
-		IExpressionInterpreter<ExistsClause> ex = getInterpretersFilteredByEypressionType(
-				runtime, ExistsClause.class).get(0);
-		ex.interpret(runtime);
-		IVariableSet set = runtime.getRuntimeContext().pop();
-		
-		/*
-		 * get result
-		 */
-		QueryMatches result = (QueryMatches)set.getValue(VariableNames.QUERYMATCHES);
-		/*
-		 * called by filter
-		 */
-		if ( getExpression().isChildOf(FilterPostfix.class) && runtime.getRuntimeContext().peek().contains(VariableNames.CURRENT_TUPLE)){			
-			if ( !result.isEmpty()){
-				result = new QueryMatches(runtime);
-				Map<String, Object> tuple = HashUtil.getHashMap();
-				tuple.put(QueryMatches.getNonScopedVariable(), runtime.getRuntimeContext().peek().getValue(VariableNames.CURRENT_TUPLE));
-				result.add(tuple);
+		IExpressionInterpreter<ExistsClause> ex = getInterpretersFilteredByEypressionType(runtime, ExistsClause.class).get(0);
+		IContext newContext = new Context(context);
+		QueryMatches results = ex.interpret(runtime, newContext, optionalArguments);
+		if (!results.isEmpty()) {
+			/*
+			 * called by filter
+			 */
+			if (getExpression().isChildOf(FilterPostfix.class) && context.getCurrentNode() != null) {
+				return QueryMatches.asQueryMatch(runtime, context.getCurrentNode());
 			}
-		}		
-			runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES, result);
+			return results;
+		}
+		return QueryMatches.emptyMatches();
 	}
 
 	/**
@@ -401,11 +341,15 @@ public class BooleanPrimitiveInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretScopedExpression(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretScopedExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * Extract anchor specifying the scope
 		 */
@@ -413,40 +357,25 @@ public class BooleanPrimitiveInterpreter extends
 		/*
 		 * Try to resolve Topic as scope
 		 */
-		Construct scope = null;
-		try {
-			scope = runtime.getDataBridge().getConstructByIdentifier(runtime,
-					anchor);
-		} catch (DataBridgeException e) {
-			logger.warn("Cannot find specified scope " + anchor);
-		}
-		/*
-		 * return empty result if theme is unknown
-		 */
+		Construct scope = runtime.getConstructResolver().getConstructByIdentifier(context, anchor);
 		if (scope == null) {
-			runtime.getRuntimeContext().peek().setValue(
-					VariableNames.QUERYMATCHES,
-					runtime.getProperties().newSequence());
-			return;
+			logger.warn("Cannot find specified scope " + anchor);
+			return QueryMatches.emptyMatches();
 		}
 
 		/*
 		 * Extract value of @_
 		 */
-		Object obj = runtime.getRuntimeContext().peek().getValue(
-				VariableNames.CURRENT_TUPLE);
+		Object obj = context.getCurrentNode();
 		if (obj != null && obj instanceof Scoped) {
 			/*
 			 * Check if scopes containing the specified theme
 			 */
 			if (((Scoped) obj).getScope().contains(scope)) {
-				ITupleSequence<Object> sequence = runtime.getProperties()
-						.newSequence();
-				sequence.add(obj);
-				runtime.getRuntimeContext().peek().setValue(
-						VariableNames.QUERYMATCHES, sequence);
+				return QueryMatches.asQueryMatch(runtime, obj);
 			}
 		}
+		return QueryMatches.emptyMatches();
 	}
 
 }

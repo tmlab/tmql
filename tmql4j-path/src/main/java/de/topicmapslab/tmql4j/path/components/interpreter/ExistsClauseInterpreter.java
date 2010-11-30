@@ -11,11 +11,12 @@
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import java.math.BigInteger;
-import java.util.Map;
 
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Least;
@@ -73,41 +74,36 @@ public class ExistsClauseInterpreter extends QuantifiedExpression<ExistsClause> 
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		switch (getGrammarTypeOfExpression()) {
 		/*
 		 * is exists-clause ::= exists-quantifier binding-set satisfies
 		 * boolean-expression
 		 */
 		case 0: {
-			amount = extractArguments(runtime, ExistsQuantifiers.class, 0,
-					VariableNames.QUANTIFIES);
-			super.interpret(runtime);
+			amount = (BigInteger) getInterpretersFilteredByEypressionType(runtime, ExistsQuantifiers.class).get(0).interpret(runtime, context, optionalArguments);
+			return super.interpret(runtime, context, optionalArguments);
 		}
-			break;
-		/*
-		 * is exists-clause ::= exists content
-		 */
+			/*
+			 * is exists-clause ::= exists content
+			 */
 		case 1:
 			/*
 			 * is exists-clause ::= content
 			 */
 		case 2: {
-			interpretContent(runtime);
+			return interpretContent(runtime, context, optionalArguments);
 		}
-			;
-			break;
-		default:
-			throw new TMQLRuntimeException("Unexpected state!");
 		}
-		;
+		return QueryMatches.emptyMatches();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected synchronized boolean doSatisfy(TMQLRuntime runtime, Map<String, Object> tuple, IResultSet<?> results) {
+	protected synchronized boolean doSatisfy(ITMQLRuntime runtime, IContext context, IResultSet<?> results) {
 		/*
 		 * keyword is SOME or LEAST
 		 */
@@ -168,43 +164,20 @@ public class ExistsClauseInterpreter extends QuantifiedExpression<ExistsClause> 
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretContent(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
-		/*
-		 * Push to stack
-		 */
-		runtime.getRuntimeContext().push();
+	private QueryMatches interpretContent(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 
 		/*
 		 * Call subexpression
 		 */
-		IExpressionInterpreter<Content> ex = getInterpretersFilteredByEypressionType(
-				runtime, Content.class).get(0);
-		ex.interpret(runtime);
-
-		/*
-		 * pop from stack
-		 */
-		IVariableSet set = runtime.getRuntimeContext().pop();
-		if (set.contains(VariableNames.QUERYMATCHES)) {
-			runtime.getRuntimeContext().peek().setValue(
-					VariableNames.QUERYMATCHES,
-					set.getValue(VariableNames.QUERYMATCHES));
-		} else {
-			runtime.getRuntimeContext().peek().setValue(
-					VariableNames.QUERYMATCHES, new QueryMatches(runtime));
-		}
-
-		/*
-		 * shift negative matches
-		 */
-		if (set.contains(VariableNames.NEGATIVE_MATCHES)) {
-			runtime.getRuntimeContext().peek().setValue(
-					VariableNames.NEGATIVE_MATCHES,
-					set.getValue(VariableNames.NEGATIVE_MATCHES));
-		}
+		IExpressionInterpreter<Content> ex = getInterpretersFilteredByEypressionType(runtime, Content.class).get(0);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 }

@@ -11,12 +11,15 @@
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import java.util.Collection;
-import java.util.Map;
+import java.util.List;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.path.grammar.productions.Content;
 import de.topicmapslab.tmql4j.path.grammar.productions.VariableAssignment;
 
 /**
@@ -33,8 +36,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.VariableAssignment;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class VariableAssignmentInterpreter extends
-		ExpressionInterpreterImpl<VariableAssignment> {
+public class VariableAssignmentInterpreter extends ExpressionInterpreterImpl<VariableAssignment> {
 
 	/**
 	 * base constructor to create a new instance
@@ -49,7 +51,8 @@ public class VariableAssignmentInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * Read variable name
 		 */
@@ -58,53 +61,40 @@ public class VariableAssignmentInterpreter extends
 		/*
 		 * call content
 		 */
-		QueryMatches content = extractArguments(runtime, Content.class, 0);
+		QueryMatches content = extractArguments(runtime, Content.class, 0, context, optionalArguments);
+		if (content.isEmpty()) {
+			return QueryMatches.emptyMatches();
+		}
 
-		QueryMatches results = null;
 		/*
 		 * rename non-scoped variable by variable name of this
 		 * variable-assignment
 		 */
-		if (content.getOrderedKeys().contains(
-				QueryMatches.getNonScopedVariable())) {
-			results = content.extractAndRenameBindingsForVariable(variable);
-		} else {
-			results = new QueryMatches(runtime);
-			/*
-			 * iterate over all contained variables
-			 */
-			for (String key : content.getOrderedKeys()) {
-				/*
-				 * iterate over all values
-				 */
-				for (Object obj : content.getPossibleValuesForVariable(key)) {
-					/*
-					 * extract the value of the given value
-					 */
-					extract(obj, results, variable);
-				}
-			}
+		if (content.getOrderedKeys().contains(QueryMatches.getNonScopedVariable())) {
+			return content.extractAndRenameBindingsForVariable(variable);
 		}
-
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				results);
+		List<Object> values = HashUtil.getList();
+		/*
+		 * iterate over all contained variables
+		 */
+		for (String key : content.getOrderedKeys()) {
+			extract(values, content.getPossibleValuesForVariable(key));
+		}
+		return QueryMatches.asQueryMatch(runtime, variable, values.toArray());
 	}
 
 	/**
 	 * Internal method to extract the value of a variable binding from the
 	 * generated variables bindings of the contained variable-assignment.
 	 * 
+	 * @param results
+	 *            the collection to add the extracted values
 	 * @param obj
 	 *            the object representing the values to extract
-	 * @param matches
-	 *            the extracted values
-	 * @param variable
-	 *            the variable which identifies the values to extract
 	 * @throws TMQLRuntimeException
 	 *             thrown if extraction fails
 	 */
-	private void extract(final Object obj, final QueryMatches matches,
-			final String variable) throws TMQLRuntimeException {
+	private void extract(final Collection<Object> results, final Object obj) throws TMQLRuntimeException {
 		/*
 		 * check if value is a sequence
 		 */
@@ -113,16 +103,14 @@ public class VariableAssignmentInterpreter extends
 			 * iterate over values and call method iterative
 			 */
 			for (Object o : (Collection<?>) obj) {
-				extract(o, matches, variable);
+				extract(results, o);
 			}
 		}
 		/*
 		 * value is an atom
 		 */
 		else {
-			Map<String, Object> tuple = HashUtil.getHashMap();
-			tuple.put(variable, obj);
-			matches.add(tuple);
+			results.add(obj);
 		}
 	}
 }

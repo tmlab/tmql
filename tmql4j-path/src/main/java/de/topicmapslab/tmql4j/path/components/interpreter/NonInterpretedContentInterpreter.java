@@ -8,12 +8,11 @@
  */
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
-import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.productions.NonInterpretedContent;
 import de.topicmapslab.tmql4j.path.grammar.productions.XMLContent;
@@ -26,8 +25,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.XMLContent;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class NonInterpretedContentInterpreter extends
-		ExpressionInterpreterImpl<NonInterpretedContent> {
+public class NonInterpretedContentInterpreter extends ExpressionInterpreterImpl<NonInterpretedContent> {
 
 	/**
 	 * base constructor to create a new instance
@@ -42,7 +40,8 @@ public class NonInterpretedContentInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	@SuppressWarnings("unchecked")
+	public String interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * transform string-represented tokens to text
 		 */
@@ -74,21 +73,7 @@ public class NonInterpretedContentInterpreter extends
 			}
 		}
 
-		String content = builder.toString();
-
-		/*
-		 * store text as tuple
-		 */
-		Map<String, Object> tuple = HashUtil.getHashMap();
-		tuple.put(QueryMatches.getNonScopedVariable(), content);
-		QueryMatches result = new QueryMatches(runtime);
-		result.add(tuple);
-
-		/*
-		 * store result
-		 */
-		runtime.getRuntimeContext().peek()
-				.setValue(VariableNames.QUERYMATCHES, result);
+		return builder.toString();
 	}
 
 }

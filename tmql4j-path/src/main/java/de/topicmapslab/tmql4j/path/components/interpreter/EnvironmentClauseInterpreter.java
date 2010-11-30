@@ -12,6 +12,9 @@ package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.productions.EnvironmentClause;
 
@@ -49,7 +52,8 @@ public class EnvironmentClauseInterpreter
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * iterate over sub-expression
 		 */
@@ -57,8 +61,10 @@ public class EnvironmentClauseInterpreter
 			/*
 			 * redirect to sub-expression
 			 */
-			ex.interpret(runtime);
+			ex.interpret(runtime, context, optionalArguments);
 		}
+		return QueryMatches.emptyMatches();
 	}
+	
 
 }

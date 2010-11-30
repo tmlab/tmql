@@ -64,7 +64,7 @@ public interface IExpressionInterpreter<T extends IExpression> {
 	 * @throws TMQLRuntimeException
 	 *             thrown if querying fails
 	 */
-	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException;
+	public <R extends Object> R interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException;
 
 	/**
 	 * Method returns a list of all interpreters for the sub-expression of the

@@ -49,6 +49,7 @@ public class BindingSetInterpreter extends ExpressionInterpreterImpl<BindingSet>
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * call all sub-expressions

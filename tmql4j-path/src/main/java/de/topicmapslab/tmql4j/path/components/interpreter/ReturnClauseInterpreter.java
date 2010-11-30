@@ -12,13 +12,14 @@ package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.path.components.processor.core.Context;
+import de.topicmapslab.tmql4j.path.grammar.productions.Content;
 import de.topicmapslab.tmql4j.path.grammar.productions.PathExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.PostfixedExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.QueryExpression;
@@ -40,15 +41,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.ReturnClause;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class ReturnClauseInterpreter extends
-		ExpressionInterpreterImpl<ReturnClause> {
-	
-	/**
-	 * the Logger
-	 */
-	private Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
-	
-	
+public class ReturnClauseInterpreter extends ExpressionInterpreterImpl<ReturnClause> {
 
 	/**
 	 * base constructor to create a new instance
@@ -63,111 +56,58 @@ public class ReturnClauseInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
-
-		logger.info("Start.");
-
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * get content-interpreter
 		 */
-		IExpressionInterpreter<Content> ex = getInterpretersFilteredByEypressionType(
-				runtime, Content.class).get(0);
+		IExpressionInterpreter<Content> interpreter = getInterpretersFilteredByEypressionType(runtime, Content.class).get(0);
 
-		QueryMatches results = new QueryMatches(runtime);
+		QueryMatches results;
 		/*
-		 * check if context is given by upper flwr-expression ( where-clause )
+		 * check if context is given by upper FLWR-expression ( where-clause )
 		 */
-		if (runtime.getRuntimeContext().peek().contains(
-				VariableNames.ITERATED_BINDINGS)) {
-			QueryMatches matches = (QueryMatches) runtime.getRuntimeContext()
-					.peek().getValue(VariableNames.ITERATED_BINDINGS);
-
-			int pos = 0;
+		if (context.getContextBindings() != null) {
+			results = new QueryMatches(runtime);
+			int index = 0;
 			/*
 			 * iterate over all tuples
 			 */
-			for (Map<String, Object> tuple : matches) {
-
+			for (Map<String, Object> tuple : context.getContextBindings()) {
+				Context newContext = new Context(context);
 				/*
 				 * get value of content
 				 */
 				String variable = QueryMatches.getNonScopedVariable();
-				if (!ex.getVariables().isEmpty()) {
-					variable = ex.getVariables().get(0);
+				if (!interpreter.getVariables().isEmpty()) {
+					variable = interpreter.getVariables().get(0);
 				}
-				Object match = tuple.get(variable);				
+				Object match = tuple.get(variable);
 
-				/*
-				 * clean variable binding on top of the stack
-				 */
-				runtime.getRuntimeContext().push();
-				runtime.getRuntimeContext().peek()
-						.remove(
-								VariableNames.ITERATED_BINDINGS);
-				runtime.getRuntimeContext().peek()
-						.setValue(VariableNames.CURRENT_TUPLE,
-								match);
-				runtime.getRuntimeContext().peek()
-						.setValue(VariableNames.CURRENT_POISTION,
-								new Integer(pos));
-				runtime.getRuntimeContext().peek()
-						.setValue(
-								QueryMatches.getNonScopedVariable(), match);
-				/*
-				 * push tuple to the top of the stack
-				 */
-				for (String var : getVariables()) {
-					if (!runtime.isSystemVariable(var) && tuple.get(var) != null ) {						
-						runtime.getRuntimeContext().peek()
-								.setValue(var, tuple.get(var));
-					}
-				}
-
+				newContext.setContextBindings(null);
+				newContext.setCurrentTuple(tuple);
+				newContext.setCurrentNode(match);
+				newContext.setCurrentIndex(index++);
 				/*
 				 * call sub-expression
 				 */
-				ex.interpret(runtime);
-
-				Object obj = runtime.getRuntimeContext().pop()
-						.getValue(VariableNames.QUERYMATCHES);
-				if (!(obj instanceof QueryMatches)) {
-					throw new TMQLRuntimeException(
-							"Invalid interpretation of expression content. Has to return an instance of QueryMatches.");
-				}
-
-				results.add(((QueryMatches) obj));
-				pos++;
-			}			
+				QueryMatches matches = interpreter.interpret(runtime, newContext, optionalArguments);
+				results.add(matches);
+			}
 		}
 		/*
-		 * no context given by flwr-expresion
+		 * no context given by FLWR-expression
 		 */
 		else {
-
 			/*
 			 * call sub-expression
 			 */
-			runtime.getRuntimeContext().push();
-			ex.interpret(runtime);
-
-			/*
-			 * redirect results
-			 */
-			Object obj = runtime.getRuntimeContext().pop().getValue(
-					VariableNames.QUERYMATCHES);
-			if (!(obj instanceof QueryMatches)) {
-				throw new TMQLRuntimeException(
-						"Invalid interpretation of expression content. Has to return an instance of QueryMatches.");
-			}
-			results = (QueryMatches) obj;
+			results = interpreter.interpret(runtime, context, optionalArguments);
 		}
-
-		runtime.getRuntimeContext().peek().setValue(
-				VariableNames.QUERYMATCHES, clean(results));
-
-		logger.info(
-				"Finished. Results: " + clean(results));
-
+		if (results.isEmpty()) {
+			return QueryMatches.emptyMatches();
+		}
+		return clean(results);
 	}
 
 	/**
@@ -178,24 +118,17 @@ public class ReturnClauseInterpreter extends
 	 * @return the cleaned query matches
 	 * @throws TMQLRuntimeException
 	 */
-	private QueryMatches clean(QueryMatches matches)
-			throws TMQLRuntimeException {
-		Content content = getExpression().getExpressionFilteredByType(
-				Content.class).get(0);
+	private QueryMatches clean(QueryMatches matches) throws TMQLRuntimeException {
+		Content content = getExpression().getExpressionFilteredByType(Content.class).get(0);
 
 		if (content.getGrammarType() == Content.TYPE_QUERY_EXPRESSION) {
-			QueryExpression qEx = content.getExpressionFilteredByType(
-					QueryExpression.class).get(0);
+			QueryExpression qEx = content.getExpressionFilteredByType(QueryExpression.class).get(0);
 			if (qEx.getGrammarType() == QueryExpression.TYPE_PATH_EXPRESSION) {
-				PathExpression pEx = qEx.getExpressionFilteredByType(
-						PathExpression.class).get(0);
+				PathExpression pEx = qEx.getExpressionFilteredByType(PathExpression.class).get(0);
 				if (pEx.getGrammarType() == PathExpression.TYPE_POSTFIXED_EXPRESSION) {
-					PostfixedExpression pfEx = pEx.getExpressionFilteredByType(
-							PostfixedExpression.class).get(0);
+					PostfixedExpression pfEx = pEx.getExpressionFilteredByType(PostfixedExpression.class).get(0);
 					if (pfEx.getGrammarType() == PostfixedExpression.TYPE_SIMPLE_CONTENT) {
-						return matches
-								.extractAndRenameBindingsForVariable(QueryMatches
-										.getNonScopedVariable());
+						return matches.extractAndRenameBindingsForVariable(QueryMatches.getNonScopedVariable());
 					}
 				}
 			}

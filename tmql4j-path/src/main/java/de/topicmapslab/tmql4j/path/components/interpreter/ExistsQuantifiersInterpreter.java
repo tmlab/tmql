@@ -12,10 +12,9 @@ package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import java.math.BigInteger;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Some;
 import de.topicmapslab.tmql4j.path.grammar.productions.ExistsQuantifiers;
@@ -35,16 +34,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.ExistsQuantifiers;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class ExistsQuantifiersInterpreter extends
-		ExpressionInterpreterImpl<ExistsQuantifiers> {
-	
-	
-	/**
-	 * the Logger
-	 */
-	private Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
-	
-	
+public class ExistsQuantifiersInterpreter extends ExpressionInterpreterImpl<ExistsQuantifiers> {
 	/**
 	 * base constructor to create a new instance
 	 * 
@@ -58,35 +48,13 @@ public class ExistsQuantifiersInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
-		/*
-		 * Log it
-		 */
-		logger.info("Start!");
-
-		/*
-		 * set value to the variable $_quantifies
-		 */
+	@SuppressWarnings("unchecked")
+	public BigInteger interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		if (getTmqlTokens().get(0).equals(Some.class)) {
-			runtime.getRuntimeContext().peek().setValue(
-					VariableNames.QUANTIFIES, BigInteger.valueOf(1));
+			return BigInteger.valueOf(1);
 		} else {
-			runtime.getRuntimeContext().peek().setValue(
-					VariableNames.QUANTIFIES,
-					new BigInteger(getTokens().get(2)));
+			return new BigInteger(getTokens().get(2));
 		}
-
-		/*
-		 * Log it
-		 */
-		logger.info(
-				"Finished! Results: "
-						+ runtime.getRuntimeContext().peek().getValue(
-								VariableNames.QUANTIFIES));
-
-		/*
-		 * Nothing more to do -> no subexpression allowed
-		 */
 	}
 
 }

@@ -11,18 +11,18 @@
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import java.util.Collection;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.path.grammar.productions.NonInterpretedContent;
 import de.topicmapslab.tmql4j.path.grammar.productions.TMContent;
+import de.topicmapslab.tmql4j.path.util.CTMConverter;
 
 /**
  * 
@@ -59,53 +59,31 @@ public class TMContentInterpreter extends ExpressionInterpreterImpl<TMContent> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		StringBuilder builder = new StringBuilder();
 
 		/*
 		 * iterate over all internal interpreter instances
 		 */
 		for (IExpressionInterpreter<?> interpreter : getInterpreters(runtime)) {
-
 			/*
-			 * create new variable layer
+			 * is simple text content
 			 */
-			runtime.getRuntimeContext().push();
-			/*
-			 * call sub-expression
-			 */
-			interpreter.interpret(runtime);
-
-			/*
-			 * check and extract results of interpretation
-			 */
-			IVariableSet set = runtime.getRuntimeContext().pop();
-			if (!set.contains(VariableNames.QUERYMATCHES)) {
-				throw new TMQLRuntimeException(
-						"Missing interpretation result of production '"
-								+ interpreter.getExpression().getClass()
-										.getSimpleName() + "'.");
-			}
-			QueryMatches matches = (QueryMatches) set
-					.getValue(VariableNames.QUERYMATCHES);
-			/*
-			 * result is simple text content and has to be added unmodified
-			 */
-			if (interpreter.getExpression() instanceof NonInterpretedContent) {
-				String content = matches.get(0).get(
-						QueryMatches.getNonScopedVariable()).toString();
+			if (interpreter instanceof NonInterpretedContentInterpreter) {
+				String content = interpreter.interpret(runtime, context, optionalArguments);
 				builder.append(content);
 			}
 			/*
-			 * results are not empty and has to be converted to CTM
+			 * is embed query
 			 */
-			else if (!matches.isEmpty()) {
+			else {
+				QueryMatches matches = interpreter.interpret(runtime, context, optionalArguments);
 				Collection<?> values = null;
 				/*
 				 * values are bound to '$$$$' because of embed path-expression
 				 */
-				if (matches.getOrderedKeys().contains(
-						QueryMatches.getNonScopedVariable())) {
+				if (matches.getOrderedKeys().contains(QueryMatches.getNonScopedVariable())) {
 					values = matches.getPossibleValuesForVariable();
 				}
 				/*
@@ -114,51 +92,26 @@ public class TMContentInterpreter extends ExpressionInterpreterImpl<TMContent> {
 				 */
 				else if (matches.getOrderedKeys().contains("$0")) {
 					values = matches.getPossibleValuesForVariable("$0");
-				}
-				/*
-				 * values are bound to unknown variable
-				 */
-				else {
-					throw new TMQLRuntimeException(
-							"Variable binding is missing. Expects '$0' or '$$$$' but found '"
-									+ matches.getOrderedKeys() + "'");
+				} else {
+					logger.warn("Variable binding is missing. Expects '$0' or '$$$$' but found '" + matches.getOrderedKeys() + "'");
+					continue;
 				}
 				/*
 				 * results as CTM
 				 */
-				builder.append(CTMConverter.toCTMString(values, runtime));
-			}
-			/*
-			 * logging information that matches are empty and will be ignored
-			 */
-			else {
-				logger
-						.info("Interpretation result is empty and will be ignored.");
+				builder.append(CTMConverter.toCTMString(values));
 			}
 		}
-
-		/*
-		 * store results as query-match at index zero
-		 */
-		QueryMatches results = new QueryMatches(runtime);
-		Map<String, Object> tuple = HashUtil.getHashMap();
-		tuple.put("$0", builder.toString());
-		results.add(tuple);
-
-		/*
-		 * store information for upper-expression
-		 */
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				results);
-
-		/*
-		 * switch result-type to XTM
-		 */
-		runtime.getProperties().setProperty(
-				TMQLRuntimeProperties.RESULT_SET_IMPLEMENTATION_CLASS,
-				CTMResult.class.getCanonicalName());
-		runtime.getProperties().setProperty(
-				TMQLRuntimeProperties.RESULT_TUPLE_IMPLEMENTATION_CLASS,
-				CTMFragment.class.getCanonicalName());
+		return QueryMatches.asQueryMatch(runtime, "$0", builder.toString());
+		// TODO handle new result type XTM
+		// /*
+		// * switch result-type to XTM
+		// */
+		// runtime.getProperties().setProperty(
+		// TMQLRuntimeProperties.RESULT_SET_IMPLEMENTATION_CLASS,
+		// CTMResult.class.getCanonicalName());
+		// runtime.getProperties().setProperty(
+		// TMQLRuntimeProperties.RESULT_TUPLE_IMPLEMENTATION_CLASS,
+		// CTMFragment.class.getCanonicalName());
 	}
 }

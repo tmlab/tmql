@@ -43,5 +43,11 @@
 			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+			<groupId>de.topicmapslab</groupId>
+			<artifactId>ctm-writer</artifactId>
+			<version>1.0.8-20100922.072001-7</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 </project>

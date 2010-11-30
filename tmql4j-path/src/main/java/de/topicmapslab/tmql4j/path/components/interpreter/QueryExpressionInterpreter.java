@@ -12,6 +12,9 @@ package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.productions.EnvironmentClause;
 import de.topicmapslab.tmql4j.path.grammar.productions.FlwrExpression;
@@ -43,8 +46,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.SelectExpression;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class QueryExpressionInterpreter extends
-		ExpressionInterpreterImpl<QueryExpression> {
+public class QueryExpressionInterpreter extends ExpressionInterpreterImpl<QueryExpression> {
 
 	/**
 	 * base constructor to create a new instance
@@ -59,7 +61,8 @@ public class QueryExpressionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * check if environment-clause contained
 		 */
@@ -67,8 +70,7 @@ public class QueryExpressionInterpreter extends
 			/*
 			 * call environment-clause
 			 */
-			getInterpretersFilteredByEypressionType(runtime,
-					EnvironmentClause.class).get(0).interpret(runtime);
+			getInterpretersFilteredByEypressionType(runtime, EnvironmentClause.class).get(0).interpret(runtime, context, optionalArguments);
 		}
 
 		/*
@@ -79,27 +81,22 @@ public class QueryExpressionInterpreter extends
 		 * is select-expression
 		 */
 		case QueryExpression.TYPE_SELECT_EXPRESSION: {
-			interpretSelectExpression(runtime);
+			return interpretSelectExpression(runtime, context, optionalArguments);
 		}
-			break;
 		/*
 		 * is flwr-expression
 		 */
 		case QueryExpression.TYPE_FLWR_EXPRESSION: {
-			interpretFlwrExpression(runtime);
+			return interpretFlwrExpression(runtime, context, optionalArguments);
 		}
-			break;
-		/*
-		 * is path-expression
-		 */
+			/*
+			 * is path-expression
+			 */
 		case QueryExpression.TYPE_PATH_EXPRESSION: {
-			interpretPathExpression(runtime);
+			return interpretPathExpression(runtime, context, optionalArguments);
 		}
-			break;
-
-		default:
-			throw new TMQLRuntimeException("unkown state");
 		}
+		return QueryMatches.emptyMatches();
 	}
 
 	/**
@@ -115,17 +112,20 @@ public class QueryExpressionInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretSelectExpression(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretSelectExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * redirect to subexpression
 		 */
-		IExpressionInterpreter<SelectExpression> ex = getInterpretersFilteredByEypressionType(
-				runtime, SelectExpression.class).get(0);
-		ex.interpret(runtime);
+		IExpressionInterpreter<SelectExpression> ex = getInterpretersFilteredByEypressionType(runtime, SelectExpression.class).get(0);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 
 	/**
@@ -141,17 +141,20 @@ public class QueryExpressionInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretFlwrExpression(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretFlwrExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * redirect to subexpression
 		 */
-		IExpressionInterpreter<FlwrExpression> ex = getInterpretersFilteredByEypressionType(
-				runtime, FlwrExpression.class).get(0);
-		ex.interpret(runtime);
+		IExpressionInterpreter<FlwrExpression> ex = getInterpretersFilteredByEypressionType(runtime, FlwrExpression.class).get(0);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 
 	/**
@@ -167,17 +170,20 @@ public class QueryExpressionInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretPathExpression(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretPathExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * redirect to subexpression
 		 */
-		IExpressionInterpreter<PathExpression> ex = getInterpretersFilteredByEypressionType(
-				runtime, PathExpression.class).get(0);
-		ex.interpret(runtime);
+		IExpressionInterpreter<PathExpression> ex = getInterpretersFilteredByEypressionType(runtime, PathExpression.class).get(0);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 
 }

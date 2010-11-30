@@ -13,14 +13,14 @@ package de.topicmapslab.tmql4j.path.components.interpreter;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.path.components.processor.core.Context;
 import de.topicmapslab.tmql4j.path.grammar.productions.SelectClause;
 import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
 
@@ -40,13 +40,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class SelectClauseInterpreter extends
-		ExpressionInterpreterImpl<SelectClause> {
-
-	/**
-	 * the Logger
-	 */
-	private Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
+public class SelectClauseInterpreter extends ExpressionInterpreterImpl<SelectClause> {
 
 	/**
 	 * base constructor to create a new instance
@@ -61,10 +55,9 @@ public class SelectClauseInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
-
-		logger.info("Start.");
-
+	// TODO refactor
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * variable mapping cache
 		 */
@@ -75,10 +68,7 @@ public class SelectClauseInterpreter extends
 		/*
 		 * check if context is given by upper expression ( where-clause )
 		 */
-		if (runtime.getRuntimeContext().peek().contains(
-				VariableNames.ITERATED_BINDINGS)) {
-			QueryMatches matches = (QueryMatches) runtime.getRuntimeContext()
-					.peek().getValue(VariableNames.ITERATED_BINDINGS);
+		if (context.getContextBindings() != null) {
 			/*
 			 * temporary store of variable bound to fn:count(...)
 			 */
@@ -86,18 +76,16 @@ public class SelectClauseInterpreter extends
 			/*
 			 * iterate over all tuples
 			 */
-			for (Map<String, Object> tuple : matches) {
+			for (Map<String, Object> tuple : context.getContextBindings()) {
 				Map<String, Object> resultTuple = HashUtil.getHashMap();
 				Map<String, Object> countableTuple = HashUtil.getHashMap();
 				int index = 0;
 				/*
 				 * iterate over all value-expression
 				 */
-				List<IExpressionInterpreter<ValueExpression>> interpreters = getInterpretersFilteredByEypressionType(
-						runtime, ValueExpression.class);
+				List<IExpressionInterpreter<ValueExpression>> interpreters = getInterpretersFilteredByEypressionType(runtime, ValueExpression.class);
 				for (int i = 0; i < interpreters.size(); i++) {
-					IExpressionInterpreter<ValueExpression> ex = interpreters
-							.get(i);
+					IExpressionInterpreter<ValueExpression> ex = interpreters.get(i);
 					/*
 					 * get current variable name
 					 */
@@ -125,87 +113,12 @@ public class SelectClauseInterpreter extends
 					 * value-expression isn't fn:count
 					 */
 					else {
-						/*
-						 * prepare stack for sub-expression call
-						 */
-						runtime.getRuntimeContext().push();
-						runtime.getRuntimeContext().peek().remove(
-								VariableNames.ITERATED_BINDINGS);
-						runtime.getRuntimeContext().peek().setValue(
-								VariableNames.CURRENT_TUPLE, match);
-						runtime.getRuntimeContext().peek().setValue(variable,
-								match);
-
-						/*
-						 * call sub-expression
-						 */
-						ex.interpret(runtime);
-
-						Object obj = runtime.getRuntimeContext().pop()
-								.getValue(VariableNames.QUERYMATCHES);
-						if (!(obj instanceof QueryMatches)) {
-							throw new TMQLRuntimeException(
-									"Invalid interpretation of expression value-expression. Has to return an instance of QueryMatches.");
-						}
-						ITupleSequence<Object> sequence = ((QueryMatches) obj)
-								.getPossibleValuesForVariable();
-						/*
-						 * check if values are bound to non-scoped variable
-						 */
-						if (sequence.isEmpty()) {
-							/*
-							 * is multi-line-result
-							 */
-							QueryMatches m = (QueryMatches) obj;
-							if (!m.isEmpty()) {
-								/*
-								 * iterate over all variables of result
-								 */
-								for (String var : m.getOrderedKeys()) {
-									/*
-									 * check if variable is indexed-variable $#
-									 */
-									if (var.matches("\\$[0-9]+")) {
-										/*
-										 * store values
-										 */
-										resultTuple
-												.put(
-														"$" + index,
-														m
-																.getPossibleValuesForVariable(var));
-										countableTuple
-												.put(
-														"$" + index,
-														m
-																.getPossibleValuesForVariable(var));
-										index++;
-									}
-								}
-							}
-						}
-						/*
-						 * values are bound to non-scoped variable
-						 */
-						else {
-							/*
-							 * check if mapping contains value variable
-							 * transformation
-							 */
-							if (!mapping.containsKey("$" + index)) {
-								mapping.put("$" + index, variable);
-							}
-							/*
-							 * store values
-							 */
-							countableTuple.put("$" + index, match);
-							if (sequence.size() == 1) {
-								resultTuple.put("$" + index, sequence.get(0));
-							} else {
-								resultTuple.put("$" + index, sequence);
-							}
-							index++;
-						}
+						Context newContext = new Context(context);
+						newContext.setContextBindings(null);
+						newContext.setCurrentNode(match);
+						newContext.setCurrentTuple(tuple);
+						newContext.setCurrentIndex(i);
+						index = updateResultTuple(runtime, mapping, resultTuple, countableTuple, index, ex, variable, newContext, optionalArguments);
 					}
 				}
 				/*
@@ -223,8 +136,7 @@ public class SelectClauseInterpreter extends
 			 * check if fn:count was contained
 			 */
 			if (countedVariable != null) {
-				results = fnCount(runtime, results, queryMatchesForCount,
-						matches, mapping, countedVariable);
+				results = fnCount(runtime, results, queryMatchesForCount, context.getContextBindings(), mapping, countedVariable);
 			}
 		}
 		/*
@@ -240,91 +152,30 @@ public class SelectClauseInterpreter extends
 			/*
 			 * iterate over value-expressions
 			 */
-			List<IExpressionInterpreter<ValueExpression>> interpreters = getInterpretersFilteredByEypressionType(
-					runtime, ValueExpression.class);
+			List<IExpressionInterpreter<ValueExpression>> interpreters = getInterpretersFilteredByEypressionType(runtime, ValueExpression.class);
 			for (int i = 0; i < interpreters.size(); i++) {
-				IExpressionInterpreter<ValueExpression> ex = interpreters
-						.get(i);
+				IExpressionInterpreter<ValueExpression> interpreter = interpreters.get(i);
 				/*
 				 * get variable of current value-expression or set to non-scoped
 				 * variable
 				 */
 				String variable = QueryMatches.getNonScopedVariable();
-				if (!ex.getVariables().isEmpty()) {
-					variable = ex.getVariables().get(0);
+				if (!interpreter.getVariables().isEmpty()) {
+					variable = interpreter.getVariables().get(0);
 				}
 
 				/*
 				 * check if current value-expression is function-invocation of
 				 * fn:count
 				 */
-				if (ex.getTokens().contains("fn:count")) {
+				if (interpreter.getTokens().contains("fn:count")) {
 					resultTuple.put("fn:count", index);
 				}
 				/*
 				 * value-expression is not fn:count
 				 */
 				else {
-					runtime.getRuntimeContext().push();
-
-					/*
-					 * call sub-expression
-					 */
-					ex.interpret(runtime);
-
-					Object obj = runtime.getRuntimeContext().pop().getValue(
-							VariableNames.QUERYMATCHES);
-					if (!(obj instanceof QueryMatches)) {
-						throw new TMQLRuntimeException(
-								"Invalid interpretation of expression value-expression. Has to return an instance of QueryMatches.");
-					}
-					ITupleSequence<Object> sequence = ((QueryMatches) obj)
-							.getPossibleValuesForVariable();
-					/*
-					 * check if values are bound to non-scoped variable
-					 */
-					if (sequence.isEmpty()) {
-						/*
-						 * is multi-line-result
-						 */
-						QueryMatches m = (QueryMatches) obj;
-						if (!m.isEmpty()) {
-							/*
-							 * iterate over variables
-							 */
-							for (String var : m.getOrderedKeys()) {
-								/*
-								 * check if variable is indexed-variable
-								 */
-								if (var.matches("\\$[0-9]+")) {
-									/*
-									 * store results
-									 */
-									resultTuple.put("$" + index, m
-											.getPossibleValuesForVariable(var));
-									countableTuple.put("$" + index, m
-											.getPossibleValuesForVariable(var));
-									index++;
-								}
-							}
-						}
-					}
-					/*
-					 * values are bound to non-scoped variable
-					 */
-					else {
-						/*
-						 * store mapping if necessary
-						 */
-						if (!mapping.containsKey("$" + index)) {
-							mapping.put("$" + index, variable);
-						}
-						/*
-						 * store results
-						 */
-						resultTuple.put("$" + index, sequence);
-						index++;
-					}
+					index = updateResultTuple(runtime, mapping, resultTuple, countableTuple, index, interpreter, variable, context, optionalArguments);
 				}
 			}
 			/*
@@ -335,12 +186,82 @@ public class SelectClauseInterpreter extends
 				queryMatchesForCount.add(countableTuple);
 			}
 		}
+		return results;
+	}
 
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				results);
-
-		logger.info("Finished. Results: " + results);
-
+	/**
+	 * Internal method to update the result set by execute a select-clause entry
+	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param mapping
+	 *            the mapping of variable names need to rename after execution
+	 * @param resultTuple
+	 *            the result tuple to update
+	 * @param countableTuple
+	 *            the tuple to count
+	 * @param index
+	 *            the current index
+	 * @param interpreter
+	 *            the interpreter to call
+	 * @param variable
+	 *            the variable to check
+	 * @param context
+	 *            the current context
+	 * @param optionalArguments
+	 *            any optional arguments
+	 * @return the new tuple index
+	 */
+	private int updateResultTuple(ITMQLRuntime runtime, final Map<String, String> mapping, Map<String, Object> resultTuple, Map<String, Object> countableTuple, int index,
+			IExpressionInterpreter<ValueExpression> interpreter, String variable, IContext context, Object... optionalArguments) {
+		/*
+		 * call sub-expression
+		 */
+		QueryMatches matches = interpreter.interpret(runtime, context, optionalArguments);
+		List<Object> possibleValuesForVariable = matches.getPossibleValuesForVariable();
+		/*
+		 * check if values are bound to non-scoped variable
+		 */
+		if (possibleValuesForVariable.isEmpty()) {
+			/*
+			 * is multi-line-result
+			 */
+			if (!matches.isEmpty()) {
+				/*
+				 * iterate over variables
+				 */
+				for (String var : matches.getOrderedKeys()) {
+					/*
+					 * check if variable is indexed-variable
+					 */
+					if (var.matches("\\$[0-9]+")) {
+						/*
+						 * store results
+						 */
+						resultTuple.put("$" + index, matches.getPossibleValuesForVariable(var));
+						countableTuple.put("$" + index, matches.getPossibleValuesForVariable(var));
+						index++;
+					}
+				}
+			}
+		}
+		/*
+		 * values are bound to non-scoped variable
+		 */
+		else {
+			/*
+			 * store mapping if necessary
+			 */
+			if (!mapping.containsKey("$" + index)) {
+				mapping.put("$" + index, variable);
+			}
+			/*
+			 * store results
+			 */
+			resultTuple.put("$" + index, possibleValuesForVariable);
+			index++;
+		}
+		return index;
 	}
 
 	/**
@@ -371,9 +292,7 @@ public class SelectClauseInterpreter extends
 	 * @throws TMQLRuntimeException
 	 *             thrown if function interpretation fails
 	 */
-	private final QueryMatches fnCount(final TMQLRuntime runtime,
-			QueryMatches results, QueryMatches tuples, QueryMatches origin,
-			final Map<String, String> mapping, final String countedVariable)
+	private final QueryMatches fnCount(final ITMQLRuntime runtime, QueryMatches results, QueryMatches tuples, QueryMatches origin, final Map<String, String> mapping, final String countedVariable)
 			throws TMQLRuntimeException {
 		QueryMatches queryMatches = new QueryMatches(runtime);
 		for (int index = 0; index < tuples.size(); index++) {
@@ -384,8 +303,7 @@ public class SelectClauseInterpreter extends
 			newTuple.putAll(result);
 			Object i = newTuple.get("fn:count");
 			newTuple.remove("fn:count");
-			newTuple
-					.put("$" + i, origin.count(tuple, mapping, countedVariable));
+			newTuple.put("$" + i, origin.count(tuple, mapping, countedVariable));
 			queryMatches.add(newTuple);
 		}
 		return queryMatches;

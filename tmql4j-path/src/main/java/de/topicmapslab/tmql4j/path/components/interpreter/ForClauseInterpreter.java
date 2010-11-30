@@ -12,6 +12,9 @@ package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.productions.BindingSet;
 import de.topicmapslab.tmql4j.path.grammar.productions.ForClause;
@@ -47,13 +50,13 @@ public class ForClauseInterpreter extends ExpressionInterpreterImpl<ForClause> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * redirect to subexpression
 		 */
-		IExpressionInterpreter<BindingSet> bindingSet = getInterpretersFilteredByEypressionType(
-				runtime, BindingSet.class).get(0);
-		bindingSet.interpret(runtime);
+		IExpressionInterpreter<BindingSet> bindingSet = getInterpretersFilteredByEypressionType(runtime, BindingSet.class).get(0);
+		return bindingSet.interpret(runtime, context, optionalArguments);
 	}
 
 }

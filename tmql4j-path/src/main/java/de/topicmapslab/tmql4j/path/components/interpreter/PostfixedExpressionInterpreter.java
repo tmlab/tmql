@@ -12,9 +12,14 @@ package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.path.components.processor.core.Context;
 import de.topicmapslab.tmql4j.path.grammar.productions.Postfix;
 import de.topicmapslab.tmql4j.path.grammar.productions.PostfixedExpression;
+import de.topicmapslab.tmql4j.path.grammar.productions.SimpleContent;
 import de.topicmapslab.tmql4j.path.grammar.productions.TupleExpression;
 
 /**
@@ -33,8 +38,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.TupleExpression;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class PostfixedExpressionInterpreter extends
-		ExpressionInterpreterImpl<PostfixedExpression> {
+public class PostfixedExpressionInterpreter extends ExpressionInterpreterImpl<PostfixedExpression> {
 
 	/**
 	 * base constructor to create a new instance
@@ -49,7 +53,10 @@ public class PostfixedExpressionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+
+		QueryMatches nonFiltered;
 		/*
 		 * switch by grammar type
 		 */
@@ -58,29 +65,32 @@ public class PostfixedExpressionInterpreter extends
 		 * is tuple-expression
 		 */
 		case PostfixedExpression.TYPE_TUPLE_EXPRESSSION: {
-			interpretTupleExpression(runtime);
+			nonFiltered = interpretTupleExpression(runtime, context, optionalArguments);
 		}
 			break;
 		/*
 		 * is simple-content
 		 */
 		case PostfixedExpression.TYPE_SIMPLE_CONTENT: {
-			interpretSimpleContent(runtime);
+			nonFiltered = interpretSimpleContent(runtime, context, optionalArguments);
 		}
 			break;
 		default:
-			throw new TMQLRuntimeException("Unknown state.");
+			return QueryMatches.emptyMatches();
 		}
 
 		/*
 		 * check if expression contains a postfix
 		 */
 		if (getInterpreters(runtime).size() > 1) {
+			Context newContext = new Context(context);
+			newContext.setContextBindings(nonFiltered);
 			/*
 			 * interpret postfix
 			 */
-			interpretPostfix(runtime);
+			return interpretPostfix(runtime, newContext, optionalArguments);
 		}
+		return nonFiltered;
 	}
 
 	/**
@@ -96,17 +106,20 @@ public class PostfixedExpressionInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretTupleExpression(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretTupleExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * redirect to subexpression
 		 */
-		IExpressionInterpreter<TupleExpression> ex = getInterpretersFilteredByEypressionType(
-				runtime, TupleExpression.class).get(0);
-		ex.interpret(runtime);
+		IExpressionInterpreter<TupleExpression> ex = getInterpretersFilteredByEypressionType(runtime, TupleExpression.class).get(0);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 
 	/**
@@ -122,17 +135,20 @@ public class PostfixedExpressionInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretSimpleContent(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretSimpleContent(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * redirect to subexpression
 		 */
-		IExpressionInterpreter<SimpleContent> ex = getInterpretersFilteredByEypressionType(
-				runtime, SimpleContent.class).get(0);
-		ex.interpret(runtime);
+		IExpressionInterpreter<SimpleContent> ex = getInterpretersFilteredByEypressionType(runtime, SimpleContent.class).get(0);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 
 	/**
@@ -148,46 +164,20 @@ public class PostfixedExpressionInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretPostfix(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
-		/*
-		 * extract current matches
-		 */
-		IVariableSet set = runtime.getRuntimeContext().peek();
-
-		if (!set.contains(VariableNames.QUERYMATCHES)) {
-			throw new TMQLRuntimeException(
-					"mising projection context, variable %%%___ not set.");
-		}
-
-		/*
-		 * set current matches to variable %_postfixed
-		 */
-		runtime.getRuntimeContext().push().setValue(VariableNames.POSTFIXED,
-				set.getValue(VariableNames.QUERYMATCHES));
-
+	private QueryMatches interpretPostfix(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * call postfix-interpreter
 		 */
-		IExpressionInterpreter<Postfix> ex = getInterpretersFilteredByEypressionType(
-				runtime, Postfix.class).get(0);
-		ex.interpret(runtime);
-
-		/*
-		 * redirect results
-		 */
-		set = runtime.getRuntimeContext().pop();
-		if (!set.contains(VariableNames.QUERYMATCHES)) {
-			throw new TMQLRuntimeException(
-					"mising interpetation result of postfix.");
-		}
-
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				set.getValue(VariableNames.QUERYMATCHES));
-
+		IExpressionInterpreter<Postfix> ex = getInterpretersFilteredByEypressionType(runtime, Postfix.class).get(0);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 
 }

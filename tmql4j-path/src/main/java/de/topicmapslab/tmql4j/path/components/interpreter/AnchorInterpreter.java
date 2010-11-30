@@ -65,6 +65,7 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * get first token
@@ -113,7 +114,7 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 				else if ("undef".equalsIgnoreCase(anchor_)) {
 					throw new UnsupportedOperationException("Undef is unknown!");
 				}
-				return QueryMatches.asQueryMatch(runtime, runtime.getConstructResolver().getConstructByIdentifier(context.getQuery().getTopicMap(), anchor_));
+				return QueryMatches.asQueryMatch(runtime, runtime.getConstructResolver().getConstructByIdentifier(context, anchor_));
 			} catch (Exception ex) {
 				logger.warn("Cannot found element for given reference '" + anchor_ + "'!");
 			}

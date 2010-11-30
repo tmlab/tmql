@@ -67,6 +67,7 @@ public class BooleanExpressionInterpreter extends ExpressionInterpreterImpl<Bool
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		switch (getGrammarTypeOfExpression()) {
 		/*

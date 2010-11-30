@@ -10,11 +10,10 @@
  */
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.productions.BindingSet;
 import de.topicmapslab.tmql4j.path.grammar.productions.ForAllClause;
@@ -52,29 +51,24 @@ public class ForAllClauseInterpreter extends QuantifiedExpression<ForAllClause> 
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
-	protected synchronized boolean doSatisfy(TMQLRuntime runtime,
-			Map<String, Object> tuple, IResultSet<?> results) {
+	protected boolean doSatisfy(ITMQLRuntime runtime, IContext context, IResultSet<?> results) {
 		try {
-			/*
-			 * create new variable layer with current tuple
-			 */
-			runtime.getRuntimeContext().push();
-			for (Entry<String, Object> t : tuple.entrySet()) {
-				runtime.getRuntimeContext().peek().setValue(
-						t.getKey(), t.getValue());
-			}
+			// /*
+			// * create new variable layer with current tuple
+			// */
+			// for (Entry<String, Object> t : tuple.entrySet()) {
+			// runtime.getRuntimeContext().peek().setValue(
+			// t.getKey(), t.getValue());
+			// }
 			/*
 			 * call iteration bindings to extract all possible values
 			 */
-			QueryMatches context = extractArguments(runtime, BindingSet.class,
-					0);
-			runtime.getRuntimeContext().pop();
+			QueryMatches matches = extractArguments(runtime, BindingSet.class, 0, context);
 			/*
 			 * check if count of possible values are equals than the count of
 			 * satisfying values
 			 */
-			return results.size() == context.size() && !context.isEmpty();
+			return results.size() == matches.size() && !matches.isEmpty();
 		} catch (TMQLRuntimeException e) {
 			e.printStackTrace();
 			return false;
@@ -97,11 +91,9 @@ public class ForAllClauseInterpreter extends QuantifiedExpression<ForAllClause> 
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
-		/*
-		 * redirect to parent method
-		 */
-		super.interpret(runtime);
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		return super.interpret(runtime, context, optionalArguments);
 	}
 
 }

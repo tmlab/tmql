@@ -16,21 +16,19 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
+import de.topicmapslab.tmql4j.path.components.processor.core.Context;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Desc;
 import de.topicmapslab.tmql4j.path.grammar.productions.OrderByClause;
 import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
-
 
 /**
  * 
@@ -47,14 +45,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class OrderByClauseInterpreter extends
-		ExpressionInterpreterImpl<OrderByClause> {
-	
-	/**
-	 * the Logger
-	 */
-	private Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
-	
+public class OrderByClauseInterpreter extends ExpressionInterpreterImpl<OrderByClause> {
 
 	/**
 	 * base constructor to create a new instance
@@ -69,34 +60,15 @@ public class OrderByClauseInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		Iterator<IExpressionInterpreter<ValueExpression>> iterator = getInterpretersFilteredByEypressionType(runtime, ValueExpression.class).iterator();
 
-		/*
-		 * Log it
-		 */
-		logger.info("Start");
-
-		/*
-		 * get value of variable %_order from the top of the stack
-		 */
-		Object obj = runtime.getRuntimeContext().peek().getValue(
-				VariableNames.ORDER);
-		/*
-		 * check binded value, has to be an instance of Map<String,
-		 * ITupleSequence<?>>
-		 */
-		QueryMatches context = (QueryMatches) obj;
-
-		Iterator<IExpressionInterpreter<ValueExpression>> iterator = getInterpretersFilteredByEypressionType(
-				runtime, ValueExpression.class).iterator();
-
-		List<IndexTuple> iteration = sort(runtime, context, iterator.next(), 0,
-				context.size());
+		List<IndexTuple> iteration = sort(runtime, context, iterator.next(), 0, context.getContextBindings().size());
 
 		while (iterator.hasNext()) {
 			boolean cancel = true;
-			IExpressionInterpreter<ValueExpression> interpreter = iterator
-					.next();
+			IExpressionInterpreter<ValueExpression> interpreter = iterator.next();
 			List<IndexTuple> results = new LinkedList<IndexTuple>();
 			results.addAll(iteration);
 			iteration.clear();
@@ -115,8 +87,9 @@ public class OrderByClauseInterpreter extends
 				IndexTuple t = results.get(index);
 				if (tuple.compareTo(t) != 0) {
 					if (index - from > 1) {
-						List<IndexTuple> tuples = sort(runtime, orderedMatches,
-								interpreter, from, index);
+						Context newContext = new Context(context);
+						newContext.setContextBindings(orderedMatches);
+						List<IndexTuple> tuples = sort(runtime, newContext, interpreter, from, index);
 						iteration.addAll(tuples);
 						cancel = false;
 					} else {
@@ -128,8 +101,9 @@ public class OrderByClauseInterpreter extends
 			}
 
 			if (results.size() - from > 1) {
-				List<IndexTuple> tuples = sort(runtime, orderedMatches,
-						interpreter, from, results.size());
+				Context newContext = new Context(context);
+				newContext.setContextBindings(orderedMatches);
+				List<IndexTuple> tuples = sort(runtime, newContext, interpreter, from, results.size());
 				iteration.addAll(tuples);
 				cancel = false;
 			}
@@ -146,16 +120,11 @@ public class OrderByClauseInterpreter extends
 		for (IndexTuple tuple : iteration) {
 			orderedMatches.add(tuple.origin);
 		}
-
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				orderedMatches);
+		return orderedMatches;
 	}
 
 	@SuppressWarnings("unchecked")
-	private final List<IndexTuple> sort(final TMQLRuntime runtime,
-			final QueryMatches context,
-			IExpressionInterpreter<ValueExpression> interpreter, int from,
-			int to) throws TMQLRuntimeException {
+	private final List<IndexTuple> sort(final ITMQLRuntime runtime, final IContext context, IExpressionInterpreter<ValueExpression> interpreter, int from, int to) throws TMQLRuntimeException {
 
 		/*
 		 * initialize the cache of results of value-expression
@@ -169,63 +138,31 @@ public class OrderByClauseInterpreter extends
 			/*
 			 * get binding at current index
 			 */
-			Map<String, Object> binding = context.get(index);
-			/*
-			 * push to stack
-			 */
-			runtime.getRuntimeContext().push();
-
-			/*
-			 * iterate over tuple
-			 */
-			for (Entry<String, Object> entry : binding.entrySet()) {
-				/*
-				 * set variable to value
-				 */
-				runtime.getRuntimeContext().peek().setValue(entry.getKey(),
-						entry.getValue());
-			}
-
-			/*
-			 * call value-expression
-			 */
-			interpreter.interpret(runtime);
-
-			/*
-			 * pop from stack
-			 */
-			Object obj = runtime.getRuntimeContext().pop().getValue(
-					VariableNames.QUERYMATCHES);
-			/*
-			 * check result type. has to be an instance of ITupleSequence<?>
-			 */
-			if (!(obj instanceof QueryMatches)) {
-				throw new TMQLRuntimeException(
-						"Invalid interpretation of expression value-expression. Has to return an instance of QueryMatches");
-			}
-
-			/*
-			 * Check size of tuple-sequence, has to be one
-			 */
-			QueryMatches matches = (QueryMatches) obj;
-			if (matches.isEmpty()) {
-				Map<String, Object> map = HashUtil.getHashMap();
-				matches.add(map);
-			}
+			Map<String, Object> binding = context.getContextBindings().get(index);
+			Context newContext = new Context(context);
+			newContext.setCurrentTuple(binding);
+			newContext.setContextBindings(null);
 			/*
 			 * create special tuple saving their index
 			 */
 			IndexTuple indexTuple = new IndexTuple();
 			indexTuple.origin = binding;
-			indexTuple.tuple = matches.getMatches().get(0);
+			/*
+			 * call value-expression
+			 */
+			QueryMatches matches = interpreter.interpret(runtime, newContext);
+			if (matches.isEmpty()) {
+				indexTuple.tuple = HashUtil.getHashMap();
+			} else {
+				indexTuple.tuple = matches.getMatches().get(0);
+			}
 			results.add(indexTuple);
 		}
 
 		/*
 		 * extract sorting direction
 		 */
-		final boolean ascending = !ParserUtils.containsTokens(interpreter
-				.getTmqlTokens(), Desc.class);
+		final boolean ascending = !ParserUtils.containsTokens(interpreter.getTmqlTokens(), Desc.class);
 
 		/*
 		 * sort the tuples
@@ -268,10 +205,7 @@ public class OrderByClauseInterpreter extends
 			if (o.tuple.isEmpty()) {
 				return 1;
 			}
-			return o.tuple.get(QueryMatches.getNonScopedVariable()).toString()
-					.compareTo(
-							tuple.get(QueryMatches.getNonScopedVariable())
-									.toString());
+			return o.tuple.get(QueryMatches.getNonScopedVariable()).toString().compareTo(tuple.get(QueryMatches.getNonScopedVariable()).toString());
 		}
 	}
 }

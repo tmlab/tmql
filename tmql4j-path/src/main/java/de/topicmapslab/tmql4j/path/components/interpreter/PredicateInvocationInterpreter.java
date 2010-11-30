@@ -17,7 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
-import org.tmapi.core.Locator;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
@@ -25,11 +24,12 @@ import org.tmapi.index.TypeInstanceIndex;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
-import de.topicmapslab.tmql4j.exception.DataBridgeException;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.path.components.interpreter.PredicateInvocationRolePlayerExpressionInterpreter.Restriction;
 import de.topicmapslab.tmql4j.path.grammar.productions.PredicateInvocation;
 import de.topicmapslab.tmql4j.path.grammar.productions.PredicateInvocationRolePlayerExpression;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
@@ -50,8 +50,7 @@ import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class PredicateInvocationInterpreter extends
-		ExpressionInterpreterImpl<PredicateInvocation> {
+public class PredicateInvocationInterpreter extends ExpressionInterpreterImpl<PredicateInvocation> {
 
 	/**
 	 * the Logger
@@ -71,37 +70,29 @@ public class PredicateInvocationInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 
 		final QueryMatches matches = new QueryMatches(runtime);
 
-		TopicMap topicMap = runtime.getTopicMap();
-
+		TopicMap topicMap = context.getQuery().getTopicMap();
 		/*
 		 * extract all associations of the specified type
 		 */
+		final String anchor = getTokens().get(0);
 		Set<Association> associations = HashUtil.getHashSet();
-		if (getTokens().get(0).equals(TmdmSubjectIdentifier.TMDM_SUBJECT)) {
+		if (anchor.equals(TmdmSubjectIdentifier.TMDM_SUBJECT)) {
 			associations.addAll(topicMap.getAssociations());
 		} else {
-			Construct c = null;
-			final String anchor = getTokens().get(0);
-			try {
-				c = runtime.getDataBridge().getConstructByIdentifier(runtime,
-						anchor);
-			} catch (DataBridgeException e) {
+			Construct c = runtime.getConstructResolver().getConstructByIdentifier(context, anchor);
+			/*
+			 * association type is unknown
+			 */
+			if (c == null) {
 				logger.warn("Cannot read topic type of assocaition '" + anchor);
+				return QueryMatches.emptyMatches();
 			}
-			if (c == null || !(c instanceof Topic)) {
-				/*
-				 * set to variable stack
-				 */
-				runtime.getRuntimeContext().peek().setValue(
-						VariableNames.QUERYMATCHES, matches);
-				return;
-			}
-			TypeInstanceIndex index = topicMap
-					.getIndex(TypeInstanceIndex.class);
+			TypeInstanceIndex index = topicMap.getIndex(TypeInstanceIndex.class);
 			if (!index.isOpen()) {
 				index.open();
 			}
@@ -113,37 +104,22 @@ public class PredicateInvocationInterpreter extends
 		 */
 		boolean strict_ = true;
 		final Set<Restriction> restrictions = HashUtil.getHashSet();
-		for (IExpressionInterpreter<PredicateInvocationRolePlayerExpression> interpreter : getInterpretersFilteredByEypressionType(
-				runtime, PredicateInvocationRolePlayerExpression.class)) {
+		for (IExpressionInterpreter<PredicateInvocationRolePlayerExpression> interpreter : getInterpretersFilteredByEypressionType(runtime, PredicateInvocationRolePlayerExpression.class)) {
 
+			/*
+			 * is ellipsis token
+			 */
 			if (interpreter.getGrammarTypeOfExpression() == PredicateInvocationRolePlayerExpression.TYPE_ELLIPSIS) {
 				strict_ = false;
-			} else {
-				runtime.getRuntimeContext().push();
-
-				interpreter.interpret(runtime);
-
-				IVariableSet set = runtime.getRuntimeContext().peek();
-				QueryMatches result = (QueryMatches) set
-						.getValue(VariableNames.QUERYMATCHES);
-				/*
-				 * role identifier or player unknown
-				 */
-				if (result.isEmpty()) {
-					/*
-					 * set to variable stack
-					 */
-					runtime.getRuntimeContext().peek().setValue(
-							VariableNames.QUERYMATCHES, matches);
-					return;
+			}
+			/*
+			 * is any restriction
+			 */
+			else {
+				Restriction restriction = interpreter.interpret(runtime, context, optionalArguments);
+				if (restriction == null) {
+					return QueryMatches.emptyMatches();
 				}
-				Map<String, Object> tuple = result.get(0);
-
-				Restriction restriction = new Restriction();
-				restriction.ex = interpreter.getExpression();
-				restriction.roleType = tuple.get("$0");
-				restriction.player = tuple.get("$1");
-				restrictions.add(restriction);
 			}
 		}
 
@@ -159,9 +135,7 @@ public class PredicateInvocationInterpreter extends
 					/*
 					 * check if predicate is strict
 					 */
-					if (strict
-							&& association.getRoles().size() != restrictions
-									.size()) {
+					if (strict && association.getRoles().size() != restrictions.size()) {
 						return;
 					}
 
@@ -177,29 +151,22 @@ public class PredicateInvocationInterpreter extends
 					/*
 					 * extract bindings
 					 */
-					Map<Restriction, Set<Role>> solutions = HashUtil
-							.getHashMap();
+					Map<Restriction, Set<Role>> solutions = HashUtil.getHashMap();
 					for (Restriction restriction : restrictions) {
 						for (Role r : association.getRoles()) {
-							boolean playerIsSubject = isTmdmSubject(restriction.player);
-							boolean roleIsSubject = isTmdmSubject(restriction.roleType);
+							boolean playerIsSubject = TmdmSubjectIdentifier.isTmdmSubject(restriction.player);
+							boolean roleIsSubject = TmdmSubjectIdentifier.isTmdmSubject(restriction.roleType);
 							/*
 							 * check if player is restricted
 							 */
-							if (restriction.player instanceof Topic
-									&& !playerIsSubject
-									&& !r.getPlayer()
-											.equals(restriction.player)) {
+							if (restriction.player instanceof Topic && !playerIsSubject && !r.getPlayer().equals(restriction.player)) {
 								continue;
 							}
 
 							/*
 							 * check if role type is restricted
 							 */
-							if (restriction.roleType instanceof Topic
-									&& !roleIsSubject
-									&& !r.getType()
-											.equals(restriction.roleType)) {
+							if (restriction.roleType instanceof Topic && !roleIsSubject && !r.getType().equals(restriction.roleType)) {
 								continue;
 							}
 
@@ -214,36 +181,27 @@ public class PredicateInvocationInterpreter extends
 
 					if (!solutions.isEmpty()) {
 						Map<String, Object> tuple = HashUtil.getHashMap();
-						Set<Role> blockedPlayers = HashUtil.getHashSet(), blockedTypes = HashUtil
-								.getHashSet();
-						Set<Map<String, Object>> tuples = toTuples(solutions,
-								tuple, blockedPlayers, blockedTypes);
+						Set<Role> blockedPlayers = HashUtil.getHashSet(), blockedTypes = HashUtil.getHashSet();
+						Set<Map<String, Object>> tuples = toTuples(solutions, tuple, blockedPlayers, blockedTypes);
 						synchronized (matches) {
 							matches.add(tuples);
 						}
 					}
 				}
 
-				private Set<Map<String, Object>> toTuples(
-						Map<Restriction, Set<Role>> values,
-						Map<String, Object> tuple, Set<Role> blockedPlayers,
-						Set<Role> blockedTypes) {
+				private Set<Map<String, Object>> toTuples(Map<Restriction, Set<Role>> values, Map<String, Object> tuple, Set<Role> blockedPlayers, Set<Role> blockedTypes) {
 					Set<Map<String, Object>> tuples = HashUtil.getHashSet();
-					Map<Restriction, Set<Role>> values_ = HashUtil
-							.getHashMap(values);
+					Map<Restriction, Set<Role>> values_ = HashUtil.getHashMap(values);
 					Restriction key = values.keySet().iterator().next();
 					values_.remove(key);
 					for (Role role : values.get(key)) {
-						boolean playerIsSubject = isTmdmSubject(key.player);
-						boolean roleIsSubject = isTmdmSubject(key.roleType);
+						boolean playerIsSubject = TmdmSubjectIdentifier.isTmdmSubject(key.player);
+						boolean roleIsSubject = TmdmSubjectIdentifier.isTmdmSubject(key.roleType);
 						Map<String, Object> tuple_ = HashUtil.getHashMap(tuple);
-						Set<Role> blockedPlayers_ = HashUtil
-								.getHashSet(blockedPlayers);
-						Set<Role> blockedTypes_ = HashUtil
-								.getHashSet(blockedTypes);
+						Set<Role> blockedPlayers_ = HashUtil.getHashSet(blockedPlayers);
+						Set<Role> blockedTypes_ = HashUtil.getHashSet(blockedTypes);
 						if (key.roleType instanceof Topic && !roleIsSubject) {
-							if (blockedTypes_.contains(role)
-									|| !role.getType().equals(key.roleType)) {
+							if (blockedTypes_.contains(role) || !role.getType().equals(key.roleType)) {
 								continue;
 							} else {
 								blockedTypes_.add(role);
@@ -256,8 +214,7 @@ public class PredicateInvocationInterpreter extends
 							blockedTypes_.add(role);
 						}
 						if (key.player instanceof Topic && !playerIsSubject) {
-							if (blockedPlayers_.contains(role)
-									|| !role.getPlayer().equals(key.player)) {
+							if (blockedPlayers_.contains(role) || !role.getPlayer().equals(key.player)) {
 								continue;
 							} else {
 								blockedPlayers_.add(role);
@@ -272,8 +229,7 @@ public class PredicateInvocationInterpreter extends
 						if (values_.isEmpty()) {
 							tuples.add(tuple_);
 						} else {
-							tuples.addAll(toTuples(values_, tuple_,
-									blockedPlayers_, blockedTypes_));
+							tuples.addAll(toTuples(values_, tuple_, blockedPlayers_, blockedTypes_));
 						}
 					}
 					return tuples;
@@ -301,76 +257,9 @@ public class PredicateInvocationInterpreter extends
 			break;
 		}
 
-		/*
-		 * set to variable stack
-		 */
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				matches);
+		return matches;
 	}
 
-	private static boolean isTmdmSubject(Object obj) {
-		if (obj instanceof Topic) {
-			for (Locator loc : ((Topic) obj).getSubjectIdentifiers()) {
-				if (loc.getReference().equalsIgnoreCase(
-						TmdmSubjectIdentifier.TMDM_TOPIC_TYPE)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	class Restriction {
-		Object player;
-		Object roleType;
-		IExpression ex;
-
-		boolean satisfy(Association association) {
-			if (roleType instanceof Topic && !isTmdmSubject(roleType)) {
-
-				Set<Role> roles = HashUtil.getHashSet();
-				roles = association.getRoles((Topic) roleType);
-
-				if (roles.isEmpty()) {
-					return false;
-				}
-				if (player instanceof Topic) {
-					if (!isTmdmSubject(player)) {
-						boolean satisfy = false;
-						for (Role r : roles) {
-							if (r.getPlayer().equals(player)) {
-								satisfy = true;
-								break;
-							}
-						}
-						if (!satisfy) {
-							return false;
-						}
-					}
-				}
-
-			} else {
-				Set<Role> roles = association.getRoles();
-				if (roles.isEmpty()) {
-					return false;
-				}
-				if (player instanceof Topic) {
-					if (!isTmdmSubject(player)) {
-						boolean satisfy = false;
-						for (Role r : roles) {
-							if (r.getPlayer().equals(player)) {
-								satisfy = true;
-								break;
-							}
-						}
-						if (!satisfy) {
-							return false;
-						}
-					}
-				}
-			}
-			return true;
-		}
-	}
+	
 
 }

@@ -12,6 +12,9 @@ package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.productions.AKOExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.ISAExpression;
@@ -20,9 +23,9 @@ import de.topicmapslab.tmql4j.path.grammar.productions.PostfixedExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.PredicateInvocation;
 
 /**
-*
-* Special interpreter class to interpret path-expressions.
-* 
+ * 
+ * Special interpreter class to interpret path-expressions.
+ * 
  * <p>
  * The grammar production rule of the expression is: <code>
  * <p>
@@ -44,12 +47,12 @@ import de.topicmapslab.tmql4j.path.grammar.productions.PredicateInvocation;
  * simple-content-2 )
  * </p>
  * </code> </p>
-* @author Sven Krosse
-* @email krosse@informatik.uni-leipzig.de
-*
-*/
-public class PathExpressionInterpreter
-		extends ExpressionInterpreterImpl<PathExpression> {
+ * 
+ * @author Sven Krosse
+ * @email krosse@informatik.uni-leipzig.de
+ * 
+ */
+public class PathExpressionInterpreter extends ExpressionInterpreterImpl<PathExpression> {
 
 	/**
 	 * base constructor to create a new instance
@@ -61,11 +64,11 @@ public class PathExpressionInterpreter
 		super(ex);
 	}
 
-
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * switch by grammar type
 		 */
@@ -74,47 +77,40 @@ public class PathExpressionInterpreter
 		 * is postfix-expression
 		 */
 		case 0: {
-			interpretPostfixExpression(runtime);
+			return interpretPostfixExpression(runtime, context, optionalArguments);
 		}
-			break;
 			/*
 			 * is predicate-invocation
 			 */
 		case 1: {
-			interpretPredicateExpression(runtime);
+			return interpretPredicateExpression(runtime, context, optionalArguments);
 		}
-			break;
 		case 2: {
 			/*
 			 * is non-canonical type anchor //
 			 */
-			interpretPostfixExpression(runtime);
+			return interpretPostfixExpression(runtime, context, optionalArguments);
 		}
-			break;
 			/*
 			 * is AKO-expression
 			 */
 		case 3: {
-			interpretAKOExpression(runtime);
+			return interpretAKOExpression(runtime, context, optionalArguments);
 		}
-			break;
 			/*
 			 * is ISA-expression
 			 */
 		case 4: {
-			interpretISAExpression(runtime);
+			return interpretISAExpression(runtime, context, optionalArguments);
 		}
-			break;
-		default:
-			throw new TMQLRuntimeException("Unknown state");
 		}
+		return QueryMatches.emptyMatches();
 	}
 
 	/**
-	 * The method is called to
-	 * interpret the given sub-expression by using the given runtime. The
-	 * interpretation will call the sub-expression if the given expression isn't a
-	 * leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the
+	 * given runtime. The interpretation will call the sub-expression if the
+	 * given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
 	 * The interpretation will transform the value on top of the stack and put
@@ -124,24 +120,26 @@ public class PathExpressionInterpreter
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretPostfixExpression(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretPostfixExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * redirect to subexpression
 		 */
-		IExpressionInterpreter<PostfixedExpression> ex = getInterpretersFilteredByEypressionType(runtime,
-				PostfixedExpression.class).get(0);
-		ex.interpret(runtime);
+		IExpressionInterpreter<PostfixedExpression> ex = getInterpretersFilteredByEypressionType(runtime, PostfixedExpression.class).get(0);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 
 	/**
-	 * The method is called to
-	 * interpret the given sub-expression by using the given runtime. The
-	 * interpretation will call the sub-expression if the given expression isn't a
-	 * leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the
+	 * given runtime. The interpretation will call the sub-expression if the
+	 * given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
 	 * The interpretation will transform the value on top of the stack and put
@@ -151,24 +149,26 @@ public class PathExpressionInterpreter
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretPredicateExpression(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretPredicateExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * redirect to subexpression
 		 */
-		IExpressionInterpreter<PredicateInvocation> ex = getInterpretersFilteredByEypressionType(runtime,
-				PredicateInvocation.class).get(0);
-		ex.interpret(runtime);
+		IExpressionInterpreter<PredicateInvocation> ex = getInterpretersFilteredByEypressionType(runtime, PredicateInvocation.class).get(0);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 
 	/**
-	 * The method is called to
-	 * interpret the given sub-expression by using the given runtime. The
-	 * interpretation will call the sub-expression if the given expression isn't a
-	 * leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the
+	 * given runtime. The interpretation will call the sub-expression if the
+	 * given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
 	 * The interpretation will transform the value on top of the stack and put
@@ -178,25 +178,27 @@ public class PathExpressionInterpreter
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretISAExpression(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretISAExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 
 		/*
 		 * redirect to subexpression
 		 */
-		IExpressionInterpreter<ISAExpression> ex = getInterpretersFilteredByEypressionType(runtime,
-				ISAExpression.class).get(0);
-		ex.interpret(runtime);
+		IExpressionInterpreter<ISAExpression> ex = getInterpretersFilteredByEypressionType(runtime, ISAExpression.class).get(0);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 
 	/**
-	 * The method is called to
-	 * interpret the given sub-expression by using the given runtime. The
-	 * interpretation will call the sub-expression if the given expression isn't a
-	 * leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the
+	 * given runtime. The interpretation will call the sub-expression if the
+	 * given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
 	 * The interpretation will transform the value on top of the stack and put
@@ -206,17 +208,20 @@ public class PathExpressionInterpreter
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretAKOExpression(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretAKOExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * Call subexpression
 		 */
-		IExpressionInterpreter<AKOExpression> ex = getInterpretersFilteredByEypressionType(runtime,
-				AKOExpression.class).get(0);
-		ex.interpret(runtime);
+		IExpressionInterpreter<AKOExpression> ex = getInterpretersFilteredByEypressionType(runtime, AKOExpression.class).get(0);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 
 }

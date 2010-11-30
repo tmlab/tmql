@@ -11,15 +11,21 @@
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tmapi.core.Construct;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
-import de.topicmapslab.tmql4j.exception.DataBridgeException;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
+import de.topicmapslab.tmql4j.path.components.navigation.NavigationHandler;
+import de.topicmapslab.tmql4j.path.components.navigation.model.INavigationAxis;
+import de.topicmapslab.tmql4j.path.components.navigation.model.ITypeHierarchyNavigationAxis;
 import de.topicmapslab.tmql4j.path.grammar.lexical.MoveForward;
 import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisInstances;
 import de.topicmapslab.tmql4j.path.grammar.productions.Step;
@@ -59,13 +65,8 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
-
-		/*
-		 * log it :)
-		 */
-		logger.info("Start");
-
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		try {
 
 			/*
@@ -88,18 +89,14 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 				/*
 				 * set anchor ( topic-type )
 				 */
-				try {
-					anchor = runtime.getDataBridge().getConstructByIdentifier(
-							runtime, getTokens().get(0));
-				} catch (DataBridgeException e) {
-					logger.warn("Cannot find optional type argument "
-							+ getTokens().get(0));
+				anchor = runtime.getConstructResolver().getConstructByIdentifier(context, getTokens().get(0));
+				if (anchor == null) {
+					logger.warn("Cannot find optional type argument " + getTokens().get(0));
 				}
 				/*
 				 * set types axis
 				 */
-				axis = runtime.getDataBridge().getImplementationOfTMQLAxis(
-						runtime, "types");
+				axis = NavigationHandler.buildHandler().lookup(NavigationAxis.types);
 				/*
 				 * set direction
 				 */
@@ -129,33 +126,32 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 				/*
 				 * peek set from stack and read @_ and set as anchor
 				 */
-				anchor = runtime.getRuntimeContext().peek().getValue(
-						VariableNames.CURRENT_TUPLE);
+				anchor = context.getCurrentNode();
 				/*
 				 * set axis
 				 */
-				axis = runtime.getDataBridge().getImplementationOfTMQLAxis(
-						runtime, getTokens().get(1));
+				axis = NavigationHandler.buildHandler().lookup(NavigationAxis.valueOf(getTokens().get(1)));
 				/*
 				 * set optional if exists
 				 */
 				if (getTokens().size() == 3) {
 					final String optional_ = getTokens().get(2);
 					if (optional_.startsWith("$")) {
-						optional = (Construct) runtime.getRuntimeContext()
-								.peek().getValue(optional_);
-					} else {
-						try {
-							optional = runtime.getDataBridge()
-									.getConstructByIdentifier(runtime,
-											getTokens().get(2));
-						} catch (DataBridgeException e) {
-							logger.warn("Cannot find optional type argument "
-									+ getTokens().get(0));
-							runtime.getRuntimeContext().peek().setValue(
-									VariableNames.QUERYMATCHES, new QueryMatches(runtime));
-							return;
+						if (context.getContextBindings() != null) {
+							List<Object> optionals = context.getContextBindings().getPossibleValuesForVariable(optional_);
+							if (!optionals.isEmpty()) {
+								optional = (Construct) optionals.get(0);
+							}
 						}
+					} else {
+						optional = runtime.getConstructResolver().getConstructByIdentifier(context, optional_);
+					}
+					/*
+					 * optional should not be null if optional argument is used
+					 */
+					if (optional == null) {
+						logger.warn("Cannot find optional type argument " + getTokens().get(0));
+						return QueryMatches.emptyMatches();
 					}
 
 				}
@@ -166,32 +162,16 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 			}
 
 			if (anchor == null) {
-				runtime.getRuntimeContext().peek().setValue(
-						VariableNames.QUERYMATCHES, new QueryMatches(runtime));
-				return;
+				logger.warn("Anchor is missing!");
+				return QueryMatches.emptyMatches();
 			}
-
-			if (axis == null) {
-				throw new TMQLRuntimeException(
-						"Cannot find axis implementation for identifier '"
-								+ getTokens().get(1) + "'");
-			}
-
 			/*
 			 * set topic map to navigation axis
 			 */
-			axis.setTopicMap(runtime.getTopicMap());
-			axis.setEnvironment(runtime.getInitialContext().getEnvironment()
-					.getTopicMap());
+			axis.setTopicMap(context.getQuery().getTopicMap());
 			if (axis instanceof ITypeHierarchyNavigationAxis) {
-				((ITypeHierarchyNavigationAxis) axis).setTransitivity(runtime
-						.isActsTransitive());
+				((ITypeHierarchyNavigationAxis) axis).setTransitivity(context.isTransitive());
 			}
-
-			/*
-			 * create query-matches
-			 */
-			QueryMatches matches = new QueryMatches(runtime);
 			/*
 			 * execute navigation by calling navigation API
 			 */
@@ -204,22 +184,11 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 			/*
 			 * convert navigation results to tuple-sequence and store
 			 */
-			matches.convertToTuples(navigationResults);
-			runtime.getRuntimeContext().peek().setValue(
-					VariableNames.QUERYMATCHES, matches);
-
+			return QueryMatches.asQueryMatch(runtime, navigationResults.toArray());
 		} catch (TMQLRuntimeException ex) {
 			throw ex;
 		} catch (Exception ex) {
-			runtime.getRuntimeContext().peek().setValue(
-					VariableNames.QUERYMATCHES, new QueryMatches(runtime));
+			return QueryMatches.emptyMatches();
 		}
-		/**
-		 * log it :)
-		 */
-		Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
-		logger.info("Finishing! Results: "
-				+ runtime.getRuntimeContext().peek().getValue(
-						VariableNames.QUERYMATCHES));
 	}
 }

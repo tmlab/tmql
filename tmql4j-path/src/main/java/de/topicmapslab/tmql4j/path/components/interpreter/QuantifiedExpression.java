@@ -113,18 +113,19 @@ public abstract class QuantifiedExpression<T extends IExpression> extends Expres
 	 * 
 	 * @param runtime
 	 *            the runtime
-	 * @param tuple
-	 *            current tuple
+	 * @param context
+	 *            the context
 	 * @param results
 	 *            the results to check
 	 * 
 	 * @return <code>true</code> if it satisfies, <code>false</code> otherwise.
 	 */
-	protected abstract boolean doSatisfy(ITMQLRuntime runtime, Map<String, Object> tuple, IResultSet<?> results);
+	protected abstract boolean doSatisfy(ITMQLRuntime runtime, IContext context, IResultSet<?> results);
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		QueryMatches results = new QueryMatches(runtime);
 
@@ -251,7 +252,9 @@ public abstract class QuantifiedExpression<T extends IExpression> extends Expres
 						 * satisfy?
 						 */
 						synchronized (results) {
-							if (doSatisfy(parent, tuple, set)) {
+							Context newContext = new Context(context);
+							newContext.setCurrentTuple(tuple);
+							if (doSatisfy(parent, newContext, set)) {
 								results.add(tuple);
 							} else {
 								results.getNegation().add(tuple);

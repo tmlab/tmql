@@ -81,20 +81,25 @@ public class TmdmSubjectIdentifier {
 	 *         <code>false</code> otherwise.
 	 */
 	public static boolean isTmdmSubjectIdentifier(final String identifier) {
-		return identifier.equalsIgnoreCase(TMDM_ASSOCIATION_ROLE_TYPE)
-				|| identifier.equalsIgnoreCase(TMDM_ASSOCIATION_TYPE)
-				|| identifier.equalsIgnoreCase(TMDM_DEFAULT_NAME_TYPE)
-				|| identifier.equalsIgnoreCase(TMDM_INSTANCE_ROLE_TYPE)
-				|| identifier.equalsIgnoreCase(TMDM_NAME_TYPE)
-				|| identifier.equalsIgnoreCase(TMDM_OCCURRENCE_TYPE)
-				|| identifier.equalsIgnoreCase(TMDM_SUBTYPE_ROLE_TYPE)
-				|| identifier.equalsIgnoreCase(TMDM_SUPERTYPE_ROLE_TYPE)
-				|| identifier
-						.equalsIgnoreCase(TMDM_SUPERTYPE_SUBTYPE_ASSOCIATION)
-				|| identifier.equalsIgnoreCase(TMDM_TOPIC_TYPE)
-				|| identifier
-						.equalsIgnoreCase(TMDM_TYPE_INSTANCE_ASSOCIATION_TYPE)
-				|| identifier.equalsIgnoreCase(TMDM_TYPE_ROLE_TYPE);
+		return identifier.equalsIgnoreCase(TMDM_ASSOCIATION_ROLE_TYPE) || identifier.equalsIgnoreCase(TMDM_ASSOCIATION_TYPE) || identifier.equalsIgnoreCase(TMDM_DEFAULT_NAME_TYPE)
+				|| identifier.equalsIgnoreCase(TMDM_INSTANCE_ROLE_TYPE) || identifier.equalsIgnoreCase(TMDM_NAME_TYPE) || identifier.equalsIgnoreCase(TMDM_OCCURRENCE_TYPE)
+				|| identifier.equalsIgnoreCase(TMDM_SUBTYPE_ROLE_TYPE) || identifier.equalsIgnoreCase(TMDM_SUPERTYPE_ROLE_TYPE) || identifier.equalsIgnoreCase(TMDM_SUPERTYPE_SUBTYPE_ASSOCIATION)
+				|| identifier.equalsIgnoreCase(TMDM_TOPIC_TYPE) || identifier.equalsIgnoreCase(TMDM_TYPE_INSTANCE_ASSOCIATION_TYPE) || identifier.equalsIgnoreCase(TMDM_TYPE_ROLE_TYPE);
 	}
 
+	/**
+	 * Utility method to check if the given object is a string with the value
+	 * "tm:subject"
+	 * 
+	 * @param obj
+	 *            the object
+	 * @return <code>true</code> if the object is the string "tm:subject",
+	 *         <code>false</code> otherwise
+	 */
+	public static boolean isTmdmSubject(Object obj) {
+		if (obj instanceof String) {
+			return obj.toString().endsWith(TMDM_SUBJECT);
+		}
+		return false;
+	}
 }

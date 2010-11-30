@@ -15,8 +15,11 @@ import java.util.Map.Entry;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.path.components.processor.core.Context;
 import de.topicmapslab.tmql4j.path.grammar.productions.FlwrExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.ForClause;
 import de.topicmapslab.tmql4j.path.grammar.productions.OrderByClause;
@@ -39,8 +42,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.WhereClause;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class FlwrExpressionInterpreter extends
-		ExpressionInterpreterImpl<FlwrExpression> {
+public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExpression> {
 
 	/**
 	 * base constructor to create a new instance
@@ -55,16 +57,14 @@ public class FlwrExpressionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
-
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		boolean emptyForResults = false;
-
-		QueryMatches results = interpreteForClauses(runtime);
+		QueryMatches results = interpreteForClauses(runtime, context, optionalArguments);
 		/*
 		 * check if at least one for clause does not match to any variable
 		 */
-		for (ForClause forClause : getExpression().getExpressionFilteredByType(
-				ForClause.class)) {
+		for (ForClause forClause : getExpression().getExpressionFilteredByType(ForClause.class)) {
 			try {
 				String variable = forClause.getVariables().get(0);
 				if (!results.getOrderedKeys().contains(variable)) {
@@ -83,30 +83,27 @@ public class FlwrExpressionInterpreter extends
 			 * check if where clause exists and any variable is contained
 			 */
 			if (containsExpressionsType(WhereClause.class)) {
-				results = interpreteWhereClause(runtime, results);
+				Context newContext = new Context(context);
+				newContext.setContextBindings(results);
+				results = interpreteWhereClause(runtime, newContext, optionalArguments);
 			}
 
 			/*
 			 * check if order-by clause exists and any variable is contained
 			 */
 			if (containsExpressionsType(OrderByClause.class)) {
-				results = interpreteOrderByClause(runtime, results);
+				Context newContext = new Context(context);
+				newContext.setContextBindings(results);
+				results = interpreteOrderByClause(runtime, newContext, optionalArguments);
 			}
-
-			results = interpretReturnClause(runtime, results);
+			Context newContext = new Context(context);
+			newContext.setContextBindings(results);
+			return interpretReturnClause(runtime, newContext, optionalArguments);
 		}
 		/*
 		 * results of for-clause are empty
 		 */
-		else {
-			results = new QueryMatches(runtime);
-		}
-		/*
-		 * set overall results on top of the stack
-		 */
-		runtime.getRuntimeContext().peek().setValue(VariableNames.QUERYMATCHES,
-				results);
-
+		return QueryMatches.emptyMatches();
 	}
 
 	/**
@@ -122,53 +119,31 @@ public class FlwrExpressionInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
-	 * @param tuples
-	 *            the satisfying variable bindings of the where-clause
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
 	 * @return the query matches containing the results of the interpretation of
 	 *         the sub-expression
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private QueryMatches interpreteOrderByClause(TMQLRuntime runtime,
-			QueryMatches tuples) throws TMQLRuntimeException {
+	private QueryMatches interpreteOrderByClause(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * check if order-by clause exists and any variable is contained
 		 */
-		if (containsExpressionsType(OrderByClause.class) && !tuples.isEmpty()) {
+		if (context.getContextBindings() != null) {
 			/*
 			 * get order-by-clause
 			 */
-			IExpressionInterpreter<OrderByClause> orderByClause = getInterpretersFilteredByEypressionType(
-					runtime, OrderByClause.class).get(0);
-
-			/*
-			 * set binding to set on top of the stack, which has to order
-			 */
-			runtime.getRuntimeContext().push().setValue(VariableNames.ORDER,
-					tuples);
+			IExpressionInterpreter<OrderByClause> orderByClause = getInterpretersFilteredByEypressionType(runtime, OrderByClause.class).get(0);
 
 			/*
 			 * call order-by-clause
 			 */
-			orderByClause.interpret(runtime);
-
-			/*
-			 * pop from stack
-			 */
-			Object obj = runtime.getRuntimeContext().pop().getValue(
-					VariableNames.QUERYMATCHES);
-			/*
-			 * check result type, has to be an instance of Map<?,?>
-			 */
-			if (obj instanceof QueryMatches) {
-				return (QueryMatches) obj;
-			} else {
-				throw new TMQLRuntimeException(
-						"Invalid interpretation of expression orderBby-clause. Has to return an instance of QueryMatches.");
-			}
-
+			return orderByClause.interpret(runtime, context, optionalArguments);
 		}
-		return tuples;
+		return QueryMatches.emptyMatches();
 	}
 
 	/**
@@ -184,89 +159,48 @@ public class FlwrExpressionInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
-	 * @param matches
-	 *            the satisfying and ordered variable bindings of the
-	 *            where-clause
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
 	 * @return the query matches containing the results of the interpretation of
 	 *         the sub-expression
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private QueryMatches interpretReturnClause(TMQLRuntime runtime,
-			QueryMatches matches) throws TMQLRuntimeException {
-
+	private QueryMatches interpretReturnClause(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * only one select clause has to be contained
 		 */
 		if (!containsExpressionsType(ReturnClause.class)) {
-			throw new TMQLRuntimeException(
-					"Invalid structure. not return clause.");
+			throw new TMQLRuntimeException("Invalid structure. not return clause.");
+		}
+		/*
+		 * Return empty matches if the given context is empty
+		 */
+		if (context.getContextBindings() == null) {
+			return QueryMatches.emptyMatches();
 		}
 
 		/*
 		 * extract the select clause
 		 */
-		IExpressionInterpreter<ReturnClause> returnClauseInterpreter = getInterpretersFilteredByEypressionType(
-				runtime, ReturnClause.class).get(0);
+		IExpressionInterpreter<ReturnClause> returnClauseInterpreter = getInterpretersFilteredByEypressionType(runtime, ReturnClause.class).get(0);
 
 		/*
 		 * check if return-clause is dependent from variables and results is not
 		 * empty
 		 */
-		boolean ignore = false;
-		for (IExpressionInterpreter<ForClause> interpreter : getInterpretersFilteredByEypressionType(
-				runtime, ForClause.class)) {
-			if (matches.getPossibleValuesForVariable(
-					interpreter.getTokens().get(1)).isEmpty()) {
-				ignore = true;
-				break;
+		for (IExpressionInterpreter<ForClause> interpreter : getInterpretersFilteredByEypressionType(runtime, ForClause.class)) {
+			if (context.getContextBindings().getPossibleValuesForVariable(interpreter.getTokens().get(1)).isEmpty()) {
+				return QueryMatches.emptyMatches();
 			}
 
-		}
-
-		/*
-		 * check if return-clause can ignored because of missing value for at
-		 * least one variable
-		 */
-		if (!ignore) {
-			/*
-			 * push to the top of the stack
-			 */
-			runtime.getRuntimeContext().push();
-			if (!matches.isEmpty()) {
-				runtime.getRuntimeContext().peek().setValue(
-						VariableNames.ITERATED_BINDINGS, matches);
-			} else {
-				runtime.getRuntimeContext().peek().remove(
-						VariableNames.ITERATED_BINDINGS);
-			}
-
-			/*
-			 * call sub expression
-			 */
-			returnClauseInterpreter.interpret(runtime);
-
-			/*
-			 * pop from top of the stack
-			 */
-			Object obj = runtime.getRuntimeContext().pop().getValue(
-					VariableNames.QUERYMATCHES);
-			/*
-			 * check result type
-			 */
-			if (!(obj instanceof QueryMatches)) {
-				throw new TMQLRuntimeException(
-						"Invalid interpretation of expression return-clause. Has to return an instance of QueryMatches.");
-			}
-
-			return (QueryMatches) obj;
 		}
 		/*
-		 * ignore return clause
+		 * call sub expression
 		 */
-		else {
-			return new QueryMatches(runtime);
-		}
+		return returnClauseInterpreter.interpret(runtime, context, optionalArguments);
 	}
 
 	/**
@@ -282,54 +216,33 @@ public class FlwrExpressionInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
-	 * @param bindings
-	 *            the variable bindings context defined by the for-clauses
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
 	 * @return the query matches containing the results of the interpretation of
 	 *         the sub-expression
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private QueryMatches interpreteWhereClause(TMQLRuntime runtime,
-			QueryMatches bindings) throws TMQLRuntimeException {
+	private QueryMatches interpreteWhereClause(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * get where-clause
 		 */
-		IExpressionInterpreter<WhereClause> whereClause = getInterpretersFilteredByEypressionType(
-				runtime, WhereClause.class).get(0);
-
-		/*
-		 * push on top of the stack
-		 */
-		runtime.getRuntimeContext().push();
-
-		runtime.getRuntimeContext().peek().setValue(
-				VariableNames.ITERATED_BINDINGS, bindings);
+		IExpressionInterpreter<WhereClause> whereClause = getInterpretersFilteredByEypressionType(runtime, WhereClause.class).get(0);
 		/*
 		 * call where-clause
 		 */
-		whereClause.interpret(runtime);
-
-		/*
-		 * pop from stack
-		 */
-		Object obj = runtime.getRuntimeContext().peek().getValue(
-				VariableNames.QUERYMATCHES);
-
-		/*
-		 * check result type, has to be an instance of ITupleSequence<?>
-		 */
-		if (!(obj instanceof QueryMatches)) {
-			throw new TMQLRuntimeException(
-					"Invalid interpretation of expression where-clause. Has to return an instance of QueryMatches.");
-		}
-		QueryMatches matches = (QueryMatches) obj;
-
-		QueryMatches result = new QueryMatches(runtime);
+		// TODO use for iteration results as iteration bindings
+		Context newContext = new Context(context);
+		newContext.setContextBindings(null);
+		QueryMatches matches = whereClause.interpret(runtime, newContext, optionalArguments);
 		/*
 		 * iterate of all bindings if bindings and results are not empty
 		 */
-		if (!bindings.isEmpty()) {
-			if (!matches.isEmpty()) {
+		if (!matches.isEmpty()) {
+			if (context.getContextBindings() != null) {
+				QueryMatches results = new QueryMatches(runtime);
 				/*
 				 * iterate over tuples
 				 */
@@ -343,23 +256,22 @@ public class FlwrExpressionInterpreter extends
 						 * check if possible bindings of the where-clause are
 						 * contained by the for-clauses-bindings
 						 */
-						if (bindings.getOrderedKeys().contains(entry.getKey())) {
-							satisfy = bindings.getPossibleValuesForVariable(
-									entry.getKey()).contains(entry.getValue());
+						if (context.getContextBindings().getOrderedKeys().contains(entry.getKey())) {
+							satisfy = context.getContextBindings().getPossibleValuesForVariable(entry.getKey()).contains(entry.getValue());
 						}
 						if (!satisfy) {
 							break;
 						}
 					}
 					if (satisfy) {
-						result.add(tuple);
+						results.add(tuple);
 					}
 				}
+				return results;
 			}
-		} else {
-			result = matches;
+			return matches;
 		}
-		return result;
+		return QueryMatches.emptyMatches();
 	}
 
 	/**
@@ -375,17 +287,20 @@ public class FlwrExpressionInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
 	 * @return the query matches containing the results of the interpretation of
 	 *         the sub-expression
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private QueryMatches interpreteForClauses(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpreteForClauses(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * Cache to store all possible bindings of contained variables
 		 */
-		QueryMatches[] bindings = extractArguments(runtime, ForClause.class);
+		QueryMatches[] bindings = extractArguments(runtime, ForClause.class, context, optionalArguments);
 		return new QueryMatches(runtime, bindings);
 	}
 }

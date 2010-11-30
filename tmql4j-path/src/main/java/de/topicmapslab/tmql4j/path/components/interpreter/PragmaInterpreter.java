@@ -10,7 +10,13 @@
  */
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.productions.Pragma;
 
@@ -33,6 +39,11 @@ import de.topicmapslab.tmql4j.path.grammar.productions.Pragma;
 public class PragmaInterpreter extends ExpressionInterpreterImpl<Pragma> {
 
 	/**
+	 * the Logger
+	 */
+	private Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
+
+	/**
 	 * base constructor to create a new instance
 	 * 
 	 * @param ex
@@ -45,8 +56,8 @@ public class PragmaInterpreter extends ExpressionInterpreterImpl<Pragma> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
-
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * extract identifier
 		 */
@@ -64,30 +75,20 @@ public class PragmaInterpreter extends ExpressionInterpreterImpl<Pragma> {
 			 * check if value is tm:intransitive
 			 */
 			if (qiri.equalsIgnoreCase("tm:intransitive")) {
-				/*
-				 * switch type-transitivity off
-				 */
-				runtime.getProperties().setProperty(
-						TMQLRuntimeProperties.TMDM_TYPE_TRANSITIVITY, "false");				
-				runtime.setActsTransitive(false);
+				context.setTransitive(false);
 			}
 			/*
 			 * check if value is tm:transitive
 			 */
 			else if (qiri.equalsIgnoreCase("tm:transitive")) {
-				/*
-				 * switch type-transitivity on
-				 */
-				runtime.getProperties().setProperty(
-						TMQLRuntimeProperties.TMDM_TYPE_TRANSITIVITY, "true");				
-				runtime.setActsTransitive(true);
+				context.setTransitive(true);
 			} else {
-				throw new TMQLRuntimeException("Unknown QIRI for taxonometry.");
+				logger.warn("Value '" + qiri + "' is unknown for pragma '" + identifier + "'");
 			}
 		} else {
-			throw new TMQLRuntimeException("Unknown identifier " + identifier);
+			logger.warn("Pragma '" + identifier + "' with value '" + qiri + "' is unknown.");
 		}
-
+		return QueryMatches.emptyMatches();
 	}
 
 }

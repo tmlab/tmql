@@ -222,7 +222,7 @@ public class ConstructResolver implements IConstructResolver {
 				 */
 				if (topic == null && !identifier.equalsIgnoreCase(identifier_)) {
 					/*
-					 * materialyzation is allowed
+					 * materialization is allowed
 					 */
 					if (runtime.getProperties().isMaterializeMetaModel()) {
 						return map.createTopicBySubjectIdentifier(locator);

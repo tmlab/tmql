@@ -18,7 +18,9 @@ import org.slf4j.LoggerFactory;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
@@ -28,6 +30,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Substraction;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Union;
 import de.topicmapslab.tmql4j.path.grammar.productions.Content;
 import de.topicmapslab.tmql4j.path.grammar.productions.PathExpression;
+import de.topicmapslab.tmql4j.path.util.QueryMatchUtils;
 
 /**
  * 
@@ -93,54 +96,49 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		switch (getGrammarTypeOfExpression()) {
 		/*
 		 * is content ::= content ( UNION | MINUS | INTERSECT ) content
 		 */
 		case Content.TYPE_SET_OPERATION: {
-			interpretSetOperation(runtime);
+			return interpretSetOperation(runtime, context, optionalArguments);
 		}
-			break;
-		/*
-		 * is { query-expression }
-		 */
+			/*
+			 * is { query-expression }
+			 */
 		case Content.TYPE_QUERY_EXPRESSION: {
-			interpretQueryExpression(runtime);
+			return interpretQueryExpression(runtime, context, optionalArguments);
 		}
-			break;
-		/*
-		 * is if path-expression then content [ else content ]
-		 */
+			/*
+			 * is if path-expression then content [ else content ]
+			 */
 		case Content.TYPE_CONDITIONAL_EXPRESSION: {
-			interpretConditionalPathExpression(runtime);
+			return interpretConditionalPathExpression(runtime, context, optionalArguments);
 		}
-			break;
-		/*
-		 * is tm-content
-		 */
+			/*
+			 * is tm-content
+			 */
 		case Content.TYPE_CTM_EXPRESSION: {
-			interpretTMContent(runtime);
+			return interpretTMContent(runtime, context, optionalArguments);
 		}
-			break;
-		/*
-		 * is xml-content
-		 */
+			/*
+			 * is xml-content
+			 */
 		case Content.TYPE_XML_EXPRESSION: {
-			interpretXMLContent(runtime);
+			return interpretXMLContent(runtime, context, optionalArguments);
 		}
-			break;
-		/*
-		 * is path-expression-1 || path-expression-2 ==> if path-expression-1
-		 * then { path-expression-1 } else { path-expression-2 }
-		 */
+			/*
+			 * is path-expression-1 || path-expression-2 ==> if
+			 * path-expression-1 then { path-expression-1 } else {
+			 * path-expression-2 }
+			 */
 		case Content.TYPE_NONCANONICAL_CONDITIONAL_EXPRESSION: {
-			interpretConditionalPathExpression(runtime);
+			return interpretConditionalPathExpression(runtime, context, optionalArguments);
 		}
-			break;
-		default:
-			throw new TMQLRuntimeException("Unexpected state!");
 		}
+		return QueryMatches.emptyMatches();
 	}
 
 	/**
@@ -156,13 +154,17 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretSetOperation(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretSetOperation(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 
-		QueryMatches[] content = extractArguments(runtime, Content.class);
+		QueryMatches[] content = extractArguments(runtime, Content.class, context, optionalArguments);
 
 		/*
 		 * get language-specific token of set-operator
@@ -204,8 +206,8 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 		 * is unknown operator
 		 */
 		else {
-			throw new TMQLRuntimeException("Unknown operator '"
-					+ operator.getSimpleName() + "'!");
+			logger.warn("Unknown operator '" + operator.getSimpleName() + "' for content!");
+			return QueryMatches.emptyMatches();
 		}
 
 		/*
@@ -214,15 +216,10 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 		negation.removeAll(result.getMatches());
 		result.addNegation(negation);
 		/*
-		 * set overall result to %%%____
-		 */
-		runtime.getRuntimeContext().peek()
-				.setValue(VariableNames.QUERYMATCHES, result);
-
-		/*
 		 * log it
 		 */
-		logger.info("Finished! Results: " + result);
+		logger.debug("Finished! Results: " + result);
+		return result;
 	}
 
 	/**
@@ -238,16 +235,20 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretQueryExpression(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretQueryExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * redirect to sub-expression
 		 */
 		IExpressionInterpreter<?> ex = getInterpreters(runtime).get(0);
-		ex.interpret(runtime);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 
 	/**
@@ -263,16 +264,19 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretConditionalPathExpression(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
-		logger.info("Start");
+	private QueryMatches interpretConditionalPathExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		logger.debug("Start");
 
-		QueryMatches[] pathContent = extractArguments(runtime,
-				PathExpression.class);
-		QueryMatches[] content = extractArguments(runtime, Content.class);
+		QueryMatches[] pathContent = extractArguments(runtime, PathExpression.class, context, optionalArguments);
+		QueryMatches[] content = extractArguments(runtime, Content.class, context, optionalArguments);
 		/*
 		 * use else-content if exists
 		 */
@@ -282,30 +286,19 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 			 * subexpression or if first token don't equals IF and there are two
 			 * subexpression
 			 */
-			if ((getTmqlTokens().get(0).equals(If.class) && getInterpreters(
-					runtime).size() == 3)) {
-				runtime.getRuntimeContext().peek()
-						.setValue(VariableNames.QUERYMATCHES, content[1]);
-				logger.info("Finished! Results: " + content[1]);
-			} else if (!getTmqlTokens().get(0).equals(If.class)
-					&& getInterpreters(runtime).size() == 2) {
-				runtime.getRuntimeContext()
-						.peek()
-						.setValue(VariableNames.QUERYMATCHES,
-								pathContent[pathContent.length - 1]);
-
-				logger.info("Finished! Results: "
-						+ pathContent[pathContent.length - 1]);
+			if ((getTmqlTokens().get(0).equals(If.class) && getInterpreters(runtime).size() == 3)) {
+				logger.debug("Finished! Results: " + content[1]);
+				return content[1];
+			} else if (!getTmqlTokens().get(0).equals(If.class) && getInterpreters(runtime).size() == 2) {
+				logger.debug("Finished! Results: " + pathContent[pathContent.length - 1]);
+				return pathContent[pathContent.length - 1];
 			}
 			/*
 			 * no else-content contained returns an empty sequence
 			 */
 			else {
-				runtime.getRuntimeContext()
-						.peek()
-						.setValue(VariableNames.QUERYMATCHES,
-								new QueryMatches(runtime));
-				logger.info("Finished! Results are empty");
+				logger.debug("Finished! Results are empty");
+				return QueryMatches.emptyMatches();
 			}
 		}
 		/*
@@ -316,20 +309,13 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 			 * there is an else-expression
 			 */
 			if (getTmqlTokens().contains(If.class)) {
-				runtime.getRuntimeContext().peek()
-						.setValue(VariableNames.QUERYMATCHES, content[0]);
+				return content[0];
 			}
 			/*
 			 * shortcut condition
 			 */
 			else {
-				runtime.getRuntimeContext()
-						.peek()
-						.setValue(
-								VariableNames.QUERYMATCHES,
-								pathContent[0]
-										.extractAndRenameBindingsForVariable(QueryMatches
-												.getNonScopedVariable()));
+				return pathContent[0].extractAndRenameBindingsForVariable(QueryMatches.getNonScopedVariable());
 			}
 		}
 	}
@@ -347,16 +333,20 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretXMLContent(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretXMLContent(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * redirect to sub-expression
 		 */
 		IExpressionInterpreter<?> ex = getInterpreters(runtime).get(0);
-		ex.interpret(runtime);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 
 	/**
@@ -372,15 +362,19 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretTMContent(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretTMContent(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * redirect to sub-expression
 		 */
 		IExpressionInterpreter<?> ex = getInterpreters(runtime).get(0);
-		ex.interpret(runtime);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 }

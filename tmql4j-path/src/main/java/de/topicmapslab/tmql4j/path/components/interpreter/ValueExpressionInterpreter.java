@@ -10,13 +10,21 @@
  */
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
+import static de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression.TYPE_CONTENT;
+import static de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression.TYPE_FUNCTION_INVOCATION;
+import static de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression.TYPE_INFIX_OPERATOR;
+import static de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression.TYPE_PREFIX_OPERATOR;
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Asc;
+import de.topicmapslab.tmql4j.path.grammar.productions.Content;
 import de.topicmapslab.tmql4j.path.grammar.productions.FunctionInvocation;
 import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
+import de.topicmapslab.tmql4j.path.util.QueryMatchUtils;
 
 /**
  * 
@@ -68,11 +76,11 @@ public class ValueExpressionInterpreter extends
 		super(ex);
 		indexOfOperator = ((ValueExpression) ex).getIndexOfOperator();
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {		
 		/*
 		 * switch by grammar type
 		 */

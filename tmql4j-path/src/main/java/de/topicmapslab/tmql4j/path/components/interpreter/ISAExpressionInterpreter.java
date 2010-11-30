@@ -18,10 +18,18 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
+import de.topicmapslab.tmql4j.path.components.navigation.NavigationHandler;
+import de.topicmapslab.tmql4j.path.components.navigation.model.INavigationAxis;
+import de.topicmapslab.tmql4j.path.exception.NavigationException;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Variable;
 import de.topicmapslab.tmql4j.path.grammar.productions.ISAExpression;
+import de.topicmapslab.tmql4j.path.grammar.productions.SimpleContent;
 
 /**
  * 
@@ -41,8 +49,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.ISAExpression;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class ISAExpressionInterpreter extends
-		ExpressionInterpreterImpl<ISAExpression> {
+public class ISAExpressionInterpreter extends ExpressionInterpreterImpl<ISAExpression> {
 
 	/**
 	 * base constructor to create a new instance
@@ -57,31 +64,30 @@ public class ISAExpressionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
-
-		TopicMap topicMap = getQueriedTopicMap(runtime);
-
-		Object context = null;
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		TopicMap topicMap = context.getQuery().getTopicMap();
+		Object anchor = null;
 		String variable = null;
 		/*
 		 * context is a variable
 		 */
 		if (getTmqlTokens().get(0).equals(Variable.class)) {
-			context = getTokens().get(0);
+			anchor = getTokens().get(0);
 			variable = getTokens().get(0);
 		}
 		/*
 		 * context is any other content
 		 */
 		else {
-			QueryMatches m = extractArguments(runtime, SimpleContent.class, 0);
+			QueryMatches results = extractArguments(runtime, SimpleContent.class, 0, context, optionalArguments);
 			/*
 			 * empty content -> return
 			 */
-			if (m.getPossibleValuesForVariable().isEmpty()) {
-				return;
+			if (results.getPossibleValuesForVariable().isEmpty()) {
+				return QueryMatches.emptyMatches();
 			}
-			context = m.getPossibleValuesForVariable();
+			anchor = results.getPossibleValuesForVariable();
 			variable = QueryMatches.getNonScopedVariable();
 		}
 
@@ -89,82 +95,68 @@ public class ISAExpressionInterpreter extends
 		 * call the second simple-content expression representing the type
 		 * content
 		 */
-		QueryMatches simpleContent2 = extractArguments(runtime,
-				SimpleContent.class, 1);
+		QueryMatches simpleContent2 = extractArguments(runtime, SimpleContent.class, 1, context, optionalArguments);
 
 		/*
 		 * simple-content-1 is variable
 		 */
-		INavigationAxis axis = runtime.getDataBridge()
-				.getImplementationOfTMQLAxis(runtime, "instances");
-		axis.setTopicMap(topicMap);
-		/*
-		 * create query-matches containing the results
-		 */
-		QueryMatches matches = new QueryMatches(runtime);
-		/*
-		 * iterate over all values of right-hand content
-		 */
-		for (Object o : simpleContent2.getPossibleValuesForVariable()) {
+		try {
+			INavigationAxis axis = NavigationHandler.buildHandler().lookup(NavigationAxis.instances);
+			axis.setTopicMap(topicMap);
 			/*
-			 * get all instances of the current topic
+			 * create query-matches containing the results
 			 */
-			if (o instanceof Topic) {
-				try {
+			QueryMatches matches = new QueryMatches(runtime);
+			/*
+			 * iterate over all values of right-hand content
+			 */
+			for (Object o : simpleContent2.getPossibleValuesForVariable()) {
+				/*
+				 * get all instances of the current topic
+				 */
+				if (o instanceof Topic) {
+
 					for (Object obj_ : axis.navigateForward(o)) {
 						Map<String, Object> map = HashUtil.getHashMap();
 						map.put(variable, obj_);
 						matches.add(map);
 					}
-				} catch (NavigationException e) {
-					throw new TMQLRuntimeException(
-							"Interpretation fails because of failing navigation.",
-							e);
 				}
 			}
-		}
-
-		/*
-		 * context is any other query match -> create intersection
-		 */
-		if (context instanceof Collection<?>) {
-			Collection<?> col = (Collection<?>) context;
-			Collection<?> all = matches.getPossibleValuesForVariable();
-			col.retainAll(all);
-			matches = new QueryMatches(runtime);
-			matches.convertToTuples(col);
 			/*
-			 * set negation
+			 * context is any other query match -> create intersection
 			 */
-			QueryMatches negation = new QueryMatches(runtime);
-			all.remove(col);
-			negation.convertToTuples(all);
-			matches.addNegation(negation);
-		}
-		/*
-		 * context is variable
-		 */
-		else {
-			/*
-			 * } set negation
-			 */
-			Set<Topic> topics = HashUtil.getHashSet();
-			topics.addAll(topicMap.getTopics());
-			for (Object o : matches.getPossibleValuesForVariable(getTokens()
-					.get(0))) {
-				topics.remove(o);
+			if (anchor instanceof Collection<?>) {
+				Collection<?> col = (Collection<?>) anchor;
+				Collection<?> all = matches.getPossibleValuesForVariable();
+				col.retainAll(all);
+				matches = QueryMatches.asQueryMatch(runtime, col.toArray());
+				/*
+				 * set negation
+				 */
+				all.remove(col);
+				matches.addNegation(QueryMatches.asQueryMatch(runtime, all.toArray()));
 			}
-			QueryMatches negation = new QueryMatches(runtime);
-			negation.convertToTuples(topics, getTokens().get(0));
-			matches.addNegation(negation);
+			/*
+			 * context is variable
+			 */
+			else {
+				/*
+				 * set negation
+				 */
+				Set<Topic> topics = HashUtil.getHashSet();
+				topics.addAll(topicMap.getTopics());
+				for (Object o : matches.getPossibleValuesForVariable(getTokens().get(0))) {
+					topics.remove(o);
+				}
+				QueryMatches negation = new QueryMatches(runtime);
+				negation.convertToTuples(topics, getTokens().get(0));
+				matches.addNegation(negation);
+			}
+			return matches;
+		} catch (NavigationException e) {
+			throw new TMQLRuntimeException("Interpretation fails because of failing navigation.", e);
 		}
-
-		/*
-		 * set to stack
-		 */
-		runtime.getRuntimeContext().peek()
-				.setValue(VariableNames.QUERYMATCHES, matches);
-
 	}
 
 }
