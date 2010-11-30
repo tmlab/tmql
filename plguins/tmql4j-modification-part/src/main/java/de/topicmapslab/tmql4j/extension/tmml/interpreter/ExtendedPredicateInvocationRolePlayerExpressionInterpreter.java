@@ -219,7 +219,7 @@ public class ExtendedPredicateInvocationRolePlayerExpressionInterpreter extends
 			}
 		}else{
 			System.out.println("Execute value expression");
-			QueryMatches matches = extractArguments(runtime, ValueExpression.class, index);
+			QueryMatches matches = extractArguments(runtime, interpreter, VariableNames.QUERYMATCHES);
 			if ( !matches.isEmpty()){
 				System.out.println("Found topic: " + matches.get(0).get(QueryMatches.getNonScopedVariable()));
 				return matches.get(0).get(QueryMatches.getNonScopedVariable());

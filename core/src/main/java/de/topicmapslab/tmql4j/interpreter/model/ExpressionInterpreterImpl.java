@@ -259,7 +259,6 @@ public abstract class ExpressionInterpreterImpl<T extends IExpression>
 	 * @param R
 	 *            the type the result will be convert to
 	 */
-	@SuppressWarnings("unchecked")
 	protected <E extends IExpression, R extends Object> R extractArguments(
 			final TMQLRuntime runtime, final Class<E> type, int index,
 			final String variable) throws TMQLRuntimeException {
@@ -280,8 +279,38 @@ public abstract class ExpressionInterpreterImpl<T extends IExpression>
 		/*
 		 * interpret contained expression at given position
 		 */
+		Object obj = extractArguments(runtime, interpreters.get(index), variable);
+		return (R) obj;		
+	}
+	
+	/**
+	 * Method extracts the arguments by calling the contained expression at the
+	 * specific index
+	 * 
+	 * @param runtime
+	 *            the current runtime
+	 * @param interpreter
+	 *            the interpreter to call
+	 * @param variable
+	 *            the name of the variable to extract as result of the called
+	 *            sub-expression
+	 * @return the result of interpreter execution
+	 * @throws TMQLRuntimeException
+	 *             thrown if execution failed
+	 * @param E
+	 *            the type of the sub-expression to call
+	 * @param R
+	 *            the type the result will be convert to
+	 */
+	@SuppressWarnings("unchecked")
+	protected <E extends IExpression, R extends Object> R extractArguments(
+			final TMQLRuntime runtime, IExpressionInterpreter<E> interpreter,
+			final String variable) throws TMQLRuntimeException {
+		/*
+		 * interpret contained expression at given position
+		 */
 		runtime.getRuntimeContext().push();
-		interpreters.get(index).interpret(runtime);
+		interpreter.interpret(runtime);
 		/*
 		 * extract results of execution
 		 */

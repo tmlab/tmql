@@ -10,6 +10,7 @@
  */
 package de.topicmapslab.tmql4j.interpreter.core.interpreter;
 
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -23,9 +24,8 @@ import de.topicmapslab.tmql4j.common.utility.VariableNames;
 import de.topicmapslab.tmql4j.interpreter.core.base.QueryMatches;
 import de.topicmapslab.tmql4j.interpreter.model.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.interpreter.model.IExpressionInterpreter;
-import de.topicmapslab.tmql4j.lexer.token.Variable;
 import de.topicmapslab.tmql4j.parser.core.expressions.PredicateInvocationRolePlayerExpression;
-import de.topicmapslab.tmql4j.parser.core.expressions.ValueExpression;
+import de.topicmapslab.tmql4j.parser.core.expressions.Variable;
 
 /**
  * 
@@ -73,7 +73,9 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends
 		if (getGrammarTypeOfExpression() == PredicateInvocationRolePlayerExpression.TYPE_ROLE_PLAYER_COMBINATION) {
 
 			final Object roleType;
-			if (containsExpressionsType(de.topicmapslab.tmql4j.parser.core.expressions.Variable.class)) {
+			List<IExpressionInterpreter<?>> interpreters = getInterpreters(runtime);
+			IExpressionInterpreter<?> interpreter = interpreters.get(0);
+			if (interpreter instanceof VariableInterpreter) {
 				if (runtime.getRuntimeContext().peek()
 						.contains(getVariables().get(0))) {
 					roleType = runtime.getRuntimeContext().peek()
@@ -82,8 +84,8 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends
 					roleType = getVariables().get(0);
 				}
 			} else {
-				QueryMatches matches = extractArguments(runtime,
-						ValueExpression.class, 0);
+				QueryMatches matches = extractArguments(runtime, interpreter,
+						VariableNames.QUERYMATCHES);
 
 				if (matches.isEmpty()) {
 					/*
@@ -112,9 +114,8 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends
 				}
 			}
 			final Object player;
-			IExpressionInterpreter<ValueExpression> interpreter = getInterpretersFilteredByEypressionType(
-					runtime, ValueExpression.class).get(1);
-			if (interpreter.getTmqlTokens().get(0).equals(Variable.class)) {
+			interpreter = interpreters.get(1);
+			if (interpreter instanceof VariableInterpreter) {
 				String var = interpreter.getTokens().get(0);
 				if (runtime.getRuntimeContext().peek().contains(var)) {
 					player = runtime.getRuntimeContext().peek().getValue(var);
@@ -122,8 +123,8 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends
 					player = var;
 				}
 			} else {
-				QueryMatches players = extractArguments(runtime,
-						ValueExpression.class, 1);
+				QueryMatches players = extractArguments(runtime, interpreter,
+						VariableNames.QUERYMATCHES);
 				/*
 				 * Transform result to mapping between role type an possible
 				 * players
