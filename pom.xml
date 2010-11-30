@@ -31,7 +31,7 @@
 			<url>http://www.tmapi.org/maven-repository/</url>
 		</repository>
 		<repository>
-			<id>tmapi</id>
+			<id>tmapi snapshots</id>
 			<url>http://www.tmapi.org/maven-repository/snapshots</url>
 		</repository>
 	</repositories>
