@@ -10,14 +10,13 @@ package de.topicmapslab.tmql4j.tests.merge;
 
 import static junit.framework.Assert.assertEquals;
 
-
 import org.junit.Test;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.majortom.util.FeatureStrings;
-import de.topicmapslab.tmql4j.common.core.query.TMQLQuery;
-import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.path.query.TMQLQuery;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
 
 /**
  * @author Sven Krosse
@@ -41,7 +40,7 @@ public class TestMergeExpressionPathStyle extends Tmql4JTestCase {
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(1L, set.first().first());
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, topicMap.getTopics().size());
 	}
 
@@ -69,7 +68,7 @@ public class TestMergeExpressionPathStyle extends Tmql4JTestCase {
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(1L, set.first().first());
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(n - 1, topicMap.getTopics().size());
 	}
 
@@ -106,7 +105,7 @@ public class TestMergeExpressionPathStyle extends Tmql4JTestCase {
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(1L, set.first().first());
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(n - 1, topicMap.getTopics().size());
 	}
 

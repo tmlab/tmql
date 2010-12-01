@@ -15,7 +15,6 @@ import java.util.Map.Entry;
 
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Equality;
@@ -31,6 +30,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.RegularExpression;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Star;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Unequals;
 import de.topicmapslab.tmql4j.util.ComparisonUtils;
+import de.topicmapslab.tmql4j.util.HashUtil;
 import de.topicmapslab.tmql4j.util.MathematicUtils;
 
 /**

@@ -12,12 +12,9 @@ package de.topicmapslab.tmql4j.path.grammar.productions;
 
 import java.util.List;
 
-import de.topicmapslab.tmql4j.components.processor.core.IContext;
-import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
-import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
@@ -85,7 +82,7 @@ public class Anchor extends ExpressionImpl {
 		Class<? extends IToken> token = getTmqlTokens().get(0);
 		if (token.equals(Dot.class)) {
 			setGrammarType(TYPE_DOT);
-		} else if (token.equals(Variable.class)) {
+		} else if (token.equals(de.topicmapslab.tmql4j.path.grammar.lexical.Variable.class)) {
 			setGrammarType(TYPE_VARIABLE);
 		} else if (token.equals(Literal.class)) {
 			setGrammarType(TYPE_LITERAL);
@@ -105,14 +102,6 @@ public class Anchor extends ExpressionImpl {
 			return false;
 		}
 		Class<? extends IToken> token = getTmqlTokens().get(0);
-		return token.equals(Dot.class) || token.equals(Variable.class) || token.equals(Element.class) || token.equals(Literal.class) || token.equals(DatatypedElement.class);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
+		return token.equals(Dot.class) || token.equals(de.topicmapslab.tmql4j.path.grammar.lexical.Variable.class) || token.equals(Element.class) || token.equals(Literal.class) || token.equals(DatatypedElement.class);
 	}
 }

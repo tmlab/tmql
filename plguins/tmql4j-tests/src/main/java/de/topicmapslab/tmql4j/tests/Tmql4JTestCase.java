@@ -16,15 +16,16 @@ import org.tmapi.core.Association;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
+import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
 import org.tmapix.io.XTMTopicMapReader;
 
 import de.topicmapslab.identifier.TmdmSubjectIdentifier;
-import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.common.core.runtime.TMQLRuntimeFactory;
-import de.topicmapslab.tmql4j.common.model.query.IQuery;
-import de.topicmapslab.tmql4j.common.model.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.resultprocessing.model.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
+import de.topicmapslab.tmql4j.components.processor.runtime.TMQLRuntimeFactory;
+import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.query.IQuery;
 
 /**
  * Abstract base test class for TMQL4J test suite
@@ -37,15 +38,16 @@ public abstract class Tmql4JTestCase {
 	protected TopicMapSystemFactory factory;
 	protected ITMQLRuntime runtime;
 	protected final String base = "http://psi.example.org/test/";
+	protected TopicMapSystem topicMapSystem;
 
 	@Before
 	public void setUp() throws Exception {
 		factory = TopicMapSystemFactory.newInstance();
 		factory.setFeature(
 				"http://tmapi.org/features/type-instance-associations", true);
-		topicMap = factory.newTopicMapSystem().createTopicMap(base);
-		runtime = TMQLRuntimeFactory.newFactory().newRuntime(topicMap);
-		runtime.getProperties().enableLanguageExtensionTmqlUl(true);
+		topicMapSystem = factory.newTopicMapSystem();
+		topicMap = topicMapSystem.createTopicMap(base);
+		runtime = TMQLRuntimeFactory.newFactory().newRuntime(topicMapSystem);
 		runtime.getLanguageContext().getPrefixHandler().setDefaultPrefix(base);
 	}
 
@@ -153,15 +155,14 @@ public abstract class Tmql4JTestCase {
 	@SuppressWarnings("unchecked")
 	protected <T extends IResultSet<?>> T execute(String query)
 			throws TMQLRuntimeException {
-		runtime.getProperties().enableMaterializeMetaModel(true);
-		IQuery q = runtime.run(query);
+		IQuery q = runtime.run(topicMap, query);
 		return (T) q.getResults();
 	}
 
 	@SuppressWarnings("unchecked")
 	protected <T extends IResultSet<?>> T execute(IQuery query)
 			throws TMQLRuntimeException {
-		runtime.getProperties().enableMaterializeMetaModel(true);
+		query.setTopicMap(topicMap);
 		runtime.run(query);
 		return (T) query.getResults();
 	}

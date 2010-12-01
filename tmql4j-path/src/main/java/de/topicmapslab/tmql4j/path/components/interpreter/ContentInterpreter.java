@@ -21,7 +21,6 @@ import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.path.grammar.lexical.If;
@@ -31,6 +30,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Union;
 import de.topicmapslab.tmql4j.path.grammar.productions.Content;
 import de.topicmapslab.tmql4j.path.grammar.productions.PathExpression;
 import de.topicmapslab.tmql4j.path.util.QueryMatchUtils;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * 

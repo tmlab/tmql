@@ -12,6 +12,9 @@ package de.topicmapslab.tmql4j.query;
 
 import org.tmapi.core.TopicMap;
 
+import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+
 /**
  * Abstract base implementation of {@link IQuery} to implements the core
  * functionality of each query.
@@ -21,6 +24,11 @@ import org.tmapi.core.TopicMap;
  * 
  */
 public abstract class QueryImpl implements IQuery {
+
+	/**
+	 * the querying results
+	 */
+	private IResultSet<?> results;
 
 	/**
 	 * the topic map to query
@@ -78,12 +86,32 @@ public abstract class QueryImpl implements IQuery {
 	public void setTopicMap(TopicMap topicMap) {
 		this.topicMap = topicMap;
 	}
-	
+
 	/**
 	 * Internal method to update the query string
-	 * @param queryString the queryString to set
+	 * 
+	 * @param queryString
+	 *            the queryString to set
 	 */
 	protected void setQueryString(String queryString) {
 		this.queryString = queryString;
+	}
+
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public void setResults(IResultSet<?> results) {
+		this.results = results;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IResultSet<?> getResults() throws TMQLRuntimeException {
+		if (results == null) {
+			throw new TMQLRuntimeException("Querying process not finished yet.");
+		}
+		return results;
 	}
 }

@@ -17,11 +17,11 @@ import org.junit.Test;
 import org.tmapi.core.Association;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.tmql4j.common.core.query.TMQLQuery;
-import de.topicmapslab.tmql4j.common.utility.HashUtil;
-import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
-import de.topicmapslab.tmql4j.resultprocessing.model.IResult;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.components.processor.results.IResult;
+import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.path.query.TMQLQuery;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.util.HashUtil;
 /**
  * @author Sven Krosse
  * @email krosse@informatik.uni-leipzig.de
@@ -50,11 +50,11 @@ public class TestAssociationDef extends Tmql4JTestCase {
 		assertEquals(associations.size(), topicMap.getAssociations().size());
 		
 		query = " tm:subject ( tm:subject : myTopic )";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(0, set.getResults().size());
 		
 		query = " tm:subject ( tm:subject : myTopic , ... )";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(associations.size(), set.getResults().size());
 		for ( IResult r : set){
 			assertEquals(1,r.size());
@@ -62,7 +62,7 @@ public class TestAssociationDef extends Tmql4JTestCase {
 		}
 		
 		query = " tm:subject ( roleType : myTopic , ... )";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(associations.size(), set.getResults().size());
 		for ( IResult r : set){
 			assertEquals(1,r.size());
@@ -70,7 +70,7 @@ public class TestAssociationDef extends Tmql4JTestCase {
 		}
 		
 		query = " myType ( tm:subject : myTopic , ... )";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(associations.size(), set.getResults().size());
 		for ( IResult r : set){
 			assertEquals(1,r.size());
@@ -78,7 +78,7 @@ public class TestAssociationDef extends Tmql4JTestCase {
 		}
 		
 		query = " myType ( roleType : myTopic , ... )";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(associations.size(), set.getResults().size());
 		for ( IResult r : set){
 			assertEquals(1,r.size());

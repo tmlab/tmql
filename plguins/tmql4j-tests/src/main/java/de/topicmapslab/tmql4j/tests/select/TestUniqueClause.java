@@ -1,4 +1,5 @@
 /*
+
  * Copyright: Copyright 2010 Topic Maps Lab, University of Leipzig. http://www.topicmapslab.de/    
  * License:   Apache License, Version 2.0 http://www.apache.org/licenses/LICENSE-2.0.html
  *  
@@ -10,16 +11,12 @@ package de.topicmapslab.tmql4j.tests.select;
 
 import static junit.framework.Assert.assertEquals;
 
-
 import org.junit.Test;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.tmql4j.common.context.TMQLRuntimeProperties;
-import de.topicmapslab.tmql4j.common.core.tuplesequence.MultipleTupleSequence;
-import de.topicmapslab.tmql4j.common.core.tuplesequence.UniqueTupleSequence;
-import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
-import de.topicmapslab.tmql4j.resultprocessing.model.IResult;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.components.processor.results.IResult;
+import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
 
 /**
  * @author Sven Krosse
@@ -29,7 +26,7 @@ public class TestUniqueClause extends Tmql4JTestCase {
 
 	@Test
 	public void testUniqueClause() throws Exception {
-		runtime.getProperties().setProperty(TMQLRuntimeProperties.TUPLE_SEQUENCE_CLASS, MultipleTupleSequence.class.getName());
+		
 		
 		Topic topic = createTopicBySI("myTopic");
 
@@ -52,7 +49,7 @@ public class TestUniqueClause extends Tmql4JTestCase {
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals("Name",set.first().first());		
-		runtime.getProperties().setProperty(TMQLRuntimeProperties.TUPLE_SEQUENCE_CLASS, UniqueTupleSequence.class.getName());	
+			
 	}
 	
 }

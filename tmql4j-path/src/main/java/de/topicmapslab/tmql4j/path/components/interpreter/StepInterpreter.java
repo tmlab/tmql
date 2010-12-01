@@ -29,6 +29,7 @@ import de.topicmapslab.tmql4j.path.components.navigation.model.ITypeHierarchyNav
 import de.topicmapslab.tmql4j.path.grammar.lexical.MoveForward;
 import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisInstances;
 import de.topicmapslab.tmql4j.path.grammar.productions.Step;
+import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 
 /**
  * 
@@ -73,7 +74,7 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 			 * try to resolve Construct
 			 */
 			Object anchor = null;
-			Construct optional = null;
+			Object optional = null;
 
 			/*
 			 * is shortcut of types axis
@@ -143,7 +144,9 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 								optional = (Construct) optionals.get(0);
 							}
 						}
-					} else {
+					} else if ( TmdmSubjectIdentifier.isTmdmName(optional_) || TmdmSubjectIdentifier.isTmdmOccurrence(optional_)){
+						optional = optional_;
+					}else{
 						optional = runtime.getConstructResolver().getConstructByIdentifier(context, optional_);
 					}
 					/*
@@ -184,7 +187,7 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 			/*
 			 * convert navigation results to tuple-sequence and store
 			 */
-			return QueryMatches.asQueryMatch(runtime, navigationResults.toArray());
+			return QueryMatches.asQueryMatchNS(runtime, navigationResults.toArray());
 		} catch (TMQLRuntimeException ex) {
 			throw ex;
 		} catch (Exception ex) {

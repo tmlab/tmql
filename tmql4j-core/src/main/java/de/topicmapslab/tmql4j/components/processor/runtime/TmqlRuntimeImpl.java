@@ -16,6 +16,7 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
 
+import de.topicmapslab.tmql4j.components.parser.IParserTree;
 import de.topicmapslab.tmql4j.components.processor.ITmqlProcessor;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.query.IQuery;
@@ -100,7 +101,14 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 	public void setTopicMapSystem(TopicMapSystem system) {
 		this.topicMapSystem = system;
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public IParserTree parse(IQuery query) throws TMQLRuntimeException {
+		return parse(query.getQueryString());
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */

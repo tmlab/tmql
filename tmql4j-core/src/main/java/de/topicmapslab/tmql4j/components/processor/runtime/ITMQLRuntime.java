@@ -129,6 +129,17 @@ public interface ITMQLRuntime {
 	 *             thrown if parser fails because of invalid syntax
 	 */
 	public IParserTree parse(final String query) throws TMQLRuntimeException;
+	
+	/**
+	 * Method parse the given query and return the parser tree object
+	 * 
+	 * @param query
+	 *            the query
+	 * @return the parser tree and never <code>null</code>
+	 * @throws TMQLRuntimeException
+	 *             thrown if parser fails because of invalid syntax
+	 */
+	public IParserTree parse(final IQuery query) throws TMQLRuntimeException;
 
 	/**
 	 * Returns the internal instance of TMQL query processor.

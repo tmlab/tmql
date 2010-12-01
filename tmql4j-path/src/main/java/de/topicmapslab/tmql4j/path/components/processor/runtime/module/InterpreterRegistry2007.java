@@ -160,5 +160,6 @@ public class InterpreterRegistry2007 extends InterpreterRegistry {
 		registerInterpreterClass(WhereClause.class, WhereClauseInterpreter.class);
 		registerInterpreterClass(XMLContent.class, XMLContentInterpreter.class);
 		registerInterpreterClass(NonInterpretedContent.class, NonInterpretedContentInterpreter.class);
+		registerInterpreterClass(QueryExpression.class, QueryExpressionInterpreter.class);
 	}
 }

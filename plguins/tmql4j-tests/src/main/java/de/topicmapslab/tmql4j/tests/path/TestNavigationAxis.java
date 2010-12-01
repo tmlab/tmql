@@ -26,10 +26,10 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.core.Typed;
 import org.tmapi.core.Variant;
 
-import de.topicmapslab.tmql4j.common.utility.HashUtil;
-import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
-import de.topicmapslab.tmql4j.resultprocessing.model.IResult;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.components.processor.results.IResult;
+import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.util.HashUtil;
 /**
  * @author Sven Krosse
  * @email krosse@informatik.uni-leipzig.de

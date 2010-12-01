@@ -14,13 +14,9 @@ import java.util.List;
 import java.util.Set;
 
 import de.topicmapslab.tmql4j.components.parser.IParserUtilsCallback;
-import de.topicmapslab.tmql4j.components.processor.core.IContext;
-import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
-import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
@@ -32,6 +28,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Order;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Select;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Unique;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Where;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Special implementation of {@link ExpressionImpl} representing a
@@ -161,13 +158,4 @@ public class SelectExpression extends ExpressionImpl {
 		 */
 		return getTmqlTokens().size() > 1 && getTmqlTokens().get(0).equals(Select.class);
 	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

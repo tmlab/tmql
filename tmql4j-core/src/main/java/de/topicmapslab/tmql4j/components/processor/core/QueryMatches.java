@@ -23,9 +23,9 @@ import java.util.Set;
 
 import de.topicmapslab.tmql4j.components.processor.core.ProjectionQueryMatches.ProjectionQueryMatch;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.CollectionsUtility;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.util.CollectionsUtility;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Class definition of a container of all querying results of the TMQL querying
@@ -1248,7 +1248,7 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 	 * @return the query match
 	 * @since 2.7.0
 	 */
-	public static QueryMatches asQueryMatch(ITMQLRuntime runtime, Object... values) {
+	public static QueryMatches asQueryMatchNS(ITMQLRuntime runtime, Object... values) {
 		return asQueryMatch(runtime, getNonScopedVariable(), values);
 	}
 

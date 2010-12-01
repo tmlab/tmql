@@ -71,7 +71,7 @@ public class SubtypesNavigationAxis extends BaseNavigationAxisImpl  implements I
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateBackward(Object construct, Construct optional)
+	public Collection<?> navigateBackward(Object construct, Object optional)
 			throws NavigationException {
 		if (optional == null || optional instanceof Construct) {
 			return axis.navigateForward(construct, (Construct) optional);

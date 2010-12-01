@@ -72,4 +72,12 @@ public interface IQuery {
 	 * @param topicMap the topic map
 	 */
 	public void setTopicMap(TopicMap topicMap);
+	
+	/**
+	 * Internal setter of the results
+	 * 
+	 * @param results
+	 *            the results
+	 */
+	public void setResults(IResultSet<?> results);
 }

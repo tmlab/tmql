@@ -17,8 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-
 /**
  * Base implementation of {@link IResultSet} to implement the method providing
  * base functionality. The result set represents a 2-dimension container
@@ -66,8 +64,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 		/*
 		 * extract class information from type
 		 */
-		this.clazz = (Class<T>) ((ParameterizedType) clazz
-				.getGenericSuperclass()).getActualTypeArguments()[0];
+		this.clazz = (Class<T>) ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
 
 		/*
 		 * create result list
@@ -78,21 +75,6 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 		 * create iterator instance
 		 */
 		this.iterator = results.iterator();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void reduceTo2Dimensions() throws UnsupportedOperationException,
-			TMQLRuntimeException {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean canReduceTo2Dimensions() {
-		return false;
 	}
 
 	/**
@@ -167,12 +149,12 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	public int size() {
 		return results.size();
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public boolean isEmpty() {
-		return size()==0;
+		return size() == 0;
 	}
 
 	/**
@@ -187,8 +169,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 		builder.append("{\r\n");
 		Iterator<T> iterator = iterator();
 		while (iterator.hasNext()) {
-			builder.append(iterator.next().toString()
-					+ (iterator.hasNext() ? "," : "") + "\r\n");
+			builder.append(iterator.next().toString() + (iterator.hasNext() ? "," : "") + "\r\n");
 		}
 		builder.append("}");
 		return builder.toString();
@@ -232,19 +213,65 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	 * {@inheritDoc}
 	 */
 	public T get(int index) {
-		if ( getResults().size() <= index ){
-			throw new IndexOutOfBoundsException("Result set does not contains an element at position '"+ index + "'.");
+		if (getResults().size() <= index) {
+			throw new IndexOutOfBoundsException("Result set does not contains an element at position '" + index + "'.");
 		}
 		return getResults().get(index);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
 	public <R extends Object> R get(int rowIndex, int colIndex) {
 		T result = get(rowIndex);
-		return (R)result.get(colIndex);
+		return (R) result.get(colIndex);
 	}
-	
+
+	private static ResultSet<?> emptyResultSet;
+
+	/**
+	 * Returns an empty unmodifiable result set.
+	 * 
+	 * @return the result set
+	 */
+	public static ResultSet<?> emptyResultSet() {
+		if (emptyResultSet == null) {
+			emptyResultSet = new ResultSet<IResult>() {
+				public String getResultType() {
+					return ResultType.TMAPI.name();
+				}
+
+				/**
+				 * {@inheritDoc}
+				 */
+				public void addResult(IResult result) {
+					throw new UnsupportedOperationException("Unmodifiable result set does not supports method add.");
+				}
+
+				/**
+				 * {@inheritDoc}
+				 */
+				public void addResults(Collection<IResult> results) {
+					throw new UnsupportedOperationException("Unmodifiable result set does not supports method add.");
+				}
+
+				/**
+				 * {@inheritDoc}
+				 */
+				public void addResults(IResult... results) {
+					throw new UnsupportedOperationException("Unmodifiable result set does not supports method add.");
+				}
+
+				/**
+				 * {@inheritDoc}
+				 */
+				public Class<? extends IResult> getResultClass() {
+					return IResult.class;
+				}
+			};
+		}
+		return emptyResultSet;
+	}
+
 }

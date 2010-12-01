@@ -22,11 +22,11 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.Variant;
 
-import de.topicmapslab.tmql4j.common.utility.HashUtil;
-import de.topicmapslab.tmql4j.draft2010.query.TMQLQueryDraft2008;
-import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
-import de.topicmapslab.tmql4j.resultprocessing.model.IResult;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.components.processor.results.IResult;
+import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.path.query.TMQLQuery;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.util.HashUtil;
 /**
  * @author Sven Krosse
  * @email krosse@informatik.uni-leipzig.de
@@ -102,7 +102,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = "myTopic / theType";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(values.length, set.size());
 
 		Set<String> result = HashUtil.getHashSet();
@@ -129,7 +129,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = "myTopic / tm:name";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(names.length, set.size());
 
 		Set<String> result = HashUtil.getHashSet();
@@ -157,7 +157,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = "myTopic / tm:occurrence";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(occurrences.length, set.size());
 
 		Set<String> result = HashUtil.getHashSet();
@@ -180,7 +180,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 		for (int i = 0; i < 100; i++) {
 			topic.createName(type, "Value" + i, new Topic[0]);
 			query = "\"Value" + i + "\" \\ ";
-			set = execute(new TMQLQueryDraft2008(query));
+			set = execute(new TMQLQuery(topicMap,query));
 			assertEquals(i + "", 1, set.size());
 			assertTrue(set.getResults().get(0).first() instanceof Topic);
 			assertTrue(set.getResults().get(0).first().equals(topic));
@@ -196,7 +196,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 		for (int i = 0; i < 100; i++) {
 			topic.createOccurrence(type, "Value" + i, new Topic[0]);
 			query = "\"Value" + i + "\" \\ ";
-			set = execute(new TMQLQueryDraft2008(query));
+			set = execute(new TMQLQuery(topicMap,query));
 			assertEquals(i + "", 1, set.size());
 			assertTrue(set.getResults().get(0).first() instanceof Topic);
 			assertTrue(set.getResults().get(0).first().equals(topic));
@@ -378,7 +378,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = "myTopic <->";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(topics.length, set.size());
 
 		Set<Topic> result = HashUtil.getHashSet();
@@ -457,7 +457,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = "\"" + base + "myTopic\" =";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertTrue(set.getResults().get(0).first() instanceof Topic);
 		assertTrue(set.getResults().get(0).first().equals(topic));

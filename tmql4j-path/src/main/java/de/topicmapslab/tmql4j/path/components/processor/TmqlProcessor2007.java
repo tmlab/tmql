@@ -16,6 +16,7 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.results.IResultProcessor;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.path.components.lexer.TMQLLexer;
 import de.topicmapslab.tmql4j.path.components.parser.TMQLParser;
@@ -46,25 +47,35 @@ public class TmqlProcessor2007 implements ITmqlProcessor {
 	 * {@inheritDoc}
 	 */
 	public IResultSet<?> query(IQuery query) {
+		IParserTree tree = parse(query);
+		if (tree != null) {
+			IContext context = new Context(query);
 
+			QueryMatches results = tree.root().interpret(runtime, context);
+
+			IResultProcessor resultProcessor = getResultProcessor();
+			/*
+			 * TODO handle flwr xtm and ctm results
+			 */
+			resultProcessor.proceed(results, SimpleResultSet.class);
+
+			return resultProcessor.getResultSet();
+		}
+		return ResultSet.emptyResultSet();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IParserTree parse(IQuery query) {
 		ILexer lexer = getTmqlLexer(query);
 		lexer.execute();
-
-		IParser parser = getTmqlParser(lexer);
-		parser.parse(runtime);
-		IParserTree tree = parser.getParserTree();
-
-		IContext context = new Context(query);
-
-		QueryMatches results = tree.root().interpret(runtime, context);
-
-		IResultProcessor resultProcessor = getResultProcessor();
-		/*
-		 * TODO handle flwr xtm and ctm results
-		 */
-		resultProcessor.proceed(results, SimpleResultSet.class);
-
-		return resultProcessor.getResultSet();
+		if (!lexer.getTokens().isEmpty()) {
+			IParser parser = getTmqlParser(lexer);
+			parser.parse(runtime);
+			return parser.getParserTree();
+		}
+		return null;
 	}
 
 	/**

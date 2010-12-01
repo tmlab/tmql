@@ -11,14 +11,13 @@ package de.topicmapslab.tmql4j.tests.delete;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
-
 import org.junit.Test;
 import org.tmapi.core.Name;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.tmql4j.common.core.query.TMQLQuery;
-import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.path.query.TMQLQuery;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
 
 /**
  * @author Sven Krosse
@@ -49,7 +48,7 @@ public class TestDeleteExpressionPathSytle extends Tmql4JTestCase {
 		assertEquals(100, t.getNames().size());
 
 		String query = " DELETE myTopic >> characteristics tm:name";
-		SimpleResultSet set = execute(new TMQLQuery(query));
+		SimpleResultSet set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(100L, set.first().first());
@@ -70,7 +69,7 @@ public class TestDeleteExpressionPathSytle extends Tmql4JTestCase {
 		assertEquals(100, t.getNames().size());
 
 		String query = " DELETE myTopic >> characteristics tm:name @theme";
-		SimpleResultSet set = execute(new TMQLQuery(query));
+		SimpleResultSet set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(50L, set.first().first());
@@ -91,7 +90,7 @@ public class TestDeleteExpressionPathSytle extends Tmql4JTestCase {
 		assertEquals(100, t.getNames().size());
 
 		String query = " DELETE myTopic >> characteristics tm:name [ ^ myType ]";
-		SimpleResultSet set = execute(new TMQLQuery(query));
+		SimpleResultSet set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(50L, set.first().first());
@@ -116,7 +115,7 @@ public class TestDeleteExpressionPathSytle extends Tmql4JTestCase {
 		assertEquals(100, t.getNames().size());
 
 		String query = " DELETE myTopic >> characteristics myType @theme";
-		SimpleResultSet set = execute(new TMQLQuery(query));
+		SimpleResultSet set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(25L, set.first().first());

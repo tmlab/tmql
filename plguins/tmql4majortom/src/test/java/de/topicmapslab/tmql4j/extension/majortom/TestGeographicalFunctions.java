@@ -20,9 +20,9 @@ import de.topicmapslab.majortom.model.core.IOccurrence;
 import de.topicmapslab.majortom.util.XmlSchemeDatatypes;
 import de.topicmapslab.tmql4j.extension.majortom.expression.GetCoordinatesInDistance;
 import de.topicmapslab.tmql4j.extension.majortom.expression.GetDistance;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
 import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
 import de.topicmapslab.tmql4j.resultprocessing.model.IResult;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
 
 /**
  * @author Sven Krosse

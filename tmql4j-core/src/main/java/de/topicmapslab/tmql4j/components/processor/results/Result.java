@@ -59,21 +59,6 @@ public abstract class Result implements IResult {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<Collection<Object>> reduceTo2Dimensions()
-			throws UnsupportedOperationException {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean canReduceTo2Dimensions() {
-		return false;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	public Iterator<Object> iterator() {
 		return results.iterator();
 	}

@@ -14,13 +14,9 @@ import java.util.List;
 import java.util.Set;
 
 import de.topicmapslab.tmql4j.components.parser.IParserUtilsCallback;
-import de.topicmapslab.tmql4j.components.processor.core.IContext;
-import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
-import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
@@ -32,6 +28,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Every;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Not;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Or;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Some;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 
 /**
@@ -236,14 +233,5 @@ public class BooleanExpression extends ExpressionImpl {
 			}
 		}
 		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
+	}	
 }

@@ -13,13 +13,9 @@ package de.topicmapslab.tmql4j.path.grammar.productions;
 import java.util.List;
 import java.util.Set;
 
-import de.topicmapslab.tmql4j.components.processor.core.IContext;
-import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
-import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
@@ -55,6 +51,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Star;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Substraction;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Unequals;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Union;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Special implementation of {@link ExpressionImpl} representing a
@@ -297,14 +294,6 @@ public class PostfixedExpression extends ExpressionImpl {
 		}
 		return ParserUtils.containsTokens(getTmqlTokens(),
 				tupleExpressionIndicators);
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

@@ -17,12 +17,12 @@ import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.components.processor.core.Context;
 import de.topicmapslab.tmql4j.path.grammar.productions.Anchor;
 import de.topicmapslab.tmql4j.path.grammar.productions.Navigation;
 import de.topicmapslab.tmql4j.path.grammar.productions.SimpleContent;
+import de.topicmapslab.tmql4j.util.HashUtil;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 
 /**
@@ -74,13 +74,13 @@ public class SimpleContentInterpreter extends ExpressionInterpreterImpl<SimpleCo
 		 */
 		Anchor a = getExpression().getExpressionFilteredByType(Anchor.class).get(0);
 		if (anchor.isEmpty() && a.getGrammarType() == Anchor.TYPE_VARIABLE) {
-			anchor = QueryMatches.asQueryMatch(runtime, context.getQuery().getTopicMap().getTopics().toArray());
+			anchor = QueryMatches.asQueryMatchNS(runtime, context.getQuery().getTopicMap().getTopics().toArray());
 		}
 		/*
 		 * special interpretation for tm:subject
 		 */
 		else if (anchor.isEmpty() && TmdmSubjectIdentifier.isTmdmSubject(a.getTokens().get(0))) {
-			anchor = QueryMatches.asQueryMatch(runtime, TmdmSubjectIdentifier.TMDM_SUBJECT);
+			anchor = QueryMatches.asQueryMatch(runtime, QueryMatches.getNonScopedVariable(), TmdmSubjectIdentifier.TM_SUBJECT);
 		}
 		QueryMatches results = new QueryMatches(runtime);
 		/*

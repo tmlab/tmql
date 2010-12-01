@@ -16,9 +16,9 @@ import de.topicmapslab.tmql4j.components.processor.runtime.module.FunctionRegist
 import de.topicmapslab.tmql4j.components.processor.runtime.module.InterpreterRegistry;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.PrefixHandler;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.TokenRegistry;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLInitializationException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 public class LanguageContext implements ILanguageContext {
 

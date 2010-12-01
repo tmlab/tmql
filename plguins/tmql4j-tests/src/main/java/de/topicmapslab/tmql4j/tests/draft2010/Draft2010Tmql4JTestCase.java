@@ -8,11 +8,10 @@
  */
 package de.topicmapslab.tmql4j.tests.draft2010;
 
-import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.common.model.query.IQuery;
-import de.topicmapslab.tmql4j.draft2010.query.TMQLQueryDraft2010;
-import de.topicmapslab.tmql4j.resultprocessing.model.IResultSet;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.query.IQuery;
 
 /**
  * @author Sven Krosse

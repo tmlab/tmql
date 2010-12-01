@@ -59,51 +59,36 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 	 */
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		boolean emptyForResults = false;
-		QueryMatches results = interpreteForClauses(runtime, context, optionalArguments);
-		/*
-		 * check if at least one for clause does not match to any variable
-		 */
-		for (ForClause forClause : getExpression().getExpressionFilteredByType(ForClause.class)) {
-			try {
-				String variable = forClause.getVariables().get(0);
-				if (!results.getOrderedKeys().contains(variable)) {
-					emptyForResults = true;
-					break;
-				}
-			} catch (Exception e) {
-				emptyForResults = true;
-			}
-		}
-		/*
-		 * results of for-clause are not empty
-		 */
-		if (!emptyForResults) {
-			/*
-			 * check if where clause exists and any variable is contained
-			 */
-			if (containsExpressionsType(WhereClause.class)) {
-				Context newContext = new Context(context);
-				newContext.setContextBindings(results);
-				results = interpreteWhereClause(runtime, newContext, optionalArguments);
-			}
-
-			/*
-			 * check if order-by clause exists and any variable is contained
-			 */
-			if (containsExpressionsType(OrderByClause.class)) {
-				Context newContext = new Context(context);
-				newContext.setContextBindings(results);
-				results = interpreteOrderByClause(runtime, newContext, optionalArguments);
-			}
-			Context newContext = new Context(context);
+		Context newContext = new Context(context);
+		if (containsExpressionsType(ForClause.class)) {
+			QueryMatches results = interpreteForClauses(runtime, context, optionalArguments);
 			newContext.setContextBindings(results);
-			return interpretReturnClause(runtime, newContext, optionalArguments);
+			if (results.isEmpty()) {
+				return QueryMatches.emptyMatches();
+			}
 		}
 		/*
-		 * results of for-clause are empty
+		 * check if where clause exists and any variable is contained
 		 */
-		return QueryMatches.emptyMatches();
+		if (containsExpressionsType(WhereClause.class)) {
+			QueryMatches results = interpreteWhereClause(runtime, newContext, optionalArguments);
+			newContext.setContextBindings(results);
+			if (results.isEmpty()) {
+				return QueryMatches.emptyMatches();
+			}
+		}
+
+		/*
+		 * check if order-by clause exists and any variable is contained
+		 */
+		if (containsExpressionsType(OrderByClause.class)) {
+			QueryMatches results = interpreteOrderByClause(runtime, newContext, optionalArguments);
+			newContext.setContextBindings(results);
+			if (results.isEmpty()) {
+				return QueryMatches.emptyMatches();
+			}
+		}	
+		return interpretReturnClause(runtime, newContext, optionalArguments);
 	}
 
 	/**
@@ -175,12 +160,6 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 		if (!containsExpressionsType(ReturnClause.class)) {
 			throw new TMQLRuntimeException("Invalid structure. not return clause.");
 		}
-		/*
-		 * Return empty matches if the given context is empty
-		 */
-		if (context.getContextBindings() == null) {
-			return QueryMatches.emptyMatches();
-		}
 
 		/*
 		 * extract the select clause
@@ -235,7 +214,7 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 		 */
 		// TODO use for iteration results as iteration bindings
 		Context newContext = new Context(context);
-		newContext.setContextBindings(null);
+//		newContext.setContextBindings(null);
 		QueryMatches matches = whereClause.interpret(runtime, newContext, optionalArguments);
 		/*
 		 * iterate of all bindings if bindings and results are not empty

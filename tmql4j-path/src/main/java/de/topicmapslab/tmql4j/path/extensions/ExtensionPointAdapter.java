@@ -18,13 +18,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLExtensionRegistryException;
 import de.topicmapslab.tmql4j.extensions.IExtensionPoint;
 import de.topicmapslab.tmql4j.extensions.IExtensionPointAdapter;
 import de.topicmapslab.tmql4j.extensions.ILanguageExtension;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.osgi.TMQLActivator;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Extension adapter importing the register extensions using Java service

@@ -20,14 +20,11 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.Variant;
 
 import de.topicmapslab.identifier.XmlSchemeDatatypes;
-import de.topicmapslab.tmql4j.common.context.TMQLRuntimeProperties;
-import de.topicmapslab.tmql4j.common.core.tuplesequence.MultipleTupleSequence;
-import de.topicmapslab.tmql4j.common.core.tuplesequence.UniqueTupleSequence;
-import de.topicmapslab.tmql4j.common.utility.HashUtil;
-import de.topicmapslab.tmql4j.draft2010.query.TMQLQueryDraft2008;
-import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
-import de.topicmapslab.tmql4j.resultprocessing.model.IResult;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.components.processor.results.IResult;
+import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.path.query.TMQLQuery;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 public class TestFunctionInvocation extends Tmql4JTestCase {
 
@@ -37,13 +34,13 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = " fn:regexp ( \"This is a string.\", \".*string.*\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first().equals("This is a string."));
 
 		query = " fn:regexp ( \"This is a integer.\", \".*string.*\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(0, set.size());
 	}
 
@@ -54,19 +51,19 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = "fn:substring ( \"This is a string.\" , 0 , 7 ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first().equals("This is"));
 
 		query = "fn:substring ( \"This is a string.\" , 0 , 50 ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first().equals("This is a string."));
 
 		query = "fn:substring ( \"This is a string.\" , 7 , 50 ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first().equals(" a string."));
@@ -77,7 +74,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		String query;
 		SimpleResultSet set = null;
 		query = "fn:string-concat ( \"This is \", \"a string.\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first().equals("This is a string."));
@@ -88,7 +85,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		String query;
 		SimpleResultSet set = null;
 		query = "fn:string-concat ( \"This is \", \"a string.\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first().equals("This is a string."));
@@ -100,7 +97,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 		String value = "This is a string.";
 		query = "fn:length ( \"" + value + "\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(BigInteger.valueOf(value.length()), set.first().first());
@@ -112,23 +109,23 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = "fn:string-geq ( \"b\" , \"a\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first().equals("b"));
 
 		query = "fn:string-geq ( \"a\" , \"b\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));		
+		set = execute(new TMQLQuery(topicMap,query));		
 		assertEquals(0, set.size());
 
 		query = "fn:string-geq ( \"aa\" , \"a\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first().equals("aa"));
 
 		query = "fn:string-geq ( \"aa\" , \"aa\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first().equals("aa"));
@@ -140,19 +137,19 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = "fn:string-gt ( \"b\" , \"a\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first().equals("b"));
 
 		query = "fn:string-gt ( \"aa\" , \"a\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first().equals("aa"));
 
 		query = "fn:string-gt ( \"aa\" , \"aa\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(0, set.size());
 	}
 
@@ -162,23 +159,23 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = "fn:string-leq ( \"a\" , \"b\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first().equals("a"));
 
 		query = "fn:string-leq ( \"b\" , \"a\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(0, set.size());
 
 		query = "fn:string-leq ( \"a\" , \"aa\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first().equals("a"));
 
 		query = "fn:string-leq ( \"aa\" , \"aa\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first().equals("aa"));
@@ -190,19 +187,19 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = "fn:string-lt ( \"a\" , \"b\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first().equals("a"));
 
 		query = "fn:string-lt ( \"a\" , \"aa\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first().equals("a"));
 
 		query = "fn:string-lt ( \"aa\" , \"aa\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(0, set.size());
 	}
 
@@ -212,7 +209,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		String query = "fn:url-encode ( \"" + url.toString() + "\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first()
@@ -226,7 +223,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		String query = "fn:url-decode ( \"" + value + "\" ) ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first()
@@ -244,20 +241,20 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		String query;
 		SimpleResultSet set = null;
 		query = "fn:count( myTopic / tm:name )";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(BigInteger.valueOf(100), set.first().first());
 		
 		Topic topicBySL = createTopicBySL("loc");
 		query = "// tm:subject [ fn:count(.>>locators)> 0 ]";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(topicBySL, set.first().first());
 		
 		query = "FOR $t IN // tm:subject WHERE fn:count( $t >>locators ) > 0 RETURN $t";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		System.out.println(set);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
@@ -277,7 +274,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		for (int i = 0; i < 100; i++) {
 			query = "fn:compare( myTopic / tm:name , \"Name "
 					+ Integer.toString(i) + "\")";
-			set = execute(new TMQLQueryDraft2008(query));
+			set = execute(new TMQLQuery(topicMap,query));
 			assertEquals(1, set.size());
 			assertEquals(1, set.first().size());
 			assertEquals(true, set.first().first());
@@ -298,7 +295,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		for (int i = 0; i < 100; i++) {
 			query = "fn:except(  myTopic / tm:name , \"Name "
 					+ Integer.toString(i) + "\")";
-			set = execute(new TMQLQueryDraft2008(query));
+			set = execute(new TMQLQuery(topicMap,query));
 			assertEquals(99, set.size());
 			assertEquals(1, set.first().size());
 			for (IResult r : set) {
@@ -322,7 +319,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		String query;
 		SimpleResultSet set = null;
 		query = "fn:concat(  myTopic / tm:name , \"Name 101\")";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(names.size() + 1, set.size());
 		for (IResult r : set) {
 			assertEquals(1, r.size());
@@ -372,7 +369,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		String query;
 		SimpleResultSet set = null;
 		query = "fn:has-datatype(  myTopic >> characteristics tm:occurrence )";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(datatypes.size(), set.size());
 		for (IResult r : set) {
 			assertEquals(1, r.size());
@@ -398,7 +395,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 			query = "fn:has-variant(  myTopic >> characteristics tm:name , "
 					+ entry.getKey().getSubjectIdentifiers().iterator().next()
 							.getReference() + " )";
-			set = execute(new TMQLQueryDraft2008(query));
+			set = execute(new TMQLQuery(topicMap,query));
 			assertEquals(1, set.size());
 			assertEquals(1, set.first().size());
 			assertEquals(entry.getValue(), set.first().first());
@@ -417,7 +414,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		String query;
 		SimpleResultSet set = null;
 		query = "fn:slice(  myTopic >> characteristics tm:name , 0 , 10 )";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(10, set.size());
 		for ( IResult r : set){
 			assertEquals(1, r.size());
@@ -425,7 +422,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		}
 		
 		query = "fn:slice(  myTopic >> characteristics tm:name , -10 , 10 )";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(10, set.size());
 		for ( IResult r : set){
 			assertEquals(1, r.size());
@@ -433,7 +430,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		}
 		
 		query = "fn:slice(  myTopic >> characteristics tm:name , -10 , 100 )";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(100, set.size());
 		for ( IResult r : set){
 			assertEquals(1, r.size());
@@ -441,7 +438,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		}
 		
 		query = "fn:slice(  myTopic >> characteristics tm:name , -10 , 1000 )";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(100, set.size());
 		for ( IResult r : set){
 			assertEquals(1, r.size());
@@ -449,7 +446,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		}
 		
 		query = "fn:slice(  myTopic >> characteristics tm:name , 10 , 0 )";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		System.out.println(set);
 		assertEquals(0, set.size());		
 				
@@ -457,7 +454,6 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 	
 	@Test
 	public void testUniqueFunction() throws Exception {
-		runtime.getProperties().setProperty(TMQLRuntimeProperties.TUPLE_SEQUENCE_CLASS, MultipleTupleSequence.class.getName());
 		
 		Topic topic = createTopicBySI("myTopic");		
 		Set<Name> names = HashUtil.getHashSet();
@@ -469,7 +465,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		String query;
 		SimpleResultSet set = null;
 		query = "myTopic / tm:name";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(100, set.size());
 		for ( IResult r : set){
 			assertEquals(1, r.size());
@@ -478,14 +474,12 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		}
 		
 		query = "fn:uniq(  myTopic / tm:name )";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(4, set.size());
 		for ( IResult r : set){
 			assertEquals(1, r.size());
 			assertTrue(r.first() instanceof String );
 		}		
-		
-		runtime.getProperties().setProperty(TMQLRuntimeProperties.TUPLE_SEQUENCE_CLASS, UniqueTupleSequence.class.getName());				
 	}
 	
 	@Test
@@ -500,7 +494,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		String query;
 		SimpleResultSet set = null;
 		query = "myTopic >> characteristics tm:name";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(100, set.size());
 		for ( IResult r : set){
 			assertEquals(1, r.size());
@@ -508,7 +502,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		}
 		
 		query = "fn:zigzag(  myTopic >> characteristics tm:name )";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		for ( IResult r : set){
 			System.out.println(r);
@@ -532,7 +526,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		String query;
 		SimpleResultSet set = null;
 		query = "myTopic >> characteristics tm:name";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(100, set.size());
 		for ( IResult r : set){
 			assertEquals(1, r.size());
@@ -540,7 +534,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		}
 		
 		query = "fn:zigzag(  myTopic >> characteristics tm:name )";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		for ( IResult r : set){
 			System.out.println(r);
@@ -551,7 +545,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		}	
 		
 		query = "fn:zagzig ( fn:zigzag (  myTopic >> characteristics tm:name ) )";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(100, set.size());
 		for ( IResult r : set){
 			assertEquals(1, r.size());

@@ -42,7 +42,7 @@ public class FunctionInvocationInterpreter extends ExpressionInterpreterImpl<Fun
 	/**
 	 * internal function interpreter
 	 */
-	private IFunction<?> interpreter;
+	private IFunction interpreter;
 
 	/**
 	 * base constructor to create a new instance
@@ -65,14 +65,14 @@ public class FunctionInvocationInterpreter extends ExpressionInterpreterImpl<Fun
 		 * try to extract interpreter for given identifier
 		 */
 		if (interpreter == null) {
-			Class<? extends IFunction<?>> clazz = runtime.getLanguageContext().getFunctionRegistry().getFunction(identifier);
+			Class<? extends IFunction> clazz = runtime.getLanguageContext().getFunctionRegistry().getFunction(identifier);
 
 			try {
 				/*
 				 * try to instantiate the responsible function interpreter
 				 */
-				Constructor<? extends IFunction<?>> constructor = clazz.getConstructor(FunctionInvocation.class);
-				interpreter = constructor.newInstance(getExpression());
+				Constructor<? extends IFunction> constructor = clazz.getConstructor();
+				interpreter = constructor.newInstance();
 			} catch (SecurityException e) {
 				throw new TMQLRuntimeException("Internal error, during initilaization of function-invocation-interpreter of " + getTokens().get(0), e);
 			} catch (NoSuchMethodException e) {
@@ -87,6 +87,6 @@ public class FunctionInvocationInterpreter extends ExpressionInterpreterImpl<Fun
 				throw new TMQLRuntimeException("Internal error, during initilaization of function-invocation-interpreter of " + getTokens().get(0), e);
 			}
 		}
-		return interpreter.interpret(runtime, context);
+		return interpreter.interpret(runtime, context, this);
 	}
 }

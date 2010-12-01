@@ -15,10 +15,9 @@ import java.util.Set;
 import org.junit.Test;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.tmql4j.common.utility.HashUtil;
-import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
-import de.topicmapslab.tmql4j.resultprocessing.core.xml.XMLResult;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * @author Sven Krosse
@@ -63,11 +62,11 @@ public class TestComment extends Tmql4JTestCase {
 		assertEquals(1, set.first().size());
 		assertEquals("Hallo <Welt>", set.get(0, 0));
 		
-		query = "RETURN <Welt> Hallo </Welt>";
-		XMLResult xmlSet = execute(query);
-		assertEquals(1, xmlSet.size());
-		assertEquals(1, xmlSet.first().size());
-		assertEquals("<Welt> Hallo </Welt>", xmlSet.get(0, 0));
+//		query = "RETURN <Welt> Hallo </Welt>";
+//		XMLResult xmlSet = execute(query);
+//		assertEquals(1, xmlSet.size());
+//		assertEquals(1, xmlSet.first().size());
+//		assertEquals("<Welt> Hallo </Welt>", xmlSet.get(0, 0));
 		
 		query = "\"Hallo \\u0022 Welt\"";
 		set = execute(query);

@@ -18,9 +18,20 @@ package de.topicmapslab.tmql4j.util;
 public class TmdmSubjectIdentifier {
 
 	/**
-	 * subject-identifier of the topic-type of the topic maps data model
+	 * the tm:subject
 	 */
-	public static final String TMDM_SUBJECT = "tm:subject";
+	public static final String TM_SUBJECT = "tm:subject";
+	public static final String TMDM_SUBJECT = "tmdm:subject";
+	/**
+	 * the tm:name
+	 */
+	public static final String TM_NAME = "tm:name";
+	public static final String TMDM_NAME = "tmdm:name";
+	/**
+	 * the tm:occurrence
+	 */
+	public static final String TM_OCCURRENCE = "tm:occurrence";
+	public static final String TMDM_OCCURRENCE = "tmdm:occurrence";
 	/**
 	 * subject-identifier of the topic-type of the topic maps data model
 	 */
@@ -89,16 +100,51 @@ public class TmdmSubjectIdentifier {
 
 	/**
 	 * Utility method to check if the given object is a string with the value
-	 * "tm:subject"
+	 * "tm:subject" or "tmdm:subject"
 	 * 
 	 * @param obj
 	 *            the object
-	 * @return <code>true</code> if the object is the string "tm:subject",
-	 *         <code>false</code> otherwise
+	 * @return <code>true</code> if the object is the string "tm:subject" or
+	 *         "tmdm:subject", <code>false</code> otherwise
 	 */
 	public static boolean isTmdmSubject(Object obj) {
 		if (obj instanceof String) {
-			return obj.toString().endsWith(TMDM_SUBJECT);
+			String identifier = (String) obj;
+			return identifier.equalsIgnoreCase(TM_SUBJECT) || identifier.equalsIgnoreCase(TMDM_SUBJECT);
+		}
+		return false;
+	}
+
+	/**
+	 * Utility method to check if the given object is a string with the value
+	 * "tm:occurrence" or "tmdm:occurrence"
+	 * 
+	 * @param obj
+	 *            the object
+	 * @return <code>true</code> if the object is the string "tm:occurrence" or
+	 *         "tmdm:occurrence", <code>false</code> otherwise
+	 */
+	public static boolean isTmdmOccurrence(Object obj) {
+		if (obj instanceof String) {
+			String identifier = (String) obj;
+			return identifier.equalsIgnoreCase(TMDM_OCCURRENCE) || identifier.equalsIgnoreCase(TM_OCCURRENCE);
+		}
+		return false;
+	}
+
+	/**
+	 * Utility method to check if the given object is a string with the value
+	 * "tm:name" or "tmdm:name"
+	 * 
+	 * @param obj
+	 *            the object
+	 * @return <code>true</code> if the object is the string "tm:name" or
+	 *         "tmdm:name", <code>false</code> otherwise
+	 */
+	public static boolean isTmdmName(Object obj) {
+		if (obj instanceof String) {
+			String identifier = (String) obj;
+			return identifier.equalsIgnoreCase(TMDM_NAME) || identifier.equalsIgnoreCase(TM_NAME);
 		}
 		return false;
 	}

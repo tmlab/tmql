@@ -12,6 +12,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import de.topicmapslab.tmql4j.path.tests.select.TestFromClause;
+import de.topicmapslab.tmql4j.path.tests.select.TestOffsetLimitClause;
+import de.topicmapslab.tmql4j.path.tests.select.TestOrderByClause;
+import de.topicmapslab.tmql4j.path.tests.select.TestSelectClause;
+import de.topicmapslab.tmql4j.path.tests.select.TestUniqueClause;
+import de.topicmapslab.tmql4j.path.tests.select.TestWhereClause;
+
 /**
  * @author Sven Krosse
  *

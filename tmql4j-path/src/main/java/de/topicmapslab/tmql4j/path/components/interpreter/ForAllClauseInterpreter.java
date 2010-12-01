@@ -53,13 +53,6 @@ public class ForAllClauseInterpreter extends QuantifiedExpression<ForAllClause> 
 	 */
 	protected boolean doSatisfy(ITMQLRuntime runtime, IContext context, IResultSet<?> results) {
 		try {
-			// /*
-			// * create new variable layer with current tuple
-			// */
-			// for (Entry<String, Object> t : tuple.entrySet()) {
-			// runtime.getRuntimeContext().peek().setValue(
-			// t.getKey(), t.getValue());
-			// }
 			/*
 			 * call iteration bindings to extract all possible values
 			 */

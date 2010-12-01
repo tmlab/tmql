@@ -20,12 +20,12 @@ import org.junit.Test;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.tmql4j.common.core.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.common.utility.HashUtil;
-import de.topicmapslab.tmql4j.draft2010.query.TMQLQueryDraft2008;
-import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
-import de.topicmapslab.tmql4j.resultprocessing.model.IResult;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.components.processor.results.IResult;
+import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.path.query.TMQLQuery;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * @author Sven Krosse
@@ -254,7 +254,7 @@ public class TestTupleExpression extends Tmql4JTestCase {
 
 		query = " NULL ";
 		try {
-			set = execute(new TMQLQueryDraft2008(query));
+			set = execute(new TMQLQuery(topicMap,query));
 		} catch (TMQLRuntimeException e) {
 			fail("Interpretation of empty tuple fails!");
 		}

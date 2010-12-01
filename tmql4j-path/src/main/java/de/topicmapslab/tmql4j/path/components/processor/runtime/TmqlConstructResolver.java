@@ -61,39 +61,30 @@ public class TmqlConstructResolver implements IConstructResolver {
 	 * {@inheritDoc}
 	 */
 	public final Construct getConstructByIdentifier(final IContext context, final String identifier) throws TMQLRuntimeException {
-		Construct construct = getTopicBySubjectIdentifier(context, identifier);
+		Construct construct = null;
+		/*
+		 * try to get element by identifier
+		 */
+		construct = tryToGetElementByIdentifier(context, identifier);
 		if (construct == null) {
-			construct = getConstructByItemIdentifier(context, identifier);
-			if (construct == null) {
-				construct = getConstructByItemIdentifier(context, identifier);
-				if (construct == null) {
-					try {
-						/*
-						 * try to get element by identifier
-						 */
-						construct = tryToGetElementByIdentifier(context, identifier);
-					} catch (TMQLRuntimeException ex) {
-						/*
-						 * check if identifier contains QNames
-						 */
-						if (!isAbsolute(context, identifier)) {
-							/*
-							 * try to get item by absolute IRI
-							 */
-							construct = tryToGetElementByIdentifier(context, toAbsoluteIRI(context, identifier));
-						} else {
-							final String defaultPrefix = runtime.getLanguageContext().getPrefixHandler().getDefaultPrefix();
-							/*
-							 * no default prefix set
-							 */
-							if (defaultPrefix != null && !defaultPrefix.isEmpty()) {
-								/*
-								 * try to get element by identifier
-								 */
-								construct = tryToGetElementByIdentifier(context, defaultPrefix + identifier);
-							}
-						}
-					}
+			/*
+			 * check if identifier contains QNames
+			 */
+			if (!isAbsolute(context, identifier)) {
+				/*
+				 * try to get item by absolute IRI
+				 */
+				construct = tryToGetElementByIdentifier(context, toAbsoluteIRI(context, identifier));
+			} else {
+				final String defaultPrefix = runtime.getLanguageContext().getPrefixHandler().getDefaultPrefix();
+				/*
+				 * no default prefix set
+				 */
+				if (defaultPrefix != null && !defaultPrefix.isEmpty()) {
+					/*
+					 * try to get element by identifier
+					 */
+					construct = tryToGetElementByIdentifier(context, defaultPrefix + identifier);
 				}
 			}
 		}

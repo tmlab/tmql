@@ -71,7 +71,7 @@ public class RolesNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateBackward(Object construct, Construct optional)
+	public Collection<?> navigateBackward(Object construct, Object optional)
 			throws NavigationException {
 		if (construct instanceof Topic) {
 			Topic topic = (Topic) construct;

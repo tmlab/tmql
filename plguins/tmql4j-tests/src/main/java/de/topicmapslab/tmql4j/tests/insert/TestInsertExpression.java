@@ -12,13 +12,12 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 
-
 import org.junit.Test;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.tmql4j.common.core.query.TMQLQuery;
-import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.path.query.TMQLQuery;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
 
 /**
  * @author Sven Krosse
@@ -38,7 +37,7 @@ public class TestInsertExpression extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = " INSERT ''' " + subjectIdentifier + ". '''";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(2L, set.first().first());
@@ -59,7 +58,7 @@ public class TestInsertExpression extends Tmql4JTestCase {
 
 		query = " INSERT ''' " + base + "myType ( " + base + "myType : "
 				+ base + "myTopic ) '''";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(6L, set.first().first());

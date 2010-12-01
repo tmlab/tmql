@@ -11,9 +11,9 @@ package de.topicmapslab.tmql4j.components.processor.runtime.module;
 import java.util.Map;
 import java.util.Properties;
 
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLInitializationException;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.util.HashUtil;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 
 /**
@@ -46,7 +46,7 @@ public class PrefixHandler {
 	 */
 	static {
 		knownSystemIdentifiers.put("tm:subject",
-				TmdmSubjectIdentifier.TMDM_SUBJECT);
+				TmdmSubjectIdentifier.TM_SUBJECT);
 		knownSystemIdentifiers.put("tm:name",
 				TmdmSubjectIdentifier.TMDM_NAME_TYPE);
 		knownSystemIdentifiers.put("tm:occurrence",
@@ -91,8 +91,7 @@ public class PrefixHandler {
 						.toString());
 			}
 		} catch (Exception ex) {
-			throw new TMQLInitializationException(
-					"Cannot load prefix.properties");
+			// IGNORE
 		}
 	}
 

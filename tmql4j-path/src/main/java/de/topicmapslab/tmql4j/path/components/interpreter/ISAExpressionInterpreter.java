@@ -21,7 +21,6 @@ import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.NavigationHandler;
@@ -30,6 +29,7 @@ import de.topicmapslab.tmql4j.path.exception.NavigationException;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Variable;
 import de.topicmapslab.tmql4j.path.grammar.productions.ISAExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.SimpleContent;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * 
@@ -130,12 +130,12 @@ public class ISAExpressionInterpreter extends ExpressionInterpreterImpl<ISAExpre
 				Collection<?> col = (Collection<?>) anchor;
 				Collection<?> all = matches.getPossibleValuesForVariable();
 				col.retainAll(all);
-				matches = QueryMatches.asQueryMatch(runtime, col.toArray());
+				matches = QueryMatches.asQueryMatchNS(runtime, col.toArray());
 				/*
 				 * set negation
 				 */
 				all.remove(col);
-				matches.addNegation(QueryMatches.asQueryMatch(runtime, all.toArray()));
+				matches.addNegation(QueryMatches.asQueryMatchNS(runtime, all.toArray()));
 			}
 			/*
 			 * context is variable

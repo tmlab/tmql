@@ -10,12 +10,11 @@ package de.topicmapslab.tmql4j.tests.environment;
 
 import static junit.framework.Assert.assertEquals;
 
-
 import org.junit.Test;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
 
 /**
  * @author Sven Krosse

@@ -13,8 +13,8 @@ import java.util.Map;
 
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.query.IQuery;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * @author Sven Krosse

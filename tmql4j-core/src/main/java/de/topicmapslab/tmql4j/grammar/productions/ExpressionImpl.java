@@ -15,14 +15,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.CollectionsUtility;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.extensions.ILanguageExtension;
 import de.topicmapslab.tmql4j.extensions.ILanguageExtensionEntry;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.util.CollectionsUtility;
 
 /**
  * Base implementation of {@link IExpression} representing one specific
@@ -332,6 +335,14 @@ public abstract class ExpressionImpl implements IExpression {
 			parent = parent.getParent();
 		}
 		return false;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		IExpressionInterpreter<?> interpreter = runtime.getLanguageContext().getInterpreterRegistry().interpreterInstance(this);
+		return interpreter.interpret(runtime, context, optionalArguments);
 	}
 
 }

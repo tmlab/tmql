@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 
 import de.topicmapslab.tmql4j.components.parser.IParserUtilsCallback;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
@@ -33,6 +32,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundClose;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundOpen;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketSquareClose;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketSquareOpen;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Utility class defining some helpful methods for parser.

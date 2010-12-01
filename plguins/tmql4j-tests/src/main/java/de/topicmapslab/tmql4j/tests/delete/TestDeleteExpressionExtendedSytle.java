@@ -10,14 +10,13 @@ package de.topicmapslab.tmql4j.tests.delete;
 
 import static junit.framework.Assert.assertEquals;
 
-
 import org.junit.Test;
 import org.tmapi.core.Name;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.tmql4j.common.core.query.TMQLQuery;
-import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.path.query.TMQLQuery;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
 
 /**
  * @author Sven Krosse
@@ -37,7 +36,7 @@ public class TestDeleteExpressionExtendedSytle extends Tmql4JTestCase {
 		assertEquals(100, t.getNames().size());
 
 		String query = " DELETE $t >> characteristics tm:name WHERE $t ISA myType";
-		SimpleResultSet set = execute(new TMQLQuery(query));
+		SimpleResultSet set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(100L, set.first().first());
@@ -60,7 +59,7 @@ public class TestDeleteExpressionExtendedSytle extends Tmql4JTestCase {
 		assertEquals(100, t.getNames().size());
 
 		String query = " DELETE $t >> characteristics tm:name @theme WHERE $t ISA myType";
-		SimpleResultSet set = execute(new TMQLQuery(query));
+		SimpleResultSet set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(50L, set.first().first());
@@ -83,7 +82,7 @@ public class TestDeleteExpressionExtendedSytle extends Tmql4JTestCase {
 		assertEquals(100, t.getNames().size());
 
 		String query = " DELETE $t >> characteristics cType WHERE $t ISA myType";
-		SimpleResultSet set = execute(new TMQLQuery(query));
+		SimpleResultSet set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(50L, set.first().first());
@@ -110,7 +109,7 @@ public class TestDeleteExpressionExtendedSytle extends Tmql4JTestCase {
 		assertEquals(100, t.getNames().size());
 
 		String query = " DELETE $t >> characteristics cType @theme WHERE $t ISA myType";
-		SimpleResultSet set = execute(new TMQLQuery(query));
+		SimpleResultSet set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(25L, set.first().first());

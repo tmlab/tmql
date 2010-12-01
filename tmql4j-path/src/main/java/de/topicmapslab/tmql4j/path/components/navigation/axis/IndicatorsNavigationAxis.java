@@ -63,7 +63,7 @@ public class IndicatorsNavigationAxis extends BaseNavigationAxisImpl {
 	 * {@inheritDoc}
 	 */
 	public Collection<?> navigateBackward(Object construct,
-			Construct optional) throws NavigationException {
+			Object optional) throws NavigationException {
 		/*
 		 * create new instance of tuple-sequence
 		 */

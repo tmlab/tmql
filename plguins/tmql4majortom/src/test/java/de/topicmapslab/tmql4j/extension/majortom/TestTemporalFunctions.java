@@ -21,9 +21,9 @@ import de.topicmapslab.tmql4j.extension.majortom.expression.GetDates;
 import de.topicmapslab.tmql4j.extension.majortom.expression.GetDatesAfter;
 import de.topicmapslab.tmql4j.extension.majortom.expression.GetDatesBefore;
 import de.topicmapslab.tmql4j.extension.majortom.expression.GetDatesInRange;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
 import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
 import de.topicmapslab.tmql4j.resultprocessing.model.IResult;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
 
 /**
  * @author Sven Krosse

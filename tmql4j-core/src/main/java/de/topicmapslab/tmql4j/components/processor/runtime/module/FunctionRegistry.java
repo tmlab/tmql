@@ -11,8 +11,8 @@ package de.topicmapslab.tmql4j.components.processor.runtime.module;
 import java.util.Map;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.grammar.productions.IFunction;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Internal registry for function classes. Provides access to registered
@@ -27,7 +27,7 @@ public abstract class FunctionRegistry {
 	/**
 	 * internal store of all known function interpreter
 	 */
-	private final Map<String, Class<? extends IFunction<?>>> functions = HashUtil.getHashMap();
+	private final Map<String, Class<? extends IFunction>> functions = HashUtil.getHashMap();
 
 	/**
 	 * the TMQL runtime instance
@@ -54,7 +54,7 @@ public abstract class FunctionRegistry {
 	 * @param interpreter
 	 *            the interpreter class of the new function
 	 */
-	public void registerFunction(String itemIdentifier, Class<? extends IFunction<?>> interpreter) {
+	public void registerFunction(String itemIdentifier, Class<? extends IFunction> interpreter) {
 		functions.put(itemIdentifier, interpreter);
 	}
 
@@ -68,11 +68,11 @@ public abstract class FunctionRegistry {
 	 * @return the interpreter class if the identifier is known,
 	 *         <code>null</code> otherwise
 	 */
-	public Class<? extends IFunction<?>> getFunction(final String itemIdentifier) {
+	public Class<? extends IFunction> getFunction(final String itemIdentifier) {
 		/*
 		 * get stored interpreter class
 		 */
-		Class<? extends IFunction<?>> interpreter = functions.get(itemIdentifier);
+		Class<? extends IFunction> interpreter = functions.get(itemIdentifier);
 		return interpreter;
 	}
 
@@ -94,9 +94,9 @@ public abstract class FunctionRegistry {
 	 */
 	protected abstract void initialize();
 
-	
 	/**
 	 * Returns the stored reference of the runtime
+	 * 
 	 * @return the runtime
 	 */
 	protected ITMQLRuntime getRuntime() {

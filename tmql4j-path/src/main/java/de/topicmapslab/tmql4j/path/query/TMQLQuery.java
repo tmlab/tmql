@@ -12,9 +12,7 @@ package de.topicmapslab.tmql4j.path.query;
 
 import org.tmapi.core.TopicMap;
 
-import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.query.preprocessing.TmqlScreener;
 import de.topicmapslab.tmql4j.path.query.preprocessing.TmqlWhiteSpacer;
 import de.topicmapslab.tmql4j.query.IQuery;
@@ -28,11 +26,6 @@ import de.topicmapslab.tmql4j.query.QueryImpl;
  * 
  */
 public class TMQLQuery extends QueryImpl {
-
-	/**
-	 * the querying results
-	 */
-	private IResultSet<?> results;
 
 	/**
 	 * Constructor to create a new instance of a TMQL query.
@@ -53,26 +46,6 @@ public class TMQLQuery extends QueryImpl {
 	 */
 	public IQuery toTMQL() {
 		return this;
-	}
-
-	/**
-	 * Internal setter of the results
-	 * 
-	 * @param results
-	 *            the results
-	 */
-	public void setResults(IResultSet<?> results) {
-		this.results = results;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public IResultSet<?> getResults() throws TMQLRuntimeException {
-		if (results == null) {
-			throw new TMQLRuntimeException("Querying process not finished yet.");
-		}
-		return results;
 	}
 
 	/**
@@ -98,6 +71,6 @@ public class TMQLQuery extends QueryImpl {
 	 * {@inheritDoc}
 	 */
 	public void afterQuery(ITMQLRuntime runtime) {
-		// NOTHING TO DO 
+		// NOTHING TO DO
 	}
 }

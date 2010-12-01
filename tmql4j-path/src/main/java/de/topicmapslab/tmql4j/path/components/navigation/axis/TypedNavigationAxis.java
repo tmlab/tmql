@@ -15,10 +15,10 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.Typed;
 import org.tmapi.index.TypeInstanceIndex;
 
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.path.components.navigation.BaseNavigationAxisImpl;
 import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Class definition representing the typed axis.
@@ -62,7 +62,7 @@ public class TypedNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateBackward(Object construct, Construct optional)
+	public Collection<?> navigateBackward(Object construct, Object optional)
 			throws NavigationException {
 		return new TypesNavigationAxis().navigateForward(construct, optional);
 	}

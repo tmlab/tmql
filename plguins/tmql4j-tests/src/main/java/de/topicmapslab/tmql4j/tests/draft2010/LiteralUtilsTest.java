@@ -6,9 +6,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
-import de.topicmapslab.tmql4j.common.utility.HashUtil;
-import de.topicmapslab.tmql4j.interpreter.utility.operation.LiteralUtils;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
 
 public class LiteralUtilsTest extends Tmql4JTestCase {
 	@Test

@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
@@ -44,6 +43,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisReifierMoveBackwa
 import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisReifierMoveForward;
 import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisTraverse;
 import de.topicmapslab.tmql4j.path.grammar.productions.Step;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Utility class for non-canonical -> canonical transformations.

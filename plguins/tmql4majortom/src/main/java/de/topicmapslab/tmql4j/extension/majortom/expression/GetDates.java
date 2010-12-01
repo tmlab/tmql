@@ -21,10 +21,10 @@ import de.topicmapslab.tmql4j.common.utility.HashUtil;
 import de.topicmapslab.tmql4j.common.utility.VariableNames;
 import de.topicmapslab.tmql4j.extension.majortom.utils.FunctionUtils;
 import de.topicmapslab.tmql4j.interpreter.core.base.QueryMatches;
-import de.topicmapslab.tmql4j.interpreter.core.interpreter.functions.IFunctionInvocationInterpreter;
 import de.topicmapslab.tmql4j.interpreter.model.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.parser.core.expressions.FunctionInvocation;
 import de.topicmapslab.tmql4j.parser.core.expressions.Parameters;
+import de.topicmapslab.tmql4j.path.grammar.functions.IFunctionInvocationInterpreter;
 
 /**
  * @author Sven Krosse

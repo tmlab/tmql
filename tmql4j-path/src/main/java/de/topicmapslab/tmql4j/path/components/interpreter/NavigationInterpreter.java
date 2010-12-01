@@ -17,11 +17,11 @@ import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.components.processor.core.Context;
 import de.topicmapslab.tmql4j.path.grammar.productions.Navigation;
 import de.topicmapslab.tmql4j.path.grammar.productions.Step;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * 
@@ -72,7 +72,7 @@ public class NavigationInterpreter extends ExpressionInterpreterImpl<Navigation>
 				/*
 				 * call next expression
 				 */
-				QueryMatches matches = nextExpression.interpret(runtime, context, optionalArguments);
+				QueryMatches matches = nextExpression.interpret(runtime, newContext, optionalArguments);
 				results.addAll(matches.getPossibleValuesForVariable());
 			}
 			/*
@@ -80,6 +80,6 @@ public class NavigationInterpreter extends ExpressionInterpreterImpl<Navigation>
 			 */
 			values = results;
 		}
-		return QueryMatches.asQueryMatch(runtime, values.toArray());
+		return QueryMatches.asQueryMatchNS(runtime, values.toArray());
 	}
 }

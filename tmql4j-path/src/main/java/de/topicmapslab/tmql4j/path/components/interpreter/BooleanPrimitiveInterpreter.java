@@ -24,7 +24,6 @@ import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.components.processor.core.Context;
 import de.topicmapslab.tmql4j.path.grammar.productions.BooleanExpression;
@@ -32,6 +31,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.BooleanPrimitive;
 import de.topicmapslab.tmql4j.path.grammar.productions.ExistsClause;
 import de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix;
 import de.topicmapslab.tmql4j.path.grammar.productions.ForAllClause;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * 
@@ -321,7 +321,7 @@ public class BooleanPrimitiveInterpreter extends ExpressionInterpreterImpl<Boole
 			 * called by filter
 			 */
 			if (getExpression().isChildOf(FilterPostfix.class) && context.getCurrentNode() != null) {
-				return QueryMatches.asQueryMatch(runtime, context.getCurrentNode());
+				return QueryMatches.asQueryMatchNS(runtime, context.getCurrentNode());
 			}
 			return results;
 		}
@@ -372,7 +372,7 @@ public class BooleanPrimitiveInterpreter extends ExpressionInterpreterImpl<Boole
 			 * Check if scopes containing the specified theme
 			 */
 			if (((Scoped) obj).getScope().contains(scope)) {
-				return QueryMatches.asQueryMatch(runtime, obj);
+				return QueryMatches.asQueryMatchNS(runtime, obj);
 			}
 		}
 		return QueryMatches.emptyMatches();

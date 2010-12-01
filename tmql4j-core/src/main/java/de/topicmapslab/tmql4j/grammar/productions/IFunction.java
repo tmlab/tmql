@@ -10,6 +10,7 @@
  */
 package de.topicmapslab.tmql4j.grammar.productions;
 
+import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
@@ -23,7 +24,7 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public interface IFunction<T extends IExpression> {
+public interface IFunction {
 
 	/**
 	 * Checks if the number of parameters is valid for the current function
@@ -53,8 +54,10 @@ public interface IFunction<T extends IExpression> {
 	 *            the runtime
 	 * @param context
 	 *            the context
+	 * @param caller
+	 *            the calling expression
 	 * @return the result of querying
 	 */
-	public QueryMatches interpret(ITMQLRuntime runtime, IContext context);
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller);
 
 }

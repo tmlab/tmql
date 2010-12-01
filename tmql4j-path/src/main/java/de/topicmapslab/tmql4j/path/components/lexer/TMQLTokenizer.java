@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLLexerException;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * TMQL tokenizer class. String secure tokenizer of TMQL queries, splitting

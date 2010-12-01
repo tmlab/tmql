@@ -8,10 +8,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.tmql4j.common.core.query.TMQLQuery;
-import de.topicmapslab.tmql4j.draft2010.query.TMQLQueryDraft2008;
-import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.path.query.TMQLQuery;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
 
 public class TestValueExpression extends Tmql4JTestCase {
 
@@ -22,7 +21,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = prefix + " undef  ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap, query));
 		Assert.assertEquals(1,set.size()); 
 		Assert.assertEquals(1,set.first().size());
 		Assert.assertTrue(set.first().first() instanceof Topic);
@@ -35,7 +34,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = prefix + " -1 * 1  ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();
 		if (o instanceof BigInteger) {
@@ -48,7 +47,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " - -1 * 1 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof BigInteger) {
@@ -68,7 +67,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = prefix + " 1 + 2 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		System.out.println();
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();
@@ -82,7 +81,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " 1 + 2 + 5 + 10 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -96,7 +95,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " 1 + 2 + 99 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -110,7 +109,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " 1.0 + 2.0  ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -124,7 +123,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " \"abc\" + \"def\" ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -145,7 +144,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = prefix + " 1 - 2 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();
 		if (o instanceof BigInteger) {
@@ -158,7 +157,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " 20 - 20 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof BigInteger) {
@@ -171,7 +170,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " 99 - 2 - 99 ";
-		set = execute(new TMQLQueryDraft2008(query));
+		set = execute(new TMQLQuery(topicMap, query));
 		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -185,7 +184,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " SELECT 3.0 - 2.0  ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -207,7 +206,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = prefix + " SELECT 1 * 2 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();
 		if (o instanceof BigInteger) {
@@ -220,7 +219,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " 20 * 20 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof BigInteger) {
@@ -233,7 +232,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " - 20 * 20 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -247,7 +246,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " 3.0 * 2.0  ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -268,7 +267,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = prefix + " 1 % 2 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();
 		if (o instanceof BigDecimal) {
@@ -281,7 +280,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " 20 % 20 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof BigDecimal) {
@@ -294,7 +293,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " - 20 % 20 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -308,7 +307,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " 3.0 % 2.0  ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -330,7 +329,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = prefix + " 1 mod 2 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();
 		if (o instanceof BigDecimal) {
@@ -343,7 +342,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " 20 mod 20 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof BigDecimal) {
@@ -363,7 +362,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = prefix + " 1 < 2 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();
 		if (o instanceof Boolean) {
@@ -376,7 +375,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " \"a\" < \"b\" ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof Boolean) {
@@ -396,7 +395,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = prefix + " 1 <= 2 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();
 		if (o instanceof Boolean) {
@@ -409,7 +408,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " \"a\" <= \"b\" ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof Boolean) {
@@ -429,7 +428,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = prefix + " 10 > 2 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();
 		if (o instanceof Boolean) {
@@ -442,7 +441,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " \"a\" > \"B\" ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof Boolean) {
@@ -462,7 +461,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = prefix + " 10 >= 2 ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();
 		if (o instanceof Boolean) {
@@ -475,7 +474,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		}
 
 		query = prefix + " \"a\" >= \"B\" ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof Boolean) {
@@ -495,7 +494,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = prefix + " \"aaaa\" =~ \".*a.*\" ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();
 		if (o instanceof Boolean) {
@@ -516,23 +515,23 @@ public class TestValueExpression extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = prefix + " myTopic [ 1 == 1 ]";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Assert.assertEquals(1, set.first().size());
 		Assert.assertEquals(t, set.first().first());
 		
 		query = prefix + " myTopic [ 1 == 2 ]";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(0, set.size());
 
 		query = prefix + "  myTopic [ \"a\" == \"a\" ]";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Assert.assertEquals(1, set.first().size());
 		Assert.assertEquals(t, set.first().first());
 		
 		query = prefix + "  myTopic [ \"a\" == \"b\" ] ";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(0, set.size());
 	}
 	
@@ -544,23 +543,23 @@ public class TestValueExpression extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = prefix + " myTopic [ 1 != 2 ]";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Assert.assertEquals(1, set.first().size());
 		Assert.assertEquals(t, set.first().first());
 		
 		query = prefix + " myTopic [ 1 != 1 ]";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(0, set.size());
 
 		query = prefix + "  myTopic [ \"a\" != \"b\"  ]";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Assert.assertEquals(1, set.first().size());
 		Assert.assertEquals(t, set.first().first());
 		
 		query = prefix + "  myTopic [ \"a\" != \"a\"  ]";
-		set = execute(new TMQLQuery(query));
+		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(0, set.size());
 	}
 }

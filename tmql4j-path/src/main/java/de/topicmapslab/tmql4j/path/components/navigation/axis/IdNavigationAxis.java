@@ -62,7 +62,7 @@ public class IdNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateBackward(Object construct, Construct optional)
+	public Collection<?> navigateBackward(Object construct, Object optional)
 			throws NavigationException {
 		Collection<Object> set = new LinkedList<Object>();
 		Construct c = getTopicMap().getConstructById(construct.toString());

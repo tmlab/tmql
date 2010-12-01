@@ -61,7 +61,7 @@ public class PrefixDirectiveInterpreter extends ExpressionInterpreterImpl<Prefix
 		/*
 		 * store prefix
 		 */
-		context.setPrefix(qiri, reference);
+		context.setPrefix(reference, qiri);
 		
 		return QueryMatches.emptyMatches();
 	}

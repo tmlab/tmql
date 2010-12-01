@@ -11,6 +11,9 @@
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import java.math.BigInteger;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +34,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.OrderByClause;
 import de.topicmapslab.tmql4j.path.grammar.productions.SelectClause;
 import de.topicmapslab.tmql4j.path.grammar.productions.SelectExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.WhereClause;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * 
@@ -70,16 +74,17 @@ public class SelectExpressionInterpreter extends ExpressionInterpreterImpl<Selec
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		Context newContext = new Context(context);
+		QueryMatches fromResults = null;
 		/*
 		 * check if from-clause exists
 		 */
 		if (containsExpressionsType(FromClause.class)) {
-			QueryMatches matches = interpretFromClause(runtime, newContext, optionalArguments);
-			if (matches.isEmpty()) {
+			fromResults = interpretFromClause(runtime, newContext, optionalArguments);
+			if (fromResults.isEmpty()) {
 				logger.warn("Interpretation of from clause return no results!");
 				return QueryMatches.emptyMatches();
 			}
-			newContext.setContextBindings(matches);
+//			newContext.setContextBindings(fromResults);
 		}
 
 		/*
@@ -101,6 +106,8 @@ public class SelectExpressionInterpreter extends ExpressionInterpreterImpl<Selec
 		 * interpret where-clause if exists
 		 */
 		if (containsExpressionsType(WhereClause.class)) {
+			newContext.setContextBindings(getBindingsContext(runtime, fromResults));
+			fromResults = null;
 			QueryMatches matches = interpretWhereClause(runtime, newContext, optionalArguments);
 			if (matches.isEmpty()) {
 				logger.warn("Interpretation of where clause return no results!");
@@ -124,43 +131,41 @@ public class SelectExpressionInterpreter extends ExpressionInterpreterImpl<Selec
 		 * interpret select-clause if exists
 		 */
 		QueryMatches matches = interpretSelectClause(runtime, newContext, optionalArguments);
-		// /*
-		// * clean results by from-clause if exists and not already cleaned by
-		// * where-clause
-		// */
-		// if (!containsWhereClause && context != null) {
-		// /*
-		// * create new temporary sequence to store cleared matches
-		// */
-		// ITupleSequence<Object> context_ = context
-		// .getPossibleValuesForVariable();
-		// QueryMatches cleaned = new QueryMatches(runtime);
-		// /*
-		// * iterate over all tuples
-		// */
-		// for (Map<String, Object> tuple : matches) {
-		// boolean add = true;
-		// for (Object o : tuple.values()) {
-		// if (o instanceof Collection) {
-		// Collection<?> col = (Collection<?>) o;
-		// col.retainAll(context_);
-		// add = !col.isEmpty();
-		// } else {
-		// add = context_.contains(o);
-		// }
-		// if (!add) {
-		// break;
-		// }
-		// }
-		// /*
-		// * check if value is contained in the context
-		// */
-		// if (add) {
-		// cleaned.add(tuple);
-		// }
-		// }
-		// matches = cleaned;
-		// }
+		/*
+		 * remove non valid content defined by from-clause
+		 */
+		if (fromResults != null ) {
+			/*
+			 * create new temporary sequence to store cleared matches
+			 */
+			List<Object> context_ = fromResults.getPossibleValuesForVariable();
+			QueryMatches cleaned = new QueryMatches(runtime);
+			/*
+			 * iterate over all tuples
+			 */
+			for (Map<String, Object> tuple : matches) {
+				boolean add = true;
+				for (Object o : tuple.values()) {
+					if (o instanceof Collection) {
+						Collection<?> col = (Collection<?>) o;
+						col.retainAll(context_);
+						add = !col.isEmpty();
+					} else {
+						add = context_.contains(o);
+					}
+					if (!add) {
+						break;
+					}
+				}
+				/*
+				 * check if value is contained in the context
+				 */
+				if (add) {
+					cleaned.add(tuple);
+				}
+			}
+			matches = cleaned;
+		}
 
 		/*
 		 * unify if necessary
@@ -337,8 +342,7 @@ public class SelectExpressionInterpreter extends ExpressionInterpreterImpl<Selec
 		 */
 		if (!containsExpressionsType(SelectClause.class)) {
 			throw new TMQLRuntimeException("Invalid structure. not select clause.");
-		}
-
+		}		
 		/*
 		 * extract the select clause
 		 */
@@ -381,4 +385,32 @@ public class SelectExpressionInterpreter extends ExpressionInterpreterImpl<Selec
 		return matches.select(offset, offset + limit);
 	}
 
+	/**
+	 * Utility method to create a binding context for where-clause execution
+	 * @param runtime the runtime
+	 * @param fromBindings the from bindings
+	 * @return the generated context
+	 */
+	private QueryMatches getBindingsContext(ITMQLRuntime runtime, QueryMatches fromBindings){
+		if ( fromBindings == null ){
+			return null;
+		}
+		
+		QueryMatches context = new QueryMatches(runtime);
+		/*
+		 * iterate over all possible values
+		 */
+		for ( Object value : fromBindings.getPossibleValuesForVariable()){
+			/*
+			 * iterate over all keys
+			 */
+			Map<String, Object> tuple = HashUtil.getHashMap();
+			for ( String key : getExpression().getExpressionFilteredByType(WhereClause.class).get(0).getVariables()){
+				tuple.put(key, value);
+			}
+			context.add(tuple);
+		}
+		return context;
+	}
+	
 }

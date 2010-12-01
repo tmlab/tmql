@@ -14,6 +14,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import org.tmapi.core.Association;
+import org.tmapi.core.Topic;
+
 /**
  * Interface definition of a tuple of the generated result set. The result
  * represents a row in the result set and contains a number of atomic or complex
@@ -80,32 +83,6 @@ public interface IResult extends Iterable<Object> {
 	 *             thrown if no element is available
 	 */
 	Object next() throws NoSuchElementException;
-
-	/**
-	 * Reduce internal values to atomic values. If result contains complex
-	 * values like tuple sequences or collections, they will be reduce to a set
-	 * of values. If more than one complex type is contained, all possible
-	 * combinations will be generated. For example the values [ { A , B } , { C
-	 * , D } ] will be transformed to [ A , C ] , [ A , D ] , [ B , C ] , [ B ,
-	 * D ].
-	 * 
-	 * @return the set containing all combinations of complex values
-	 * @throws UnsupportedOperationException
-	 *             thrown if operation is not supported by the implementation
-	 * @see IResult#canReduceTo2Dimensions()
-	 */
-	public Collection<Collection<Object>> reduceTo2Dimensions()
-			throws UnsupportedOperationException;
-
-	/**
-	 * Method checks if the current implementation supports the reduction to a
-	 * 2-dimensional result.
-	 * 
-	 * @see IResult#reduceTo2Dimensions()
-	 * @return <code>true</code> if operation is supported, <code>false</code>
-	 *         otherwise
-	 */
-	public boolean canReduceTo2Dimensions();
 
 	/**
 	 * Method returns the whole list of contained values.

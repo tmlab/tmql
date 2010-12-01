@@ -164,7 +164,7 @@ public interface INavigationAxis {
 	 * @throws NavigationException
 	 *             thrown if navigation fails, because of unsupported types
 	 */
-	Collection<?> navigateBackward(final Object construct, final Construct optional) throws NavigationException;
+	Collection<?> navigateBackward(final Object construct, final Object optional) throws NavigationException;
 
 	/**
 	 * Method navigate through the abstract topic map graph over the axis in

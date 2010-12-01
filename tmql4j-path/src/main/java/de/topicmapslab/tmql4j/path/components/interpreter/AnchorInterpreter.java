@@ -10,10 +10,12 @@
  */
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tmapi.core.Construct;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
@@ -26,7 +28,6 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Dot;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Element;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Literal;
 import de.topicmapslab.tmql4j.path.grammar.productions.Anchor;
-import de.topicmapslab.tmql4j.path.grammar.productions.Variable;
 import de.topicmapslab.tmql4j.util.LiteralUtils;
 
 /**
@@ -47,6 +48,10 @@ import de.topicmapslab.tmql4j.util.LiteralUtils;
  */
 public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 
+	/**
+	 * 
+	 */
+	private static final String VARIABLE_TOPIC_MAP = "%_";
 	/**
 	 * the Logger
 	 */
@@ -82,31 +87,31 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 				 * handle as date?
 				 */
 				if (LiteralUtils.isDate(anchor_)) {
-					return QueryMatches.asQueryMatch(runtime, LiteralUtils.asDate(anchor_));
+					return QueryMatches.asQueryMatchNS(runtime, LiteralUtils.asDate(anchor_));
 				}
 				/*
 				 * handle as time?
 				 */
 				else if (LiteralUtils.isTime(anchor_)) {
-					return QueryMatches.asQueryMatch(runtime, LiteralUtils.asTime(anchor_));
+					return QueryMatches.asQueryMatchNS(runtime, LiteralUtils.asTime(anchor_));
 				}
 				/*
 				 * handle as dateTime?
 				 */
 				else if (LiteralUtils.isDateTime(anchor_)) {
-					return QueryMatches.asQueryMatch(runtime, LiteralUtils.asDateTime(anchor_));
+					return QueryMatches.asQueryMatchNS(runtime, LiteralUtils.asDateTime(anchor_));
 				}
 				/*
 				 * handle as decimal?
 				 */
 				else if (LiteralUtils.isDecimal(anchor_)) {
-					return QueryMatches.asQueryMatch(runtime, LiteralUtils.asDecimal(anchor_));
+					return QueryMatches.asQueryMatchNS(runtime, LiteralUtils.asDecimal(anchor_));
 				}
 				/*
 				 * handle as integer?
 				 */
 				else if (LiteralUtils.isInteger(anchor_)) {
-					return QueryMatches.asQueryMatch(runtime, LiteralUtils.asInteger(anchor_));
+					return QueryMatches.asQueryMatchNS(runtime, LiteralUtils.asInteger(anchor_));
 				}
 				/*
 				 * handle special topic undef
@@ -114,7 +119,11 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 				else if ("undef".equalsIgnoreCase(anchor_)) {
 					throw new UnsupportedOperationException("Undef is unknown!");
 				}
-				return QueryMatches.asQueryMatch(runtime, runtime.getConstructResolver().getConstructByIdentifier(context, anchor_));
+				Construct constructByIdentifier = runtime.getConstructResolver().getConstructByIdentifier(context, anchor_);
+				if (constructByIdentifier != null) {
+					return QueryMatches.asQueryMatchNS(runtime, constructByIdentifier);
+				}
+				return QueryMatches.emptyMatches();
 			} catch (Exception ex) {
 				logger.warn("Cannot found element for given reference '" + anchor_ + "'!");
 			}
@@ -126,8 +135,8 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 			/*
 			 * check if current tuple is on top of the stack
 			 */
-			if (context.getCurrentTuple() != null) {
-				return QueryMatches.asQueryMatch(runtime, context.getCurrentTuple());
+			if (context.getCurrentNode() != null) {
+				return QueryMatches.asQueryMatchNS(runtime, context.getCurrentNode());
 			}
 			/*
 			 * check if context is given by upper-expression
@@ -139,28 +148,40 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 		/*
 		 * anchor is a variable
 		 */
-		else if (anchor.equals(Variable.class)) {
+		else if (anchor.equals(de.topicmapslab.tmql4j.path.grammar.lexical.Variable.class)) {
 			final String variable = getTokens().get(0);
 			if (context.getContextBindings() != null) {
-				QueryMatches match = new QueryMatches(runtime);
 				/*
 				 * save binding as tuple
 				 */
-				match.convertToTuples(match.getPossibleValuesForVariable(variable));
-				/*
-				 * check if variable was mapped by internal operation
-				 */
-				if (match.isEmpty() && match.getOrigin(variable) != null) {
-					match.convertToTuples(match.getPossibleValuesForVariable(match.getOrigin(variable)));
+				List<Object> possibleValuesForVariable = context.getContextBindings().getPossibleValuesForVariable(variable);
+				if (!possibleValuesForVariable.isEmpty()) {
+					return QueryMatches.asQueryMatchNS(runtime, possibleValuesForVariable.toArray());
 				}
-				return match;
+				/*
+				 * check if a mapping exists for the variable used
+				 */
+				final String origin = context.getContextBindings().getOrigin(variable);
+				if (origin != null) {
+					possibleValuesForVariable = context.getContextBindings().getPossibleValuesForVariable(origin);
+					if (!possibleValuesForVariable.isEmpty()) {
+						return QueryMatches.asQueryMatchNS(runtime, possibleValuesForVariable.toArray());
+					}
+				}
+			}
+			else if ( context.getCurrentTuple() != null && context.getCurrentTuple().containsKey(variable)){
+				return QueryMatches.asQueryMatchNS(runtime, context.getCurrentTuple().get(variable));
+			}
+			Object value = getSystemReference(runtime, context, variable);
+			if (value != null) {
+				return QueryMatches.asQueryMatchNS(runtime, value);
 			}
 		}
 		/*
 		 * anchor is a string
 		 */
 		else if (anchor.equals(Literal.class)) {
-			return QueryMatches.asQueryMatch(runtime, LiteralUtils.asString(anchor_));
+			return QueryMatches.asQueryMatch(runtime, QueryMatches.getNonScopedVariable(), LiteralUtils.asString(anchor_));
 		}
 		/*
 		 * anchor is a data-typed element
@@ -171,11 +192,30 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 			String datatype = tokenizer.nextToken();
 			try {
 				Object datatypedValue = LiteralUtils.asLiteral(value, datatype);
-				return QueryMatches.asQueryMatch(runtime, datatypedValue);
+				return QueryMatches.asQueryMatchNS(runtime, datatypedValue);
 			} catch (Exception ex) {
 				logger.warn("Cannot convert element for given reference '" + value + "' to datatype '" + datatype + "'!");
 			}
 		}
 		return QueryMatches.emptyMatches();
+	}
+
+	/**
+	 * Internal method to handle system references.
+	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param context
+	 *            the querying context
+	 * @param variable
+	 *            the variable name
+	 * @return the value of the system reference or <code>null</code> if the
+	 *         variable is not a system variable
+	 */
+	private Object getSystemReference(ITMQLRuntime runtime, IContext context, final String variable) {
+		if (VARIABLE_TOPIC_MAP.equalsIgnoreCase(variable)) {
+			return context.getQuery().getTopicMap();
+		}
+		return null;
 	}
 }

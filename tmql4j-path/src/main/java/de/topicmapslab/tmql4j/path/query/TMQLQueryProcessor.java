@@ -15,11 +15,11 @@ import java.util.Map;
 import org.tmapi.core.TopicMap;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.TMQLRuntimeFactory;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.query.IQuery;
 import de.topicmapslab.tmql4j.query.IQueryProcessor;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 public class TMQLQueryProcessor implements IQueryProcessor {
 
@@ -56,8 +56,10 @@ public class TMQLQueryProcessor implements IQueryProcessor {
 			TMQLRuntimeFactory.newFactory().newRuntime(null).parse(query);
 			return true;
 		} catch (TMQLInvalidSyntaxException e) {
+			e.printStackTrace();
 			return false;
 		} catch (TMQLGeneratorException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}

@@ -12,6 +12,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import de.topicmapslab.tmql4j.path.tests.engine.TestResultSets;
+
 /**
  * @author Sven Krosse
  * 

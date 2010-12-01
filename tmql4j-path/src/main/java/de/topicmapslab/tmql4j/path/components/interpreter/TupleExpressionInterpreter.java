@@ -10,16 +10,19 @@
  */
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.TupleExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * 
@@ -37,8 +40,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class TupleExpressionInterpreter extends
-		ExpressionInterpreterImpl<TupleExpression> {
+public class TupleExpressionInterpreter extends ExpressionInterpreterImpl<TupleExpression> {
 
 	/**
 	 * base constructor to create a new instance
@@ -53,7 +55,9 @@ public class TupleExpressionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+
 		/*
 		 * switch by grammar type
 		 */
@@ -62,18 +66,17 @@ public class TupleExpressionInterpreter extends
 		 * is value-expression
 		 */
 		case 0: {
-			interpretValueExpression(runtime);
+			return interpretValueExpression(runtime, context, optionalArguments);
 		}
-			break;
-		/*
-		 * is null
-		 */
+			/*
+			 * is null
+			 */
 		case 1: {
-			interpretNull(runtime);
+			return interpretNull(runtime, context, optionalArguments);
 		}
-			break;
 		}
 		;
+		return QueryMatches.emptyMatches();
 	}
 
 	/**
@@ -89,11 +92,15 @@ public class TupleExpressionInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretValueExpression(TMQLRuntime runtime)
-			throws TMQLRuntimeException {
+	private QueryMatches interpretValueExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * variable store of multiple tuple-expressions
 		 */
@@ -107,22 +114,18 @@ public class TupleExpressionInterpreter extends
 		 */
 		Set<QueryMatches> matches = HashUtil.getHashSet();
 
-		QueryMatches[] context = extractArguments(runtime,
-				ValueExpression.class);
-		for (int index = 0; index < context.length; index++) {
+		QueryMatches[] content = extractArguments(runtime, ValueExpression.class, context, optionalArguments);
+		for (int index = 0; index < content.length; index++) {
 			/*
 			 * get corresponding expression
 			 */
-			IExpression ex = getExpression().getExpressionFilteredByType(
-					ValueExpression.class).get(index);
+			IExpression ex = getExpression().getExpressionFilteredByType(ValueExpression.class).get(index);
 
-			QueryMatches result = context[index]
-					.extractAndRenameBindingsForVariable("$" + (index));
+			QueryMatches result = content[index].extractAndRenameBindingsForVariable("$" + (index));
 			/*
 			 * add sequence
 			 */
-			ITupleSequence<Object> values = context[index]
-					.getPossibleValuesForVariable();
+			List<Object> values = content[index].getPossibleValuesForVariable();
 			/*
 			 * check if expression contains variables
 			 */
@@ -139,8 +142,7 @@ public class TupleExpressionInterpreter extends
 				 * check if values are empty
 				 */
 				if (values.isEmpty()) {
-					values = context[index]
-							.getPossibleValuesForVariable(variable);
+					values = content[index].getPossibleValuesForVariable(variable);
 					origin = variable;
 				}
 				/*
@@ -152,15 +154,13 @@ public class TupleExpressionInterpreter extends
 				/*
 				 * store as tuple
 				 */
-				tuple.put("$" + (index), values.size() == 1 ? values.get(0)
-						: values);
+				tuple.put("$" + (index), values.size() == 1 ? values.get(0) : values);
 				origins.put(variable, "$" + index);
 				/*
 				 * store as tuple sequence
 				 */
-				result = context[index].extractAndRenameBindingsForVariable(
-						origin, variable);
-			}			
+				result = content[index].extractAndRenameBindingsForVariable(origin, variable);
+			}
 
 			/*
 			 * store as tuple
@@ -171,8 +171,8 @@ public class TupleExpressionInterpreter extends
 			 */
 			if (!result.isEmpty()) {
 				matches.add(result);
-			}else{
-				matches.add(context[index]);
+			} else {
+				matches.add(content[index]);
 			}
 		}
 
@@ -184,10 +184,10 @@ public class TupleExpressionInterpreter extends
 		/*
 		 * is singleton tuple-expression
 		 */
-		if (context.length == 1) {
+		if (content.length == 1) {
 			if (!matches.isEmpty()) {
 				results.addAll(matches);
-			} else if ( !tuple.isEmpty()){
+			} else if (!tuple.isEmpty()) {
 				results.add(tuple);
 			}
 		}
@@ -197,12 +197,7 @@ public class TupleExpressionInterpreter extends
 		else {
 			results.add(tuple);
 		}
-
-		/*
-		 * set results
-		 */
-		runtime.getRuntimeContext().peek()
-				.setValue(VariableNames.QUERYMATCHES, results);
+		return results;
 	}
 
 	/**
@@ -218,17 +213,19 @@ public class TupleExpressionInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretNull(TMQLRuntime runtime) throws TMQLRuntimeException {
+	private QueryMatches interpretNull(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * set empty tuple sequence
 		 */
-		runtime.getRuntimeContext()
-				.peek()
-				.setValue(VariableNames.QUERYMATCHES, new QueryMatches(runtime));
-
+		return QueryMatches.emptyMatches();
 	}
 
 }

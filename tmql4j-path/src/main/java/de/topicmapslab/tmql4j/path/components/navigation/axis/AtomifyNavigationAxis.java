@@ -70,7 +70,7 @@ public class AtomifyNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateBackward(Object construct, Construct optional)
+	public Collection<?> navigateBackward(Object construct, Object optional)
 			throws NavigationException {
 		if (construct instanceof Object) {
 			TopicMap map = getTopicMap();

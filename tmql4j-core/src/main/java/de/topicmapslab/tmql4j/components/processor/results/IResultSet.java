@@ -14,8 +14,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-
 /**
  * Interface definition of a sequence of tuples as a result of querying process.
  * The result set represents a 2-dimension container containing a number of
@@ -91,31 +89,6 @@ public interface IResultSet<T extends IResult> extends Iterable<T> {
 	 * @return a class representing the type parameter T
 	 */
 	public Class<? extends T> getResultClass();
-
-	/**
-	 * Reduce internal results to atomic results. If result set contains results
-	 * containing complex values like tuple sequences or collections, they will
-	 * be reduce to a set of values. If more than one complex type is contained,
-	 * all possible combinations will be generated. For example the values [ { A
-	 * , B } , { C , D } ] will be transformed to [ A , C ] , [ A , D ] , [ B ,
-	 * C ] , [ B , D ].
-	 * 
-	 * @throws UnsupportedOperationException
-	 *             thrown if operation is not supported by the implementation
-	 * @see IResult#reduceTo2Dimensions()
-	 */
-	public void reduceTo2Dimensions() throws UnsupportedOperationException,
-			TMQLRuntimeException;
-
-	/**
-	 * Method checks if the current implementation supports the reduction to a
-	 * 2-dimensional result set.
-	 * 
-	 * @see IResultSet#reduceTo2Dimensions()
-	 * @return <code>true</code> if operation is supported, <code>false</code>
-	 *         otherwise
-	 */
-	public boolean canReduceTo2Dimensions();
 
 	/**
 	 * Method returns a string representation of current result type according

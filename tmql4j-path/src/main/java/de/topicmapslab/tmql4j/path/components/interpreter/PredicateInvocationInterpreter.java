@@ -27,11 +27,11 @@ import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.components.interpreter.PredicateInvocationRolePlayerExpressionInterpreter.Restriction;
 import de.topicmapslab.tmql4j.path.grammar.productions.PredicateInvocation;
 import de.topicmapslab.tmql4j.path.grammar.productions.PredicateInvocationRolePlayerExpression;
+import de.topicmapslab.tmql4j.util.HashUtil;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 
 /**
@@ -81,7 +81,7 @@ public class PredicateInvocationInterpreter extends ExpressionInterpreterImpl<Pr
 		 */
 		final String anchor = getTokens().get(0);
 		Set<Association> associations = HashUtil.getHashSet();
-		if (anchor.equals(TmdmSubjectIdentifier.TMDM_SUBJECT)) {
+		if (anchor.equals(TmdmSubjectIdentifier.TM_SUBJECT)) {
 			associations.addAll(topicMap.getAssociations());
 		} else {
 			Construct c = runtime.getConstructResolver().getConstructByIdentifier(context, anchor);
@@ -120,6 +120,7 @@ public class PredicateInvocationInterpreter extends ExpressionInterpreterImpl<Pr
 				if (restriction == null) {
 					return QueryMatches.emptyMatches();
 				}
+				restrictions.add(restriction);
 			}
 		}
 

@@ -13,9 +13,11 @@ package de.topicmapslab.tmql4j.path.components.interpreter;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
+import org.tmapi.core.Construct;
 import org.tmapi.core.TopicMap;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
@@ -24,7 +26,6 @@ import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.runtime.TMQLRuntimeFactory;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.components.processor.core.Context;
@@ -160,7 +161,6 @@ public abstract class QuantifiedExpression<T extends IExpression> extends Expres
 		 */
 		else {
 			final String query = buildQuery();
-			// TODO read multithreaded from runtime
 			results = interpretQuantifiedExpression(runtime, context, bindingsContext, query, false);
 		}
 
@@ -221,7 +221,7 @@ public abstract class QuantifiedExpression<T extends IExpression> extends Expres
 		/*
 		 * set of all running threads
 		 */
-		final Set<Thread> threads = HashUtil.getHashSet();
+		ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(4 * Runtime.getRuntime().availableProcessors());
 		/*
 		 * iterate over all bindings
 		 */
@@ -245,7 +245,21 @@ public abstract class QuantifiedExpression<T extends IExpression> extends Expres
 							runtime.getLanguageContext().getPrefixHandler().registerPrefix(entry.getKey(), entry.getValue());
 						}
 
-						IQuery q = runtime.run(context.getQuery().getTopicMap(), query);
+						String query_ = new String(query);
+						for (Entry<String, Object> entry : tuple.entrySet()) {
+							final String variable = "\\" + entry.getKey();
+							final String value;
+							if (entry.getValue() instanceof Construct) {
+								value = " \"" + ((Construct) entry.getValue()).getId() + "\" << id";
+							} else {
+								value = "\"" + entry.getValue().toString() + "\"";
+							}
+							query_ = query_.replaceAll(variable, value);
+
+						}
+						System.out.println(query_);
+
+						IQuery q = runtime.run(context.getQuery().getTopicMap(), query_);
 						IResultSet<?> set = q.getResults();
 
 						/*
@@ -268,30 +282,19 @@ public abstract class QuantifiedExpression<T extends IExpression> extends Expres
 			/*
 			 * run thread
 			 */
-			threads.add(thread);
 			if (multiThreaded) {
-				thread.start();
+				threadPool.execute(thread);
 			} else {
 				thread.run();
 			}
 
 		}
 
-		/*
-		 * wait until all threads finished
-		 */
-		while (true) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+		if (multiThreaded) {
+			while (threadPool.getActiveCount() > 0) {
+				// WAIT
 			}
-			for (Thread t : threads) {
-				if (t.isAlive()) {
-					continue;
-				}
-			}
-			break;
+			threadPool.shutdown();
 		}
 
 		return results;

@@ -14,13 +14,9 @@ import java.util.List;
 import java.util.Set;
 
 import de.topicmapslab.tmql4j.components.parser.IParserUtilsCallback;
-import de.topicmapslab.tmql4j.components.processor.core.IContext;
-import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
-import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
@@ -30,6 +26,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Order;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Return;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Where;
 import de.topicmapslab.tmql4j.path.grammar.lexical.XmlStartTag;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /*
  * 
@@ -130,13 +127,5 @@ public class FlwrExpression extends ExpressionImpl {
 		 * start-tag
 		 */
 		return getTmqlTokens().size() > 1 && ParserUtils.containsTokens(getTmqlTokens(), Return.class, XmlStartTag.class);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

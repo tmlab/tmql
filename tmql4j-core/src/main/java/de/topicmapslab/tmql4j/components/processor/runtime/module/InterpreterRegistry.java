@@ -12,11 +12,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLException;
 import de.topicmapslab.tmql4j.exception.TMQLInitializationException;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Internal registry for interpreter classes. Provides access to interpreter
@@ -33,6 +33,13 @@ public abstract class InterpreterRegistry {
 	 */
 	private final Map<Class<? extends IExpression>, Class<? extends IExpressionInterpreter<?>>> registry = HashUtil
 			.getHashMap();
+	
+	/**
+	 * constructor
+	 */
+	public InterpreterRegistry() {
+		initialize();
+	}
 
 	/**
 	 * Intialization method

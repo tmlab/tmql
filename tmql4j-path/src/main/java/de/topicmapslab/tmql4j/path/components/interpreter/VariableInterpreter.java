@@ -51,7 +51,7 @@ public class VariableInterpreter extends ExpressionInterpreterImpl<Variable> {
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		final String variable =getTokens().get(0);
 		if ( context.getCurrentTuple() != null && context.getCurrentTuple().containsValue(variable)){
-			return QueryMatches.asQueryMatch(runtime, context.getCurrentTuple().get(variable));
+			return QueryMatches.asQueryMatchNS(runtime, context.getCurrentTuple().get(variable));
 		}
 		return QueryMatches.emptyMatches();
 	}

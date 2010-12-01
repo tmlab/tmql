@@ -10,14 +10,13 @@
  */
 package de.topicmapslab.tmql4j.path.components.processor.results;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.results.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.IResultProcessor;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.ProjectionUtils;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 
@@ -69,54 +68,31 @@ public class TmqlResultProcessor implements IResultProcessor {
 	 */
 	public void proceed(QueryMatches matches, Class<? extends IResultSet<?>> clazz) throws TMQLRuntimeException {
 		try {
+
+			List<List<Object>> results = ProjectionUtils.asTwoDimensional(matches);
 			/*
 			 * create new instance of result set
 			 */
 			resultSet = clazz.getConstructor().newInstance();
 			/*
-			 * get ordered keys of querying matches
-			 */
-			List<String> keys = matches.getOrderedKeys();
-			/*
 			 * iterate over query matches per tuple
 			 */
-			for (Map<String, Object> tuple : matches) {
+			for (List<Object> tuple : results) {
 				/*
 				 * create new instance of result
 				 */
-				IResult result = resultSet.getResultClass().getConstructor()
-						.newInstance();
-				/*
-				 * iterate over values of current tuple
-				 */
-				for (String key : keys) {
-					Object value = tuple.get(key);
-					/*
-					 * add values as collection or as atomic value
-					 */
-					if (value instanceof Collection<?>) {
-						result.add(((Collection<?>) value));
-					} else {
-						result.add(value);
-					}
-				}
+				IResult result = resultSet.getResultClass().getConstructor().newInstance();
+				result.add(tuple);
 				/*
 				 * add result to result set
 				 */
 				resultSet.addResult(result);
 			}
-
-			/*
-			 * check if result set should be reduced to two dimensions
-			 */
-			if (resultSet.canReduceTo2Dimensions()) {
-				resultSet.reduceTo2Dimensions();
-			}
 		} catch (Exception e) {
 			throw new TMQLRuntimeException("Failed to generate result set", e);
 		}
 	}
-	
+
 	/**
 	 * @return the runtime
 	 */

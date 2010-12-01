@@ -12,6 +12,8 @@ import org.tmapi.core.TopicMapSystem;
 
 import de.topicmapslab.tmql4j.components.parser.IParserTree;
 import de.topicmapslab.tmql4j.components.processor.ITmqlProcessor;
+import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.IConstructResolver;
 import de.topicmapslab.tmql4j.components.processor.runtime.ILanguageContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.IValueStore;
@@ -22,6 +24,7 @@ import de.topicmapslab.tmql4j.path.components.processor.TmqlProcessor2007;
 import de.topicmapslab.tmql4j.path.components.processor.runtime.module.LanguageContext;
 import de.topicmapslab.tmql4j.path.components.processor.runtime.module.ValueStore;
 import de.topicmapslab.tmql4j.path.extensions.ExtensionPointAdapter;
+import de.topicmapslab.tmql4j.path.query.TMQLQuery;
 import de.topicmapslab.tmql4j.query.IQuery;
 
 /**
@@ -71,8 +74,20 @@ public class TmqlRuntime2007 extends TmqlRuntimeImpl {
 	 * {@inheritDoc}
 	 */
 	public IParserTree parse(String query) throws TMQLRuntimeException {
-		// TODO implement
-		throw new UnsupportedOperationException();
+		IQuery q = new TMQLQuery(null, query);
+		/*
+		 * before-execution call to query
+		 */
+		q.beforeQuery(this);		
+		/*
+		 * redirect to real implementation
+		 */
+		IParserTree tree = getTmqlProcessor().parse(q);
+		/*
+		 * after-execution call to query
+		 */
+		q.afterQuery(this);
+		return tree;
 	}
 
 	/**
@@ -84,7 +99,11 @@ public class TmqlRuntime2007 extends TmqlRuntimeImpl {
 		}
 		if (!query.getQueryString().isEmpty()) {
 			ITmqlProcessor processor = getTmqlProcessor();
-			processor.query(query);
+			IResultSet<?> results = processor.query(query);
+			query.setResults(results);
+		}
+		else{
+			query.setResults(ResultSet.emptyResultSet());
 		}
 	}
 
@@ -108,7 +127,7 @@ public class TmqlRuntime2007 extends TmqlRuntimeImpl {
 	protected ITmqlProcessor createTmqlProcessor() {
 		return new TmqlProcessor2007(this);
 	}
-	
+
 	/**
 	 * 
 	 * {@inheritDoc}

@@ -14,13 +14,9 @@ import java.util.List;
 import java.util.Set;
 
 import de.topicmapslab.tmql4j.components.parser.IParserUtilsCallback;
-import de.topicmapslab.tmql4j.components.processor.core.IContext;
-import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
-import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
@@ -28,6 +24,7 @@ import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.path.grammar.lexical.By;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Comma;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Order;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /*
  *
@@ -113,13 +110,4 @@ public class OrderByClause extends ExpressionImpl {
 				&& getTmqlTokens().get(0).equals(Order.class)
 				&& getTmqlTokens().get(1).equals(By.class);
 	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

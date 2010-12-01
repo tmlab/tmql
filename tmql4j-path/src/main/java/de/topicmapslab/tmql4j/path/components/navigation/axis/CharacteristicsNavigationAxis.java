@@ -9,12 +9,9 @@
 package de.topicmapslab.tmql4j.path.components.navigation.axis;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Set;
 
 import org.tmapi.core.Construct;
-import org.tmapi.core.Locator;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
 import org.tmapi.core.Topic;
@@ -55,24 +52,21 @@ public class CharacteristicsNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Construct> getBackwardNavigationResultClass(
-			Object construct) throws NavigationException {
+	public Class<? extends Construct> getBackwardNavigationResultClass(Object construct) throws NavigationException {
 		return Topic.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Construct> getForwardNavigationResultClass(
-			Object construct) throws NavigationException {
+	public Class<? extends Construct> getForwardNavigationResultClass(Object construct) throws NavigationException {
 		return Construct.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateBackward(Object construct, Construct optional)
-			throws NavigationException {
+	public Collection<?> navigateBackward(Object construct, Object optional) throws NavigationException {
 		/*
 		 * create new instance of tuple-sequence
 		 */
@@ -112,8 +106,7 @@ public class CharacteristicsNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateForward(Object construct, Object optional)
-			throws NavigationException {
+	public Collection<?> navigateForward(Object construct, Object optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			Topic topic = (Topic) construct;
 			/*
@@ -121,59 +114,41 @@ public class CharacteristicsNavigationAxis extends BaseNavigationAxisImpl {
 			 */
 			Collection<Object> set = new LinkedList<Object>();
 			/*
-			 * get a set of all occurrences
-			 */
-			Set<Occurrence> occurences = topic.getOccurrences();
-			/*
-			 * get a set of all names
-			 */
-			Set<Name> names = topic.getNames();
-			/*
 			 * check if optional type is defined
 			 */
-			if (optional != null && optional instanceof Topic) {
-				Topic type = ((Topic) optional);
+			if (optional != null) {
 				/*
-				 * extract all super-types of the types
+				 * optional item is a topic
 				 */
-				Collection<Topic> types = new HashSet<Topic>();
-				types.add(type);
-				
-				boolean isTmOccurrence = false;
-				for ( Locator locator : type.getSubjectIdentifiers()){
-					if ( locator.getReference().equalsIgnoreCase(TmdmSubjectIdentifier.TMDM_OCCURRENCE_TYPE)){
-						isTmOccurrence = true;
-						break;
-					}
-				}
-				
-				boolean isTmName = false;
-				for ( Locator locator : type.getSubjectIdentifiers()){
-					if ( locator.getReference().equalsIgnoreCase(TmdmSubjectIdentifier.TMDM_NAME_TYPE)){
-						isTmName = true;
-						break;
-					}
-				}
-				
-				/*
-				 * iterate over all occurrences
-				 */
-				for (Occurrence occurrence : occurences) {
-					if ( isTmOccurrence  || types.contains(occurrence.getType())) {
-						set.add(occurrence);
-					}
+				if (optional instanceof Topic) {
+					Topic type = ((Topic) optional);
+					set.addAll(topic.getNames(type));
+					set.addAll(topic.getOccurrences(type));
 				}
 				/*
-				 * iterate over all names
+				 * optional item is a TMDM string
 				 */
-				for (Name name : names) {
-					if ( isTmName || types.contains(name.getType())) {
-						set.add(name);
+				else if (optional instanceof String) {
+					/*
+					 * optional is tm:occurrence for all occurrences
+					 */
+					if (TmdmSubjectIdentifier.isTmdmOccurrence(optional)) {
+						set.addAll(topic.getOccurrences());
+					}
+					/*
+					 * optional is tm:name for all names
+					 */
+					if (TmdmSubjectIdentifier.isTmdmName(optional)) {
+						set.addAll(topic.getNames());
 					}
 				}
-			} else {
-				set.addAll(occurences);
-				set.addAll(names);
+			}
+			/*
+			 * non optional item
+			 */
+			else {
+				set.addAll(topic.getOccurrences());
+				set.addAll(topic.getNames());
 			}
 			return set;
 		}
@@ -183,8 +158,7 @@ public class CharacteristicsNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean supportsBackwardNavigation(Object construct,
-			Construct optional) throws NavigationException {
+	public boolean supportsBackwardNavigation(Object construct, Construct optional) throws NavigationException {
 		if (construct instanceof Occurrence || construct instanceof Name) {
 			return true;
 		}
@@ -194,8 +168,7 @@ public class CharacteristicsNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean supportsForwardNavigation(Object construct, Object optional)
-			throws NavigationException {
+	public boolean supportsForwardNavigation(Object construct, Object optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			return true;
 		}

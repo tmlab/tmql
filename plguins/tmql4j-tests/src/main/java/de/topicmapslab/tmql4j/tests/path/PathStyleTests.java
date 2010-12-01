@@ -12,6 +12,15 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import de.topicmapslab.tmql4j.path.tests.path.TestContent;
+import de.topicmapslab.tmql4j.path.tests.path.TestFilterPostfix;
+import de.topicmapslab.tmql4j.path.tests.path.TestFunctionInvocation;
+import de.topicmapslab.tmql4j.path.tests.path.TestNavigationAxis;
+import de.topicmapslab.tmql4j.path.tests.path.TestNonCanonicalNaviagationAxis;
+import de.topicmapslab.tmql4j.path.tests.path.TestPredicateInvocation;
+import de.topicmapslab.tmql4j.path.tests.path.TestTupleExpression;
+import de.topicmapslab.tmql4j.path.tests.path.TestValueExpression;
+
 /**
  * @author Sven Krosse
  * 

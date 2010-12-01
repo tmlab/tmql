@@ -15,12 +15,9 @@ import java.util.List;
 
 import de.topicmapslab.tmql4j.components.lexer.ILexer;
 import de.topicmapslab.tmql4j.components.parser.IParserTree;
-import de.topicmapslab.tmql4j.components.processor.core.IContext;
-import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
-import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
@@ -112,7 +109,7 @@ public class QueryExpression extends ExpressionImpl {
 			ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
 			TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
-
+		
 		/*
 		 * initialize token iterator
 		 */
@@ -207,14 +204,6 @@ public class QueryExpression extends ExpressionImpl {
 	@Override
 	public boolean isValid() {
 		return !getTmqlTokens().isEmpty();
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }

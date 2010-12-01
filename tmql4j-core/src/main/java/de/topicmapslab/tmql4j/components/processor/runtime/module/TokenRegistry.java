@@ -11,10 +11,10 @@ package de.topicmapslab.tmql4j.components.processor.runtime.module;
 import java.util.Set;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLExtensionRegistryException;
 import de.topicmapslab.tmql4j.exception.TMQLInitializationException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Registry class to handle all tokens of different languages extensions and the

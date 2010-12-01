@@ -18,14 +18,13 @@ import org.tmapi.core.Construct;
 import org.tmapi.core.Occurrence;
 import org.tmapi.core.Scoped;
 import org.tmapi.core.Topic;
-import org.tmapi.core.TopicMap;
 
-import de.topicmapslab.tmql4j.common.utility.HashUtil;
-import de.topicmapslab.tmql4j.common.utility.XmlSchemeDatatypes;
-import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
-import de.topicmapslab.tmql4j.resultprocessing.model.IResult;
-import de.topicmapslab.tmql4j.resultprocessing.model.IResultSet;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.components.processor.results.IResult;
+import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.util.HashUtil;
+import de.topicmapslab.tmql4j.util.XmlSchemeDatatypes;
 
 /**
  * @author Sven Krosse
@@ -473,11 +472,7 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 				createAssociation().createRole(topic, t);
 				topics.add(t);
 			}
-		}
-		
-		TopicMap env = factory.newTopicMapSystem().createTopicMap("http://psi.example.org/environment/");
-		runtime.setEnvironmentMap(env);
-		
+		}		
 		String query = null;		
 		SimpleResultSet set = null;
 

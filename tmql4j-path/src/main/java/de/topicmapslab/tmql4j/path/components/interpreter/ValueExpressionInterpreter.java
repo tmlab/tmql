@@ -80,6 +80,7 @@ public class ValueExpressionInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {		
 		/*
 		 * switch by grammar type
@@ -89,34 +90,28 @@ public class ValueExpressionInterpreter extends
 		 * is infix-operator expression
 		 */
 		case TYPE_INFIX_OPERATOR: {
-			interpretInfixOpertor(runtime);
+			return interpretInfixOpertor(runtime, context, optionalArguments);
 		}
-			break;
 		/*
 		 * is prefix-operator expression
 		 */
 		case TYPE_PREFIX_OPERATOR: {
-			interpretPrefixOpertor(runtime);
+			return interpretPrefixOpertor(runtime, context, optionalArguments);
 		}
-			break;
 		/*
 		 * is function-invocation
 		 */
 		case TYPE_FUNCTION_INVOCATION: {
-			interpretFunctionInvocation(runtime);
+			return interpretFunctionInvocation(runtime, context, optionalArguments);
 		}
-			break;
 		/*
 		 * is content
 		 */
 		case TYPE_CONTENT: {
-			interpretContent(runtime);
+			return interpretContent(runtime, context, optionalArguments);
 		}
-			break;
-		default:
-			throw new TMQLRuntimeException("Unexprected state!");
-		}
-		;
+		}		
+		return QueryMatches.emptyMatches();
 	}
 
 	/**
@@ -132,26 +127,26 @@ public class ValueExpressionInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretPrefixOpertor(TMQLRuntime runtime)
+	private QueryMatches interpretPrefixOpertor(ITMQLRuntime runtime, IContext context, Object... optionalArguments)
 			throws TMQLRuntimeException {
 		/*
 		 * call value expression
 		 */
 		QueryMatches argument = extractArguments(runtime,
-				ValueExpression.class, 0);
+				ValueExpression.class, 0, context, optionalArguments);
 		/*
 		 * call operator-handler to interpret operator
 		 */
-		QueryMatches results = QueryMatchUtils.operation(runtime,
-				getTmqlTokens().get(indexOfOperator), argument);
-		/*
-		 * store result
-		 */
-		runtime.getRuntimeContext().peek().setValue(
-				VariableNames.QUERYMATCHES, results);
+		return QueryMatchUtils.operation(runtime,
+				getTmqlTokens().get(indexOfOperator), argument);		
 	}
 
 	/**
@@ -170,26 +165,20 @@ public class ValueExpressionInterpreter extends
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretInfixOpertor(TMQLRuntime runtime)
+	private QueryMatches interpretInfixOpertor(ITMQLRuntime runtime, IContext context, Object... optionalArguments)
 			throws TMQLRuntimeException {
 		/*
 		 * call value expressions
 		 */
 		QueryMatches[] arguments = extractArguments(runtime,
-				ValueExpression.class);
+				ValueExpression.class, context, optionalArguments);
 
 		/*
 		 * call operator-handler to interpret operator
 		 */
-		QueryMatches results = QueryMatchUtils.operation(runtime,
+		return QueryMatchUtils.operation(runtime,
 				getTmqlTokens().get(indexOfOperator), arguments[0],
 				arguments[1]);
-
-		/*
-		 * store results
-		 */
-		runtime.getRuntimeContext().peek().setValue(
-				VariableNames.QUERYMATCHES, results);
 	}
 
 	/**
@@ -205,17 +194,22 @@ public class ValueExpressionInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretFunctionInvocation(TMQLRuntime runtime)
+	private QueryMatches interpretFunctionInvocation(ITMQLRuntime runtime, IContext context, Object... optionalArguments)
 			throws TMQLRuntimeException {
 		/*
 		 * redirect to subexpression
 		 */
 		IExpressionInterpreter<FunctionInvocation> ex = getInterpretersFilteredByEypressionType(
 				runtime, FunctionInvocation.class).get(0);
-		ex.interpret(runtime);
+		return ex.interpret(runtime, context, optionalArguments);
 	}
 
 	/**
@@ -231,15 +225,20 @@ public class ValueExpressionInterpreter extends
 	 * @param runtime
 	 *            the runtime which contains all necessary information for
 	 *            querying process
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private void interpretContent(TMQLRuntime runtime)
+	private QueryMatches interpretContent(ITMQLRuntime runtime, IContext context, Object... optionalArguments)
 			throws TMQLRuntimeException {
 		/*
 		 * call content
 		 */
-		QueryMatches content = extractArguments(runtime, Content.class, 0);
+		QueryMatches content = extractArguments(runtime, Content.class, 0, context, optionalArguments);
 
 		/*
 		 * check if content should be ordered
@@ -248,11 +247,6 @@ public class ValueExpressionInterpreter extends
 			content = content.orderBy(getTmqlTokens().get(
 					getTmqlTokens().size() - 1).equals(Asc.class));
 		}
-
-		/*
-		 * store results
-		 */
-		runtime.getRuntimeContext().peek().setValue(
-				VariableNames.QUERYMATCHES, content);
+		return content;
 	}
 }

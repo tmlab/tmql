@@ -74,7 +74,7 @@ public class TypesNavigationAxis extends BaseNavigationAxisImpl implements
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public Collection<?> navigateBackward(Object construct, Construct optional)
+	public Collection<?> navigateBackward(Object construct, Object optional)
 			throws NavigationException {
 		/*
 		 * create new instance of tuple-sequence
@@ -131,9 +131,6 @@ public class TypesNavigationAxis extends BaseNavigationAxisImpl implements
 
 			TypeInstanceIndex index = getTopicMap().getIndex(
 					TypeInstanceIndex.class);
-			if (!index.isOpen()) {
-				index.open();
-			}
 			if (!index.isOpen()) {
 				index.open();
 			}

@@ -10,15 +10,13 @@ package de.topicmapslab.tmql4j.tests.delete;
 
 import static junit.framework.Assert.assertEquals;
 
-
 import org.junit.Test;
 import org.tmapi.core.Association;
 import org.tmapi.core.Name;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.tmql4j.common.core.query.TMQLQuery;
-import de.topicmapslab.tmql4j.resultprocessing.core.simple.SimpleResultSet;
-import de.topicmapslab.tmql4j.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
 
 /**
  * @author Sven Krosse
@@ -42,11 +40,11 @@ public class TestDeleteAll extends Tmql4JTestCase {
 		assertEquals(100, topicMap.getAssociations().size());
 
 		String query = "DELETE CASCADE ALL";
-		SimpleResultSet set = execute(new TMQLQuery(query));
+		SimpleResultSet set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(1101, ((Long) set.first().first()).longValue());
-		
+
 		assertEquals(0, topicMap.getTopics().size());
 		assertEquals(0, topicMap.getAssociations().size());
 	}

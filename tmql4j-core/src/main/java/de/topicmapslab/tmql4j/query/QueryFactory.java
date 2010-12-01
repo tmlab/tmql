@@ -15,7 +15,7 @@ import java.util.ServiceLoader;
 
 import org.tmapi.core.TopicMap;
 
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Factory to create a new query instance. The factory can instantiate queries

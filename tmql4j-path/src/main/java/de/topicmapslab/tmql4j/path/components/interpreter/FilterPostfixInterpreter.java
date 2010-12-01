@@ -35,7 +35,6 @@ import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.util.HashUtil;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.NavigationHandler;
@@ -44,6 +43,7 @@ import de.topicmapslab.tmql4j.path.components.processor.core.Context;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
 import de.topicmapslab.tmql4j.path.grammar.productions.BooleanExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * 
@@ -179,8 +179,8 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 				Object object = storedMatches.getMatches().get(index).get(variable);
 				List<Object> results = HashUtil.getList();
 				Context newContext = new Context(context);
+				newContext.setCurrentIndex(index);			
 				newContext.setContextBindings(null);
-				newContext.setCurrentIndex(index);
 				/*
 				 * check if value is a sequence
 				 */
@@ -296,7 +296,7 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 						values.add(object);
 					}
 				}
-				return QueryMatches.asQueryMatch(runtime, values.toArray());
+				return QueryMatches.asQueryMatchNS(runtime, values.toArray());
 
 			} catch (NavigationException e) {
 				throw new TMQLRuntimeException(e);
@@ -361,7 +361,7 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 			/*
 			 * iterate over all values of non-scoped variable
 			 */
-			for (Object object : context.getContextBindings()) {
+			for (Object object : context.getContextBindings().getPossibleValuesForVariable()) {
 				/*
 				 * check if value is a scoped item and the scope contains the
 				 * given theme
@@ -370,7 +370,7 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 					values.add(object);
 				}
 			}
-			return QueryMatches.asQueryMatch(runtime, values.toArray());
+			return QueryMatches.asQueryMatchNS(runtime, values.toArray());
 		}
 		return QueryMatches.emptyMatches();
 	}
