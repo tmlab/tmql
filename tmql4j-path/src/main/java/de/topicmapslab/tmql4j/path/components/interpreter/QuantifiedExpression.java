@@ -268,6 +268,7 @@ public abstract class QuantifiedExpression<T extends IExpression> extends Expres
 						synchronized (results) {
 							Context newContext = new Context(context);
 							newContext.setCurrentTuple(tuple);
+							newContext.setContextBindings(null);
 							if (doSatisfy(parent, newContext, set)) {
 								results.add(tuple);
 							} else {
