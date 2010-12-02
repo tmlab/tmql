@@ -34,32 +34,12 @@
 			</plugin>
 		</plugins>
 	</build>
-	<repositories>
-		<repository>
-			<id>tmlab</id>
-			<url>http://maven.topicmapslab.de/public</url>
-		</repository>
-		<repository>
-			<id>ontopia</id>
-			<url>http://ontopia.googlecode.com/svn/maven-repository/</url>
-		</repository>
-		<repository>
-			<id>ontopia snapshot</id>
-			<url>http://ontopia.googlecode.com/svn/maven-snapshot-repository/</url>
-		</repository>
-	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>de.topicmapslab.tmql4j</groupId>
 			<artifactId>tmql4j-core</artifactId>
 			<version>${project.parent.verion}</version>
 			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>de.topicmapslab</groupId>
-			<artifactId>ctm-writer</artifactId>
-			<version>1.0.8-20100922.072001-7</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

@@ -18,9 +18,8 @@ import de.topicmapslab.tmql4j.components.parser.IParserTree;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLException;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
-import de.topicmapslab.tmql4j.extensions.IExtensionPointAdapter;
-import de.topicmapslab.tmql4j.extensions.ILanguageExtension;
-import de.topicmapslab.tmql4j.extensions.ILanguageExtensionEntry;
+import de.topicmapslab.tmql4j.extension.IExtensionPointAdapter;
+import de.topicmapslab.tmql4j.extension.ILanguageExtension;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.QueryExpression;
 import de.topicmapslab.tmql4j.query.IQuery;
@@ -89,8 +88,7 @@ public class ParserTreeImpl implements IParserTree {
 	 * @throws TMQLException
 	 *             thrown if generation of parsing tree fails
 	 */
-	protected static ParserTreeImpl create(ILexer lexer, ITMQLRuntime runtime)
-			throws TMQLException {
+	protected static ParserTreeImpl create(ILexer lexer, ITMQLRuntime runtime) throws TMQLException {
 
 		/*
 		 * get extension adapter
@@ -99,8 +97,7 @@ public class ParserTreeImpl implements IParserTree {
 		/*
 		 * get extensions
 		 */
-		Set<ILanguageExtension> extensions = adapter
-				.getLanguageExtensions(QueryExpression.class);
+		Set<ILanguageExtension> extensions = adapter.getLanguageExtensions(QueryExpression.class);
 
 		/*
 		 * try to create root expression
@@ -114,20 +111,13 @@ public class ParserTreeImpl implements IParserTree {
 			 */
 			for (ILanguageExtension extension : extensions) {
 				/*
-				 * get extension entry point
-				 */
-				ILanguageExtensionEntry entry = extension
-						.getLanguageExtensionEntry();
-				/*
 				 * check if production is valid for current extension
 				 */
-				if (entry.isValidProduction(runtime, lexer.getTmqlTokens(),
-						lexer.getTokens(), null)) {
+				if (extension.isValidProduction(runtime, lexer.getTmqlTokens(), lexer.getTokens(), null)) {
 					/*
 					 * create root node
 					 */
-					root = entry.parse(runtime, lexer.getTmqlTokens(), lexer
-							.getTokens(), null, false);
+					root = extension.parse(runtime, lexer.getTmqlTokens(), lexer.getTokens(), null, false);
 					useDefault = false;
 					break;
 				}
@@ -141,15 +131,14 @@ public class ParserTreeImpl implements IParserTree {
 			/*
 			 * create root node ( query-expression )
 			 */
-			root = new QueryExpression(lexer, runtime);			
+			root = new QueryExpression(lexer, runtime);
 		}
 
 		/*
 		 * root should not be null
 		 */
 		if (root == null) {
-			throw new TMQLGeneratorException(
-					"Invalid state, grammar unknown for given query.");
+			throw new TMQLGeneratorException("Invalid state, grammar unknown for given query.");
 		}
 
 		/*
@@ -170,8 +159,7 @@ public class ParserTreeImpl implements IParserTree {
 
 		for (int index = 0; index < nodes.size(); index++) {
 			IExpression node = nodes.get(index);
-			treeNodeToString(node, new boolean[] { false,
-					index < (nodes.size() - 1) }, builder);
+			treeNodeToString(node, new boolean[] { false, index < (nodes.size() - 1) }, builder);
 		}
 	}
 
@@ -191,8 +179,7 @@ public class ParserTreeImpl implements IParserTree {
 	 *            the string builder where the generated string will be written
 	 *            in
 	 */
-	private void treeNodeToString(final IExpression expression,
-			boolean[] hasBrothers, final StringBuilder builder) {
+	private void treeNodeToString(final IExpression expression, boolean[] hasBrothers, final StringBuilder builder) {
 
 		/*
 		 * iterate over array

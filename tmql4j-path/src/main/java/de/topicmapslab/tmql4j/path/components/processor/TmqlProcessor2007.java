@@ -21,7 +21,6 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.path.components.lexer.TMQLLexer;
 import de.topicmapslab.tmql4j.path.components.parser.TMQLParser;
 import de.topicmapslab.tmql4j.path.components.processor.core.Context;
-import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.path.components.processor.results.TmqlResultProcessor;
 import de.topicmapslab.tmql4j.query.IQuery;
 
@@ -32,6 +31,7 @@ import de.topicmapslab.tmql4j.query.IQuery;
 public class TmqlProcessor2007 implements ITmqlProcessor {
 
 	private final ITMQLRuntime runtime;
+	private TmqlResultProcessor tmqlResultProcessor;
 
 	/**
 	 * constructor
@@ -49,15 +49,12 @@ public class TmqlProcessor2007 implements ITmqlProcessor {
 	public IResultSet<?> query(IQuery query) {
 		IParserTree tree = parse(query);
 		if (tree != null) {
-			IContext context = new Context(query);
+			IContext context = new Context(this, query);
 
 			QueryMatches results = tree.root().interpret(runtime, context);
 
 			IResultProcessor resultProcessor = getResultProcessor();
-			/*
-			 * TODO handle flwr xtm and ctm results
-			 */
-			resultProcessor.proceed(results, SimpleResultSet.class);
+			resultProcessor.proceed(results);
 
 			return resultProcessor.getResultSet();
 		}
@@ -96,7 +93,10 @@ public class TmqlProcessor2007 implements ITmqlProcessor {
 	 * {@inheritDoc}
 	 */
 	public IResultProcessor getResultProcessor() {
-		return new TmqlResultProcessor(runtime);
+		if (tmqlResultProcessor == null) {
+			tmqlResultProcessor = new TmqlResultProcessor(runtime);
+		}
+		return tmqlResultProcessor;
 	}
 
 }

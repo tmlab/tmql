@@ -8,8 +8,6 @@
  */
 package de.topicmapslab.tmql4j.path.tests;
 
-import java.io.File;
-
 import org.junit.After;
 import org.junit.Before;
 import org.tmapi.core.Association;
@@ -18,14 +16,13 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
-import org.tmapix.io.XTMTopicMapReader;
 
-import de.topicmapslab.identifier.TmdmSubjectIdentifier;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.runtime.TMQLRuntimeFactory;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.query.IQuery;
+import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 
 /**
  * Abstract base test class for TMQL4J test suite
@@ -43,8 +40,7 @@ public abstract class Tmql4JTestCase {
 	@Before
 	public void setUp() throws Exception {
 		factory = TopicMapSystemFactory.newInstance();
-		factory.setFeature(
-				"http://tmapi.org/features/type-instance-associations", true);
+		factory.setFeature("http://tmapi.org/features/type-instance-associations", true);
 		topicMapSystem = factory.newTopicMapSystem();
 		topicMap = topicMapSystem.createTopicMap(base);
 		runtime = TMQLRuntimeFactory.newFactory().newRuntime(topicMapSystem);
@@ -95,8 +91,7 @@ public abstract class Tmql4JTestCase {
 	 * @return the created topic
 	 */
 	protected Topic createTopicBySI(String reference) {
-		return topicMap
-				.createTopicBySubjectIdentifier(createLocator(reference));
+		return topicMap.createTopicBySubjectIdentifier(createLocator(reference));
 	}
 
 	/**
@@ -139,37 +134,21 @@ public abstract class Tmql4JTestCase {
 	 *            the supertype
 	 */
 	protected void addSupertype(Topic type, Topic supertype) {
-		Association association = createAssociation(topicMap
-				.createTopicBySubjectIdentifier(topicMap
-						.createLocator(TmdmSubjectIdentifier.TMDM_SUPERTYPE_SUBTYPE_ASSOCIATION)));
-		association
-				.createRole(
-						topicMap.createTopicBySubjectIdentifier(topicMap
-								.createLocator(TmdmSubjectIdentifier.TMDM_SUPERTYPE_ROLE_TYPE)),
-						supertype);
-		association.createRole(topicMap.createTopicBySubjectIdentifier(topicMap
-				.createLocator(TmdmSubjectIdentifier.TMDM_SUBTYPE_ROLE_TYPE)),
-				type);
+		Association association = createAssociation(topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_SUPERTYPE_SUBTYPE_ASSOCIATION)));
+		association.createRole(topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_SUPERTYPE_ROLE_TYPE)), supertype);
+		association.createRole(topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_SUBTYPE_ROLE_TYPE)), type);
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T extends IResultSet<?>> T execute(String query)
-			throws TMQLRuntimeException {
+	protected <T extends IResultSet<?>> T execute(String query) throws TMQLRuntimeException {
 		IQuery q = runtime.run(topicMap, query);
 		return (T) q.getResults();
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T extends IResultSet<?>> T execute(IQuery query)
-			throws TMQLRuntimeException {
+	protected <T extends IResultSet<?>> T execute(IQuery query) throws TMQLRuntimeException {
 		query.setTopicMap(topicMap);
 		runtime.run(query);
 		return (T) query.getResults();
-	}
-	
-	public void fromXtm(final String path) throws Exception{
-		XTMTopicMapReader reader = new XTMTopicMapReader(topicMap,
-				new File(path));
-		reader.read();
 	}
 }

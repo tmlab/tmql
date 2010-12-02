@@ -32,6 +32,11 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 public class TmqlResultProcessor implements IResultProcessor {
 
 	/**
+	 * the class of used result set
+	 */
+	private Class<? extends IResultSet<?>> resultSetClass = SimpleResultSet.class;
+	
+	/**
 	 * the generated result set
 	 */
 	private IResultSet<?> resultSet;
@@ -66,14 +71,14 @@ public class TmqlResultProcessor implements IResultProcessor {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void proceed(QueryMatches matches, Class<? extends IResultSet<?>> clazz) throws TMQLRuntimeException {
+	public void proceed(QueryMatches matches) throws TMQLRuntimeException {
 		try {
 
 			List<List<Object>> results = ProjectionUtils.asTwoDimensional(matches);
 			/*
 			 * create new instance of result set
 			 */
-			resultSet = clazz.getConstructor().newInstance();
+			resultSet = resultSetClass.getConstructor().newInstance();
 			/*
 			 * iterate over query matches per tuple
 			 */
@@ -98,5 +103,12 @@ public class TmqlResultProcessor implements IResultProcessor {
 	 */
 	public ITMQLRuntime getRuntime() {
 		return runtime;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setResultType(Class<? extends IResultSet<?>> clazz) {
+		this.resultSetClass = clazz;		
 	}
 }

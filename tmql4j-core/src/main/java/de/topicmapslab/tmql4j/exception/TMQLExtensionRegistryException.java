@@ -10,7 +10,7 @@
  */
 package de.topicmapslab.tmql4j.exception;
 
-import de.topicmapslab.tmql4j.extensions.IExtensionPoint;
+import de.topicmapslab.tmql4j.extension.IExtensionPoint;
 
 /***
  * Special exception class thrown if any extensions represented by the

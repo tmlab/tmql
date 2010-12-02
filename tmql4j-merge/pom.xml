@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>tmql4j-parent</artifactId>
+    <groupId>de.topicmapslab.tmql4j</groupId>
+    <version>2.7.0-SNAPSHOT</version>
+  </parent>
+  <groupId>de.topicmapslab.tmql4j</groupId>
+  <version>2.7.0-SNAPSHOT</version>
+  <artifactId>tmql4j-delete</artifactId>
+  <name>TMQL Delete Style</name>
+  <build>
+  	<resources>
+  			<resource>
+  				<directory>META-INF</directory>
+  				 <targetPath>${project.build.directory}/classes/META-INF</targetPath>
+  			</resource>
+  			<resource>
+  				<directory>OSGI-INF</directory>
+  				<targetPath>${project.build.directory}/classes/OSGI-INF</targetPath>
+  			</resource>  			
+  			<resource>
+  				<directory>src/main/resources</directory>
+  			</resource>
+  		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

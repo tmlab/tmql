@@ -17,27 +17,16 @@ import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.productions.EnvironmentClause;
-import de.topicmapslab.tmql4j.path.grammar.productions.FlwrExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.PathExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.QueryExpression;
-import de.topicmapslab.tmql4j.path.grammar.productions.SelectExpression;
 
 /**
  * 
- * Special interpreter class to interpret query-expressions. *
+ * Special interpreter class to interpret query-expressions.
  * <p>
  * The grammar production rule of the expression is: <code>
  * <p>
- * query-expression ::= [ environment-clause ] select-expression
- * </p>
- * <p>
- * query-expression ::= [ environment-clause ] flwr-expression
- * </p>
- * <p>
  * query-expression ::= [ environment-clause ] path-expression
- * </p>
- * <p>
- * query-expression ::= [ environment-clause ] delete-expression
  * </p>
  * </code> </p>
  * 
@@ -72,113 +61,6 @@ public class QueryExpressionInterpreter extends ExpressionInterpreterImpl<QueryE
 			 */
 			getInterpretersFilteredByEypressionType(runtime, EnvironmentClause.class).get(0).interpret(runtime, context, optionalArguments);
 		}
-
-		/*
-		 * switch by grammar-type
-		 */
-		switch (getGrammarTypeOfExpression()) {
-		/*
-		 * is select-expression
-		 */
-		case QueryExpression.TYPE_SELECT_EXPRESSION: {
-			return interpretSelectExpression(runtime, context, optionalArguments);
-		}
-		/*
-		 * is flwr-expression
-		 */
-		case QueryExpression.TYPE_FLWR_EXPRESSION: {
-			return interpretFlwrExpression(runtime, context, optionalArguments);
-		}
-			/*
-			 * is path-expression
-			 */
-		case QueryExpression.TYPE_PATH_EXPRESSION: {
-			return interpretPathExpression(runtime, context, optionalArguments);
-		}
-		}
-		return QueryMatches.emptyMatches();
-	}
-
-	/**
-	 * The method is called to interpret the given sub-expression by using the
-	 * given runtime. The interpretation will call the sub-expression if the
-	 * given expression isn't a leaf in parsing-tree.
-	 * 
-	 * <p>
-	 * The interpretation will transform the value on top of the stack and put
-	 * its results also on top.
-	 * </p>
-	 * 
-	 * @param runtime
-	 *            the runtime which contains all necessary information for
-	 *            querying process
-	 * @param context
-	 *            the current querying context
-	 * @param optionalArguments
-	 *            optional arguments
-	 * @return the query matches
-	 * @throws TMQLRuntimeException
-	 *             thrown if interpretation fails
-	 */
-	private QueryMatches interpretSelectExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		/*
-		 * redirect to subexpression
-		 */
-		IExpressionInterpreter<SelectExpression> ex = getInterpretersFilteredByEypressionType(runtime, SelectExpression.class).get(0);
-		return ex.interpret(runtime, context, optionalArguments);
-	}
-
-	/**
-	 * The method is called to interpret the given sub-expression by using the
-	 * given runtime. The interpretation will call the sub-expression if the
-	 * given expression isn't a leaf in parsing-tree.
-	 * 
-	 * <p>
-	 * The interpretation will transform the value on top of the stack and put
-	 * its results also on top.
-	 * </p>
-	 * 
-	 * @param runtime
-	 *            the runtime which contains all necessary information for
-	 *            querying process
-	 * @param context
-	 *            the current querying context
-	 * @param optionalArguments
-	 *            optional arguments
-	 * @return the query matches
-	 * @throws TMQLRuntimeException
-	 *             thrown if interpretation fails
-	 */
-	private QueryMatches interpretFlwrExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		/*
-		 * redirect to subexpression
-		 */
-		IExpressionInterpreter<FlwrExpression> ex = getInterpretersFilteredByEypressionType(runtime, FlwrExpression.class).get(0);
-		return ex.interpret(runtime, context, optionalArguments);
-	}
-
-	/**
-	 * The method is called to interpret the given sub-expression by using the
-	 * given runtime. The interpretation will call the sub-expression if the
-	 * given expression isn't a leaf in parsing-tree.
-	 * 
-	 * <p>
-	 * The interpretation will transform the value on top of the stack and put
-	 * its results also on top.
-	 * </p>
-	 * 
-	 * @param runtime
-	 *            the runtime which contains all necessary information for
-	 *            querying process
-	 * @param context
-	 *            the current querying context
-	 * @param optionalArguments
-	 *            optional arguments
-	 * @return the query matches
-	 * @throws TMQLRuntimeException
-	 *             thrown if interpretation fails
-	 */
-	private QueryMatches interpretPathExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * redirect to subexpression
 		 */

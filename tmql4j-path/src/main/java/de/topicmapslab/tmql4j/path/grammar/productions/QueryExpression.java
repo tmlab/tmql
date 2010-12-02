@@ -23,21 +23,10 @@ import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Prefix;
-import de.topicmapslab.tmql4j.path.grammar.lexical.Return;
-import de.topicmapslab.tmql4j.path.grammar.lexical.Select;
-import de.topicmapslab.tmql4j.path.grammar.lexical.XmlStartTag;
 
 /**
  * Special implementation of {@link ExpressionImpl} representing a
  * query-expression.
- * <p>
- * The grammar production rule of the expression is: <code>
- * <p>
- * query-expression ::= [ environment-clause ] select-expression
- * </p>
- * <p>
- * query-expression ::= [ environment-clause ] flwr-expression
- * </p>
  * <p>
  * query-expression ::= [ environment-clause ] path-expression
  * </p>
@@ -48,19 +37,6 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.XmlStartTag;
  * 
  */
 public class QueryExpression extends ExpressionImpl {
-
-	/**
-	 * grammar type of a query-expression containing a select-expression
-	 */
-	public static final int TYPE_SELECT_EXPRESSION = 0;
-	/**
-	 * grammar type of a query-expression containing a flwr-expression
-	 */
-	public static final int TYPE_FLWR_EXPRESSION = 1;
-	/**
-	 * grammar type of a query-expression containing a path-expression
-	 */
-	public static final int TYPE_PATH_EXPRESSION = 2;
 
 	/**
 	 * base constructor to create a new instance used by {@link IParserTree}
@@ -80,8 +56,7 @@ public class QueryExpression extends ExpressionImpl {
 	 *             thrown if the sub-tree can not be generated
 	 * 
 	 */
-	public QueryExpression(ILexer lexer, ITMQLRuntime runtime)
-			throws TMQLInvalidSyntaxException, TMQLGeneratorException {
+	public QueryExpression(ILexer lexer, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		this(null, lexer.getTmqlTokens(), lexer.getTokens(), runtime);
 	}
 
@@ -104,17 +79,13 @@ public class QueryExpression extends ExpressionImpl {
 	 *             thrown if the sub-tree can not be generated
 	 */
 	@SuppressWarnings("unchecked")
-	public QueryExpression(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public QueryExpression(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
-		
+
 		/*
 		 * initialize token iterator
 		 */
-		Iterator<Class<? extends IToken>> iteratorTmqlTokens = tmqlTokens
-				.iterator();
+		Iterator<Class<? extends IToken>> iteratorTmqlTokens = tmqlTokens.iterator();
 		/*
 		 * get key token
 		 */
@@ -128,34 +99,27 @@ public class QueryExpression extends ExpressionImpl {
 		/*
 		 * check if first token is %prefix or %pragma
 		 */
-		if (token.equals(de.topicmapslab.tmql4j.path.grammar.lexical.Pragma.class)
-				|| token.equals(Prefix.class)) {
+		if (token.equals(de.topicmapslab.tmql4j.path.grammar.lexical.Pragma.class) || token.equals(Prefix.class)) {
 			/*
 			 * lookup last index of keyword %pragma
 			 */
-			List<Integer> indizes = ParserUtils.indizes(tmqlTokens,
-					de.topicmapslab.tmql4j.path.grammar.lexical.Pragma.class);
-			int pragmaIndex = indizes.isEmpty() ? -1 : indizes.get(indizes
-					.size() - 1);
+			List<Integer> indizes = ParserUtils.indizes(tmqlTokens, de.topicmapslab.tmql4j.path.grammar.lexical.Pragma.class);
+			int pragmaIndex = indizes.isEmpty() ? -1 : indizes.get(indizes.size() - 1);
 			/*
 			 * lookup last index of keyword %prefix
 			 */
-			indizes = ParserUtils.indizes(tmqlTokens,
-					Prefix.class);
-			int directiveIndex = indizes.isEmpty() ? -1 : indizes.get(indizes
-					.size() - 1);
+			indizes = ParserUtils.indizes(tmqlTokens, Prefix.class);
+			int directiveIndex = indizes.isEmpty() ? -1 : indizes.get(indizes.size() - 1);
 
 			/*
 			 * get last index of environment definition
 			 */
-			index = pragmaIndex > directiveIndex ? pragmaIndex + 3
-					: directiveIndex + 3;
+			index = pragmaIndex > directiveIndex ? pragmaIndex + 3 : directiveIndex + 3;
 
 			/*
 			 * add environment-clause
 			 */
-			checkForExtensions(EnvironmentClause.class, tmqlTokens.subList(0,
-					index), tokens.subList(0, index), runtime);
+			checkForExtensions(EnvironmentClause.class, tmqlTokens.subList(0, index), tokens.subList(0, index), runtime);
 		}
 
 		/*
@@ -163,38 +127,7 @@ public class QueryExpression extends ExpressionImpl {
 		 */
 		if (index < tmqlTokens.size()) {
 			int size = tmqlTokens.size();
-			/*
-			 * check if token is keyword SELECT
-			 */
-			if (tmqlTokens.get(index).equals(Select.class)) {
-				checkForExtensions(SelectExpression.class, tmqlTokens.subList(
-						index, size), tokens.subList(index, size), runtime);
-				setGrammarType(TYPE_SELECT_EXPRESSION);
-			}
-			/*
-			 * flwr-expression or path-expression
-			 */
-			else {
-				/*
-				 * is flwr-expression
-				 */
-				if (ParserUtils.containsTokens(tmqlTokens.subList(
-						index, size), Return.class, XmlStartTag.class)) {
-					checkForExtensions(FlwrExpression.class, tmqlTokens
-							.subList(index, size), tokens.subList(index, size),
-							runtime);
-					setGrammarType(TYPE_FLWR_EXPRESSION);
-				}
-				/*
-				 * last possibility is path-expression
-				 */
-				else {
-					checkForExtensions(PathExpression.class, tmqlTokens
-							.subList(index, size), tokens.subList(index, size),
-							runtime);
-					setGrammarType(TYPE_PATH_EXPRESSION);
-				}
-			}
+			checkForExtensions(PathExpression.class, tmqlTokens.subList(index, size), tokens.subList(index, size), runtime);
 		}
 	}
 

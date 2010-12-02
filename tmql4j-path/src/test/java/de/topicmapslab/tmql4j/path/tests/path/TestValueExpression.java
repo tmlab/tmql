@@ -181,7 +181,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 			Assert.fail();
 		}
 
-		query = prefix + " SELECT 3.0 - 2.0  ";
+		query = prefix + " 3.0 - 2.0  ";
 		set = execute(new TMQLQuery(topicMap,query));
 		System.out.println();
 		Assert.assertEquals(1, set.size());
@@ -203,7 +203,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = prefix + " SELECT 1 * 2 ";
+		query = prefix + " 1 * 2 ";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();

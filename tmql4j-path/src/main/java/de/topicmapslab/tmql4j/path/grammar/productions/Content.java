@@ -22,18 +22,13 @@ import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketAngleClose;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketAngleOpen;
-import de.topicmapslab.tmql4j.path.grammar.lexical.Element;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Else;
-import de.topicmapslab.tmql4j.path.grammar.lexical.GreaterThan;
 import de.topicmapslab.tmql4j.path.grammar.lexical.If;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Intersect;
 import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutCondition;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Substraction;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Then;
-import de.topicmapslab.tmql4j.path.grammar.lexical.TripleQuote;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Union;
-import de.topicmapslab.tmql4j.path.grammar.lexical.XmlEndTag;
-import de.topicmapslab.tmql4j.path.grammar.lexical.XmlStartTag;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -124,106 +119,91 @@ public class Content extends ExpressionImpl {
 		super(parent, tmqlTokens, tokens, runtime);
 
 		/*
-		 * is tm-content
+		 * create set containing all set-operators UNION , MINUS , INTERSECT
 		 */
-		if (tmqlTokens.get(0).equals(TripleQuote.class) && tmqlTokens.get(tmqlTokens.size() - 1).equals(TripleQuote.class)) {
-			setGrammarType(TYPE_CTM_EXPRESSION);
-			checkForExtensions(TMContent.class, tmqlTokens, tokens, runtime);
-		}
+		Set<Class<? extends IToken>> operators = HashUtil.getHashSet();
+		operators.add(Substraction.class);
+		operators.add(Intersect.class);
+		operators.add(Union.class);
+		int index = ParserUtils.indexOfTokens(tmqlTokens, operators);
 		/*
-		 * is xml-content
+		 * is content operator content
 		 */
-		else if (isXmlContent(parent, tmqlTokens, tokens, runtime)) {
-			setGrammarType(TYPE_XML_EXPRESSION);
-			checkForExtensions(XMLContent.class, tmqlTokens, tokens, runtime);
+		if (index != -1) {
+			setGrammarType(TYPE_SET_OPERATION);
+			checkForExtensions(Content.class, getTmqlTokens().subList(0, index), getTokens().subList(0, index), runtime);
+			checkForExtensions(Content.class, getTmqlTokens().subList(index + 1, getTmqlTokens().size()), getTokens().subList(index + 1, getTokens().size()), runtime);
+			indexOfOperator = index;
 		} else {
 			/*
-			 * create set containing all set-operators ++ , -- , ==
+			 * create set containing conditional operator ||
 			 */
-			Set<Class<? extends IToken>> operators = HashUtil.getHashSet();
-			operators.add(Substraction.class);
-			operators.add(Intersect.class);
-			operators.add(Union.class);
-			int index = ParserUtils.indexOfTokens(tmqlTokens, operators);
+			operators.clear();
+			operators.add(ShortcutCondition.class);
+			index = ParserUtils.indexOfTokens(tmqlTokens, operators);
 			/*
-			 * is content operator content
+			 * is path-expression || path-expression
 			 */
 			if (index != -1) {
-				setGrammarType(TYPE_SET_OPERATION);
-				checkForExtensions(Content.class, getTmqlTokens().subList(0, index), getTokens().subList(0, index), runtime);
-				checkForExtensions(Content.class, getTmqlTokens().subList(index + 1, getTmqlTokens().size()), getTokens().subList(index + 1, getTokens().size()), runtime);
+				setGrammarType(TYPE_NONCANONICAL_CONDITIONAL_EXPRESSION);
+				checkForExtensions(PathExpression.class, getTmqlTokens().subList(0, index), getTokens().subList(0, index), runtime);
+				checkForExtensions(PathExpression.class, getTmqlTokens().subList(index + 1, getTmqlTokens().size()), getTokens().subList(index + 1, getTokens().size()), runtime);
 				indexOfOperator = index;
-			} else {
+			}
+			/*
+			 * if path-expression then content else content
+			 */
+			else if (tmqlTokens.get(0).equals(If.class)) {
+				setGrammarType(TYPE_CONDITIONAL_EXPRESSION);
 				/*
-				 * create set containing conditional operator ||
+				 * get index of keyword THEN
 				 */
 				operators.clear();
-				operators.add(ShortcutCondition.class);
-				index = ParserUtils.indexOfTokens(tmqlTokens, operators);
+				operators.add(Then.class);
+				int iThen = ParserUtils.indexOfTokens(tmqlTokens, operators);
 				/*
-				 * is path-expression || path-expression
+				 * get index of keyword THEN
 				 */
-				if (index != -1) {
-					setGrammarType(TYPE_NONCANONICAL_CONDITIONAL_EXPRESSION);
-					checkForExtensions(PathExpression.class, getTmqlTokens().subList(0, index), getTokens().subList(0, index), runtime);
-					checkForExtensions(PathExpression.class, getTmqlTokens().subList(index + 1, getTmqlTokens().size()), getTokens().subList(index + 1, getTokens().size()), runtime);
-					indexOfOperator = index;
-				}
-				/*
-				 * if path-expression then content else content
-				 */
-				else if (tmqlTokens.get(0).equals(If.class)) {
-					setGrammarType(TYPE_CONDITIONAL_EXPRESSION);
-					/*
-					 * get index of keyword THEN
-					 */
-					operators.clear();
-					operators.add(Then.class);
-					int iThen = ParserUtils.indexOfTokens(tmqlTokens, operators);
-					/*
-					 * get index of keyword THEN
-					 */
-					operators.clear();
-					operators.add(Else.class);
-					int iElse = ParserUtils.indexOfTokens(tmqlTokens, operators);
+				operators.clear();
+				operators.add(Else.class);
+				int iElse = ParserUtils.indexOfTokens(tmqlTokens, operators);
 
-					/*
-					 * add path-expression as condition
-					 */
-					checkForExtensions(PathExpression.class, tmqlTokens.subList(1, iThen), tokens.subList(1, iThen), runtime);
-					/*
-					 * has else expression
-					 */
-					if (iElse != -1) {
-						/*
-						 * is then-content
-						 */
-						checkForExtensions(Content.class, tmqlTokens.subList(iThen + 1, iElse), tokens.subList(iThen + 1, iElse), runtime);
-						/*
-						 * is else-content
-						 */
-						checkForExtensions(Content.class, tmqlTokens.subList(iElse + 1, tmqlTokens.size()), tokens.subList(iElse + 1, tokens.size()), runtime);
-					} else {
-						/*
-						 * is then-content
-						 */
-						checkForExtensions(Content.class, tmqlTokens.subList(iThen + 1, tmqlTokens.size()), tokens.subList(iThen + 1, tokens.size()), runtime);
-					}
-				}
 				/*
-				 * is { query-expression }
+				 * add path-expression as condition
 				 */
-				else if (tmqlTokens.size() > 0) {
-					if (tmqlTokens.get(0).equals(BracketAngleOpen.class) && tmqlTokens.get(tmqlTokens.size() - 1).equals(BracketAngleClose.class)) {
-						setGrammarType(TYPE_QUERY_EXPRESSION);
-						/*
-						 * add query-expression without { and }
-						 */
-						checkForExtensions(QueryExpression.class, tmqlTokens.subList(1, tmqlTokens.size() - 1), tokens.subList(1, tokens.size() - 1), runtime);
-					} else {
-						checkForExtensions(QueryExpression.class, tmqlTokens, tokens, runtime);
-						setGrammarType(TYPE_QUERY_EXPRESSION);
-					}
+				checkForExtensions(PathExpression.class, tmqlTokens.subList(1, iThen), tokens.subList(1, iThen), runtime);
+				/*
+				 * has else expression
+				 */
+				if (iElse != -1) {
+					/*
+					 * is then-content
+					 */
+					checkForExtensions(Content.class, tmqlTokens.subList(iThen + 1, iElse), tokens.subList(iThen + 1, iElse), runtime);
+					/*
+					 * is else-content
+					 */
+					checkForExtensions(Content.class, tmqlTokens.subList(iElse + 1, tmqlTokens.size()), tokens.subList(iElse + 1, tokens.size()), runtime);
+				} else {
+					/*
+					 * is then-content
+					 */
+					checkForExtensions(Content.class, tmqlTokens.subList(iThen + 1, tmqlTokens.size()), tokens.subList(iThen + 1, tokens.size()), runtime);
+				}
+			}
+			/*
+			 * is { query-expression }
+			 */
+			else if (tmqlTokens.size() > 0) {
+				if (tmqlTokens.get(0).equals(BracketAngleOpen.class) && tmqlTokens.get(tmqlTokens.size() - 1).equals(BracketAngleClose.class)) {
+					setGrammarType(TYPE_QUERY_EXPRESSION);
+					/*
+					 * add query-expression without { and }
+					 */
+					checkForExtensions(QueryExpression.class, tmqlTokens.subList(1, tmqlTokens.size() - 1), tokens.subList(1, tokens.size() - 1), runtime);
+				} else {
+					checkForExtensions(QueryExpression.class, tmqlTokens, tokens, runtime);
+					setGrammarType(TYPE_QUERY_EXPRESSION);
 				}
 			}
 		}
@@ -246,34 +226,5 @@ public class Content extends ExpressionImpl {
 	 */
 	public int getIndexOfOperator() {
 		return indexOfOperator;
-	}
-
-	private boolean isXmlContent(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) {
-		/*
-		 * parent should be a RETURN clause
-		 */
-		if (!(parent instanceof ReturnClause)) {
-			return false;
-		}
-		/*
-		 * starts with XML Tag and Ends with XML Tag
-		 */
-		else if (tmqlTokens.get(0).equals(XmlStartTag.class) && tmqlTokens.get(tmqlTokens.size() - 1).equals(XmlEndTag.class)) {
-			return true;
-		}
-		/*
-		 * starts with <yml.. > and has END Tag
-		 */
-		else if (tmqlTokens.get(0).equals(Element.class) && tokens.get(0).startsWith("<") && tmqlTokens.get(tmqlTokens.size() - 1).equals(XmlEndTag.class)) {
-			Set<Class<? extends IToken>> tokensToFound = HashUtil.getHashSet();
-			tokensToFound.add(GreaterThan.class);
-			Set<Class<? extends IToken>> protectionStarts = HashUtil.getHashSet();
-			tokensToFound.add(BracketAngleOpen.class);
-			Set<Class<? extends IToken>> protectionEnds = HashUtil.getHashSet();
-			tokensToFound.add(BracketAngleClose.class);
-			int index = ParserUtils.indexOfTokens(tmqlTokens, tokensToFound, protectionStarts, protectionEnds);
-			return index != -1;
-		}
-		return false;
 	}
 }

@@ -19,11 +19,11 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ILanguageContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.IValueStore;
 import de.topicmapslab.tmql4j.components.processor.runtime.TmqlRuntimeImpl;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.extensions.IExtensionPointAdapter;
+import de.topicmapslab.tmql4j.extension.IExtensionPointAdapter;
 import de.topicmapslab.tmql4j.path.components.processor.TmqlProcessor2007;
 import de.topicmapslab.tmql4j.path.components.processor.runtime.module.LanguageContext;
 import de.topicmapslab.tmql4j.path.components.processor.runtime.module.ValueStore;
-import de.topicmapslab.tmql4j.path.extensions.ExtensionPointAdapter;
+import de.topicmapslab.tmql4j.path.extension.ExtensionPointAdapter;
 import de.topicmapslab.tmql4j.path.query.TMQLQuery;
 import de.topicmapslab.tmql4j.query.IQuery;
 
@@ -52,8 +52,9 @@ public class TmqlRuntime2007 extends TmqlRuntimeImpl {
 	 */
 	public TmqlRuntime2007(TopicMapSystem topicMapSystem) throws TMQLRuntimeException {
 		super(topicMapSystem);
-		this.extensionPointAdapter = new ExtensionPointAdapter(this);
 		this.constructResolver = new TmqlConstructResolver(this);
+		this.extensionPointAdapter = new ExtensionPointAdapter(this);
+		this.extensionPointAdapter.loadExtensionPoints();
 	}
 
 	/**

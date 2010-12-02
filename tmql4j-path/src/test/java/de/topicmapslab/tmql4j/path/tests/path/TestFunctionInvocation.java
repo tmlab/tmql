@@ -19,12 +19,12 @@ import org.tmapi.core.Occurrence;
 import org.tmapi.core.Topic;
 import org.tmapi.core.Variant;
 
-import de.topicmapslab.identifier.XmlSchemeDatatypes;
 import de.topicmapslab.tmql4j.components.processor.results.IResult;
 import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.path.query.TMQLQuery;
 import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
 import de.topicmapslab.tmql4j.util.HashUtil;
+import de.topicmapslab.tmql4j.util.XmlSchemeDatatypes;
 
 public class TestFunctionInvocation extends Tmql4JTestCase {
 

@@ -15,10 +15,15 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 public class BracketSquareOpen extends Token {
 
 	/**
+	 * the token
+	 */
+	public static final String TOKEN = "[";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "[";
+		return TOKEN;
 	}
 
 }

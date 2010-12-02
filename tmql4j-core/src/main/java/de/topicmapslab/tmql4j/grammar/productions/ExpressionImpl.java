@@ -22,8 +22,7 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.extensions.ILanguageExtension;
-import de.topicmapslab.tmql4j.extensions.ILanguageExtensionEntry;
+import de.topicmapslab.tmql4j.extension.ILanguageExtension;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.CollectionsUtility;
 
@@ -84,10 +83,7 @@ public abstract class ExpressionImpl implements IExpression {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
-	public ExpressionImpl(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public ExpressionImpl(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		this.children = new LinkedList<IExpression>();
 		this.tmqlTokens = tmqlTokens;
 		this.tokens = tokens;
@@ -97,8 +93,7 @@ public abstract class ExpressionImpl implements IExpression {
 		 * check if syntax is valid
 		 */
 		if (!isValid()) {
-			throw new TMQLInvalidSyntaxException(tmqlTokens, tokens,
-					getClass(), "Expression is invalid.");
+			throw new TMQLInvalidSyntaxException(tmqlTokens, tokens, getClass(), "Expression is invalid.");
 		}
 	}
 
@@ -171,8 +166,7 @@ public abstract class ExpressionImpl implements IExpression {
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public <T extends IExpression> List<T> getExpressionFilteredByType(
-			Class<? extends T> type) {
+	public <T extends IExpression> List<T> getExpressionFilteredByType(Class<? extends T> type) {
 		/*
 		 * iterate over list and extract the matching expressions
 		 */
@@ -208,8 +202,7 @@ public abstract class ExpressionImpl implements IExpression {
 				/*
 				 * check if token is variable, has to start with % , $ or @
 				 */
-				if (token.startsWith("$") || token.startsWith("%")
-						|| token.startsWith("@")) {
+				if (token.startsWith("$") || token.startsWith("%") || token.startsWith("@")) {
 					variables.add(token);
 				}
 			}
@@ -221,14 +214,12 @@ public abstract class ExpressionImpl implements IExpression {
 	/**
 	 * {@inheritDoc}
 	 */
-	public final void setExpressions(List<IExpression> reorder)
-			throws TMQLRuntimeException {
+	public final void setExpressions(List<IExpression> reorder) throws TMQLRuntimeException {
 		/*
 		 * check if lists are equal
 		 */
 		if (!CollectionsUtility.isContentEqual(children, reorder)) {
-			throw new TMQLRuntimeException(
-					"Content of new reordered sub-tree is not equal to contained sub-tree");
+			throw new TMQLRuntimeException("Content of new reordered sub-tree is not equal to contained sub-tree");
 		}
 		this.children.clear();
 		this.children.addAll(reorder);
@@ -256,9 +247,7 @@ public abstract class ExpressionImpl implements IExpression {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void checkForExtensions(Class<? extends IExpression> clazz,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
+	public void checkForExtensions(Class<? extends IExpression> clazz, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
 			TMQLGeneratorException {
 
 		boolean useDefault = true;
@@ -266,23 +255,17 @@ public abstract class ExpressionImpl implements IExpression {
 		/*
 		 * get all extensions
 		 */
-		Set<ILanguageExtension> extensions = runtime.getExtensionPointAdapter()
-				.getLanguageExtensions(clazz);
+		Set<ILanguageExtension> extensions = runtime.getExtensionPointAdapter().getLanguageExtensions(clazz);
 		if (extensions != null) {
 			/*
 			 * iterate over extensions
 			 */
 			for (ILanguageExtension extension : extensions) {
 				/*
-				 * get extension point entry
-				 */
-				ILanguageExtensionEntry entry = extension
-						.getLanguageExtensionEntry();
-				/*
 				 * check if production is valid for current extension
 				 */
-				if (entry.isValidProduction(runtime, tmqlTokens, tokens, this)) {
-					entry.parse(runtime, tmqlTokens, tokens, this, true);
+				if (extension.isValidProduction(runtime, tmqlTokens, tokens, this)) {
+					extension.parse(runtime, tmqlTokens, tokens, this, true);
 					useDefault = false;
 					break;
 				}
@@ -297,14 +280,11 @@ public abstract class ExpressionImpl implements IExpression {
 				/*
 				 * get constructor
 				 */
-				Constructor<? extends IExpression> constructor = clazz
-						.getConstructor(IExpression.class, List.class,
-								List.class, ITMQLRuntime.class);
+				Constructor<? extends IExpression> constructor = clazz.getConstructor(IExpression.class, List.class, List.class, ITMQLRuntime.class);
 				/*
 				 * create new instance
 				 */
-				IExpression ex = constructor.newInstance(this, tmqlTokens,
-						tokens, runtime);
+				IExpression ex = constructor.newInstance(this, tmqlTokens, tokens, runtime);
 				/*
 				 * add expression as child
 				 */
@@ -336,7 +316,7 @@ public abstract class ExpressionImpl implements IExpression {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

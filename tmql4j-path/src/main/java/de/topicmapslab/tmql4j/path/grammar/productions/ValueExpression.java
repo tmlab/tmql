@@ -124,16 +124,9 @@ public class ValueExpression extends ExpressionImpl {
 		super(parent, tmqlTokens, tokens, runtime);
 
 		/*
-		 * is an atom
-		 */
-		if (parent instanceof LimitClause || parent instanceof OffsetClause) {
-			setGrammarType(TYPE_CONTENT);
-			checkForExtensions(Content.class, tmqlTokens, tokens, runtime);
-		}
-		/*
 		 * is prefix-operator value-expression
 		 */
-		else if (tmqlTokens.get(0).equals(Minus.class)) {
+		if (tmqlTokens.get(0).equals(Minus.class)) {
 			setGrammarType(TYPE_PREFIX_OPERATOR);
 			checkForExtensions(ValueExpression.class, tmqlTokens.subList(1, tmqlTokens.size()), tokens.subList(1, tokens.size()), runtime);
 			indexOfOperator = 0;

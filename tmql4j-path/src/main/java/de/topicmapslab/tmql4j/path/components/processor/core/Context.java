@@ -11,6 +11,7 @@ package de.topicmapslab.tmql4j.path.components.processor.core;
 import java.util.Collections;
 import java.util.Map;
 
+import de.topicmapslab.tmql4j.components.processor.ITmqlProcessor;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.query.IQuery;
@@ -29,14 +30,18 @@ public class Context implements IContext {
 	private Object currentNode;
 	private boolean transitive;
 	private Map<String, String> prefixes;
+	private final ITmqlProcessor processor;
 
 	/**
 	 * constructor
 	 * 
+	 * @param processor
+	 *            the TMQL processor
 	 * @param query
 	 *            the handled query
 	 */
-	public Context(IQuery query) {
+	public Context(ITmqlProcessor processor, IQuery query) {
+		this.processor = processor;
 		this.query = query;
 	}
 
@@ -47,6 +52,7 @@ public class Context implements IContext {
 	 *            the clone
 	 */
 	public Context(IContext clone) {
+		this.processor = clone.getTmqlProcessor();
 		this.query = clone.getQuery();
 		this.context = clone.getContextBindings();
 		this.currentTuple = clone.getCurrentTuple();
@@ -126,7 +132,7 @@ public class Context implements IContext {
 	public void setCurrentNode(Object currentNode) {
 		this.currentNode = currentNode;
 	}
-	
+
 	/**
 	 * 
 	 * {@inheritDoc}
@@ -134,7 +140,7 @@ public class Context implements IContext {
 	public boolean isTransitive() {
 		return transitive;
 	}
-	
+
 	/**
 	 * 
 	 * {@inheritDoc}
@@ -142,35 +148,42 @@ public class Context implements IContext {
 	public void setTransitive(boolean transitive) {
 		this.transitive = transitive;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getPrefix(String qiri) {
-		if ( prefixes == null ){
+		if (prefixes == null) {
 			return null;
 		}
 		return prefixes.get(qiri);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public Map<String, String> getPrefixes() {
-		if ( prefixes == null ){
+		if (prefixes == null) {
 			return Collections.emptyMap();
 		}
 		return Collections.unmodifiableMap(prefixes);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setPrefix(String qiri, String reference) {
-		if ( prefixes == null ){
+		if (prefixes == null) {
 			prefixes = HashUtil.getHashMap();
 		}
 		prefixes.put(qiri, reference);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public ITmqlProcessor getTmqlProcessor() {
+		return processor;
+	}
+	
 }

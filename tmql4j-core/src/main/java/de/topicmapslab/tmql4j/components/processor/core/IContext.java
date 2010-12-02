@@ -10,6 +10,7 @@ package de.topicmapslab.tmql4j.components.processor.core;
 
 import java.util.Map;
 
+import de.topicmapslab.tmql4j.components.processor.ITmqlProcessor;
 import de.topicmapslab.tmql4j.query.IQuery;
 
 /**
@@ -93,5 +94,12 @@ public interface IContext {
 	 * @return a unmodifiable map of all known prefixes
 	 */
 	public Map<String, String> getPrefixes();
+
+	/**
+	 * Returns the TMQL processor proceeding this query execution
+	 * 
+	 * @return the query processor
+	 */
+	public ITmqlProcessor getTmqlProcessor();
 
 }

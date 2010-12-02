@@ -14,7 +14,7 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.topicmapslab.tmql4j.extensions.IExtensionPoint;
+import de.topicmapslab.tmql4j.extension.IExtensionPoint;
 
 /**
  * The activator is used to start the OSGi bundle. If the TMQL4J bundle is started, every 

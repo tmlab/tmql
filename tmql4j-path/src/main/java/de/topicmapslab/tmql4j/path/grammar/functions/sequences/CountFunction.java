@@ -12,7 +12,6 @@ package de.topicmapslab.tmql4j.path.grammar.functions.sequences;
 
 import java.math.BigInteger;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
@@ -53,13 +52,13 @@ public class CountFunction extends FunctionImpl {
 				Context newContext = new Context(context);
 				newContext.setContextBindings(iteration);
 				newContext.setCurrentTuple(tuple);
-				Map<String, Object> tuple_ = HashUtil.getHashMap(tuple); 
+				Map<String, Object> tuple_ = HashUtil.getHashMap(tuple);
 				tuple_.put(QueryMatches.getNonScopedVariable(), callParameters(runtime, newContext, caller));
-				matches.add(tuple_);				
+				matches.add(tuple_);
 			}
 			return matches;
-		} 
-		return QueryMatches.asQueryMatchNS(runtime,callParameters(runtime, context, caller));		
+		}
+		return QueryMatches.asQueryMatchNS(runtime, callParameters(runtime, context, caller));
 	}
 
 	/**

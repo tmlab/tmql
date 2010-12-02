@@ -3,11 +3,11 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.topicmapslab.tmql4j</groupId>
-	
+
 	<artifactId>tmql4j-parent</artifactId>
 	<version>2.7.0-SNAPSHOT</version>
-	<packaging>pom</packaging>	
-	<name>TMQL4J Parent Project</name>	
+	<packaging>pom</packaging>
+	<name>TMQL4J Parent Project</name>
 	<build>
 		<plugins>
 			<plugin>
@@ -15,8 +15,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.0.2</version>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>1.6</source>
+					<target>1.6</target>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -30,6 +30,14 @@
 			<id>tmapi</id>
 			<url>http://www.tmapi.org/maven-repository/</url>
 		</repository>
+		<repository>
+			<id>ontopia</id>
+			<url>http://ontopia.googlecode.com/svn/maven-repository/</url>
+		</repository>
+		<repository>
+			<id>ontopia snapshot</id>
+			<url>http://ontopia.googlecode.com/svn/maven-snapshot-repository/</url>
+		</repository>
 	</repositories>
 	<distributionManagement>
 		<repository>
@@ -37,13 +45,5 @@
 			<name>Topic Maps Lab Repositiory</name>
 			<url>scpexe://topicmapslab.de/home/maven/webdir/maven.topicmapslab.de/public/public</url>
 		</repository>
-	</distributionManagement>	
-	<modules>
-		<module>core</module>
-		<module>plguins/tmql-draft-2010</module>
-		<module>plguins/tmql4j-tests</module>
-		<module>plguins/tmql4j-modification-part</module>
-		<module>plguins/tmql4ontopia</module>
-		<module>plguins/tmql4majortom</module>
-	</modules>
+	</distributionManagement>
 </project>

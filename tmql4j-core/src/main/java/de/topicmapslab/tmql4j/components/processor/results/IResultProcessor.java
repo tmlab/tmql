@@ -40,12 +40,19 @@ public interface IResultProcessor {
 	 * 
 	 * @param matches
 	 *            the querying results
-	 * @param clazz
-	 *            the class of result set to create
 	 * @throws TMQLRuntimeException
 	 *             thrown if {@link IResultSet} class can not be instantiate or
 	 *             a error happened during transformation task
 	 */
-	public void proceed(QueryMatches matches, Class<? extends IResultSet<?>> clazz) throws TMQLRuntimeException;
+	public void proceed(QueryMatches matches) throws TMQLRuntimeException;
+
+	/**
+	 * Method to overwrite the result set class used to create the querying
+	 * result
+	 * 
+	 * @param clazz
+	 *            the new result set class
+	 */
+	public void setResultType(Class<? extends IResultSet<?>> clazz);
 
 }

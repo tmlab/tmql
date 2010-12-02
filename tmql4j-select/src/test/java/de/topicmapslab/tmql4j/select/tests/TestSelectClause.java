@@ -11,7 +11,6 @@ package de.topicmapslab.tmql4j.select.tests;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
-import java.util.Collection;
 import java.util.Set;
 
 import org.junit.Test;
@@ -59,7 +58,7 @@ public class TestSelectClause extends Tmql4JTestCase {
 			assertEquals(topic, r.getResults().get(0));
 			assertTrue(names.contains(r.getResults().get(1)));
 		}
-		
+
 		query = "SELECT ( myTopic , myTopic >> characteristics tm:name )";
 		set = execute(query);
 		assertEquals(100, set.size());

@@ -16,7 +16,7 @@ import org.tmapi.core.TopicMapSystem;
 import de.topicmapslab.tmql4j.components.parser.IParserTree;
 import de.topicmapslab.tmql4j.components.processor.ITmqlProcessor;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.extensions.IExtensionPointAdapter;
+import de.topicmapslab.tmql4j.extension.IExtensionPointAdapter;
 import de.topicmapslab.tmql4j.query.IQuery;
 import de.topicmapslab.tmql4j.query.QueryFactory;
 

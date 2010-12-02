@@ -29,6 +29,9 @@ import de.topicmapslab.tmql4j.components.processor.runtime.TMQLRuntimeFactory;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.components.processor.core.Context;
+import de.topicmapslab.tmql4j.path.grammar.lexical.BracketSquareClose;
+import de.topicmapslab.tmql4j.path.grammar.lexical.BracketSquareOpen;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Dot;
 import de.topicmapslab.tmql4j.path.grammar.productions.BindingSet;
 import de.topicmapslab.tmql4j.path.grammar.productions.BooleanExpression;
 import de.topicmapslab.tmql4j.query.IQuery;
@@ -180,16 +183,25 @@ public abstract class QuantifiedExpression<T extends IExpression> extends Expres
 		 * create query string
 		 */
 		final StringBuilder sb = new StringBuilder();
-		sb.append("FOR ");
+
 		BindingSet bindingSet = getExpression().getExpressionFilteredByType(BindingSet.class).get(0);
-		for (String token : bindingSet.getTokens()) {
-			sb.append(token + " ");
+		final String variable = bindingSet.getVariables().get(0);
+		for (int i = 2; i < bindingSet.getTokens().size(); i++) {
+			sb.append(bindingSet.getTokens().get(i));
+			sb.append(" ");
 		}
-		sb.append("WHERE ");
+		sb.append(BracketSquareOpen.TOKEN);
+		sb.append(" ");
 		for (String token : getExpression().getExpressionFilteredByType(BooleanExpression.class).get(0).getTokens()) {
-			sb.append(token + " ");
+			if (token.equals(variable)) {
+				sb.append(Dot.TOKEN);
+			} else {
+				sb.append(token);
+			}
+			sb.append(" ");
 		}
-		sb.append("RETURN " + bindingSet.getVariables().get(0));
+		sb.append(" ");
+		sb.append(BracketSquareClose.TOKEN);
 		return sb.toString();
 	}
 
@@ -257,7 +269,6 @@ public abstract class QuantifiedExpression<T extends IExpression> extends Expres
 							query_ = query_.replaceAll(variable, value);
 
 						}
-						System.out.println(query_);
 
 						IQuery q = runtime.run(context.getQuery().getTopicMap(), query_);
 						IResultSet<?> set = q.getResults();
