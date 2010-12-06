@@ -16,9 +16,18 @@ import de.topicmapslab.tmql4j.query.QueryImpl;
 public class TMQLQuery extends QueryImpl {
 
 	/**
+	 * a static array of full qualified names of all expression which occurs a
+	 * modification of the topic map
+	 */
+	private static String[] modificationExpressions = new String[0];
+
+	/**
 	 * Constructor
-	 * @param topicMap the topic map
-	 * @param queryString the query string
+	 * 
+	 * @param topicMap
+	 *            the topic map
+	 * @param queryString
+	 *            the query string
 	 */
 	public TMQLQuery(TopicMap topicMap, String queryString) {
 		super(topicMap, queryString);
@@ -43,8 +52,14 @@ public class TMQLQuery extends QueryImpl {
 	 * {@inheritDoc}
 	 */
 	public void afterQuery(ITMQLRuntime runtime) {
-		// NOTHING TO DO		
+		// NOTHING TO DO
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	protected String[] getModificationExpressionTypeNames() {
+		return modificationExpressions;
+	}
 
 }

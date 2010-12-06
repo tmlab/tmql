@@ -18,9 +18,9 @@ import org.tmapi.core.Name;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.components.processor.results.IResult;
+import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.flwr.components.processor.results.ctm.CTMResult;
 import de.topicmapslab.tmql4j.flwr.components.processor.results.xml.XMLResult;
-import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**

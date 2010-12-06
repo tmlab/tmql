@@ -1,0 +1,111 @@
+=== TMQL API ===
+
+Simply the topic maps query engine tmql4j isn't a query engine only supports topic maps engine based on the TMAPI specification. In addition the engine provides a set of interfaces to add any backend implementation providing informations represented as topic map constructs. 
+
+==== The ITMQLRuntime Interface ====
+
+The interface definition called 'ITMQLRuntime' specifies a runtime implementation handle any topic map query language.
+
+-----------------------------------------
+public interface ITMQLRuntime {
+
+	public void run(IQuery query) throws TMQLRuntimeException;
+
+	public IQuery run(TopicMap topicMap, String query) throws TMQLRuntimeException;
+
+	public ILanguageContext getLanguageContext();
+
+	public IExtensionPointAdapter getExtensionPointAdapter() throws UnsupportedOperationException;
+
+	public boolean isExtensionMechanismSupported();
+
+	public void setTopicMapSystem(TopicMapSystem system);
+
+	public TopicMapSystem getTopicMapSystem();
+
+	public IParserTree parse(final String query) throws TMQLRuntimeException;
+	
+	public IParserTree parse(final IQuery query) throws TMQLRuntimeException;
+
+	public ITmqlProcessor getTmqlProcessor();
+
+	public IConstructResolver getConstructResolver();
+	
+	 public String getLanguageName();
+}
+-----------------------------------------
+
+The method 'getConstructResolver' is used to identify a topic by the given identifier represented by the second argument. The first argument is a reference of the current querying context. In relation to the TMAPI the method has to return an instance of 'Construct' representing any construct of a topic map, like topics, associations or roles. The method has to return the data set for the given identifier, but may not return 'null' any time. If the construct cannot found or is unknown for the called backend 'null' should be returned.
+
+The method 'getTmqlProcessor' is called during the querying process to fetch a processor instance executes the querying process. The processor encapsulate the lexical scanner, the parser and result processing modules.
+
+The method 'getExtensionPointAdapter' returns the internal reference of the extension point adapter if the runtime supports extension mechanism, which can be check by calling the method 'isExtensionMechanismSupported'. If the method is called if the mechanism is not supported, an exception is caused.
+
+The methods 'run' and 'parse' are called by the upper application.
+
+==== The IConstructResolver Interface ====
+
+The interface definition represents a utility module to find a construct by different identifier types, like its subject-identifiers, subject-locators or item-identifiers.
+
+-------------------------------------
+1:	public interface IConstructResolver {
+2:
+3:		public Topic getTopicBySubjectIdentifier(final IContext context, final String identifier);
+5:
+6:		public Topic getTopicBySubjectLocator(final IContext context,final String identifier);
+8:
+9:		public Construct getConstructByItemIdentifier(final IContext context,final String identifier);
+11:
+12:		public Construct getConstructByIdentifier(final IContext context,final String identifier);
+14:
+15:	}
+-------------------------------------
+
+The first parameter of each method contains the current context of querying processes, like the topic map instance it-self, the query and some additional prefixes defined by the query.
+
+Like the name of 'getTopicBySubjectIdentifier' method indicates, implements the method the functionality to get a topic item by its subject-identifier. As parameters the method will get an unique subject-identifier of a topic as string-represented IRI and an instance of the topic map construct, contains the information. The topic map construct can also be an abtraction container for the underlying backend. As alternative the function 'getTopicBySubjectLocator' returns a topic item represented by its subject-locator. Both method has to return the topic item identified by the given IRI but never null. If the construct cannot be resolved, 'null' shall be returned.
+
+In relation to the topic maps data model the third method 'getConstructByItemIdentifier' has to return an topic map construct identified by it item-identifier given by the first argument. If there is no construct with this item-identifier, 'null' shall be returned.
+
+The last method combines the three functions to get a topic map construct by its identifiers. Please note that this method can be ambiguous, if the topic map contains a construct with the IRI as subject-locator and one with the IRI as subject-identifier. If the topic map scheme of the queried topic map or the abstract layer contains a restriction to forbid something like that, the method can use securely.
+
+==== The INavigationAxis Interface ====
+
+The current draft of the topic maps query language contains a special navigation expression type based on the proxies defined by the topic maps reference model. The draft describe 12 axis as abstraction of the topic maps graph defined by the relation between any topic map constructs like associations and roles. In relation to this axis the tmql4j API contains the interface 'INavigationAxis' representing one of this axis.
+
+-----------------------------------------
+1:	public interface INavigationAxis {
+2:
+3:		TopicMap getTopicMap() throws NavigationException;
+4:	
+5:		void setTopicMap(TopicMap topicMap);
+10:
+11:		NavigationAxis getNavigationType();
+12:
+13:		boolean supportsForwardNavigation(final Object construct, final Object optional) throws NavigationException;
+14:
+15:		boolean supportsForwardNavigation(final Object construct, final Object optional) throws NavigationException;
+16:
+17:		ITupleSequence<?> navigateForward(final Object construct) throws NavigationException;
+18:
+19:		ITupleSequence<?> navigateForward(final Object construct, final Object optional) throws NavigationException;
+20:
+21:		Class<?> getForwardNavigationResultClass(final Object construct) throws NavigationException;
+22:
+23:	}
+-----------------------------------------
+
+The method 'setTopicMap' used by the runtime container to set the current topic map to the navigation axis implementation. The given topic maps can be used by the implementation to realize the navigation step if it is necessary. 
+
+The 'getNavigationType' returns an enumeration value describing the type of this axis. The core engine defines enumeration values for each of the predefined navigation axis. To add new axis the extension has to extend this enumeration and add new values.
+
+Some of the TMQL axis supporting an optional type parameter in addition to the navigation start represented by a topic reference. Because of that most of the methods of the interface are overloaded to realize the usage with an optional argument or without it. The method 'supportsForwardNavigation' checks if the given start node of the abstract topic maps graph will be supported by the axis and if the optional type can be used if it is not 'null'.
+
+The navigation step over the axis will be provided by the 'navigateForward' method an will return a tuple sequence containing all topic map constructs as target nodes of the navigation step. 
+
+The last method 'getForwardNavigationResultClass'  returns the class object representing the expected result type of a navigation step of this navigation axis.
+
+In addition to the method containing the word forward there are a correspondent to realize the method in backward direction as it is described by the current draft.
+
+If any of the navigation functions fails, the method will throw an exception of type 'NavigationException'.
+

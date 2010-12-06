@@ -1,7 +1,6 @@
 package de.topicmapslab.tmql4j.merge.grammar.productions;
 
 import java.util.Iterator;
-
 import java.util.List;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;

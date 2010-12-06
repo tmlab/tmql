@@ -14,7 +14,9 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.extension.IExtensionPoint;
+import de.topicmapslab.tmql4j.query.IQueryProcessor;
 
 /**
  * The activator is used to start the OSGi bundle. If the TMQL4J bundle is started, every 
@@ -52,6 +54,42 @@ public class TMQLActivator implements BundleActivator {
 		} catch (InvalidSyntaxException e) {
 			// only logging 'cause should not happen
 			logger.error("Tried loading extension points: ", e);
+		}
+		return Collections.emptyList();
+	}
+	
+	public List<IQueryProcessor> getQueryProcessors() {
+		try {
+			List<IQueryProcessor> result = new ArrayList<IQueryProcessor>();
+			ServiceReference[] refs = context.getServiceReferences(
+					IQueryProcessor.class.getName(), null);
+			if (refs == null)
+				return Collections.emptyList();
+			for (ServiceReference ref : refs) {
+				result.add((IQueryProcessor) context.getService(ref));
+			}
+			return result;
+		} catch (InvalidSyntaxException e) {
+			// only logging 'cause should not happen
+			logger.error("Tried loading query processors: ", e);
+		}
+		return Collections.emptyList();
+	}
+	
+	public List<ITMQLRuntime> getTmqlRuntimes() {
+		try {
+			List<ITMQLRuntime> result = new ArrayList<ITMQLRuntime>();
+			ServiceReference[] refs = context.getServiceReferences(
+					ITMQLRuntime.class.getName(), null);
+			if (refs == null)
+				return Collections.emptyList();
+			for (ServiceReference ref : refs) {
+				result.add((ITMQLRuntime) context.getService(ref));
+			}
+			return result;
+		} catch (InvalidSyntaxException e) {
+			// only logging 'cause should not happen
+			logger.error("Tried loading runtimes: ", e);
 		}
 		return Collections.emptyList();
 	}

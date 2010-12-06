@@ -18,11 +18,11 @@ import org.junit.Test;
 
 import de.topicmapslab.majortom.model.core.IOccurrence;
 import de.topicmapslab.tmql4j.components.processor.results.IResult;
+import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetDates;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetDatesAfter;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetDatesBefore;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetDatesInRange;
-import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
 
 /**
  * @author Sven Krosse

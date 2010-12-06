@@ -8,13 +8,10 @@
  */
 package de.topicmapslab.tmql4j.components.processor.runtime;
 
-import java.util.Set;
-
 import de.topicmapslab.tmql4j.components.processor.runtime.module.PrefixHandler;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.model.IFunctionRegistry;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.model.IInterpreterRegistry;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.model.ITokenRegistry;
-import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 
 /**
  * Interface definition of the context store all import informations used for
@@ -53,12 +50,4 @@ public interface ILanguageContext {
 	 * @return the reference of the interpreter register
 	 */
 	public IInterpreterRegistry getInterpreterRegistry();
-
-	/**
-	 * Method returns the internal defined list of allowed expression types
-	 * 
-	 * @return a set containing the expression classes representing the allowed
-	 *         expression
-	 */
-	public Set<Class<? extends IExpression>> getAllowedExpressionTypes();
 }

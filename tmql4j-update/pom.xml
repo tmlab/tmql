@@ -8,7 +8,7 @@
 	</parent>
 	<groupId>de.topicmapslab.tmql4j</groupId>
 	<artifactId>tmql4j-update</artifactId>
-	<version>2.7.0-SNAPSHOT</version>
+	<version>${project.parent.version}</version>
 	<name>TMQL Update Style</name>
 	<build>
 		<resources>
@@ -39,14 +39,14 @@
   	<dependency>
   		<groupId>de.topicmapslab.tmql4j</groupId>
   		<artifactId>tmql4j-path</artifactId>
-  		<version>2.7.0-SNAPSHOT</version>
+  		<version>${project.version}</version>
   		<type>jar</type>
   		<scope>compile</scope>
   	</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.7</version>
+			<version>4.8.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

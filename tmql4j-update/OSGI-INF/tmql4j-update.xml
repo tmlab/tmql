@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="tmql4j-update">
+   <implementation class=de.topicmapslab.tmql4j.update.extension.Draft2007UpdateStylee"/>
+   <implementation classde.topicmapslab.tmql4j.select.extension.Draft2007SelectStlye7FlwrStyle"/>
+
+   <service>
+      <provide interface="de.topicmapslab.tmql4j.extension.IExtensionPoint"/>
+   </service>   < <implementation de.topicmapslab.tmql4j.path.query.TMQLQueryProcessorime2007"/>
+   <service>
+      <provide interface="de.topicmapslab.tmql4j.common.model.runtime.ITMQLRuntime"/>
+   </service>
+</scr:component>

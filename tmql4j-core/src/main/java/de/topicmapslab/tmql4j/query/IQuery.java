@@ -15,6 +15,7 @@ import org.tmapi.core.TopicMap;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 
 /**
  * Interface definition of a query, which can be handled by the TMQL4 engine or
@@ -80,4 +81,33 @@ public interface IQuery {
 	 *            the results
 	 */
 	public void setResults(IResultSet<?> results);
+	
+	/**
+	 * Forbid the expression as part of the parsed tree
+	 * @param forbiddenExpressionType the expression to forbid
+	 */
+	public void forbidExpression(Class<? extends IExpression> forbiddenExpressionType);
+	
+	/**
+	 * Allow the expression as part of the parsed tree. Please note, that this has only an effect if the expression was forbid before.
+	 * @param allowedExpressionType the expression to allow
+	 */
+	public void allowExpression(Class<? extends IExpression> allowedExpressionType);
+	
+	/**
+	 * Forbid any expression which modify the topic map
+	 */
+	public void forbidModificationQueries();
+	
+	/**
+	 * Allow any expression which modify the topic map. Please note, that this has only an effect if the expressions were forbid before.
+	 */
+	public void allowModificationQueries();
+	
+	/**
+	 * Checks if the current query forbids the given expression type
+	 * @param expressionType the expression type
+	 * @return <code>true</code> if the expression type is forbidden, <code>false</code> otherwise
+	 */
+	public boolean isForbidden(Class<? extends IExpression> expressionType);
 }

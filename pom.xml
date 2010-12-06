@@ -9,6 +9,26 @@
 	<packaging>pom</packaging>
 	<name>TMQL4J Parent Project</name>
 	<build>
+		<extensions>
+			<extension>
+				<groupId>org.apache.maven.wagon</groupId>
+				<artifactId>wagon-ssh</artifactId>
+				<version>1.0-beta-2</version>
+			</extension>
+		</extensions>
+		<resources>
+			<resource>
+				<directory>META-INF</directory>
+				<targetPath>${project.build.directory}/classes/META-INF</targetPath>
+			</resource>
+			<resource>
+				<directory>OSGI-INF</directory>
+				<targetPath>${project.build.directory}/classes/OSGI-INF</targetPath>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -47,13 +67,14 @@
 		</repository>
 	</distributionManagement>
 	<modules>
-	<module>tmql4j-core</module>
-	<module>tmql4j-path</module>
-	<module>tmql4j-select</module>
-	<module>tmql4j-flwr</module>
-	<module>tmql4j-insert</module>
-	<module>tmql4j-update</module>
-	<module>tmql4j-delete</module>
-	<module>tmql4j-merge</module>
+		<module>tmql4j-core</module>
+		<module>tmql4j-path</module>
+		<module>tmql4j-select</module>
+		<module>tmql4j-flwr</module>
+		<module>tmql4j-insert</module>
+		<module>tmql4j-update</module>
+		<module>tmql4j-delete</module>
+		<module>tmql4j-merge</module>
+		<module>tmql4j-draft2010</module>
 	</modules>
 </project>

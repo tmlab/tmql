@@ -16,10 +16,10 @@ import de.topicmapslab.tmql4j.components.processor.core.Context;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
+import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.insert.grammar.productions.InsertClause;
 import de.topicmapslab.tmql4j.insert.grammar.productions.TMContent;
-import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**

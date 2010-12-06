@@ -19,9 +19,9 @@ import de.topicmapslab.geotype.wgs84.Wgs84Degree;
 import de.topicmapslab.majortom.model.core.IOccurrence;
 import de.topicmapslab.majortom.util.XmlSchemeDatatypes;
 import de.topicmapslab.tmql4j.components.processor.results.IResult;
+import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetCoordinatesInDistance;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetDistance;
-import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
 
 /**
  * @author Sven Krosse

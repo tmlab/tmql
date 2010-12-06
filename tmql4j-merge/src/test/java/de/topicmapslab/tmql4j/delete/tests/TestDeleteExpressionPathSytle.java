@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.tmapi.core.Name;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.path.query.TMQLQuery;
 
 /**

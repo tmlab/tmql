@@ -8,6 +8,8 @@
  */
 package de.topicmapslab.tmql4j.flwr.tests;
 
+import static junit.framework.Assert.assertEquals;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,8 +17,7 @@ import org.junit.Test;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.components.processor.results.IResult;
-import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
-import static junit.framework.Assert.*;
+import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 /**
  * @author Sven Krosse
  * 

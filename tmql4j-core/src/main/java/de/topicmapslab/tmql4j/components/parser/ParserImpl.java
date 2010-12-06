@@ -10,6 +10,9 @@
  */
 package de.topicmapslab.tmql4j.components.parser;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.topicmapslab.tmql4j.components.lexer.ILexer;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLException;
@@ -28,6 +31,11 @@ import de.topicmapslab.tmql4j.query.IQuery;
  * 
  */
 public abstract class ParserImpl implements IParser {
+
+	/**
+	 * the logger
+	 */
+	private static Logger logger = LoggerFactory.getLogger(ParserImpl.class);
 
 	/**
 	 * the parsing result
@@ -61,7 +69,7 @@ public abstract class ParserImpl implements IParser {
 	public void parse(ITMQLRuntime runtime) throws TMQLParserException {
 		try {
 			tree = getParserTreeInstance(runtime, lexer.getQuery(), lexer);
-			if (!isValid(runtime)) {
+			if (!isValid(runtime, lexer.getQuery())) {
 				throw new TMQLParserException("Parser tree is invalid, at least one expression are not allowed.");
 			}
 		} catch (TMQLParserException e) {
@@ -94,14 +102,7 @@ public abstract class ParserImpl implements IParser {
 	 *         otherwise.
 	 * @throws TMQLParserException
 	 */
-	private boolean isValid(ITMQLRuntime runtime) throws TMQLParserException {
-
-		/*
-		 * if expressions are empty allow all
-		 */
-		if (runtime.getLanguageContext().getAllowedExpressionTypes().isEmpty()) {
-			return true;
-		}
+	private boolean isValid(ITMQLRuntime runtime, IQuery query) throws TMQLParserException {
 
 		/*
 		 * iterate over top-level expression
@@ -110,7 +111,8 @@ public abstract class ParserImpl implements IParser {
 			/*
 			 * check if expressions are allowed
 			 */
-			if (!runtime.getLanguageContext().getAllowedExpressionTypes().contains(expression.getClass())) {
+			if (query.isForbidden(expression.getClass())) {
+				logger.error("Expression type '" + expression.getClass().getName() + "' is forbidden!");
 				return false;
 			}
 		}

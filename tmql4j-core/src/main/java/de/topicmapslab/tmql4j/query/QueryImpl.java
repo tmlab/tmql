@@ -10,10 +10,16 @@
  */
 package de.topicmapslab.tmql4j.query;
 
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmapi.core.TopicMap;
 
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Abstract base implementation of {@link IQuery} to implements the core
@@ -24,6 +30,16 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
  * 
  */
 public abstract class QueryImpl implements IQuery {
+
+	/**
+	 * the logger
+	 */
+	private static Logger logger = LoggerFactory.getLogger(QueryImpl.class);
+
+	/**
+	 * a set holding all forbidden expression types
+	 */
+	private Set<Class<? extends IExpression>> forbiddenExpressionTypes;
 
 	/**
 	 * the querying results
@@ -113,5 +129,80 @@ public abstract class QueryImpl implements IQuery {
 			throw new TMQLRuntimeException("Querying process not finished yet.");
 		}
 		return results;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void forbidExpression(Class<? extends IExpression> forbiddenExpressionType) {
+		if (forbiddenExpressionTypes == null) {
+			forbiddenExpressionTypes = HashUtil.getHashSet();
+		}
+		forbiddenExpressionTypes.add(forbiddenExpressionType);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void forbidModificationQueries() {
+		for (Class<? extends IExpression> forbiddenExpressionType : getModificationExpressionTypes()) {
+			forbidExpression(forbiddenExpressionType);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void allowExpression(Class<? extends IExpression> allowedExpressionType) {
+		if (forbiddenExpressionTypes != null) {
+			forbiddenExpressionTypes.remove(allowedExpressionType);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void allowModificationQueries() {
+		for (Class<? extends IExpression> allowedExpressionType : getModificationExpressionTypes()) {
+			allowExpression(allowedExpressionType);
+		}
+	}
+
+	/**
+	 * Utility method to load all expression of a specific language which occurs
+	 * a modification of the topic map
+	 * 
+	 * @return a set of classes
+	 */
+	@SuppressWarnings("unchecked")
+	private Set<Class<? extends IExpression>> getModificationExpressionTypes() {
+		Set<Class<? extends IExpression>> classes = HashUtil.getHashSet();
+		for (String name : getModificationExpressionTypeNames()) {
+			try {
+				Class<? extends IExpression> clazz = (Class<? extends IExpression>) Class.forName(name);
+				classes.add(clazz);
+			} catch (Exception e) {
+				logger.warn("Expression type '" + name + "'not present in classpath");
+			}
+		}
+		return classes;
+	}	
+
+	/**
+	 * Returns an array of the full qualified expression types of the query
+	 * language which occurs modification expression.
+	 * 
+	 * @return a string array
+	 */
+	protected abstract String[] getModificationExpressionTypeNames();
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isForbidden(Class<? extends IExpression> expressionType) {
+		if (forbiddenExpressionTypes == null) {
+			return false;
+		}
+		return forbiddenExpressionTypes.contains(expressionType);
 	}
 }
