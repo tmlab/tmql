@@ -95,14 +95,6 @@ public interface ITMQLRuntime {
 	public boolean isExtensionMechanismSupported();
 
 	/**
-	 * Returns the internal reference of the value store containing all values
-	 * stored during the querying process.
-	 * 
-	 * @return the value store
-	 */
-	public IValueStore getValueStore();
-
-	/**
 	 * Setting the topic map system used to create temporary maps on merge or
 	 * special exports
 	 * 
@@ -154,5 +146,11 @@ public interface ITMQLRuntime {
 	 * @return the construct resolver
 	 */
 	public IConstructResolver getConstructResolver();
+	
+	/**
+	 * Returns the name of the supported language.
+	 * @return the language name
+	 */
+	public String getLanguageName();
 
 }

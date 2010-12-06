@@ -19,7 +19,6 @@ import org.tmapi.core.TopicMapSystem;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.insert.exceptions.DeletionException;
 import de.topicmapslab.tmql4j.insert.exceptions.InsertException;
 
 /**
@@ -52,7 +51,7 @@ public class InsertHandler {
 	 * @throws InsertException
 	 *             thrown if topic map cannot be extracted from stack
 	 */
-	public InsertHandler(ITMQLRuntime runtime, IContext context) throws DeletionException {
+	public InsertHandler(ITMQLRuntime runtime, IContext context) throws InsertException {
 		try {
 			this.topicMap = context.getQuery().getTopicMap();
 			this.topicMapSystem = runtime.getTopicMapSystem();

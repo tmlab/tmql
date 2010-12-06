@@ -76,4 +76,47 @@ public class TMQLRuntimeFactory {
 		return runtime;
 	}
 
+	/**
+	 * Create a new TMQL4J runtime
+	 * 
+	 * @param languageName
+	 *            the name of the language which should be supported by the
+	 *            runtime
+	 * @return the created {@link ITMQLRuntime}
+	 * @throws TMQLRuntimeException
+	 *             thrown if the data-bridge instance cannot be instantiate
+	 */
+	public ITMQLRuntime newRuntime(final String languageName) throws TMQLRuntimeException {
+		ServiceLoader<ITMQLRuntime> loader = ServiceLoader.load(ITMQLRuntime.class, TMQLRuntimeFactory.class.getClassLoader());
+		Iterator<ITMQLRuntime> iterator = loader.iterator();
+		while (iterator.hasNext()) {
+			ITMQLRuntime runtime = iterator.next();
+			if (runtime.getLanguageName().equalsIgnoreCase(languageName)) {
+				return runtime;
+			}
+		}
+		throw new TMQLRuntimeException("No implementation class for ITMQLRuntime found, which supports the language '" + languageName + "'!");
+	}
+
+	/**
+	 * Create a new TMQL4J runtime
+	 * 
+	 * 
+	 * @param topicMapSystem
+	 *            a topic maps system to create temporary maps
+	 * @param languageName
+	 *            the name of the language which should be supported by the
+	 *            runtime
+	 * @return the created {@link ITMQLRuntime}
+	 * @throws TMQLRuntimeException
+	 *             thrown if runtime cannot be created
+	 * 
+	 * @see ITMQLRuntime#setTopicMapSystem(TopicMapSystem)
+	 */
+	public ITMQLRuntime newRuntime(final TopicMapSystem topicMapSystem, final String languageName) throws TMQLRuntimeException {
+		ITMQLRuntime runtime = newRuntime(languageName);
+		runtime.setTopicMapSystem(topicMapSystem);
+		return runtime;
+	}
+
 }

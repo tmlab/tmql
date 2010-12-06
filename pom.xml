@@ -5,7 +5,7 @@
 	<groupId>de.topicmapslab.tmql4j</groupId>
 
 	<artifactId>tmql4j-parent</artifactId>
-	<version>2.7.0-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>TMQL4J Parent Project</name>
 	<build>
@@ -46,4 +46,14 @@
 			<url>scpexe://topicmapslab.de/home/maven/webdir/maven.topicmapslab.de/public/public</url>
 		</repository>
 	</distributionManagement>
+	<modules>
+	<module>tmql4j-core</module>
+	<module>tmql4j-path</module>
+	<module>tmql4j-select</module>
+	<module>tmql4j-flwr</module>
+	<module>tmql4j-insert</module>
+	<module>tmql4j-update</module>
+	<module>tmql4j-delete</module>
+	<module>tmql4j-merge</module>
+	</modules>
 </project>

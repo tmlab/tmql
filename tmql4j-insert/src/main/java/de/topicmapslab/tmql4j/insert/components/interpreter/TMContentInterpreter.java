@@ -101,6 +101,6 @@ public class TMContentInterpreter extends ExpressionInterpreterImpl<TMContent> {
 				builder.append(CTMConverter.toCTMString(values));
 			}
 		}
-		return QueryMatches.asQueryMatch(runtime, "$0", builder.toString());
+		return QueryMatches.asQueryMatchNS(runtime, builder.toString());
 	}
 }

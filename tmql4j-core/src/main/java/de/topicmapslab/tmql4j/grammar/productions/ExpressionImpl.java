@@ -297,14 +297,8 @@ public abstract class ExpressionImpl implements IExpression {
 	}
 
 	/**
-	 * Method checks if the current expression is a child of the specified
-	 * expression type. The method walks up to the tree root and check all
-	 * parent types.
 	 * 
-	 * @param clazz
-	 *            the expression type
-	 * @return <code>true</code> if the current expression is a child of the
-	 *         specified type, <code>false</code> otherwise.
+	 * {@inheritDoc}
 	 */
 	public boolean isChildOf(Class<? extends IExpression> clazz) {
 		IExpression parent = getParent();

@@ -11,14 +11,10 @@
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import java.util.List;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
-import org.tmapi.core.Role;
-import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
@@ -26,9 +22,8 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.PredicateInvocationRolePlayerExpression;
-import de.topicmapslab.tmql4j.util.HashUtil;
+import de.topicmapslab.tmql4j.path.util.Restriction;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 
 /**
@@ -90,8 +85,12 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends Expressi
 				 */
 				QueryMatches matches = interpreter.interpret(runtime, context, optionalArguments);
 				if (matches.isEmpty()) {
-					logger.warn("Value-expression to fetch role-type return empty result set!");
-					return null;
+					if (TmdmSubjectIdentifier.isTmdmSubject(interpreter.getTokens().get(0))) {
+						roleType = TmdmSubjectIdentifier.TMDM_SUBJECT;
+					} else {
+						logger.warn("Value-expression to fetch role-type return empty result set!");
+						return null;
+					}
 				} else {
 					Construct construct = (Construct) matches.get(0).get(QueryMatches.getNonScopedVariable());
 					if (construct == null) {
@@ -114,8 +113,12 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends Expressi
 			} else {
 				QueryMatches matches = interpreter.interpret(runtime, context, optionalArguments);
 				if (matches.isEmpty()) {
-					logger.warn("Value-expression to fetch player return empty result set!");
-					return null;
+					if (TmdmSubjectIdentifier.isTmdmSubject(interpreter.getTokens().get(0))) {
+						player = TmdmSubjectIdentifier.TMDM_SUBJECT;
+					} else {
+						logger.warn("Value-expression to fetch player return empty result set!");
+						return null;
+					}
 				} else {
 					Construct construct = (Construct) matches.get(0).get(QueryMatches.getNonScopedVariable());
 					if (construct == null) {
@@ -127,67 +130,13 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends Expressi
 				}
 			}
 			Restriction restriction = new Restriction();
-			restriction.ex = this.getExpression();
-			restriction.roleType = roleType;
-			restriction.player = player;
+			restriction.setExpression(getExpression());
+			restriction.setRoleType(roleType);
+			restriction.setPlayer(player);
 			return restriction;
 		}
 		logger.warn("Unsupported state of role-player-constraint!");
 		return null;
-	}
-
-	public class Restriction {
-		Object player;
-		Object roleType;
-		IExpression ex;
-
-		boolean satisfy(Association association) {
-			if (roleType instanceof Topic && !TmdmSubjectIdentifier.isTmdmSubject(roleType)) {
-
-				Set<Role> roles = HashUtil.getHashSet();
-				roles = association.getRoles((Topic) roleType);
-
-				if (roles.isEmpty()) {
-					return false;
-				}
-				if (player instanceof Topic) {
-					if (!TmdmSubjectIdentifier.isTmdmSubject(player)) {
-						boolean satisfy = false;
-						for (Role r : roles) {
-							if (r.getPlayer().equals(player)) {
-								satisfy = true;
-								break;
-							}
-						}
-						if (!satisfy) {
-							return false;
-						}
-					}
-				}
-
-			} else {
-				Set<Role> roles = association.getRoles();
-				if (roles.isEmpty()) {
-					return false;
-				}
-				if (player instanceof Topic) {
-					if (!TmdmSubjectIdentifier.isTmdmSubject(player)) {
-						boolean satisfy = false;
-						for (Role r : roles) {
-							if (r.getPlayer().equals(player)) {
-								satisfy = true;
-								break;
-							}
-						}
-						if (!satisfy) {
-							return false;
-						}
-					}
-				}
-			}
-			return true;
-		}
-
 	}
 
 }

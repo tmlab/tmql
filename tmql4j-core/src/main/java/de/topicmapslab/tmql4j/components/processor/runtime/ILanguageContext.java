@@ -10,10 +10,10 @@ package de.topicmapslab.tmql4j.components.processor.runtime;
 
 import java.util.Set;
 
-import de.topicmapslab.tmql4j.components.processor.runtime.module.FunctionRegistry;
-import de.topicmapslab.tmql4j.components.processor.runtime.module.InterpreterRegistry;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.PrefixHandler;
-import de.topicmapslab.tmql4j.components.processor.runtime.module.TokenRegistry;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.model.IFunctionRegistry;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.model.IInterpreterRegistry;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.model.ITokenRegistry;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 
 /**
@@ -31,14 +31,14 @@ public interface ILanguageContext {
 	 * 
 	 * @return the reference of the token register
 	 */
-	public TokenRegistry getTokenRegistry();
+	public ITokenRegistry getTokenRegistry();
 
 	/**
 	 * Method get access to the internal instance of the function register
 	 * 
 	 * @return the reference of the function register
 	 */
-	public FunctionRegistry getFunctionRegistry();
+	public IFunctionRegistry getFunctionRegistry();
 
 	/**
 	 * Method get access to the internal instance of the prefix handler
@@ -52,7 +52,7 @@ public interface ILanguageContext {
 	 * 
 	 * @return the reference of the interpreter register
 	 */
-	public InterpreterRegistry getInterpreterRegistry();
+	public IInterpreterRegistry getInterpreterRegistry();
 
 	/**
 	 * Method returns the internal defined list of allowed expression types

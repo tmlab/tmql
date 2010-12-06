@@ -17,6 +17,7 @@ import org.tmapi.core.TopicMap;
 import de.topicmapslab.tmql4j.components.processor.runtime.TMQLRuntimeFactory;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
+import de.topicmapslab.tmql4j.path.components.processor.runtime.TmqlRuntime2007;
 import de.topicmapslab.tmql4j.query.IQuery;
 import de.topicmapslab.tmql4j.query.IQueryProcessor;
 import de.topicmapslab.tmql4j.util.HashUtil;
@@ -25,10 +26,16 @@ public class TMQLQueryProcessor implements IQueryProcessor {
 
 	private final Map<String, TMQLQuery> queries;
 
+	/**
+	 * constructor
+	 */
 	public TMQLQueryProcessor() {
 		this.queries = HashUtil.getHashMap();
 	}
-
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public TMQLQuery asTmqlQuery(TopicMap topicMap, String query) {
 		if (queries.containsKey(query)) {
@@ -39,21 +46,30 @@ public class TMQLQueryProcessor implements IQueryProcessor {
 		}
 		throw new IllegalArgumentException("String represenation cannot convert to a TMQL query!");
 	}
-
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getLanguageName() {
 		return "TMQL";
 	}
-
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public IQuery getQuery(TopicMap topicMap, String query) {
 		return asTmqlQuery(topicMap, query);
 	}
-
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isValid(String query) {
 		try {
-			TMQLRuntimeFactory.newFactory().newRuntime(null).parse(query);
+			TMQLRuntimeFactory.newFactory().newRuntime(TmqlRuntime2007.TMQL_2007).parse(query);
 			return true;
 		} catch (TMQLInvalidSyntaxException e) {
 			e.printStackTrace();

@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>tmql4j-parent</artifactId>
 		<groupId>de.topicmapslab.tmql4j</groupId>
-		<version>2.7.0-SNAPSHOT</version>
+		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 	<groupId>de.topicmapslab.tmql4j</groupId>
 	<artifactId>tmql4j-flwr</artifactId>

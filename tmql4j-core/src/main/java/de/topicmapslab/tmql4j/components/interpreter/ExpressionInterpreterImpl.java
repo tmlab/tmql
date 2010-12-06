@@ -19,7 +19,7 @@ import org.tmapi.core.TopicMap;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.runtime.module.InterpreterRegistry;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.InterpreterRegistryImpl;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
@@ -35,7 +35,7 @@ import de.topicmapslab.tmql4j.grammar.productions.IExpression;
  * <p>
  * An Instance of {@link IExpression} will be an argument of the interpretation
  * process of a {@link IExpressionInterpreter} which will be instantiate by the
- * {@link InterpreterRegistry}.
+ * {@link InterpreterRegistryImpl}.
  * </p>
  * 
  * @author Sven Krosse

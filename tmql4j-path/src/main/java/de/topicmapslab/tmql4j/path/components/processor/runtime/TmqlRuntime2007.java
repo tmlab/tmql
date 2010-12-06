@@ -16,14 +16,13 @@ import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.IConstructResolver;
 import de.topicmapslab.tmql4j.components.processor.runtime.ILanguageContext;
-import de.topicmapslab.tmql4j.components.processor.runtime.IValueStore;
+import de.topicmapslab.tmql4j.components.processor.runtime.TmqlConstructResolver;
 import de.topicmapslab.tmql4j.components.processor.runtime.TmqlRuntimeImpl;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.extension.ExtensionPointAdapter;
 import de.topicmapslab.tmql4j.extension.IExtensionPointAdapter;
 import de.topicmapslab.tmql4j.path.components.processor.TmqlProcessor2007;
 import de.topicmapslab.tmql4j.path.components.processor.runtime.module.LanguageContext;
-import de.topicmapslab.tmql4j.path.components.processor.runtime.module.ValueStore;
-import de.topicmapslab.tmql4j.path.extension.ExtensionPointAdapter;
 import de.topicmapslab.tmql4j.path.query.TMQLQuery;
 import de.topicmapslab.tmql4j.query.IQuery;
 
@@ -33,6 +32,8 @@ import de.topicmapslab.tmql4j.query.IQuery;
  */
 public class TmqlRuntime2007 extends TmqlRuntimeImpl {
 
+	public static final String TMQL_2007 = "TMQL-2007";
+	
 	private final IExtensionPointAdapter extensionPointAdapter;
 	private final IConstructResolver constructResolver;
 
@@ -79,7 +80,7 @@ public class TmqlRuntime2007 extends TmqlRuntimeImpl {
 		/*
 		 * before-execution call to query
 		 */
-		q.beforeQuery(this);		
+		q.beforeQuery(this);
 		/*
 		 * redirect to real implementation
 		 */
@@ -102,8 +103,7 @@ public class TmqlRuntime2007 extends TmqlRuntimeImpl {
 			ITmqlProcessor processor = getTmqlProcessor();
 			IResultSet<?> results = processor.query(query);
 			query.setResults(results);
-		}
-		else{
+		} else {
 			query.setResults(ResultSet.emptyResultSet());
 		}
 	}
@@ -113,13 +113,6 @@ public class TmqlRuntime2007 extends TmqlRuntimeImpl {
 	 */
 	protected ILanguageContext createLanguageContext() {
 		return new LanguageContext(this);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected IValueStore createValueStore() {
-		return new ValueStore();
 	}
 
 	/**
@@ -135,5 +128,12 @@ public class TmqlRuntime2007 extends TmqlRuntimeImpl {
 	 */
 	public IConstructResolver getConstructResolver() {
 		return constructResolver;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getLanguageName() {
+		return TMQL_2007;
 	}
 }

@@ -11,8 +11,8 @@ package de.topicmapslab.tmql4j.select.extension;
 import java.util.List;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.runtime.module.InterpreterRegistry;
-import de.topicmapslab.tmql4j.components.processor.runtime.module.TokenRegistry;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.model.IInterpreterRegistry;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.model.ITokenRegistry;
 import de.topicmapslab.tmql4j.exception.TMQLExtensionRegistryException;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
@@ -52,14 +52,14 @@ public class Draft2007SelectStyleQueryExpression implements ILanguageExtension {
 	 */
 	public void registerExtension(ITMQLRuntime runtime) throws TMQLExtensionRegistryException {
 
-		TokenRegistry tokens = runtime.getLanguageContext().getTokenRegistry();
+		ITokenRegistry tokens = runtime.getLanguageContext().getTokenRegistry();
 		tokens.register(From.class);
 		tokens.register(Limit.class);
 		tokens.register(Offset.class);
 		tokens.register(Select.class);
 		tokens.register(Unique.class);
 
-		InterpreterRegistry interpreterRegistry = runtime.getLanguageContext().getInterpreterRegistry();
+		IInterpreterRegistry interpreterRegistry = runtime.getLanguageContext().getInterpreterRegistry();
 
 		interpreterRegistry.registerInterpreterClass(FromClause.class, FromClauseInterpreter.class);
 		interpreterRegistry.registerInterpreterClass(LimitClause.class, LimitClauseInterpreter.class);
@@ -77,7 +77,7 @@ public class Draft2007SelectStyleQueryExpression implements ILanguageExtension {
 	public Class<? extends IExpression> getExpressionType() {
 		return de.topicmapslab.tmql4j.path.grammar.productions.QueryExpression.class;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

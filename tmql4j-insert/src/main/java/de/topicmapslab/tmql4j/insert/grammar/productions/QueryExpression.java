@@ -9,33 +9,37 @@ import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
-import de.topicmapslab.tmql4j.insert.grammar.tokens.Delete;
 import de.topicmapslab.tmql4j.insert.grammar.tokens.Insert;
-import de.topicmapslab.tmql4j.insert.grammar.tokens.Merge;
-import de.topicmapslab.tmql4j.insert.grammar.tokens.Update;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Pragma;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Prefix;
 import de.topicmapslab.tmql4j.path.grammar.productions.EnvironmentClause;
 
+/**
+ * Query-Expression of the insert-style of TMQL
+ * 
+ * @author Sven Krosse
+ * 
+ */
 public class QueryExpression extends ExpressionImpl {
 
 	/**
-	 * grammar type of a query-expression containing a delete-expression
+	 * base constructor to create a new expression without sub-nodes
+	 * 
+	 * @param parent
+	 *            the known parent node
+	 * @param tmqlTokens
+	 *            the list of language-specific tokens contained by this
+	 *            expression
+	 * @param tokens
+	 *            the list of string-represented tokens contained by this
+	 *            expression
+	 * @param runtime
+	 *            the TMQL runtime
+	 * @throws TMQLInvalidSyntaxException
+	 *             thrown if the syntax of the given sub-query is invalid
+	 * @throws TMQLGeneratorException
+	 *             thrown if the sub-tree can not be generated
 	 */
-	public static final int TYPE_DELETE_EXPRESSION = 3;
-	/**
-	 * grammar type of a query-expression containing an insert-expression
-	 */
-	public static final int TYPE_INSERT_EXPRESSION = 4;
-	/**
-	 * grammar type of a query-expression containing an update-expression
-	 */
-	public static final int TYPE_UPDATE_EXPRESSION = 5;
-	/**
-	 * grammar type of a query-expression containing a merge-expression
-	 */
-	public static final int TYPE_MERGE_EXPRESSION = 6;
-
 	public QueryExpression(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
@@ -89,41 +93,34 @@ public class QueryExpression extends ExpressionImpl {
 		}
 
 		/*
-		 * check if token is keyword DELETE
-		 */
-		if (tmqlTokens.contains(Delete.class)) {
-			checkForExtensions(DeleteExpression.class, tmqlTokens_, tokens_, runtime);
-			setGrammarType(TYPE_DELETE_EXPRESSION);
-		}
-		/*
 		 * check if token is keyword INSERT
 		 */
-		else if (tmqlTokens.contains(Insert.class)) {
+		if (tmqlTokens.contains(Insert.class)) {
 			checkForExtensions(InsertExpression.class, tmqlTokens_, tokens_, runtime);
-			setGrammarType(TYPE_INSERT_EXPRESSION);
-		}
-		/*
-		 * check if token is keyword UPDATE
-		 */
-		else if (tmqlTokens.contains(Update.class)) {
-			checkForExtensions(UpdateExpression.class, tmqlTokens_, tokens_, runtime);
-			setGrammarType(TYPE_UPDATE_EXPRESSION);
-		}
-		/*
-		 * check if token is keyword MERGE
-		 */
-		else if (tmqlTokens.contains(Merge.class)) {
-			checkForExtensions(MergeExpression.class, tmqlTokens_, tokens_, runtime);
-			setGrammarType(TYPE_MERGE_EXPRESSION);
 		} else {
 			throw new TMQLInvalidSyntaxException(tmqlTokens_, tokens_, this.getClass());
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isValid() {
-		return !getTmqlTokens().isEmpty()
-				&& (getTmqlTokens().contains(Delete.class) || getTmqlTokens().contains(Merge.class) || getTmqlTokens().contains(Insert.class) || getTmqlTokens().contains(Update.class));
+		return isValid(getTmqlTokens());
+	}
+
+	/**
+	 * Utility method to check if the given tokens represent a valid
+	 * insert-expression
+	 * 
+	 * @param tokens
+	 *            the tokens
+	 * @return <code>true</code> if the expression is valid, <code>false</code>
+	 *         otherwise
+	 */
+	public static boolean isValid(List<Class<? extends IToken>> tokens) {
+		return !tokens.isEmpty() && (tokens.contains(Insert.class));
 	}
 
 }

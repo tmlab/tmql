@@ -11,7 +11,7 @@ package de.topicmapslab.tmql4j.flwr.extension;
 import java.util.List;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.runtime.module.InterpreterRegistry;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.model.IInterpreterRegistry;
 import de.topicmapslab.tmql4j.exception.TMQLExtensionRegistryException;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
@@ -31,7 +31,7 @@ public class Draft2007FlwrStyleContent implements ILanguageExtension {
 	 * {@inheritDoc}
 	 */
 	public void registerExtension(ITMQLRuntime runtime) throws TMQLExtensionRegistryException {
-		InterpreterRegistry interpreterRegistry = runtime.getLanguageContext().getInterpreterRegistry();
+		IInterpreterRegistry interpreterRegistry = runtime.getLanguageContext().getInterpreterRegistry();
 		interpreterRegistry.registerInterpreterClass(Content.class, ContentInterpreter.class);
 	}
 	

@@ -35,11 +35,6 @@ import de.topicmapslab.tmql4j.query.QueryFactory;
 public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 
 	/**
-	 * the internal cache instance to store values
-	 */
-	private final IValueStore valueStore;
-
-	/**
 	 * the internal reference of the language context
 	 */
 	private final ILanguageContext languageContext;
@@ -71,8 +66,7 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 	 *             thrown if the runtime cannot be instantiate
 	 */
 	public TmqlRuntimeImpl(final TopicMapSystem topicMapSystem) throws TMQLRuntimeException {
-		this.topicMapSystem = topicMapSystem;
-		this.valueStore = createValueStore();
+		this.topicMapSystem = topicMapSystem;		
 		this.languageContext = createLanguageContext();
 		this.processor = createTmqlProcessor();
 	}
@@ -154,20 +148,6 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 	 * @return the language context
 	 */
 	protected abstract ILanguageContext createLanguageContext();
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public IValueStore getValueStore() {
-		return valueStore;
-	}
-
-	/**
-	 * Method to create new value store
-	 * 
-	 * @return the value store
-	 */
-	protected abstract IValueStore createValueStore();
 
 	/**
 	 * {@inheritDoc}

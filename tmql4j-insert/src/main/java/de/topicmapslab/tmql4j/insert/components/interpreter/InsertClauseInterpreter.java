@@ -9,14 +9,18 @@ package de.topicmapslab.tmql4j.insert.components.interpreter;
 
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.Context;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.insert.grammar.productions.InsertClause;
 import de.topicmapslab.tmql4j.insert.grammar.productions.TMContent;
+import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * 
@@ -33,8 +37,7 @@ import de.topicmapslab.tmql4j.insert.grammar.productions.TMContent;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class InsertClauseInterpreter extends
-		ExpressionInterpreterImpl<InsertClause> {
+public class InsertClauseInterpreter extends ExpressionInterpreterImpl<InsertClause> {
 
 	/**
 	 * base constructor to create a new instance
@@ -49,118 +52,44 @@ public class InsertClauseInterpreter extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public void interpret(TMQLRuntime runtime) throws TMQLRuntimeException {
-
+	@SuppressWarnings("unchecked")
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
-		 * store old properties of result set and result tuple classes
+		 * extract sub-expression of type TM-content
 		 */
-		String resultSetClass = runtime.getProperties().getProperty(
-				TMQLRuntimeProperties.RESULT_SET_IMPLEMENTATION_CLASS);
-		String resultClass = runtime.getProperties().getProperty(
-				TMQLRuntimeProperties.RESULT_TUPLE_IMPLEMENTATION_CLASS);
-
-		/*
-		 * extract sub-expression of type tm-content
-		 */
-		List<IExpressionInterpreter<TMContent>> interpreters = getInterpretersFilteredByEypressionType(
-				runtime, TMContent.class);
+		List<IExpressionInterpreter<TMContent>> interpreters = getInterpretersFilteredByEypressionType(runtime, TMContent.class);
 		if (interpreters.size() != 1) {
-			throw new TMQLRuntimeException(
-					"Invalid structure. Insert-clauses have to contain exactly one tm-content expression.");
+			throw new TMQLRuntimeException("Invalid structure. Insert-clauses have to contain exactly one tm-content expression.");
 		}
-
 		IExpressionInterpreter<TMContent> interpreter = interpreters.get(0);
-
-		Logger.getLogger(getClass().getSimpleName()).info("Start.");
-
-		QueryMatches results = new QueryMatches(runtime);
 		/*
 		 * check if context is given by insert-expression ( where-clause )
 		 */
-		if (runtime.getRuntimeContext().peek().contains(
-				VariableNames.ITERATED_BINDINGS)) {
-			QueryMatches matches = (QueryMatches) runtime.getRuntimeContext()
-					.peek().getValue(VariableNames.ITERATED_BINDINGS);
-
+		if (context.getContextBindings() != null) {
+			List<Object> results = HashUtil.getList();
 			/*
 			 * iterate over all tuples
 			 */
-			for (Map<String, Object> tuple : matches) {
+			for (Map<String, Object> tuple : context.getContextBindings()) {
 				String variable = QueryMatches.getNonScopedVariable();
 				Object match = tuple.get(variable);
-
+				Context newContext = new Context(context);
+				newContext.setContextBindings(null);
+				newContext.setCurrentTuple(tuple);
+				newContext.setCurrentNode(match);
 				/*
-				 * clear stack
+				 * call TM-content
 				 */
-				runtime.getRuntimeContext().push();
-				runtime.getRuntimeContext().peek()
-						.remove(
-								VariableNames.ITERATED_BINDINGS);
-				runtime.getRuntimeContext().peek()
-						.setValue(VariableNames.CURRENT_TUPLE,
-								match);
-				runtime.getRuntimeContext().peek()
-						.setValue(
-								QueryMatches.getNonScopedVariable(), match);
-				/*
-				 * push tuple to the top of the stack
-				 */
-				for (String var : getVariables()) {
-					runtime.getRuntimeContext().peek()
-							.setValue(var, tuple.get(var));
-				}
-
-				/*
-				 * call tm-content
-				 */
-				interpreter.interpret(runtime);
-
-				Object obj = runtime.getRuntimeContext().pop()
-						.getValue(VariableNames.QUERYMATCHES);
-				if (!(obj instanceof QueryMatches)) {
-					throw new TMQLRuntimeException(
-							"Invalid interpretation of expression value-expression. Has to return an instance of QueryMatches.");
-				}
-
-				results.add(((QueryMatches) obj).getMatches());
+				QueryMatches matches = interpreter.interpret(runtime, newContext, optionalArguments);
+				results.add(matches.getMatches());
 			}
-
+			context.getTmqlProcessor().getResultProcessor().setResultType(SimpleResultSet.class);
+			return QueryMatches.asQueryMatchNS(runtime, results.toArray());
 		}
 		/*
 		 * no context given
 		 */
-		else {
-
-			runtime.getRuntimeContext().push();
-			/*
-			 * call tm-content
-			 */
-			interpreter.interpret(runtime);
-
-			Object obj = runtime.getRuntimeContext().pop().getValue(
-					VariableNames.QUERYMATCHES);
-			if (!(obj instanceof QueryMatches)) {
-				throw new TMQLRuntimeException(
-						"Invalid interpretation of expression value-expression. Has to return an instance of QueryMatches.");
-			}
-			results = (QueryMatches) obj;
-		}
-
-		runtime.getRuntimeContext().peek().setValue(
-				VariableNames.QUERYMATCHES, results);
-
-		Logger.getLogger(getClass().getSimpleName()).info(
-				"Finished. Results: " + results);
-
-		/*
-		 * switch result-type back to origin
-		 */
-		runtime.getProperties().setProperty(
-				TMQLRuntimeProperties.RESULT_SET_IMPLEMENTATION_CLASS,
-				resultSetClass);
-		runtime.getProperties().setProperty(
-				TMQLRuntimeProperties.RESULT_TUPLE_IMPLEMENTATION_CLASS,
-				resultClass);
+		return interpreter.interpret(runtime, context, optionalArguments);
 	}
 
 }

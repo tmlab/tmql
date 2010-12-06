@@ -12,10 +12,13 @@ import java.util.Set;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ILanguageContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.runtime.module.FunctionRegistry;
-import de.topicmapslab.tmql4j.components.processor.runtime.module.InterpreterRegistry;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.FunctionRegistryImpl;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.InterpreterRegistryImpl;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.PrefixHandler;
-import de.topicmapslab.tmql4j.components.processor.runtime.module.TokenRegistry;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.TokenRegistryImpl;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.model.IFunctionRegistry;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.model.IInterpreterRegistry;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.model.ITokenRegistry;
 import de.topicmapslab.tmql4j.exception.TMQLInitializationException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.util.HashUtil;
@@ -30,7 +33,7 @@ public class LanguageContext implements ILanguageContext {
 	/**
 	 * the function register
 	 */
-	private final FunctionRegistry functionRegistry;
+	private final FunctionRegistryImpl functionRegistry;
 	/**
 	 * the prefix handler
 	 */
@@ -38,11 +41,11 @@ public class LanguageContext implements ILanguageContext {
 	/**
 	 * the token register
 	 */
-	private final TokenRegistry tokenRegistry;
+	private final TokenRegistryImpl tokenRegistry;
 	/**
 	 * the interpreter register
 	 */
-	private final InterpreterRegistry interpreterRegistry;
+	private final InterpreterRegistryImpl interpreterRegistry;
 
 	/**
 	 * constructor
@@ -53,17 +56,17 @@ public class LanguageContext implements ILanguageContext {
 	 *             thrown if initialization fails
 	 */
 	public LanguageContext(final ITMQLRuntime runtime) throws TMQLInitializationException {
-		this.functionRegistry = new FunctionRegistry2007(runtime);
+		this.functionRegistry = new FunctionRegistry(runtime);
 		this.prefixHandler = new PrefixHandler();
-		this.tokenRegistry = new TokenRegistry2007(runtime);
-		this.interpreterRegistry = new InterpreterRegistry2007();
+		this.tokenRegistry = new TokenRegistry(runtime);
+		this.interpreterRegistry = new InterpreterRegistry();
 		this.allowedExpressionTypes = HashUtil.getHashSet();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public FunctionRegistry getFunctionRegistry() {
+	public IFunctionRegistry getFunctionRegistry() {
 		return functionRegistry;
 	}
 
@@ -77,17 +80,17 @@ public class LanguageContext implements ILanguageContext {
 	/**
 	 * {@inheritDoc}
 	 */
-	public TokenRegistry getTokenRegistry() {
+	public ITokenRegistry getTokenRegistry() {
 		return tokenRegistry;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public InterpreterRegistry getInterpreterRegistry() {
+	public IInterpreterRegistry getInterpreterRegistry() {
 		return interpreterRegistry;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

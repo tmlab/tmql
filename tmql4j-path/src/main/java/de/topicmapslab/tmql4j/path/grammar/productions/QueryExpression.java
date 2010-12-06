@@ -46,17 +46,17 @@ public class QueryExpression extends ExpressionImpl {
 	 * {@link QueryExpression#QueryExpression(IExpression, List, List, TMQLRuntime)}
 	 * </p>
 	 * 
-	 * @param lexer
-	 *            the lexical scanner containing all lexical tokens
 	 * @param runtime
 	 *            the TMQL runtime
+	 * @param lexer
+	 *            the lexical scanner containing all lexical tokens
 	 * @throws TMQLInvalidSyntaxException
 	 *             thrown if the syntax of the given sub-query is invalid
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 * 
 	 */
-	public QueryExpression(ILexer lexer, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
+	public QueryExpression(ITMQLRuntime runtime, ILexer lexer) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		this(null, lexer.getTmqlTokens(), lexer.getTokens(), runtime);
 	}
 

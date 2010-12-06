@@ -12,11 +12,10 @@ package de.topicmapslab.tmql4j.path.components.parser;
 
 import de.topicmapslab.tmql4j.components.lexer.ILexer;
 import de.topicmapslab.tmql4j.components.parser.IParser;
-import de.topicmapslab.tmql4j.components.parser.IParserTree;
+import de.topicmapslab.tmql4j.components.parser.ParserImpl;
+import de.topicmapslab.tmql4j.components.parser.ParserTreeImpl;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.exception.TMQLException;
-import de.topicmapslab.tmql4j.exception.TMQLParserException;
-import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.query.IQuery;
 
 /**
  * Base implementation of {@link IParser}. The parser transform the
@@ -28,83 +27,19 @@ import de.topicmapslab.tmql4j.grammar.productions.IExpression;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public final class TMQLParser implements IParser {
+public final class TMQLParser extends ParserImpl {
 
 	/**
-	 * the parsing result
-	 */
-	private IParserTree tree = null;
-	/**
-	 * the lexical scanner containing the lexical tokens
-	 */
-	private final ILexer lexer;
-
-	/**
-	 * base constructor to create a new instance
-	 * 
 	 * @param lexer
-	 *            the lexical scanner containing the lexical tokens to parse
 	 */
 	public TMQLParser(ILexer lexer) {
-		this.lexer = lexer;
+		super(lexer);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public IParserTree getParserTree() {
-		return this.tree;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void parse(ITMQLRuntime runtime) throws TMQLParserException {
-		try {
-			tree = ParserTreeImpl.create(lexer, runtime);
-			if (!isValid(runtime)) {
-				throw new TMQLParserException(
-						"Parser tree is invalid, at least one expression are not allowed.");
-			}
-		} catch (TMQLParserException e) {
-			throw e;
-		} catch (TMQLException e) {
-			throw new TMQLParserException("Parser failed because of "
-					+ e.getLocalizedMessage());
-		}
-	}
-
-	/**
-	 * Method checks if the parser tree is valid. The parser tree is valid, if
-	 * the parser tree contains on top-level only expressions which are allowed.
-	 * 
-	 * @param runtime
-	 *            the TMQL4J runtime
-	 * @return <code>true</code> if the parser tree is valid, <code>false</code>
-	 *         otherwise.
-	 * @throws TMQLParserException
-	 */
-	private boolean isValid(ITMQLRuntime runtime) throws TMQLParserException {
-
-		/*
-		 * if expressions are empty allow all
-		 */
-		if (runtime.getLanguageContext().getAllowedExpressionTypes().isEmpty()) {
-			return true;
-		}
-
-		/*
-		 * iterate over top-level expression
-		 */
-		for (IExpression expression : tree.root().getExpressions()) {
-			/*
-			 * check if expressions are allowed
-			 */
-			if (!runtime.getLanguageContext().getAllowedExpressionTypes()
-					.contains(expression.getClass())) {
-				return false;
-			}
-		}
-		return true;
+	protected ParserTreeImpl getParserTreeInstance(ITMQLRuntime runtime, IQuery query, ILexer lexer) {
+		return new TmqlParserTree(runtime, query, lexer);
 	}
 }

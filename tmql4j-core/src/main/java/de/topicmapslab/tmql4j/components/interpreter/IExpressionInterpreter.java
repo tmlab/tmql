@@ -15,7 +15,7 @@ import java.util.List;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.runtime.module.InterpreterRegistry;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.InterpreterRegistryImpl;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
@@ -30,7 +30,7 @@ import de.topicmapslab.tmql4j.grammar.productions.IExpression;
  * <p>
  * An Instance of {@link IExpression} will be an argument of the interpretation
  * process of a {@link IExpressionInterpreter} which will be instantiate by the
- * {@link InterpreterRegistry}.
+ * {@link InterpreterRegistryImpl}.
  * </p>
  * 
  * @author Sven Krosse
@@ -70,7 +70,7 @@ public interface IExpressionInterpreter<T extends IExpression> {
 	 * Method returns a list of all interpreters for the sub-expression of the
 	 * internal expression. If the expression is a leaf this method will return
 	 * an empty list of interpreters. The method instantiate one interpreter for
-	 * each expression by calling the {@link InterpreterRegistry}:
+	 * each expression by calling the {@link InterpreterRegistryImpl}:
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
@@ -123,7 +123,7 @@ public interface IExpressionInterpreter<T extends IExpression> {
 	 * internal expression filtered by the given type. If the expression is a
 	 * leaf this method will return an empty list of interpreters. The method
 	 * instantiate one interpreter for each expression of the given type by
-	 * calling the {@link InterpreterRegistry}:
+	 * calling the {@link InterpreterRegistryImpl}:
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime

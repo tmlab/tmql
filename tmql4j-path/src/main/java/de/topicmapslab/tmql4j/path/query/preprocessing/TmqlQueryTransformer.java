@@ -18,9 +18,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
+import de.topicmapslab.tmql4j.components.lexer.TMQLTokenizer;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.PrefixHandler;
-import de.topicmapslab.tmql4j.path.components.lexer.TMQLTokenizer;
 import de.topicmapslab.tmql4j.util.HashUtil;
 import de.topicmapslab.tmql4j.util.LiteralUtils;
 

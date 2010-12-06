@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.Context;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
@@ -24,7 +25,6 @@ import de.topicmapslab.tmql4j.flwr.grammar.productions.ForClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.OrderByClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.ReturnClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.WhereClause;
-import de.topicmapslab.tmql4j.path.components.processor.core.Context;
 
 /**
  * 

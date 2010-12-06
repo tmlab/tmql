@@ -21,8 +21,8 @@ import org.tmapi.core.Construct;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.components.processor.results.IResult;
+import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.path.components.processor.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.path.query.TMQLQuery;
 import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
 import de.topicmapslab.tmql4j.util.HashUtil;

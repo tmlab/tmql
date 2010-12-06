@@ -176,4 +176,16 @@ public interface IExpression {
 	 *             thrown if querying fails
 	 */
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException;
+	
+	/**
+	 * Method checks if the current expression is a child of the specified
+	 * expression type. The method walks up to the tree root and check all
+	 * parent types.
+	 * 
+	 * @param clazz
+	 *            the expression type
+	 * @return <code>true</code> if the current expression is a child of the
+	 *         specified type, <code>false</code> otherwise.
+	 */
+	public boolean isChildOf(Class<? extends IExpression> clazz);
 }

@@ -11,8 +11,8 @@ package de.topicmapslab.tmql4j.flwr.extension;
 import java.util.List;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.runtime.module.InterpreterRegistry;
-import de.topicmapslab.tmql4j.components.processor.runtime.module.TokenRegistry;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.model.IInterpreterRegistry;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.model.ITokenRegistry;
 import de.topicmapslab.tmql4j.exception.TMQLExtensionRegistryException;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
@@ -52,13 +52,13 @@ public class Draft2007FlwrStyleQueryExpression implements ILanguageExtension {
 	 * {@inheritDoc}
 	 */
 	public void registerExtension(ITMQLRuntime runtime) throws TMQLExtensionRegistryException {
-		TokenRegistry tokens = runtime.getLanguageContext().getTokenRegistry();
+		ITokenRegistry tokens = runtime.getLanguageContext().getTokenRegistry();
 		tokens.register(For.class);
 		tokens.register(Return.class);
 		tokens.register(XmlEndTag.class);
 		tokens.register(XmlStartTag.class);
 
-		InterpreterRegistry interpreterRegistry = runtime.getLanguageContext().getInterpreterRegistry();
+		IInterpreterRegistry interpreterRegistry = runtime.getLanguageContext().getInterpreterRegistry();
 
 		interpreterRegistry.registerInterpreterClass(FlwrExpression.class, FlwrExpressionInterpreter.class);
 		interpreterRegistry.registerInterpreterClass(ForClause.class, ForClauseInterpreter.class);
