@@ -10,14 +10,10 @@
  */
 package de.topicmapslab.tmql4j.components.parser;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.topicmapslab.tmql4j.components.lexer.ILexer;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLException;
 import de.topicmapslab.tmql4j.exception.TMQLParserException;
-import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.query.IQuery;
 
 /**
@@ -31,11 +27,6 @@ import de.topicmapslab.tmql4j.query.IQuery;
  * 
  */
 public abstract class ParserImpl implements IParser {
-
-	/**
-	 * the logger
-	 */
-	private static Logger logger = LoggerFactory.getLogger(ParserImpl.class);
 
 	/**
 	 * the parsing result
@@ -69,7 +60,7 @@ public abstract class ParserImpl implements IParser {
 	public void parse(ITMQLRuntime runtime) throws TMQLParserException {
 		try {
 			tree = getParserTreeInstance(runtime, lexer.getQuery(), lexer);
-			if (!isValid(runtime, lexer.getQuery())) {
+			if (!tree.isValid(runtime, lexer.getQuery())) {
 				throw new TMQLParserException("Parser tree is invalid, at least one expression are not allowed.");
 			}
 		} catch (TMQLParserException e) {
@@ -92,30 +83,4 @@ public abstract class ParserImpl implements IParser {
 	 */
 	protected abstract ParserTreeImpl getParserTreeInstance(ITMQLRuntime runtime, IQuery query, ILexer lexer);
 
-	/**
-	 * Method checks if the parser tree is valid. The parser tree is valid, if
-	 * the parser tree contains on top-level only expressions which are allowed.
-	 * 
-	 * @param runtime
-	 *            the TMQL4J runtime
-	 * @return <code>true</code> if the parser tree is valid, <code>false</code>
-	 *         otherwise.
-	 * @throws TMQLParserException
-	 */
-	private boolean isValid(ITMQLRuntime runtime, IQuery query) throws TMQLParserException {
-
-		/*
-		 * iterate over top-level expression
-		 */
-		for (IExpression expression : tree.root().getExpressions()) {
-			/*
-			 * check if expressions are allowed
-			 */
-			if (query.isForbidden(expression.getClass())) {
-				logger.error("Expression type '" + expression.getClass().getName() + "' is forbidden!");
-				return false;
-			}
-		}
-		return true;
-	}
 }

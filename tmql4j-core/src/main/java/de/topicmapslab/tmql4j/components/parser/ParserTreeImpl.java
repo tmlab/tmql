@@ -15,6 +15,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.topicmapslab.tmql4j.components.lexer.ILexer;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
@@ -22,6 +25,7 @@ import de.topicmapslab.tmql4j.extension.IExtensionPointAdapter;
 import de.topicmapslab.tmql4j.extension.ILanguageExtension;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.query.IQuery;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Base implementation of a {@link IParserTree}. The parser tree is a
@@ -36,6 +40,11 @@ import de.topicmapslab.tmql4j.query.IQuery;
  * 
  */
 public abstract class ParserTreeImpl implements IParserTree {
+
+	/**
+	 * the logger
+	 */
+	private static Logger logger = LoggerFactory.getLogger(ParserImpl.class);
 
 	/**
 	 * the token at the end of a tree children
@@ -285,4 +294,59 @@ public abstract class ParserTreeImpl implements IParserTree {
 		return copy;
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public boolean isValid(ITMQLRuntime runtime, IQuery query) {
+		/*
+		 * iterate over top-level expression
+		 */
+		for (IExpression expression : root().getExpressions()) {
+			/*
+			 * check if expressions are allowed
+			 */
+			if (query.isForbidden(expression.getClass())) {
+				logger.error("Expression type '" + expression.getClass().getName() + "' is forbidden!");
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<List<IExpression>> paths(Class<? extends IExpression> expressionType) {
+		List<List<IExpression>> paths = HashUtil.getList();
+		List<IExpression> currentPath = HashUtil.getList();
+		currentPath.add(root());		
+		paths(expressionType, root(), currentPath, paths);		
+		return paths;
+	}
+
+	/**
+	 * Utility method to navigate throw the tree and extract the paths for given
+	 * expression type
+	 * 
+	 * @param expressionType
+	 *            the expression type
+	 * @param parent
+	 *            the parent
+	 * @param currentPath
+	 *            the current path
+	 * @param paths
+	 *            the paths
+	 */
+	public void paths(Class<? extends IExpression> expressionType, IExpression parent, List<IExpression> currentPath, List<List<IExpression>> paths) {
+		for (IExpression expression : parent.getExpressions()) {
+			List<IExpression> currentPath_ = HashUtil.getList(currentPath);
+			currentPath_.add(expression);
+			if (expressionType.isAssignableFrom(expression.getClass())) {
+				paths.add(currentPath_);
+			} else {
+				paths(expressionType, expression, currentPath_, paths);
+			}
+		}
+	}
 }

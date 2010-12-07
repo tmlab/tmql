@@ -11,6 +11,7 @@ package de.topicmapslab.tmql4j.components.processor;
 import de.topicmapslab.tmql4j.components.lexer.ILexer;
 import de.topicmapslab.tmql4j.components.parser.IParser;
 import de.topicmapslab.tmql4j.components.parser.IParserTree;
+import de.topicmapslab.tmql4j.components.processor.prepared.IPreparedStatement;
 import de.topicmapslab.tmql4j.components.processor.results.IResultProcessor;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.query.IQuery;
@@ -21,14 +22,46 @@ import de.topicmapslab.tmql4j.query.IQuery;
  */
 public interface ITmqlProcessor {
 
+	/**
+	 * Executes the querying process for the given query object
+	 * @param query the query
+	 * @return the results of querying process
+	 */
 	public IResultSet<?> query(IQuery query);
 	
-	public IParserTree parse(IQuery query);
+	/**
+	 * Parse the given query and returns a prepared statement instance
+	 * @param query the query
+	 * @return the prepared statement instance
+	 */
+	public IPreparedStatement prepared(IQuery query);
+	
+	/**
+	 * Parse the given query and returns the query as parser tree
+	 * @param query the query
+	 * @return the parser tree instance
+	 */
+	public IParserTree parse(IQuery query);	
 
+	/**
+	 * Returns the lexical scanner instance for the current TMQL processor
+	 * @param query the query
+	 * @return the lexical scanner
+	 */
 	public ILexer getTmqlLexer(IQuery query);
 
+	/**
+	 * Returns the parser instance for the current TMQL processor
+	 * @param query the query
+	 * @return the parser
+	 */
 	public IParser getTmqlParser(ILexer lexer);
 
+	/**
+	 * Returns the result processor instance for the current TMQL processor
+	 * @param query the query
+	 * @return the result processor
+	 */
 	public IResultProcessor getResultProcessor();
 
 }

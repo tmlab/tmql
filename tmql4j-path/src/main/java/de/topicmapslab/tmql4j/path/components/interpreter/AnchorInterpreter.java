@@ -72,6 +72,10 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 	 */
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		if ( Anchor.TYPE_PREPARED == getGrammarTypeOfExpression()){
+			return getInterpreters(runtime).get(0).interpret(runtime, context, optionalArguments);
+		}
+		
 		/*
 		 * get first token
 		 */

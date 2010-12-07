@@ -182,4 +182,17 @@ public class HashUtil {
 	public static <T> List<T> getList() {
 		return new LinkedList<T>();
 	}
+
+	/**
+	 * Returns a new list instance
+	 * 
+	 * @param <T>
+	 *            the type of list items
+	 * @param initial
+	 *            an initial list
+	 * @return the new list
+	 */
+	public static <T> List<T> getList(List<T> initial) {
+		return new LinkedList<T>(initial);
+	}
 }

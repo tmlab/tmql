@@ -15,6 +15,7 @@ import org.tmapi.core.TopicMapSystem;
 
 import de.topicmapslab.tmql4j.components.parser.IParserTree;
 import de.topicmapslab.tmql4j.components.processor.ITmqlProcessor;
+import de.topicmapslab.tmql4j.components.processor.prepared.IPreparedStatement;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.extension.IExtensionPointAdapter;
 import de.topicmapslab.tmql4j.query.IQuery;
@@ -31,7 +32,7 @@ import de.topicmapslab.tmql4j.query.QueryFactory;
  * 
  */
 public interface ITMQLRuntime {
-
+	
 	/**
 	 * Execution method of the TMQL runtime. <br />
 	 * <br />
@@ -121,7 +122,7 @@ public interface ITMQLRuntime {
 	 *             thrown if parser fails because of invalid syntax
 	 */
 	public IParserTree parse(final String query) throws TMQLRuntimeException;
-	
+
 	/**
 	 * Method parse the given query and return the parser tree object
 	 * 
@@ -132,6 +133,28 @@ public interface ITMQLRuntime {
 	 *             thrown if parser fails because of invalid syntax
 	 */
 	public IParserTree parse(final IQuery query) throws TMQLRuntimeException;
+
+	/**
+	 * Method to transform the given query to a prepared statement
+	 * 
+	 * @param query
+	 *            the query
+	 * @return the prepared statement
+	 * @throws TMQLRuntimeException
+	 *             thrown if paring process failed
+	 */
+	public IPreparedStatement preparedStatement(final IQuery query) throws TMQLRuntimeException;
+
+	/**
+	 * Method to transform the given query to a prepared statement
+	 * 
+	 * @param query
+	 *            the query
+	 * @return the prepared statement
+	 * @throws TMQLRuntimeException
+	 *             thrown if paring process failed
+	 */
+	public IPreparedStatement preparedStatement(final String query) throws TMQLRuntimeException;
 
 	/**
 	 * Returns the internal instance of TMQL query processor.
@@ -146,9 +169,10 @@ public interface ITMQLRuntime {
 	 * @return the construct resolver
 	 */
 	public IConstructResolver getConstructResolver();
-	
+
 	/**
 	 * Returns the name of the supported language.
+	 * 
 	 * @return the language name
 	 */
 	public String getLanguageName();

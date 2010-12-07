@@ -96,7 +96,7 @@ public class TMQLLexer implements ILexer {
 			 * used special tokenizer to split query into string-represented
 			 * tokens
 			 */
-			TMQLTokenizer tokenizer = new TMQLTokenizer(query.toString());
+			TMQLTokenizer tokenizer = new TMQLTokenizer(query.getQueryString());
 			/*
 			 * iterate over all tokens and try to identify the language-specific
 			 * token

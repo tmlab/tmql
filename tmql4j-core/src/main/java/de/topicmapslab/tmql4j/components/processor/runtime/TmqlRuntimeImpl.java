@@ -18,6 +18,7 @@ import org.tmapi.core.TopicMapSystemFactory;
 
 import de.topicmapslab.tmql4j.components.parser.IParserTree;
 import de.topicmapslab.tmql4j.components.processor.ITmqlProcessor;
+import de.topicmapslab.tmql4j.components.processor.prepared.IPreparedStatement;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.query.IQuery;
 import de.topicmapslab.tmql4j.query.QueryFactory;
@@ -134,7 +135,7 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 		run(q);
 		return q;
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -162,5 +163,32 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 	 * @return the processor
 	 */
 	protected abstract ITmqlProcessor createTmqlProcessor();
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public IPreparedStatement preparedStatement(IQuery query) throws TMQLRuntimeException {
+		/*
+		 * before-execution call to query
+		 */
+		query.beforeQuery(this);
+		/*
+		 * create prepared statement
+		 */
+		return getTmqlProcessor().prepared(query);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public IPreparedStatement preparedStatement(String query) throws TMQLRuntimeException {
+		IQuery q = QueryFactory.getFactory().getTmqlQuery(null, query);
+		if (q == null) {
+			throw new TMQLRuntimeException("Given query is not a TMQL query or cannot transform to TMQL.");
+		}
+		return preparedStatement(q);
+	}
+	
+	
 
 }

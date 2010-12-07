@@ -16,8 +16,10 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.grammar.lexical.Placeholder;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.path.grammar.lexical.DatatypedElement;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Dot;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Element;
@@ -58,6 +60,10 @@ public class Anchor extends ExpressionImpl {
 	 * representing the anchor type for data-typed-literals
 	 */
 	public static final int TYPE_DATATYPED = 4;
+	/**
+	 * representing a prepared statement
+	 */
+	public static final int TYPE_PREPARED = 5;
 
 	/**
 	 * base constructor to create a new instance.
@@ -90,6 +96,9 @@ public class Anchor extends ExpressionImpl {
 			setGrammarType(TYPE_TOPICREF);
 		} else if (token.equals(DatatypedElement.class)) {
 			setGrammarType(TYPE_DATATYPED);
+		} else if (token.equals(Placeholder.class)) {
+			checkForExtensions(PreparedExpression.class, tmqlTokens, tokens, runtime);
+			setGrammarType(TYPE_PREPARED);
 		}
 	}
 
@@ -102,6 +111,7 @@ public class Anchor extends ExpressionImpl {
 			return false;
 		}
 		Class<? extends IToken> token = getTmqlTokens().get(0);
-		return token.equals(Dot.class) || token.equals(de.topicmapslab.tmql4j.path.grammar.lexical.Variable.class) || token.equals(Element.class) || token.equals(Literal.class) || token.equals(DatatypedElement.class);
+		return token.equals(Dot.class) || token.equals(de.topicmapslab.tmql4j.path.grammar.lexical.Variable.class) || token.equals(Element.class) || token.equals(Literal.class)
+				|| token.equals(DatatypedElement.class) || token.equals(Placeholder.class);
 	}
 }
