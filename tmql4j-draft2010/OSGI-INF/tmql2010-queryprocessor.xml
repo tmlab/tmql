@@ -4,8 +4,4 @@
    <service>
       <provide interface="de.topicmapslab.tmql4j.converter.IQueryProcessor"/>
    </service>
-   <implementation de.topicmapslab.tmql4j.path.query.TMQLQueryProcessorime2007"/>
-   <service>
-      <provide interface="de.topicmapslab.tmql4j.common.model.runtime.ITMQLRuntime"/>
-   </service>
 </scr:component>
