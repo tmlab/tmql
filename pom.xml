@@ -76,5 +76,6 @@
 		<module>tmql4j-delete</module>
 		<module>tmql4j-merge</module>
 		<module>tmql4j-draft2010</module>
+		<module>tmql4j-majortom</module>
 	</modules>
 </project>
