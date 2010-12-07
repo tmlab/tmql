@@ -31,6 +31,27 @@ public class ProjectionUtils {
 
 	/**
 	 * Utility method to create a set of result tuples from the given query
+	 * matches. The query tuples wont be reduced to a two-dimensional result.
+	 * 
+	 * @param matches
+	 *            the query matches
+	 * @return the result tuples
+	 */
+	public static List<List<Object>> asNDimensional(QueryMatches matches) {
+		List<List<Object>> results = new LinkedList<List<Object>>();
+		List<String> keys = matches.getOrderedKeys();
+		for (Map<String, Object> tuple : matches) {
+			List<Object> current = new LinkedList<Object>();
+			for ( String key : keys){
+				current.add(tuple.get(key));
+			}
+			results.add(current);
+		}
+		return results;
+	}
+	
+	/**
+	 * Utility method to create a set of result tuples from the given query
 	 * matches. The query tuples will be reduced to a two-dimensional result.
 	 * 
 	 * @param matches

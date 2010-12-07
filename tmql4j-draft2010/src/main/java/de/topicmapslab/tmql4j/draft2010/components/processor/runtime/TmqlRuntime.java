@@ -28,13 +28,14 @@ import de.topicmapslab.tmql4j.query.IQuery;
 
 /**
  * A TMQL runtime supporting the new draft
+ * 
  * @author Sven Krosse
  * 
  */
 public class TmqlRuntime extends TmqlRuntimeImpl {
 
 	public static final String TMQL_2010 = "TMQL-2010";
-	
+
 	private final IExtensionPointAdapter extensionPointAdapter;
 	private final IConstructResolver constructResolver;
 
@@ -76,8 +77,28 @@ public class TmqlRuntime extends TmqlRuntimeImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	protected void doRun(IQuery query) throws TMQLRuntimeException {
+		if (query.getTopicMap() == null) {
+			throw new TMQLRuntimeException("Topic map not set to query instance!");
+		}
+		if (!query.getQueryString().isEmpty()) {
+			ITmqlProcessor processor = getTmqlProcessor();
+			IResultSet<?> results = processor.query(query);
+			query.setResults(results);
+		} else {
+			query.setResults(ResultSet.emptyResultSet());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public IParserTree parse(String query) throws TMQLRuntimeException {
 		IQuery q = new TMQLQuery(null, query);
+		/*
+		 * add restrictions
+		 */
+		addRestrictions(q);
 		/*
 		 * before-execution call to query
 		 */
@@ -91,22 +112,6 @@ public class TmqlRuntime extends TmqlRuntimeImpl {
 		 */
 		q.afterQuery(this);
 		return tree;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected void doRun(IQuery query) throws TMQLRuntimeException {
-		if (query.getTopicMap() == null) {
-			throw new TMQLRuntimeException("Topic map not set to query instance!");
-		}
-		if (!query.getQueryString().isEmpty()) {
-			ITmqlProcessor processor = getTmqlProcessor();
-			IResultSet<?> results = processor.query(query);
-			query.setResults(results);
-		} else {
-			query.setResults(ResultSet.emptyResultSet());
-		}
 	}
 
 	/**
@@ -130,13 +135,18 @@ public class TmqlRuntime extends TmqlRuntimeImpl {
 	public IConstructResolver getConstructResolver() {
 		return constructResolver;
 	}
-	
 
-	
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLanguageName() {
 		return TMQL_2010;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected String[] getModificationExpressionTypeNames() {
+		return TMQLQuery.modificationExpressions;
 	}
 }

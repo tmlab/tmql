@@ -13,6 +13,10 @@ package de.topicmapslab.tmql4j.delete.components.interpreter;
 import static de.topicmapslab.tmql4j.delete.grammar.productions.DeleteExpression.TYPE_ALL;
 import static de.topicmapslab.tmql4j.delete.grammar.productions.DeleteExpression.TYPE_WITHOUT_WHERE_CLAUSE;
 import static de.topicmapslab.tmql4j.delete.grammar.productions.DeleteExpression.TYPE_WITH_WHERE_CLAUSE;
+
+import java.util.Map;
+import java.util.Set;
+
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.Context;
@@ -24,6 +28,7 @@ import de.topicmapslab.tmql4j.delete.grammar.productions.DeleteExpression;
 import de.topicmapslab.tmql4j.delete.grammar.productions.WhereClause;
 import de.topicmapslab.tmql4j.delete.util.DeletionHandler;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * 
@@ -64,7 +69,14 @@ public class DeleteExpressionInterpreter extends ExpressionInterpreterImpl<Delet
 		 * is expression DELETE ALL
 		 */
 		case TYPE_ALL: {
-			return QueryMatches.asQueryMatch(runtime, "$0", new DeletionHandler(runtime, context).deleteAll());
+			Set<String> ids = new DeletionHandler(runtime, context).deleteAll();
+			context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
+			QueryMatches matches = new QueryMatches(runtime);
+			Map<String, Object> tuple = HashUtil.getHashMap();
+			tuple.put("$0", ids.size());
+			tuple.put("$1", ids);
+			matches.add(tuple);
+			return matches;
 		}
 			/*
 			 * is delete-expression

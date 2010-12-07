@@ -8,6 +8,8 @@
  */
 package de.topicmapslab.tmql4j.exception;
 
+import de.topicmapslab.tmql4j.query.IQuery;
+
 
 /**
  * Exception class thrown by a {@link IQuery} implementation if the given query

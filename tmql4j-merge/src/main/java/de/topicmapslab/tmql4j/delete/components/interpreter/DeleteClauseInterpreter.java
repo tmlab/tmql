@@ -9,6 +9,7 @@ package de.topicmapslab.tmql4j.delete.components.interpreter;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
@@ -48,11 +49,7 @@ public class DeleteClauseInterpreter extends ExpressionInterpreterImpl<DeleteCla
 	 */
 	public DeleteClauseInterpreter(DeleteClause ex) {
 		super(ex);
-		if (ex instanceof DeleteClause) {
-			this.cascade = ((DeleteClause) ex).isCascade();
-		} else {
-			this.cascade = false;
-		}
+		this.cascade = ((DeleteClause) ex).isCascade();		
 	}
 
 	/**
@@ -107,8 +104,10 @@ public class DeleteClauseInterpreter extends ExpressionInterpreterImpl<DeleteCla
 									 * call deletion-handler to remove content
 									 * and store the number of removed items
 									 */
-									long amount = new DeletionHandler(runtime, context).delete(possibleValuesForVariable, cascade);
-									resultTuple.put("$" + index, amount);
+									Set<String> ids = new DeletionHandler(runtime, context).delete(possibleValuesForVariable, cascade);
+									resultTuple.put("$" + index, ids.size());
+									index++;
+									resultTuple.put("$" + index, ids);
 									index++;
 								}
 							}
@@ -118,8 +117,10 @@ public class DeleteClauseInterpreter extends ExpressionInterpreterImpl<DeleteCla
 						 * call deletion-handler to remove content and store the
 						 * number of removed items
 						 */
-						long amount = new DeletionHandler(runtime, context).delete(possibleValuesForVariable, cascade);
-						resultTuple.put("$" + index, amount);
+						Set<String> ids = new DeletionHandler(runtime, context).delete(possibleValuesForVariable, cascade);
+						resultTuple.put("$" + index, ids.size());
+						index++;
+						resultTuple.put("$" + index, ids);
 						index++;
 					}
 				}
@@ -157,8 +158,10 @@ public class DeleteClauseInterpreter extends ExpressionInterpreterImpl<DeleteCla
 								 * call deletion-handler to remove content and
 								 * store the number of removed items
 								 */
-								long amount = new DeletionHandler(runtime, context).delete(possibleValuesForVariable, cascade);
-								resultTuple.put("$" + index, amount);
+								Set<String> ids = new DeletionHandler(runtime, context).delete(possibleValuesForVariable, cascade);
+								resultTuple.put("$" + index, ids.size());
+								index++;
+								resultTuple.put("$" + index, ids);
 								index++;
 							}
 						}
@@ -168,8 +171,10 @@ public class DeleteClauseInterpreter extends ExpressionInterpreterImpl<DeleteCla
 					 * call deletion-handler to remove content and store the
 					 * number of removed items
 					 */
-					long amount = new DeletionHandler(runtime, context).delete(possibleValuesForVariable, cascade);
-					resultTuple.put("$" + index, amount);
+					Set<String> ids = new DeletionHandler(runtime, context).delete(possibleValuesForVariable, cascade);
+					resultTuple.put("$" + index, ids.size());
+					index++;
+					resultTuple.put("$" + index, ids);
 					index++;
 				}
 			}
@@ -178,6 +183,10 @@ public class DeleteClauseInterpreter extends ExpressionInterpreterImpl<DeleteCla
 			}
 			resultTuple = HashUtil.getHashMap();
 		}
+		/*
+		 * disable auto reduction
+		 */
+		context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
 		return results;
 	}
 }

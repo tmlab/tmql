@@ -32,10 +32,14 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 public class TmqlResultProcessor implements IResultProcessor {
 
 	/**
+	 * the state of auto-reduction
+	 */
+	private boolean autoReduction = true;
+	/**
 	 * the class of used result set
 	 */
 	private Class<? extends IResultSet<?>> resultSetClass = SimpleResultSet.class;
-	
+
 	/**
 	 * the generated result set
 	 */
@@ -73,8 +77,12 @@ public class TmqlResultProcessor implements IResultProcessor {
 	 */
 	public void proceed(QueryMatches matches) throws TMQLRuntimeException {
 		try {
-
-			List<List<Object>> results = ProjectionUtils.asTwoDimensional(matches);
+			List<List<Object>> results = null;
+			if (autoReduction) {
+				results = ProjectionUtils.asTwoDimensional(matches);
+			} else {
+				results = ProjectionUtils.asNDimensional(matches);
+			}
 			/*
 			 * create new instance of result set
 			 */
@@ -104,11 +112,18 @@ public class TmqlResultProcessor implements IResultProcessor {
 	public ITMQLRuntime getRuntime() {
 		return runtime;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setResultType(Class<? extends IResultSet<?>> clazz) {
-		this.resultSetClass = clazz;		
+		this.resultSetClass = clazz;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setAutoReduction(boolean autoReduction) {
+		this.autoReduction = autoReduction;
 	}
 }

@@ -1,6 +1,7 @@
 package de.topicmapslab.tmql4j.delete.util;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -64,11 +65,11 @@ public class DeletionHandler {
 	/**
 	 * Method removes all constructs for the topic map.
 	 * 
-	 * @return a number of elements which was removed
+	 * @return a set of all removed IDs
 	 * @throws DeletionException
 	 *             thrown if deletion fails
 	 */
-	public long deleteAll() throws DeletionException {
+	public Set<String> deleteAll() throws DeletionException {
 		TypeInstanceIndex index = topicMap.getIndex(TypeInstanceIndex.class);
 		if (!index.isOpen()) {
 			index.open();
@@ -80,14 +81,13 @@ public class DeletionHandler {
 		/*
 		 * store over all amount
 		 */
-		long amount = 0;
-
+		Set<String> ids = HashUtil.getHashSet();
 		/*
 		 * delete all topic types
 		 */
 		types.addAll(index.getTopicTypes());
 		for (Topic topic : types) {
-			amount += deleteTopic(topicMap, topic, true);
+			ids.addAll(deleteTopic(topicMap, topic, true));
 		}
 		types.clear();
 
@@ -96,7 +96,7 @@ public class DeletionHandler {
 		 */
 		types.addAll(index.getNameTypes());
 		for (Topic topic : types) {
-			amount += deleteTopic(topicMap, topic, true);
+			ids.addAll(deleteTopic(topicMap, topic, true));
 		}
 		types.clear();
 
@@ -105,7 +105,7 @@ public class DeletionHandler {
 		 */
 		types.addAll(index.getOccurrenceTypes());
 		for (Topic topic : types) {
-			amount += deleteTopic(topicMap, topic, true);
+			ids.addAll(deleteTopic(topicMap, topic, true));
 		}
 		types.clear();
 
@@ -114,7 +114,7 @@ public class DeletionHandler {
 		 */
 		types.addAll(index.getAssociationTypes());
 		for (Topic topic : types) {
-			amount += deleteTopic(topicMap, topic, true);
+			ids.addAll(deleteTopic(topicMap, topic, true));
 		}
 		types.clear();
 
@@ -123,7 +123,7 @@ public class DeletionHandler {
 		 */
 		types.addAll(index.getRoleTypes());
 		for (Topic topic : types) {
-			amount += deleteTopic(topicMap, topic, true);
+			ids.addAll(deleteTopic(topicMap, topic, true));
 		}
 		types.clear();
 
@@ -132,11 +132,11 @@ public class DeletionHandler {
 		 */
 		types.addAll(index.getTopics(null));
 		for (Topic topic : types) {
-			amount += deleteTopic(topicMap, topic, true);
+			ids.addAll(deleteTopic(topicMap, topic, true));
 		}
 		types.clear();
 
-		return amount;
+		return ids;
 	}
 
 	/**
@@ -146,11 +146,11 @@ public class DeletionHandler {
 	 *            a set of items which shall be removed
 	 * @param cascade
 	 *            flag if dependent content shall also removed
-	 * @return a number of elements which was removed
+	 * @return a set containing all IDs of removed constructs
 	 * @throws DeletionException
 	 *             thrown if deletion fails
 	 */
-	public long delete(List<Object> matches, boolean cascade) throws DeletionException {
+	public Set<String> delete(List<Object> matches, boolean cascade) throws DeletionException {
 		return delete(topicMap, matches, cascade);
 	}
 
@@ -163,11 +163,11 @@ public class DeletionHandler {
 	 *            the item to remove
 	 * @param cascade
 	 *            flag if dependent content shall also removed
-	 * @return a number of elements which was removed
+	 * @return a set containing all IDs of removed constructs
 	 * @throws DeletionException
 	 *             thrown if deletion fails
 	 */
-	private long delete(TopicMap topicMap, Object match, boolean cascade) throws DeletionException {
+	private Set<String> delete(TopicMap topicMap, Object match, boolean cascade) throws DeletionException {
 		if (match instanceof Topic) {
 			return deleteTopic(topicMap, (Topic) match, cascade);
 		} else if (match instanceof Association) {
@@ -179,15 +179,15 @@ public class DeletionHandler {
 		} else if (match instanceof Variant) {
 			return deleteVariant(topicMap, (Variant) match, cascade);
 		} else if (match instanceof Locator) {
-			return deleteLocator(topicMap, (Locator) match, cascade);
+			deleteLocator(topicMap, (Locator) match, cascade);
 		} else if (match instanceof Collection<?>) {
-			long count = 0;
+			Set<String> ids = HashUtil.getHashSet();
 			for (Object obj : (Collection<?>) match) {
-				count += delete(topicMap, obj, cascade);
+				ids.addAll(delete(topicMap, obj, cascade));
 			}
-			return count;
+			return ids;
 		}
-		return 0;
+		return Collections.emptySet();
 	}
 
 	/**
@@ -199,13 +199,13 @@ public class DeletionHandler {
 	 *            the topic to remove
 	 * @param cascade
 	 *            flag if dependent content shall also removed
-	 * @return a number of elements which was removed
+	 * @return a set containing all IDs of removed constructs
 	 * @throws DeletionException
 	 *             thrown if deletion fails
 	 */
-	private long deleteTopic(final TopicMap topicMap, final Topic topic, final boolean cascade) throws DeletionException {
+	private Set<String> deleteTopic(final TopicMap topicMap, final Topic topic, final boolean cascade) throws DeletionException {
 		try {
-			long count = 0;
+			Set<String> ids = HashUtil.getHashSet();
 			if (cascade) {
 				/*
 				 * delete all names of the topic
@@ -213,7 +213,7 @@ public class DeletionHandler {
 				Set<Name> names = HashUtil.getHashSet();
 				names.addAll(topic.getNames());
 				for (Name name : names) {
-					count += deleteName(topicMap, name, cascade);
+					ids.addAll(deleteName(topicMap, name, cascade));
 				}
 				/*
 				 * delete all occurrences of the topic
@@ -221,7 +221,7 @@ public class DeletionHandler {
 				Set<Occurrence> occurrences = HashUtil.getHashSet();
 				occurrences.addAll(topic.getOccurrences());
 				for (Occurrence occurrence : occurrences) {
-					count += deleteOccurrence(topicMap, occurrence, cascade);
+					ids.addAll(deleteOccurrence(topicMap, occurrence, cascade));
 				}
 
 				NavigationHandler handler = NavigationHandler.buildHandler();
@@ -232,7 +232,7 @@ public class DeletionHandler {
 				 * delete all associations played by the topic
 				 */
 				for (Object obj : axis.navigateBackward(topic)) {
-					count += deleteAssociation(topicMap, (Association) obj, cascade);
+					ids.addAll(deleteAssociation(topicMap, (Association) obj, cascade));
 				}
 				axis = handler.lookup(NavigationAxis.types);
 				axis.setTopicMap(topicMap);
@@ -240,7 +240,7 @@ public class DeletionHandler {
 				 * delete all instances of the topic as type
 				 */
 				for (Object obj : axis.navigateBackward(topic)) {
-					count += deleteTopic(topicMap, (Topic) obj, cascade);
+					ids.addAll(deleteTopic(topicMap, (Topic) obj, cascade));
 				}
 				axis = handler.lookup(NavigationAxis.supertypes);
 				axis.setTopicMap(topicMap);
@@ -248,7 +248,7 @@ public class DeletionHandler {
 				 * delete all sub-types of the topic as type
 				 */
 				for (Object obj : axis.navigateBackward(topic)) {
-					count += deleteTopic(topicMap, (Topic) obj, cascade);
+					ids.addAll(deleteTopic(topicMap, (Topic) obj, cascade));
 				}
 
 				axis = handler.lookup(NavigationAxis.roles);
@@ -257,7 +257,7 @@ public class DeletionHandler {
 				 * delete all associations which used the topic as role-type
 				 */
 				for (Object obj : axis.navigateBackward(topic)) {
-					count += deleteAssociation(topicMap, (Association) obj, cascade);
+					ids.addAll(deleteAssociation(topicMap, (Association) obj, cascade));
 				}
 
 				/*
@@ -265,7 +265,7 @@ public class DeletionHandler {
 				 */
 				Reifiable reifiable = topic.getReified();
 				if (reifiable != null) {
-					count += delete(topicMap, reifiable, cascade);
+					ids.addAll(delete(topicMap, reifiable, cascade));
 				}
 
 				/*
@@ -274,7 +274,7 @@ public class DeletionHandler {
 				axis = handler.lookup(NavigationAxis.scope);
 				axis.setTopicMap(topicMap);
 				for (Object obj : axis.navigateBackward(topic)) {
-					count += deleteScoped(topicMap, (Scoped) obj, cascade);
+					ids.addAll(deleteScoped(topicMap, (Scoped) obj, cascade));
 				}
 
 				/*
@@ -286,24 +286,24 @@ public class DeletionHandler {
 						index.open();
 					}
 					for (Name n : index.getNames(topic)) {
-						count += deleteName(topicMap, n, cascade);
+						ids.addAll(deleteName(topicMap, n, cascade));
 					}
 					for (Occurrence o : index.getOccurrences(topic)) {
-						count += deleteOccurrence(topicMap, o, cascade);
+						ids.addAll(deleteOccurrence(topicMap, o, cascade));
 					}
 					Set<Association> set = HashUtil.getHashSet();
 					for (Role r : index.getRoles(topic)) {
 						if (set.contains(r.getParent())) {
 							continue;
 						}
-						count += deleteAssociation(topicMap, r.getParent(), cascade);
+						ids.addAll(deleteAssociation(topicMap, r.getParent(), cascade));
 						set.add(r.getParent());
 					}
 					for (Association a : index.getAssociations(topic)) {
 						if (set.contains(a)) {
 							continue;
 						}
-						count += deleteAssociation(topicMap, a, cascade);
+						ids.addAll(deleteAssociation(topicMap, a, cascade));
 					}
 				} catch (UnsupportedOperationException e) {
 					// NOTHING TO DO
@@ -311,9 +311,9 @@ public class DeletionHandler {
 				}
 
 			}
+			ids.add(topic.getId());
 			topic.remove();
-			count++;
-			return count;
+			return ids;
 		} catch (Exception e) {
 			throw new DeletionException(e);
 		}
@@ -328,17 +328,35 @@ public class DeletionHandler {
 	 *            the association to remove
 	 * @param cascade
 	 *            flag if dependent content shall also removed
-	 * @return a number of elements which was removed
+	 * @return a set containing all IDs of removed constructs
 	 * @throws DeletionException
 	 *             thrown if deletion fails
 	 */
-	private long deleteAssociation(final TopicMap topicMap, final Association association, final boolean cascade) throws DeletionException {
+	private Set<String> deleteAssociation(final TopicMap topicMap, final Association association, final boolean cascade) throws DeletionException {
 		/*
 		 * delete the association itself
 		 */
-		long count = association.getRoles().size();
+		Set<String> ids = HashUtil.getHashSet();
+		for (Role role : association.getRoles()) {
+			/*
+			 * check reification
+			 */
+			Topic reifier = role.getReifier();
+			if (reifier != null) {
+				ids.add(reifier.getId());
+			}
+			ids.add(role.getId());
+		}
+		ids.add(association.getId());
+		/*
+		 * check reification
+		 */
+		Topic reifier = association.getReifier();
+		if (reifier != null) {
+			ids.add(reifier.getId());
+		}
 		association.remove();
-		return count + 1;
+		return ids;
 	}
 
 	/**
@@ -350,12 +368,12 @@ public class DeletionHandler {
 	 *            the name to remove
 	 * @param cascade
 	 *            flag if dependent content shall also removed
-	 * @return a number of elements which was removed
+	 * @return a set containing all IDs of removed constructs
 	 * @throws DeletionException
 	 *             thrown if deletion fails
 	 */
-	private long deleteName(final TopicMap topicMap, final Name name, final boolean cascade) throws DeletionException {
-		long count = 0;
+	private Set<String> deleteName(final TopicMap topicMap, final Name name, final boolean cascade) throws DeletionException {
+		Set<String> ids = HashUtil.getHashSet();
 		if (cascade) {
 			/*
 			 * delete all variants of the name
@@ -363,15 +381,22 @@ public class DeletionHandler {
 			Set<Variant> variants = HashUtil.getHashSet();
 			variants.addAll(name.getVariants());
 			for (Variant variant : variants) {
-				count += deleteVariant(topicMap, variant, cascade);
+				ids.addAll(deleteVariant(topicMap, variant, cascade));
 			}
 		}
 		/*
 		 * delete the name itself
 		 */
+		ids.add(name.getId());
+		/*
+		 * check reification
+		 */
+		Topic reifier = name.getReifier();
+		if (reifier != null) {
+			ids.add(reifier.getId());
+		}
 		name.remove();
-		count++;
-		return count;
+		return ids;
 	}
 
 	/**
@@ -383,16 +408,25 @@ public class DeletionHandler {
 	 *            the occurrence to remove
 	 * @param cascade
 	 *            flag if dependent content shall also removed
-	 * @return a number of elements which was removed
+	 * @return a set containing all IDs of removed constructs
 	 * @throws DeletionException
 	 *             thrown if deletion fails
 	 */
-	private long deleteOccurrence(final TopicMap topicMap, final Occurrence occurrence, final boolean cascade) throws DeletionException {
+	private Set<String> deleteOccurrence(final TopicMap topicMap, final Occurrence occurrence, final boolean cascade) throws DeletionException {
+		Set<String> ids = HashUtil.getHashSet();
+		/*
+		 * check reification
+		 */
+		Topic reifier = occurrence.getReifier();
+		if (reifier != null) {
+			ids.add(reifier.getId());
+		}
 		/*
 		 * delete the occurrence itself
 		 */
+		ids.add(occurrence.getId());
 		occurrence.remove();
-		return 1;
+		return ids;
 	}
 
 	/**
@@ -404,16 +438,25 @@ public class DeletionHandler {
 	 *            the variant to remove
 	 * @param cascade
 	 *            flag if dependent content shall also removed
-	 * @return a number of elements which was removed
+	 * @return a set containing all IDs of removed constructs
 	 * @throws DeletionException
 	 *             thrown if deletion fails
 	 */
-	private long deleteVariant(final TopicMap topicMap, final Variant variant, final boolean cascade) throws DeletionException {
+	private Set<String> deleteVariant(final TopicMap topicMap, final Variant variant, final boolean cascade) throws DeletionException {
+		Set<String> ids = HashUtil.getHashSet();
+		/*
+		 * check reification
+		 */
+		Topic reifier = variant.getReifier();
+		if (reifier != null) {
+			ids.add(reifier.getId());
+		}
 		/*
 		 * delete the variant itself
 		 */
+		ids.add(variant.getId());
 		variant.remove();
-		return 1;
+		return ids;
 	}
 
 	/**
@@ -425,7 +468,7 @@ public class DeletionHandler {
 	 *            the locator of the item to remove
 	 * @param cascade
 	 *            flag if dependent content shall also removed
-	 * @return a number of elements which was removed
+	 * @return a set containing all IDs of removed constructs
 	 * @throws DeletionException
 	 *             thrown if deletion fails
 	 */
@@ -471,11 +514,11 @@ public class DeletionHandler {
 	 *            the scoped-element to remove
 	 * @param cascade
 	 *            flag if dependent content shall also removed
-	 * @return a number of elements which was removed
+	 * @return a set containing all IDs of removed constructs
 	 * @throws DeletionException
 	 *             thrown if deletion fails
 	 */
-	private long deleteScoped(final TopicMap topicMap, final Scoped scoped, final boolean cascade) throws DeletionException {
+	private Set<String> deleteScoped(final TopicMap topicMap, final Scoped scoped, final boolean cascade) throws DeletionException {
 		return delete(topicMap, scoped, cascade);
 	}
 

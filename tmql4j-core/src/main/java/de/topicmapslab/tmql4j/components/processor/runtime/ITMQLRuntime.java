@@ -18,6 +18,7 @@ import de.topicmapslab.tmql4j.components.processor.ITmqlProcessor;
 import de.topicmapslab.tmql4j.components.processor.prepared.IPreparedStatement;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.extension.IExtensionPointAdapter;
+import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.query.IQuery;
 import de.topicmapslab.tmql4j.query.QueryFactory;
 
@@ -176,5 +177,27 @@ public interface ITMQLRuntime {
 	 * @return the language name
 	 */
 	public String getLanguageName();
+	
+	/**
+	 * Forbid the expression as part of the parsed tree
+	 * @param forbiddenExpressionType the expression to forbid
+	 */
+	public void forbidExpression(Class<? extends IExpression> forbiddenExpressionType);
+	
+	/**
+	 * Allow the expression as part of the parsed tree. Please note, that this has only an effect if the expression was forbid before.
+	 * @param allowedExpressionType the expression to allow
+	 */
+	public void allowExpression(Class<? extends IExpression> allowedExpressionType);
+	
+	/**
+	 * Forbid any expression which modify the topic map
+	 */
+	public void forbidModificationQueries();
+	
+	/**
+	 * Allow any expression which modify the topic map. Please note, that this has only an effect if the expressions were forbid before.
+	 */
+	public void allowModificationQueries();
 
 }

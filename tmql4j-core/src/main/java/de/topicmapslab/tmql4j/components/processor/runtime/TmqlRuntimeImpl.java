@@ -10,6 +10,10 @@
  */
 package de.topicmapslab.tmql4j.components.processor.runtime;
 
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmapi.core.FactoryConfigurationException;
 import org.tmapi.core.TMAPIException;
 import org.tmapi.core.TopicMap;
@@ -20,8 +24,10 @@ import de.topicmapslab.tmql4j.components.parser.IParserTree;
 import de.topicmapslab.tmql4j.components.processor.ITmqlProcessor;
 import de.topicmapslab.tmql4j.components.processor.prepared.IPreparedStatement;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.query.IQuery;
 import de.topicmapslab.tmql4j.query.QueryFactory;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Core component of the processing model of the TMQL4J engine. The runtime
@@ -34,6 +40,21 @@ import de.topicmapslab.tmql4j.query.QueryFactory;
  * 
  */
 public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
+
+	/**
+	 * 
+	 */
+	private static final String GIVEN_QUERY_IS_NOT_A_TMQL_QUERY_OR_CANNOT_TRANSFORM_TO_TMQL = "Given query is not a TMQL query or cannot transform to TMQL.";
+
+	/**
+	 * the logger
+	 */
+	private static Logger logger = LoggerFactory.getLogger(TmqlRuntimeImpl.class);
+
+	/**
+	 * a set holding all forbidden expression types
+	 */
+	private Set<Class<? extends IExpression>> forbiddenExpressionTypes;
 
 	/**
 	 * the internal reference of the language context
@@ -67,7 +88,7 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 	 *             thrown if the runtime cannot be instantiate
 	 */
 	public TmqlRuntimeImpl(final TopicMapSystem topicMapSystem) throws TMQLRuntimeException {
-		this.topicMapSystem = topicMapSystem;		
+		this.topicMapSystem = topicMapSystem;
 		this.languageContext = createLanguageContext();
 		this.processor = createTmqlProcessor();
 	}
@@ -87,8 +108,6 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 		}
 		return topicMapSystem;
 	}
-	
-
 
 	/**
 	 * {@inheritDoc}
@@ -103,11 +122,15 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 	public IParserTree parse(IQuery query) throws TMQLRuntimeException {
 		return parse(query.getQueryString());
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public void run(IQuery query) throws TMQLRuntimeException {
+		/*
+		 * add restrictions
+		 */
+		addRestrictions(query);
 		/*
 		 * before-execution call to query
 		 */
@@ -130,12 +153,12 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 	public IQuery run(TopicMap topicMap, String query) throws TMQLRuntimeException {
 		IQuery q = QueryFactory.getFactory().getTmqlQuery(topicMap, query);
 		if (q == null) {
-			throw new TMQLRuntimeException("Given query is not a TMQL query or cannot transform to TMQL.");
+			throw new TMQLRuntimeException(GIVEN_QUERY_IS_NOT_A_TMQL_QUERY_OR_CANNOT_TRANSFORM_TO_TMQL);
 		}
 		run(q);
 		return q;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -163,11 +186,15 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 	 * @return the processor
 	 */
 	protected abstract ITmqlProcessor createTmqlProcessor();
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public IPreparedStatement preparedStatement(IQuery query) throws TMQLRuntimeException {
+		/*
+		 * add restrictions
+		 */
+		addRestrictions(query);
 		/*
 		 * before-execution call to query
 		 */
@@ -177,18 +204,95 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 		 */
 		return getTmqlProcessor().prepared(query);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public IPreparedStatement preparedStatement(String query) throws TMQLRuntimeException {
 		IQuery q = QueryFactory.getFactory().getTmqlQuery(null, query);
 		if (q == null) {
-			throw new TMQLRuntimeException("Given query is not a TMQL query or cannot transform to TMQL.");
+			throw new TMQLRuntimeException(GIVEN_QUERY_IS_NOT_A_TMQL_QUERY_OR_CANNOT_TRANSFORM_TO_TMQL);
 		}
 		return preparedStatement(q);
 	}
-	
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void forbidExpression(Class<? extends IExpression> forbiddenExpressionType) {
+		if (forbiddenExpressionTypes == null) {
+			forbiddenExpressionTypes = HashUtil.getHashSet();
+		}
+		forbiddenExpressionTypes.add(forbiddenExpressionType);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void forbidModificationQueries() {
+		for (Class<? extends IExpression> forbiddenExpressionType : getModificationExpressionTypes()) {
+			forbidExpression(forbiddenExpressionType);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void allowExpression(Class<? extends IExpression> allowedExpressionType) {
+		if (forbiddenExpressionTypes != null) {
+			forbiddenExpressionTypes.remove(allowedExpressionType);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void allowModificationQueries() {
+		for (Class<? extends IExpression> allowedExpressionType : getModificationExpressionTypes()) {
+			allowExpression(allowedExpressionType);
+		}
+	}
+
+	/**
+	 * Utility method to load all expression of a specific language which occurs
+	 * a modification of the topic map
+	 * 
+	 * @return a set of classes
+	 */
+	@SuppressWarnings("unchecked")
+	private Set<Class<? extends IExpression>> getModificationExpressionTypes() {
+		Set<Class<? extends IExpression>> classes = HashUtil.getHashSet();
+		for (String name : getModificationExpressionTypeNames()) {
+			try {
+				Class<? extends IExpression> clazz = (Class<? extends IExpression>) Class.forName(name);
+				classes.add(clazz);
+			} catch (Exception e) {
+				logger.warn("Expression type '" + name + "'not present in classpath");
+			}
+		}
+		return classes;
+	}
+
+	/**
+	 * Returns an array of the full qualified expression types of the query
+	 * language which occurs modification expression.
+	 * 
+	 * @return a string array
+	 */
+	protected abstract String[] getModificationExpressionTypeNames();
+
+	/**
+	 * Method adds the restrictions of this runtime to the query instance
+	 * 
+	 * @param query
+	 *            the query instance
+	 */
+	protected void addRestrictions(IQuery query) {
+		if (forbiddenExpressionTypes != null) {
+			for (Class<? extends IExpression> forbiddenExpressionType : forbiddenExpressionTypes) {
+				query.forbidExpression(forbiddenExpressionType);
+			}
+		}
+	}
 
 }

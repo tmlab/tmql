@@ -17,6 +17,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import de.topicmapslab.tmql4j.util.HashUtil;
+
 /**
  * Base implementation of {@link IResultSet} to implement the method providing
  * base functionality. The result set represents a 2-dimension container
@@ -269,9 +271,30 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 				public Class<? extends IResult> getResultClass() {
 					return IResult.class;
 				}
+				
+				/**
+				 * {@inheritDoc}
+				 */
+				public void unify() {
+					// NOTHING TO DO					
+				}
 			};
 		}
 		return emptyResultSet;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void unify() {
+		List<T> results = HashUtil.getList();
+		for ( T result : getResults()){
+			if ( !results.contains(result)){
+				results.add(result);
+			}
+		}
+		this.results.clear();
+		this.results.addAll(results);
 	}
 
 }

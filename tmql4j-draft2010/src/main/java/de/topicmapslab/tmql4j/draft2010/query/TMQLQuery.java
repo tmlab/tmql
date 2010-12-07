@@ -19,7 +19,7 @@ public class TMQLQuery extends QueryImpl {
 	 * a static array of full qualified names of all expression which occurs a
 	 * modification of the topic map
 	 */
-	private static String[] modificationExpressions = new String[0];
+	public static final String[] modificationExpressions = new String[0];
 
 	/**
 	 * Constructor

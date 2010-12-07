@@ -33,7 +33,7 @@ import de.topicmapslab.tmql4j.query.IQuery;
 public class TmqlRuntime2007 extends TmqlRuntimeImpl {
 
 	public static final String TMQL_2007 = "TMQL-2007";
-	
+
 	private final IExtensionPointAdapter extensionPointAdapter;
 	private final IConstructResolver constructResolver;
 
@@ -75,8 +75,28 @@ public class TmqlRuntime2007 extends TmqlRuntimeImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	protected void doRun(IQuery query) throws TMQLRuntimeException {
+		if (query.getTopicMap() == null) {
+			throw new TMQLRuntimeException("Topic map not set to query instance!");
+		}
+		if (!query.getQueryString().isEmpty()) {
+			ITmqlProcessor processor = getTmqlProcessor();
+			IResultSet<?> results = processor.query(query);
+			query.setResults(results);
+		} else {
+			query.setResults(ResultSet.emptyResultSet());
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
 	public IParserTree parse(String query) throws TMQLRuntimeException {
 		IQuery q = new TMQLQuery(null, query);
+		/*
+		 * add restrictions
+		 */
+		addRestrictions(q);
 		/*
 		 * before-execution call to query
 		 */
@@ -90,22 +110,6 @@ public class TmqlRuntime2007 extends TmqlRuntimeImpl {
 		 */
 		q.afterQuery(this);
 		return tree;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected void doRun(IQuery query) throws TMQLRuntimeException {
-		if (query.getTopicMap() == null) {
-			throw new TMQLRuntimeException("Topic map not set to query instance!");
-		}
-		if (!query.getQueryString().isEmpty()) {
-			ITmqlProcessor processor = getTmqlProcessor();
-			IResultSet<?> results = processor.query(query);
-			query.setResults(results);
-		} else {
-			query.setResults(ResultSet.emptyResultSet());
-		}
 	}
 
 	/**
@@ -129,11 +133,18 @@ public class TmqlRuntime2007 extends TmqlRuntimeImpl {
 	public IConstructResolver getConstructResolver() {
 		return constructResolver;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLanguageName() {
 		return TMQL_2007;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	protected String[] getModificationExpressionTypeNames() {
+		return TMQLQuery.modificationExpressions;
 	}
 }

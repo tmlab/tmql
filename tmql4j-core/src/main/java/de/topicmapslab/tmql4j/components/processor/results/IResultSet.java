@@ -158,4 +158,9 @@ public interface IResultSet<T extends IResult> extends Iterable<T> {
 	 * @return a list of all results.
 	 */
 	public List<T> getResults();
+	
+	/**
+	 * Removes duplicates from the internal result set
+	 */
+	public void unify();
 }

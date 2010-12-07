@@ -25,7 +25,7 @@ import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 public class TestDeleteAll extends Tmql4JTestCase {
 
 	@Test
-	public void testDeleteOneName() throws Exception {
+	public void testDeleteAll() throws Exception {
 		for (int i = 0; i < 100; i++) {
 			Topic topic = createTopic();
 			Name name = topic.createName("Name");
@@ -41,8 +41,8 @@ public class TestDeleteAll extends Tmql4JTestCase {
 		String query = "DELETE CASCADE ALL";
 		SimpleResultSet set = execute(query);
 		assertEquals(1, set.size());
-		assertEquals(1, set.first().size());
-		assertEquals(1101, ((Long) set.first().first()).longValue());
+		assertEquals(2, set.first().size());
+		assertEquals(1101, ((Integer) set.first().first()).intValue());
 
 		assertEquals(0, topicMap.getTopics().size());
 		assertEquals(0, topicMap.getAssociations().size());

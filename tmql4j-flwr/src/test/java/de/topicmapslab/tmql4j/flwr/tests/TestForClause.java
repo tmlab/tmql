@@ -18,6 +18,8 @@ import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.components.processor.results.IResult;
 import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.query.IQuery;
+import de.topicmapslab.tmql4j.query.QueryFactory;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -33,9 +35,9 @@ public class TestForClause extends Tmql4JTestCase {
 		Topic topic = createTopicBySI("myType");
 		Set<Topic> topics = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
-			Topic t = createTopic();		
+			Topic t = createTopic();
 			t.addType(topic);
-			topics.add(t);			
+			topics.add(t);
 		}
 
 		query = "FOR $t IN // myType RETURN $t";
@@ -46,7 +48,7 @@ public class TestForClause extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 	}
-	
+
 	@Test
 	public void testDoubleForClause() throws Exception {
 		String query;
@@ -75,5 +77,30 @@ public class TestForClause extends Tmql4JTestCase {
 			assertTrue(others.contains(r.getResults().get(1)));
 		}
 	}
-	
+
+	@Test
+	public void doSo() {
+		Topic topic = createTopicBySI("myType");
+		Set<Topic> instances = HashUtil.getHashSet();
+		Set<Topic> otherInstances = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic t = createTopic();
+			if (i % 2 == 0) {
+				t.addType(topic);
+				t.createName("Name");
+				t.createName("Name");
+				instances.add(t);
+			} else {
+				otherInstances.add(t);
+				t.createName("Name");
+				t.createName("Name");
+			}
+		}
+		IQuery query = QueryFactory.getFactory().getQuery(topicMap, "FOR $t IN // tm:subject [ fn:count ( . >> types ) == 0 ] RETURN $t,  $t >> characteristics >> types");
+
+		SimpleResultSet set = execute(query);
+		System.out.println(set);
+		System.out.println(set.size());
+	}
+
 }

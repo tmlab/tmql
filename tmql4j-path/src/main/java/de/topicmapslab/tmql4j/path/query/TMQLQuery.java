@@ -30,7 +30,7 @@ public class TMQLQuery extends QueryImpl {
 	/**
 	 * a static array of full qualified names of all expression which occurs a modification of the topic map
 	 */
-	private static String[] modificationExpressions = { "de.topicmapslab.tmql4j.delete.grammar.productions.DeleteExpression", "de.topicmapslab.tmql4j.merge.grammar.productions.MergeExpression",
+	public static final String[] modificationExpressions = { "de.topicmapslab.tmql4j.delete.grammar.productions.DeleteExpression", "de.topicmapslab.tmql4j.merge.grammar.productions.MergeExpression",
 			"de.topicmapslab.tmql4j.insert.grammar.productions.InsertExpression", "de.topicmapslab.tmql4j.update.grammar.productions.UpdateExpression" };
 
 	/**

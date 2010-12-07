@@ -9,8 +9,10 @@ import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Variable;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.grammar.lexical.Placeholder;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 
 /**
  * Class representing the production 'simple-expression' of the new draft 2010
@@ -24,6 +26,7 @@ public class SimpleExpression extends ExpressionImpl {
 	public static final int TYPE_VARIABLE = 0;
 	public static final int TYPE_TOPICREF = 1;
 	public static final int TYPE_DOT = 2;
+	public static final int TYPE_PREPARED = 3;
 
 	/**
 	 * base constructor to create a new expression without sub-nodes
@@ -58,6 +61,13 @@ public class SimpleExpression extends ExpressionImpl {
 		 */
 		else if (token.equals(Variable.class)) {
 			setGrammarType(TYPE_VARIABLE);
+		}
+		/*
+		 * is prepared 
+		 */
+		else if ( token.equals(Placeholder.class)){
+			checkForExtensions(PreparedExpression.class, tmqlTokens, tokens, runtime);
+			setGrammarType(TYPE_PREPARED);
 		}
 		/*
 		 * topic-reference

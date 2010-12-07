@@ -55,4 +55,15 @@ public interface IResultProcessor {
 	 */
 	public void setResultType(Class<? extends IResultSet<?>> clazz);
 
+	/**
+	 * Changing the internal state of auto reduction mechanism. If value set to
+	 * <code>true</code> the result processor transform the results to a
+	 * two-dimensional construct. If the value is <code>false</code> the results
+	 * may contain collections as value.
+	 * 
+	 * @param autoReduction
+	 *            the auto reduction mechanism.
+	 */
+	public void setAutoReduction(boolean autoReduction);
+
 }

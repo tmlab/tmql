@@ -234,4 +234,11 @@ public class OntopiaResultSet implements IResultSet<OntopiaResult> {
 		return (R) get(rowIndex).get(colIndex);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public void unify() {
+		// NOTHING TO DO HERE		
+	}
+	
 }

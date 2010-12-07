@@ -10,12 +10,15 @@ package de.topicmapslab.tmql4j.delete.tests;
 
 import static junit.framework.Assert.assertEquals;
 
+import java.util.Set;
+
 import org.junit.Test;
 import org.tmapi.core.Name;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.path.query.TMQLQuery;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * @author Sven Krosse
@@ -29,16 +32,18 @@ public class TestDeleteExpressionExtendedSytle extends Tmql4JTestCase {
 		Topic t = createTopicBySI("myTopic");
 		Topic type = createTopicBySI("myType");
 		t.addType(type);
+		Set<String> ids = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
-			t.createName("Name");
+			ids.add(t.createName("Name").getId());
 		}
 		assertEquals(100, t.getNames().size());
 
 		String query = " DELETE $t >> characteristics tm:name WHERE $t ISA myType";
 		SimpleResultSet set = execute(query);
 		assertEquals(1, set.size());
-		assertEquals(1, set.first().size());
-		assertEquals(100L, set.first().first());
+		assertEquals(2, set.first().size());
+		assertEquals(100, set.first().first());
+		assertEquals(ids, set.first().get(1));
 
 		assertEquals(0, t.getNames().size());
 	}
@@ -49,10 +54,12 @@ public class TestDeleteExpressionExtendedSytle extends Tmql4JTestCase {
 		Topic t = createTopicBySI("myTopic");
 		Topic type = createTopicBySI("myType");
 		t.addType(type);
+		Set<String> ids = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
 			Name n = t.createName("Name");
 			if (i % 2 == 0) {
 				n.addTheme(theme);
+				ids.add(n.getId());
 			}
 		}
 		assertEquals(100, t.getNames().size());
@@ -60,9 +67,9 @@ public class TestDeleteExpressionExtendedSytle extends Tmql4JTestCase {
 		String query = " DELETE $t >> characteristics tm:name @theme WHERE $t ISA myType";
 		SimpleResultSet set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
-		assertEquals(1, set.first().size());
-		assertEquals(50L, set.first().first());
-
+		assertEquals(2, set.first().size());
+		assertEquals(50, set.first().first());
+		assertEquals(ids, set.first().get(1));
 		assertEquals(50, t.getNames().size());
 	}
 
@@ -72,10 +79,12 @@ public class TestDeleteExpressionExtendedSytle extends Tmql4JTestCase {
 		Topic t = createTopicBySI("myTopic");
 		Topic type = createTopicBySI("myType");
 		t.addType(type);
+		Set<String> ids = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
 			Name n = t.createName("Name");
 			if (i % 2 == 0) {
 				n.setType(cType);
+				ids.add(n.getId());
 			}
 		}
 		assertEquals(100, t.getNames().size());
@@ -83,9 +92,9 @@ public class TestDeleteExpressionExtendedSytle extends Tmql4JTestCase {
 		String query = " DELETE $t >> characteristics cType WHERE $t ISA myType";
 		SimpleResultSet set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
-		assertEquals(1, set.first().size());
-		assertEquals(50L, set.first().first());
-
+		assertEquals(2, set.first().size());
+		assertEquals(50, set.first().first());
+		assertEquals(ids, set.first().get(1));
 		assertEquals(50, t.getNames().size());
 	}
 
@@ -96,6 +105,7 @@ public class TestDeleteExpressionExtendedSytle extends Tmql4JTestCase {
 		Topic t = createTopicBySI("myTopic");
 		Topic type = createTopicBySI("myType");
 		t.addType(type);
+		Set<String> ids = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
 			Name n = t.createName("Name");
 			if (i % 2 == 0) {
@@ -103,6 +113,7 @@ public class TestDeleteExpressionExtendedSytle extends Tmql4JTestCase {
 			}
 			if (i % 4 == 0) {
 				n.addTheme(theme);
+				ids.add(n.getId());
 			}
 		}
 		assertEquals(100, t.getNames().size());
@@ -110,9 +121,9 @@ public class TestDeleteExpressionExtendedSytle extends Tmql4JTestCase {
 		String query = " DELETE $t >> characteristics cType @theme WHERE $t ISA myType";
 		SimpleResultSet set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
-		assertEquals(1, set.first().size());
-		assertEquals(25L, set.first().first());
-
+		assertEquals(2, set.first().size());
+		assertEquals(25, set.first().first());
+		assertEquals(ids, set.first().get(1));
 		assertEquals(75, t.getNames().size());
 	}
 

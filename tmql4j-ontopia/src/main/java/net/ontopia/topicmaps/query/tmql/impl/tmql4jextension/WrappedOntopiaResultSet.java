@@ -208,4 +208,11 @@ public class WrappedOntopiaResultSet implements IResultSet<WrappedOntopiaResult>
 		return (R) get(rowIndex).get(colIndex);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public void unify() {
+		// NOTHING TO DO HERE		
+	}
+
 }

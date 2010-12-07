@@ -95,5 +95,7 @@ public class TestFromClause extends Tmql4JTestCase {
 			assertTrue(otherInstances.contains(r.first()) || instances.contains(r.first()));
 		}
 	}
+	
+	
 
 }

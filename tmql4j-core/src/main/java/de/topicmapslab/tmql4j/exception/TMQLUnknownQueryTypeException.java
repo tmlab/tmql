@@ -9,6 +9,8 @@
  */
 package de.topicmapslab.tmql4j.exception;
 
+import de.topicmapslab.tmql4j.query.QueryFactory;
+
 
 /**
  * Exception thrown by {@link QueryFactory} if the type of the given query is

@@ -84,6 +84,12 @@ public class SimpleExpressionInterpreter extends ExpressionInterpreterImpl<Simpl
 				return QueryMatches.asQueryMatchNS(runtime, context.getCurrentTuple().get(QueryMatches.getNonScopedVariable()));
 			}			
 		}
+		/*
+		 * is prepared statement
+		 */
+		else if ( getGrammarTypeOfExpression() == SimpleExpression.TYPE_PREPARED){
+			return getInterpreters(runtime).get(0).interpret(runtime, context, optionalArguments);
+		}
 		return QueryMatches.emptyMatches();
 
 	}
