@@ -6,7 +6,7 @@
     <version>3.0.0-SNAPSHOT</version>
   </parent>
   <groupId>de.topicmapslab.tmql4j</groupId>
-  <artifactId>tmql4-majortom</artifactId>
+  <artifactId>tmql4j-majortom</artifactId>
   <version>${project.parent.version}</version>
   <name>TMQL4J Extension for MaJorToM</name>
   <build>
@@ -72,7 +72,7 @@
   	</dependency>
   	<dependency>
   		<groupId>de.topicmapslab.majortom</groupId>
-  		<artifactId>majortom-inmemory</artifactId>
+  		<artifactId>majortom-inMemory</artifactId>
   		<version>1.1.4-SNAPSHOT</version>
   		<scope>test</scope>
   	</dependency>
