@@ -19,6 +19,7 @@ import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.extension.ILanguageExtension;
 import de.topicmapslab.tmql4j.flwr.components.interpreter.FlwrExpressionInterpreter;
 import de.topicmapslab.tmql4j.flwr.components.interpreter.ForClauseInterpreter;
+import de.topicmapslab.tmql4j.flwr.components.interpreter.GroupByClauseInterpreter;
 import de.topicmapslab.tmql4j.flwr.components.interpreter.NonInterpretedContentInterpreter;
 import de.topicmapslab.tmql4j.flwr.components.interpreter.OrderByClauseInterpreter;
 import de.topicmapslab.tmql4j.flwr.components.interpreter.QueryExpressionInterpreter;
@@ -32,6 +33,7 @@ import de.topicmapslab.tmql4j.flwr.grammar.lexical.XmlEndTag;
 import de.topicmapslab.tmql4j.flwr.grammar.lexical.XmlStartTag;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.FlwrExpression;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.ForClause;
+import de.topicmapslab.tmql4j.flwr.grammar.productions.GroupByClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.NonInterpretedContent;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.OrderByClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.QueryExpression;
@@ -62,6 +64,7 @@ public class Draft2007FlwrStyleQueryExpression implements ILanguageExtension {
 
 		interpreterRegistry.registerInterpreterClass(FlwrExpression.class, FlwrExpressionInterpreter.class);
 		interpreterRegistry.registerInterpreterClass(ForClause.class, ForClauseInterpreter.class);
+		interpreterRegistry.registerInterpreterClass(GroupByClause.class, GroupByClauseInterpreter.class);
 		interpreterRegistry.registerInterpreterClass(NonInterpretedContent.class, NonInterpretedContentInterpreter.class);
 		interpreterRegistry.registerInterpreterClass(OrderByClause.class, OrderByClauseInterpreter.class);
 		interpreterRegistry.registerInterpreterClass(QueryExpression.class, QueryExpressionInterpreter.class);

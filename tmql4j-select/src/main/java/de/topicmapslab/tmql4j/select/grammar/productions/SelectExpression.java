@@ -21,6 +21,7 @@ import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Group;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Order;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Where;
 import de.topicmapslab.tmql4j.select.grammar.lexical.From;
@@ -36,7 +37,7 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  * <p>
  * The grammar production rule of the expression is: <code>
  * <p>
- * select-expression	::=		 SELECT    < value-expression > [ FROM   value-expression ] [ WHERE   boolean-expression ] [  ORDER BY  < value-expression > ] [  UNIQUE  ] [  OFFSET  value-expression ][  LIMIT  value-expression ]
+ * select-expression	::=		 SELECT    < value-expression > [ FROM   value-expression ] [ WHERE   boolean-expression ] [ GROUP BY <variable> ] [  ORDER BY  < value-expression > ] [  UNIQUE  ] [  OFFSET  value-expression ][  LIMIT  value-expression ]
  * </p>
  * </code> </p>
  * 
@@ -101,6 +102,13 @@ public class SelectExpression extends ExpressionImpl {
 							runtime);
 				}
 				/*
+				 * is keyword GROUP
+				 */
+				else if (token.equals(Group.class)) {
+					checkForExtensions(GroupByClause.class, tmqlTokens, tokens,
+							runtime);
+				}
+				/*
 				 * is keyword ORDER
 				 */
 				else if (token.equals(Order.class)) {
@@ -137,6 +145,7 @@ public class SelectExpression extends ExpressionImpl {
 		delimers.add(Select.class);
 		delimers.add(From.class);
 		delimers.add(Where.class);
+		delimers.add(Group.class);
 		delimers.add(Order.class);
 		delimers.add(Unique.class);
 		delimers.add(Limit.class);

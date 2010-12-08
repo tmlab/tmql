@@ -28,6 +28,7 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.select.grammar.lexical.Unique;
 import de.topicmapslab.tmql4j.select.grammar.productions.FromClause;
+import de.topicmapslab.tmql4j.select.grammar.productions.GroupByClause;
 import de.topicmapslab.tmql4j.select.grammar.productions.LimitClause;
 import de.topicmapslab.tmql4j.select.grammar.productions.OffsetClause;
 import de.topicmapslab.tmql4j.select.grammar.productions.OrderByClause;
@@ -84,7 +85,6 @@ public class SelectExpressionInterpreter extends ExpressionInterpreterImpl<Selec
 				logger.warn("Interpretation of from clause return no results!");
 				return QueryMatches.emptyMatches();
 			}
-//			newContext.setContextBindings(fromResults);
 		}
 
 		/*
@@ -166,6 +166,13 @@ public class SelectExpressionInterpreter extends ExpressionInterpreterImpl<Selec
 			}
 			matches = cleaned;
 		}
+		/*
+		 * interpret group-by if exists
+		 */
+		if (containsExpressionsType(GroupByClause.class)){
+			newContext.setContextBindings(matches);
+			matches = getInterpretersFilteredByEypressionType(runtime, GroupByClause.class).get(0).interpret(runtime, newContext, optionalArguments);
+		}
 
 		/*
 		 * unify if necessary
@@ -173,7 +180,7 @@ public class SelectExpressionInterpreter extends ExpressionInterpreterImpl<Selec
 		if (ParserUtils.containsTokens(getTmqlTokens(), Unique.class)) {
 			matches = matches.unify();
 		}
-
+		
 		/*
 		 * reduce query-matches to selection window
 		 */

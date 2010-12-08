@@ -22,6 +22,7 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.FlwrExpression;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.ForClause;
+import de.topicmapslab.tmql4j.flwr.grammar.productions.GroupByClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.OrderByClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.ReturnClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.WhereClause;
@@ -87,8 +88,23 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 			if (results.isEmpty()) {
 				return QueryMatches.emptyMatches();
 			}
-		}	
-		return interpretReturnClause(runtime, newContext, optionalArguments);
+		}
+		/*
+		 * execute return clause
+		 */
+		QueryMatches matches = interpretReturnClause(runtime, newContext, optionalArguments);
+		/*
+		 * check if group-by clause exists
+		 */
+		if (containsExpressionsType(GroupByClause.class)) {
+			newContext.setContextBindings(matches);
+			QueryMatches results = getInterpretersFilteredByEypressionType(runtime, GroupByClause.class).get(0).interpret(runtime, newContext, optionalArguments);
+			if (results.isEmpty()) {
+				return QueryMatches.emptyMatches();
+			}
+			return results;
+		}
+		return matches;
 	}
 
 	/**
@@ -214,7 +230,7 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 		 */
 		// TODO use for iteration results as iteration bindings
 		Context newContext = new Context(context);
-//		newContext.setContextBindings(null);
+		// newContext.setContextBindings(null);
 		QueryMatches matches = whereClause.interpret(runtime, newContext, optionalArguments);
 		/*
 		 * iterate of all bindings if bindings and results are not empty

@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import de.topicmapslab.tmql4j.components.processor.core.ProjectionQueryMatches.ProjectionQueryMatch;
+import de.topicmapslab.tmql4j.components.processor.results.ProjectionUtils;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.util.CollectionsUtility;
@@ -39,6 +40,10 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  */
 public class QueryMatches implements Iterable<Map<String, Object>> {
 
+	/**
+	 * 
+	 */
+	private static final String AT_LEAST_ONE_OF_THE_GIVEN_VARIABLES_IS_MISSED_CANNOT_GROUP_BY_NON_EXISTING_VARIABLES = "At least one of the given variables is missed! Cannot group by non existing variables!";
 	/**
 	 * internal sequence of tuples
 	 */
@@ -1285,5 +1290,87 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 			}
 		}
 		return match;
+	}
+
+	/**
+	 * Utility method to handle group by expression for the current query
+	 * matches.
+	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param variables
+	 *            a set of variables, the matches should group by
+	 * @return the grouped query matches
+	 * @since 3.0.0
+	 */
+	@SuppressWarnings("unchecked")
+	public QueryMatches groupBy(final ITMQLRuntime runtime, final Set<String> variables) throws TMQLRuntimeException {
+		List<String> orderedKeys = getOrderedKeys();
+		if (!orderedKeys.containsAll(variables)) {
+			throw new TMQLRuntimeException(AT_LEAST_ONE_OF_THE_GIVEN_VARIABLES_IS_MISSED_CANNOT_GROUP_BY_NON_EXISTING_VARIABLES);
+		}
+		/*
+		 * group by with all variables -> this
+		 */
+		if (orderedKeys.size() == variables.size()) {
+			return this;
+		}
+		/*
+		 * store first position of key
+		 */
+		List<Map<String, Object>> positions = HashUtil.getList();
+		/*
+		 * store projections for a specific key
+		 */
+		Map<Map<String, Object>, Map<String, Object>> projections = HashUtil.getHashMap();
+		
+		/*
+		 * iterate over content
+		 */
+		for (Map<String, Object> tuple : ProjectionUtils.asTwoDimensionalMap(this)) {
+			/*
+			 * extract current key
+			 */
+			Map<String, Object> key = HashUtil.getHashMap();
+			for (String variable : variables) {
+				key.put(variable, tuple.get(variable));
+			}
+			/*
+			 * create projection or load existing
+			 */
+			Map<String, Object> projection = projections.get(key);
+			if (projection == null) {
+				projection = HashUtil.getHashMap();
+				projections.put(key, projection);
+				positions.add(key);
+			}
+			/*
+			 * group values by by given variables
+			 */
+			for (String variable : tuple.keySet()) {
+				if (!variables.contains(variable)) {
+					Collection<Object> values = (Collection<Object>) projection.get(variable);
+					if (values == null) {
+						values = HashUtil.getList();
+						projection.put(variable, values);
+					}
+					Object value = tuple.get(variable);
+					if ( !values.contains(value)){						
+						values.add(value);
+					}
+					
+				}
+			}
+		}
+		/*
+		 * create new query match
+		 */
+		QueryMatches matches = new QueryMatches(runtime);
+		for (Map<String, Object> key : positions) {
+			Map<String, Object> projection = projections.get(key);
+			projection.putAll(key);
+			matches.add(projection);
+		}
+		return matches;
 	}
 }

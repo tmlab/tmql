@@ -18,7 +18,7 @@ import org.junit.runners.Suite.SuiteClasses;
  */
 @RunWith(Suite.class)
 @SuiteClasses({ TestSelectClause.class, TestFromClause.class,
-		TestWhereClause.class, TestOrderByClause.class, TestUniqueClause.class,
+		TestWhereClause.class, TestGroupByClause.class, TestOrderByClause.class, TestUniqueClause.class,
 		TestOffsetLimitClause.class })
 public class SelectStyleTests {
 

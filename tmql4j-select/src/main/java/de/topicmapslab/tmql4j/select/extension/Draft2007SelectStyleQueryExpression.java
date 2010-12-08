@@ -20,6 +20,7 @@ import de.topicmapslab.tmql4j.extension.ILanguageExtension;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.select.components.interpreter.FromClauseInterpreter;
+import de.topicmapslab.tmql4j.select.components.interpreter.GroupByClauseInterpreter;
 import de.topicmapslab.tmql4j.select.components.interpreter.LimitClauseInterpreter;
 import de.topicmapslab.tmql4j.select.components.interpreter.OffsetClauseInterpreter;
 import de.topicmapslab.tmql4j.select.components.interpreter.OrderByClauseInterpreter;
@@ -33,6 +34,7 @@ import de.topicmapslab.tmql4j.select.grammar.lexical.Offset;
 import de.topicmapslab.tmql4j.select.grammar.lexical.Select;
 import de.topicmapslab.tmql4j.select.grammar.lexical.Unique;
 import de.topicmapslab.tmql4j.select.grammar.productions.FromClause;
+import de.topicmapslab.tmql4j.select.grammar.productions.GroupByClause;
 import de.topicmapslab.tmql4j.select.grammar.productions.LimitClause;
 import de.topicmapslab.tmql4j.select.grammar.productions.OffsetClause;
 import de.topicmapslab.tmql4j.select.grammar.productions.OrderByClause;
@@ -62,6 +64,7 @@ public class Draft2007SelectStyleQueryExpression implements ILanguageExtension {
 		IInterpreterRegistry interpreterRegistry = runtime.getLanguageContext().getInterpreterRegistry();
 
 		interpreterRegistry.registerInterpreterClass(FromClause.class, FromClauseInterpreter.class);
+		interpreterRegistry.registerInterpreterClass(GroupByClause.class, GroupByClauseInterpreter.class);
 		interpreterRegistry.registerInterpreterClass(LimitClause.class, LimitClauseInterpreter.class);
 		interpreterRegistry.registerInterpreterClass(OffsetClause.class, OffsetClauseInterpreter.class);
 		interpreterRegistry.registerInterpreterClass(OrderByClause.class, OrderByClauseInterpreter.class);

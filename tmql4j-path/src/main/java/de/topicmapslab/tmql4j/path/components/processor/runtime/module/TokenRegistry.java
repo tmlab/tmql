@@ -58,6 +58,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Exists;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Function;
 import de.topicmapslab.tmql4j.path.grammar.lexical.GreaterEquals;
 import de.topicmapslab.tmql4j.path.grammar.lexical.GreaterThan;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Group;
 import de.topicmapslab.tmql4j.path.grammar.lexical.If;
 import de.topicmapslab.tmql4j.path.grammar.lexical.In;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Intersect;
@@ -188,6 +189,7 @@ public class TokenRegistry extends TokenRegistryImpl {
 			register(Function.class);
 			register(GreaterEquals.class);
 			register(GreaterThan.class);
+			register(Group.class);
 			register(If.class);
 			register(In.class);
 			register(Isa.class);

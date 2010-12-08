@@ -24,6 +24,7 @@ import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Group;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Order;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Where;
 import de.topicmapslab.tmql4j.util.HashUtil;
@@ -37,7 +38,7 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  * <p>
  * The grammar production rule of the expression is: <code>
  * <p>
- * 	flwr-expression	::=	[  FOR   binding-set ] [  WHERE   boolean-expression ] [  ORDER BY  < value-expression > ] RETURN  content
+ * 	flwr-expression	::=	[  FOR   binding-set ] [  WHERE   boolean-expression ] [GROUP BY <variables> ] [  ORDER BY  < value-expression > ] RETURN  content
  * </p>
  * </code> </p>
  * 
@@ -88,6 +89,12 @@ public class FlwrExpression extends ExpressionImpl {
 					checkForExtensions(WhereClause.class, tmqlTokens, tokens, runtime);
 				}
 				/*
+				 * is keyword GROUP
+				 */
+				else if (token.equals(Group.class)) {
+					checkForExtensions(GroupByClause.class, tmqlTokens, tokens, runtime);
+				}
+				/*
 				 * is keyword ORDER
 				 */
 				else if (token.equals(Order.class)) {
@@ -108,6 +115,7 @@ public class FlwrExpression extends ExpressionImpl {
 		Set<Class<? extends IToken>> delimers = HashUtil.getHashSet();
 		delimers.add(For.class);
 		delimers.add(Where.class);
+		delimers.add(Group.class);
 		delimers.add(Order.class);
 		delimers.add(Return.class);
 
