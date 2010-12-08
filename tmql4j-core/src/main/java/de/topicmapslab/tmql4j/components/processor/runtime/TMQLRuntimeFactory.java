@@ -11,9 +11,12 @@ package de.topicmapslab.tmql4j.components.processor.runtime;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmapi.core.TopicMapSystem;
 
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.osgi.TMQLActivator;
 
 /**
  * Factory class to create a new {@link ITMQLRuntime} instance to query a topic
@@ -25,6 +28,11 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
  */
 public class TMQLRuntimeFactory {
 
+	/**
+	 * the Logger
+	 */
+	private Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
+	
 	/**
 	 * private hidden constructor
 	 */
@@ -50,6 +58,15 @@ public class TMQLRuntimeFactory {
 	 *             thrown if the data-bridge instance cannot be instantiate
 	 */
 	public ITMQLRuntime newRuntime() throws TMQLRuntimeException {
+		try {
+			for (ITMQLRuntime r : TMQLActivator.getDefault().getTmqlRuntimes()) {
+				return r;
+			}
+		} catch (Throwable t) {
+			// we do nothing, cause we are not in an OSGi environment
+			logger.warn("No Osgi Bundle found", t);
+		}
+		
 		ServiceLoader<ITMQLRuntime> loader = ServiceLoader.load(ITMQLRuntime.class, TMQLRuntimeFactory.class.getClassLoader());
 		Iterator<ITMQLRuntime> iterator = loader.iterator();
 		if (iterator.hasNext()) {
@@ -87,6 +104,17 @@ public class TMQLRuntimeFactory {
 	 *             thrown if the data-bridge instance cannot be instantiate
 	 */
 	public ITMQLRuntime newRuntime(final String languageName) throws TMQLRuntimeException {
+		try {
+			for (ITMQLRuntime runtime : TMQLActivator.getDefault().getTmqlRuntimes()) {
+				if (runtime.getLanguageName().equalsIgnoreCase(languageName)) {
+					return runtime;
+				}
+			}
+		} catch (Throwable t) {
+			// we do nothing, cause we are not in an OSGi environment
+			logger.warn("No Osgi Bundle found", t);
+		}
+		
 		ServiceLoader<ITMQLRuntime> loader = ServiceLoader.load(ITMQLRuntime.class, TMQLRuntimeFactory.class.getClassLoader());
 		Iterator<ITMQLRuntime> iterator = loader.iterator();
 		while (iterator.hasNext()) {

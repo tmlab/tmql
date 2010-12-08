@@ -15,6 +15,7 @@ import java.util.ServiceLoader;
 
 import org.tmapi.core.TopicMap;
 
+import de.topicmapslab.tmql4j.osgi.TMQLActivator;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -27,6 +28,8 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  */
 public class QueryFactory {
 
+	
+	
 	private Map<String, IQueryProcessor> processors;
 	private static QueryFactory factory;
 
@@ -36,10 +39,19 @@ public class QueryFactory {
 	private QueryFactory() {
 		processors = HashUtil.getHashMap();
 
+		try {
+			for (IQueryProcessor processor : TMQLActivator.getDefault()
+					.getQueryProcessors()) {
+				addQueryProcessor(processor);
+			}
+		} catch (Throwable e) {
+			// no osgi
+		}
+
 		ServiceLoader<IQueryProcessor> loader = ServiceLoader.load(IQueryProcessor.class, getClass().getClassLoader());
 		loader.reload();
 		for (IQueryProcessor processor : loader) {
-			processors.put(processor.getLanguageName(), processor);
+			addQueryProcessor(processor);
 		}
 	}
 

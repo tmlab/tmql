@@ -2,6 +2,6 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="tmql2010-queryprocessor">
    <implementation class="de.topicmapslab.tmql4j.draft2010.query.TMQLQueryProcessor"/>
    <service>
-      <provide interface="de.topicmapslab.tmql4j.converter.IQueryProcessor"/>
+      <provide interface="de.topicmapslab.tmql4j.query.IQueryProcessor"/>
    </service>
 </scr:component>

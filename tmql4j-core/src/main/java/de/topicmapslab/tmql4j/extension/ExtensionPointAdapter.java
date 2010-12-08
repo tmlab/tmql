@@ -91,7 +91,7 @@ public class ExtensionPointAdapter implements IExtensionPointAdapter {
 				pointList = TMQLActivator.getDefault().getExtensionPoints();
 		} catch (Throwable e) {
 			// we do nothing, cause we are not in an OSGi environment
-			logger.warn("No Osgi Bundle founde", e);
+			logger.warn("No Osgi Bundle found", e);
 		}
 
 		// if no OSGi list found use the loader
