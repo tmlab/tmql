@@ -40,8 +40,7 @@ public class QueryFactory {
 		processors = HashUtil.getHashMap();
 
 		try {
-			for (IQueryProcessor processor : TMQLActivator.getDefault()
-					.getQueryProcessors()) {
+			for (IQueryProcessor processor : TMQLActivator.getDefault().getQueryProcessors()) {
 				addQueryProcessor(processor);
 			}
 		} catch (Throwable e) {
