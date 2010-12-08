@@ -1,8 +1,10 @@
 Bundle-SymbolicName: de.topicmapslab.tmql4j.draft2010;singleton=true
 Bundle-Version: 3.0.0
 Bundle-Name: TMQL Draft 2010 Query Engine
-Import-Package: junit.framework;optional=true;specification-version="3.8.0",
- org.osgi.framework
+Import-Package: de.topicmapslab.majortom.util;optional=true,
+ junit.framework;optional=true;specification-version="3.8.0",
+ org.osgi.framework,
+ org.slf4j
 Service-Component: OSGI-INF/tmql2010-queryprocessor.xml, OSGI-INF/tmql2010-runtime.xml
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.topicmapslab.tmql4j;bundle-version="3.0.0",

@@ -24,8 +24,8 @@ Provide-Package: de.topicmapslab.tmql4j.path.components.interpreter,
  de.topicmapslab.tmql4j.path.tests.environment,
  de.topicmapslab.tmql4j.path.tests.path,
  de.topicmapslab.tmql4j.path.util
-Import-Package: junit.framework;optional=true;specification-version="3.8.0",
- org.osgi.framework
+Import-Package: org.osgi.framework,
+ org.slf4j;specification-version="1.6.1"
 Service-Component: OSGI-INF/tmql2007-queryprocessor.xml, OSGI-INF/tmql2007-runtime.xml
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.topicmapslab.tmql4j;bundle-version="3.0.0",
