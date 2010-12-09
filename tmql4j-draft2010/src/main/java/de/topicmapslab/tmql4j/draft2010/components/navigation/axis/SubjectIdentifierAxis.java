@@ -13,6 +13,11 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The subject-identifier axis returns all subject-identifier of a topic
+ * @author Sven Krosse
+ *
+ */
 public class SubjectIdentifierAxis implements IAxis {
 
 	/**

@@ -23,9 +23,21 @@ import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
  */
 public class SimpleExpression extends ExpressionImpl {
 
+	/**
+	 * type variable
+	 */	
 	public static final int TYPE_VARIABLE = 0;
+	/**
+	 * type topic reference
+	 */
 	public static final int TYPE_TOPICREF = 1;
+	/**
+	 * type current node
+	 */
 	public static final int TYPE_DOT = 2;
+	/**
+	 * type prepared
+	 */
 	public static final int TYPE_PREPARED = 3;
 
 	/**

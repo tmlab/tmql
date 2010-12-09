@@ -16,6 +16,11 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The value axis returns the literal value of names, occurrences or variants.
+ * @author Sven Krosse
+ *
+ */
 public class ValueAxis implements IAxis {
 
 	/**

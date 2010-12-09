@@ -229,6 +229,14 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 		T result = get(rowIndex);
 		return (R) result.get(colIndex);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isNullValue(int rowIndex, int colIndex) {
+		Object obj = get(rowIndex, colIndex);
+		return obj == null;
+	}
 
 	private static ResultSet<?> emptyResultSet;
 
@@ -277,6 +285,13 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 				 */
 				public void unify() {
 					// NOTHING TO DO					
+				}
+				
+				/**
+				 * {@inheritDoc}
+				 */
+				public boolean isNullValue(int rowIndex, int colIndex) {					
+					return false;
 				}
 			};
 		}

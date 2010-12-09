@@ -22,7 +22,9 @@ import de.topicmapslab.tmql4j.util.LiteralUtils;
  * 
  */
 public class TimeLiteralInterpreter extends ExpressionInterpreterImpl<TimeLiteral> {
-
+	/**
+	 * the logger
+	 */
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**

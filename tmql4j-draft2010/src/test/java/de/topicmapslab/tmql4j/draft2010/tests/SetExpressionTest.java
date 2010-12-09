@@ -12,8 +12,17 @@ import de.topicmapslab.tmql4j.components.processor.results.IResult;
 import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * test class of set operation
+ * @author Sven Krosse
+ *
+ */
 public class SetExpressionTest extends Tmql4JTestCase {
 
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testIntersection() throws Exception {
 		String query;
@@ -47,6 +56,10 @@ public class SetExpressionTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testIntersectionChain() throws Exception {
 		String query;
@@ -117,7 +130,10 @@ public class SetExpressionTest extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testUnion() throws Exception {
 		String query;
@@ -152,6 +168,10 @@ public class SetExpressionTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testUnionChain() throws Exception {
 		String query;
@@ -221,6 +241,10 @@ public class SetExpressionTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testMinus() throws Exception {
 		String query;
@@ -252,6 +276,10 @@ public class SetExpressionTest extends Tmql4JTestCase {
 		assertEquals(0, set.size());
 	}
 
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testMinusChain() throws Exception {
 		String query;

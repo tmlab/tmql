@@ -12,14 +12,23 @@ package de.topicmapslab.tmql4j.draft2010.grammar.lexical;
 
 import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
-
+/**
+ * the whitespace token
+ * @author Sven Krosse
+ *
+ */
 public class WhiteSpace extends Token {
+
+	/**
+	 * the token
+	 */
+	public static final String TOKEN = " ";
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return " ";
+		return TOKEN;
 	}
 
 }

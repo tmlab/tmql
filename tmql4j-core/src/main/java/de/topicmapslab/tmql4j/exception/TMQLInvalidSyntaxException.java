@@ -81,8 +81,6 @@ public class TMQLInvalidSyntaxException extends TMQLParserException {
 	 * @param message
 	 *            a message containing information about the reason of this
 	 *            exception
-	 * @param cause
-	 *            the cause
 	 */
 	public TMQLInvalidSyntaxException(
 			final List<Class<? extends IToken>> tmqlTokens,

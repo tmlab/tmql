@@ -107,6 +107,16 @@ public interface IResult extends Iterable<Object> {
 	public <T extends Object> T get(int index);
 
 	/**
+	 * Checks if the value at the given position is <code>null</code>
+	 * 
+	 * @param index
+	 *            the index
+	 * @return <code>true</code> if the value at the given position is
+	 *         <code>null</code>, <code>false</code> otherwise.
+	 */
+	public boolean isNullValue(int index);
+
+	/**
 	 * Method returns the number of contained values.
 	 * 
 	 * @return the number of contained values

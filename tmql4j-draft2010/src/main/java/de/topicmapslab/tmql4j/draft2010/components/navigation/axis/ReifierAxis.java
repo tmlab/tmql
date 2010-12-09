@@ -14,6 +14,11 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The reifier axis returns the reifier of a construct.
+ * @author Sven Krosse
+ *
+ */
 public class ReifierAxis implements IAxis {
 
 	/**

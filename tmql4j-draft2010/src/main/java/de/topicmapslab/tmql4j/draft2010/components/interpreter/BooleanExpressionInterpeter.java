@@ -26,7 +26,9 @@ import de.topicmapslab.tmql4j.grammar.productions.IExpression;
  * 
  */
 public class BooleanExpressionInterpeter extends ExpressionInterpreterImpl<BooleanExpression> {
-
+	/**
+	 * the logger
+	 */
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**
@@ -44,10 +46,10 @@ public class BooleanExpressionInterpeter extends ExpressionInterpreterImpl<Boole
 	 */
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		if ( context.getContextBindings() == null ){
+		if (context.getContextBindings() == null) {
 			logger.warn("Missing context to execute conjunction!");
 			return QueryMatches.emptyMatches();
-		}		
+		}
 		/*
 		 * switch by grammar type
 		 */
@@ -59,11 +61,11 @@ public class BooleanExpressionInterpeter extends ExpressionInterpreterImpl<Boole
 			return negation(runtime, context, optionalArguments);
 		} else if (getGrammarTypeOfExpression() == BooleanExpression.TYPE_COMPARISIONEXPRESSION) {
 			return comparison(runtime, context, optionalArguments);
-		} else if (getGrammarTypeOfExpression() == BooleanExpression.TYPE_PARETHETIC) {
+		} else if (getGrammarTypeOfExpression() == BooleanExpression.TYPE_CLAMPED) {
 			return parenthetics(runtime, context, optionalArguments);
 		} else if (getGrammarTypeOfExpression() == BooleanExpression.TYPE_EXPRESSION) {
-			return  expression(runtime, context, optionalArguments);
-		} 
+			return expression(runtime, context, optionalArguments);
+		}
 		logger.warn("Invalid grammar type '" + getGrammarTypeOfExpression() + "' of production 'boolean-expression'.");
 		return QueryMatches.emptyMatches();
 	}
@@ -88,10 +90,10 @@ public class BooleanExpressionInterpeter extends ExpressionInterpreterImpl<Boole
 		 * interpret boolean-expressions
 		 */
 		for (IExpressionInterpreter<BooleanExpression> interpreters : getInterpretersFilteredByEypressionType(runtime, BooleanExpression.class)) {
-			
-			QueryMatches matches =  interpreters.interpret(runtime, newContex, optionalArguments);
+
+			QueryMatches matches = interpreters.interpret(runtime, newContex, optionalArguments);
 			newContex.setContextBindings(matches);
-			if ( matches.isEmpty()){
+			if (matches.isEmpty()) {
 				return QueryMatches.emptyMatches();
 			}
 		}
@@ -118,7 +120,7 @@ public class BooleanExpressionInterpeter extends ExpressionInterpreterImpl<Boole
 		 * interpret boolean-expressions
 		 */
 		for (IExpressionInterpreter<BooleanExpression> interpreters : getInterpretersFilteredByEypressionType(runtime, BooleanExpression.class)) {
-			QueryMatches results =  interpreters.interpret(runtime, context, optionalArguments);
+			QueryMatches results = interpreters.interpret(runtime, context, optionalArguments);
 			/*
 			 * handle disjunction
 			 */
@@ -179,7 +181,7 @@ public class BooleanExpressionInterpeter extends ExpressionInterpreterImpl<Boole
 
 	/**
 	 * Interpretation method of grammar type
-	 * {@link BooleanExpression#TYPE_PARETHETIC}
+	 * {@link BooleanExpression#TYPE_CLAMPED}
 	 * 
 	 * @param runtime
 	 *            the runtime

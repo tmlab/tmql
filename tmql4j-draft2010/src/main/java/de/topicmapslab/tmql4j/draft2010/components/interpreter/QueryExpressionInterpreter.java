@@ -9,6 +9,11 @@ import de.topicmapslab.tmql4j.draft2010.grammar.productions.Expression;
 import de.topicmapslab.tmql4j.draft2010.grammar.productions.QueryExpression;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 
+/**
+ * The interpreter of a {@link QueryExpression}
+ * @author Sven Krosse
+ *
+ */
 public class QueryExpressionInterpreter extends ExpressionInterpreterImpl<QueryExpression> {
 
 	/**

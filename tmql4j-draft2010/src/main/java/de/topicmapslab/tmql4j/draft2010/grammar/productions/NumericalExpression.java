@@ -29,10 +29,22 @@ import de.topicmapslab.tmql4j.grammar.productions.IExpression;
  */
 public class NumericalExpression extends ExpressionImpl {
 
+	/**
+	 * type addition or subtraction
+	 */
 	public final static int TYPE_ADDITIVE_OPERATION = 0;
+	/**
+	 * type multiplication, division or modulo
+	 */
 	public final static int TYPE_MULTIPLICATIVE_OPERATION = 1;
+	/**
+	 * type unary operation
+	 */
 	public final static int TYPE_UNARY = 2;
 
+	/**
+	 * the operators
+	 */
 	private final List<Class<? extends IToken>> operators = new LinkedList<Class<? extends IToken>>();
 
 	/**
@@ -112,10 +124,19 @@ public class NumericalExpression extends ExpressionImpl {
 
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public boolean isValid() {
 		return true;
 	}
 
+	/**
+	 * Extracts the indexes of the given operator classes for additive operations
+	 * @param tmqlTokens the operator classes
+	 * @return a list of all indexes
+	 */
 	private List<Integer> indizesOfAdditiveOperations(List<Class<? extends IToken>> tmqlTokens) {
 		List<Integer> indizes = new LinkedList<Integer>();
 		long parenthics = 0;
@@ -156,7 +177,11 @@ public class NumericalExpression extends ExpressionImpl {
 		}
 		return indizes;
 	}
-
+	/**
+	 * Extracts the indexes of the given operator classes for multiplicative operations
+	 * @param tmqlTokens the operator classes
+	 * @return a list of all indexes
+	 */
 	private List<Integer> indizesOfMultiplicativeOperations(List<Class<? extends IToken>> tmqlTokens) {
 		List<Integer> indizes = new LinkedList<Integer>();
 		long parenthics = 0;
@@ -189,6 +214,10 @@ public class NumericalExpression extends ExpressionImpl {
 		return indizes;
 	}
 
+	/**
+	 * Returns all internal stored operators
+	 * @return the operators
+	 */
 	public List<Class<? extends IToken>> getOperators() {
 		return operators;
 	}

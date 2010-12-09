@@ -15,6 +15,11 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The type axis returns all types or the type of a construct
+ * @author Sven Krosse
+ *
+ */
 public class TypeAxis implements IAxis {
 
 	/**

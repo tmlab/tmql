@@ -13,6 +13,11 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The variant axis returns all variants of a name
+ * @author Sven Krosse
+ *
+ */
 public class VariantAxis implements IAxis {
 
 	/**

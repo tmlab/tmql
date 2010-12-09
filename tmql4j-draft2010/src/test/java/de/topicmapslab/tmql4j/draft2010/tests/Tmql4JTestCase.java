@@ -31,12 +31,32 @@ import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
  * 
  */
 public abstract class Tmql4JTestCase {
+	/**
+	 * the topic map
+	 */
 	protected TopicMap topicMap;
+	/**
+	 * the topic map system factory
+	 */
 	protected TopicMapSystemFactory factory;
+	/**
+	 * the runtime
+	 */
 	protected ITMQLRuntime runtime;
+	/**
+	 * the base locator reference
+	 */
 	protected final String base = "http://psi.example.org/test/";
+	/**
+	 * the topic map system
+	 */
 	protected TopicMapSystem topicMapSystem;
 
+	/**
+	 * set up method
+	 * 
+	 * @throws Exception
+	 */
 	@Before
 	public void setUp() throws Exception {
 		factory = TopicMapSystemFactory.newInstance();
@@ -47,6 +67,11 @@ public abstract class Tmql4JTestCase {
 		runtime.getLanguageContext().getPrefixHandler().setDefaultPrefix(base);
 	}
 
+	/**
+	 * tear down method
+	 * 
+	 * @throws Exception
+	 */
 	@After
 	public void tearDown() throws Exception {
 		topicMap.remove();
@@ -139,12 +164,34 @@ public abstract class Tmql4JTestCase {
 		association.createRole(topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_SUBTYPE_ROLE_TYPE)), type);
 	}
 
+	/**
+	 * Execute the given query
+	 * 
+	 * @param <T>
+	 *            the type of result set
+	 * @param query
+	 *            the query
+	 * @return the results
+	 * @throws TMQLRuntimeException
+	 *             thrown if execution fails
+	 */
 	@SuppressWarnings("unchecked")
 	protected <T extends IResultSet<?>> T execute(String query) throws TMQLRuntimeException {
 		IQuery q = runtime.run(topicMap, query);
 		return (T) q.getResults();
 	}
 
+	/**
+	 * Execute the given query
+	 * 
+	 * @param <T>
+	 *            the type of result set
+	 * @param query
+	 *            the query
+	 * @return the results
+	 * @throws TMQLRuntimeException
+	 *             thrown if execution fails
+	 */
 	@SuppressWarnings("unchecked")
 	protected <T extends IResultSet<?>> T execute(IQuery query) throws TMQLRuntimeException {
 		query.setTopicMap(topicMap);

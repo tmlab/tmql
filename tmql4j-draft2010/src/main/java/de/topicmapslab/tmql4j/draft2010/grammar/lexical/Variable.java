@@ -13,25 +13,32 @@ package de.topicmapslab.tmql4j.draft2010.grammar.lexical;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
+/**
+ * The token represent any variable
+ * 
+ * @author Sven Krosse
+ * 
+ */
 public class Variable extends Token {
+
+	/**
+	 * the token
+	 */
+	private static final String TOKEN = "$";
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean isToken(ITMQLRuntime runtime, String literal) {
-		return literal.length() > 1
-				&& (literal.startsWith("$") || literal.startsWith("%") || literal
-						.startsWith("@"))
-				&& !literal.equalsIgnoreCase("%prefix")
-				&& !literal.equalsIgnoreCase("%pragma");
+		return literal.startsWith(TOKEN);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "$...";
+		return TOKEN;
 	}
 
 }

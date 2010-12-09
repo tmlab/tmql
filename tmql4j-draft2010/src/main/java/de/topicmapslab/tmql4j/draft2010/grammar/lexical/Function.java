@@ -13,7 +13,17 @@ package de.topicmapslab.tmql4j.draft2010.grammar.lexical;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
+/**
+ * The token representing every function.
+ * @author Sven Krosse
+ *
+ */
 public class Function extends Token {
+
+	/**
+	 * the token
+	 */
+	private static final String TOKEN = "fn:";
 
 	/**
 	 * {@inheritDoc}
@@ -30,7 +40,7 @@ public class Function extends Token {
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "fn:";
+		return TOKEN;
 	}
 
 }

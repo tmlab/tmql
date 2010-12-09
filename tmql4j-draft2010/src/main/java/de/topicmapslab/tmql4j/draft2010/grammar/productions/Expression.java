@@ -21,6 +21,9 @@ import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 public class Expression extends
 		ExpressionImpl {
 
+	/**
+	 * the parent expression
+	 */
 	private IExpression parent;
 
 	/**

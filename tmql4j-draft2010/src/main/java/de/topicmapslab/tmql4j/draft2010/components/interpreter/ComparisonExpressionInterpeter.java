@@ -21,10 +21,21 @@ import de.topicmapslab.tmql4j.draft2010.util.RuntimeUtils;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 
+/**
+ * The interpreter of a {@link ComparisonExpression}
+ * @author Sven Krosse
+ *
+ */
 public class ComparisonExpressionInterpeter extends ExpressionInterpreterImpl<ComparisonExpression> {
-
+	/**
+	 * the logger
+	 */
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
+	/**
+	 * constructor
+	 * @param ex the expression
+	 */
 	public ComparisonExpressionInterpeter(ComparisonExpression ex) {
 		super(ex);
 	}

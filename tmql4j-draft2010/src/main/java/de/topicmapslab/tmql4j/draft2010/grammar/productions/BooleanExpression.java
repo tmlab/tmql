@@ -37,11 +37,29 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  */
 public class BooleanExpression extends ExpressionImpl {
 
+	/**
+	 * type conjunction
+	 */
 	public static final int TYPE_CONJUNCTION = 0;
+	/**
+	 * type disjunction
+	 */
 	public static final int TYPE_DISJUNCTION = 1;
+	/**
+	 * type negation
+	 */
 	public static final int TYPE_NOTEXPRESSION = 2;
+	/**
+	 * type content expression
+	 */
 	public static final int TYPE_EXPRESSION = 3;
-	public static final int TYPE_PARETHETIC = 4;
+	/**
+	 * type clamped expression
+	 */
+	public static final int TYPE_CLAMPED = 4;
+	/**
+	 * type comparison expression
+	 */
 	public static final int TYPE_COMPARISIONEXPRESSION = 5;
 
 	/**
@@ -63,20 +81,15 @@ public class BooleanExpression extends ExpressionImpl {
 	 *             thrown if the sub-tree can not be generated
 	 */
 	@SuppressWarnings("unchecked")
-	public BooleanExpression(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public BooleanExpression(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
 		/*
-		 * is parenthetic
+		 * is clamped
 		 */
 		if (isParenthetic(tmqlTokens)) {
-			checkForExtensions(BooleanExpression.class,
-					tmqlTokens.subList(1, tmqlTokens.size() - 1),
-					tokens.subList(1, tokens.size() - 1), runtime);
-			setGrammarType(TYPE_PARETHETIC);
+			checkForExtensions(BooleanExpression.class, tmqlTokens.subList(1, tmqlTokens.size() - 1), tokens.subList(1, tokens.size() - 1), runtime);
+			setGrammarType(TYPE_CLAMPED);
 		}
 		/*
 		 * is disjunction
@@ -88,13 +101,8 @@ public class BooleanExpression extends ExpressionImpl {
 			 */
 			IParserUtilsCallback callback = new IParserUtilsCallback() {
 
-				public void newToken(List<Class<? extends IToken>> tmqlTokens,
-						List<String> tokens,
-						Class<? extends IToken> foundDelimer)
-						throws TMQLGeneratorException,
-						TMQLInvalidSyntaxException {
-					checkForExtensions(BooleanExpression.class, tmqlTokens,
-							tokens, runtime);
+				public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
+					checkForExtensions(BooleanExpression.class, tmqlTokens, tokens, runtime);
 				}
 			};
 
@@ -119,13 +127,8 @@ public class BooleanExpression extends ExpressionImpl {
 			 */
 			IParserUtilsCallback callback = new IParserUtilsCallback() {
 
-				public void newToken(List<Class<? extends IToken>> tmqlTokens,
-						List<String> tokens,
-						Class<? extends IToken> foundDelimer)
-						throws TMQLGeneratorException,
-						TMQLInvalidSyntaxException {
-					checkForExtensions(BooleanExpression.class, tmqlTokens,
-							tokens, runtime);
+				public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
+					checkForExtensions(BooleanExpression.class, tmqlTokens, tokens, runtime);
 				}
 			};
 
@@ -152,23 +155,19 @@ public class BooleanExpression extends ExpressionImpl {
 				/*
 				 * extract not-expression not (... )
 				 */
-				checkForExtensions(BooleanExpression.class,
-						tmqlTokens.subList(1, tmqlTokens.size()),
-						tokens.subList(1, tokens.size()), runtime);
+				checkForExtensions(BooleanExpression.class, tmqlTokens.subList(1, tmqlTokens.size()), tokens.subList(1, tokens.size()), runtime);
 				setGrammarType(TYPE_NOTEXPRESSION);
 			} else if (isComparison(tmqlTokens)) {
 				/*
 				 * is a comparison expression
 				 */
-				checkForExtensions(ComparisonExpression.class, tmqlTokens,
-						tokens, runtime);
+				checkForExtensions(ComparisonExpression.class, tmqlTokens, tokens, runtime);
 				setGrammarType(TYPE_COMPARISIONEXPRESSION);
 			} else {
 				/*
 				 * is expression
 				 */
-				checkForExtensions(Expression.class, tmqlTokens, tokens,
-						runtime);
+				checkForExtensions(Expression.class, tmqlTokens, tokens, runtime);
 				setGrammarType(TYPE_EXPRESSION);
 			}
 		}
@@ -199,8 +198,7 @@ public class BooleanExpression extends ExpressionImpl {
 		}
 
 		long bracketCount = 1;
-		for (Class<? extends IToken> token : tmqlTokens.subList(1,
-				tmqlTokens.size())) {
+		for (Class<? extends IToken> token : tmqlTokens.subList(1, tmqlTokens.size())) {
 			if (token.equals(BracketRoundOpen.class)) {
 				/*
 				 * new first round opening bracket --> no parenthetic
@@ -244,14 +242,8 @@ public class BooleanExpression extends ExpressionImpl {
 			 * is operator '=' | '==' | '!=' | '<' | '>' | '<=' | '>=' | '=~'
 			 */
 			else if (bracketCount == 0
-					&& (token.equals(Equals.class)
-							|| token.equals(Equality.class)
-							|| token.equals(Unequals.class)
-							|| token.equals(LowerThan.class)
-							|| token.equals(LowerEquals.class)
-							|| token.equals(GreaterThan.class)
-							|| token.equals(GreaterEquals.class) || token
-							.equals(MatchesRegExp.class))) {
+					&& (token.equals(Equals.class) || token.equals(Equality.class) || token.equals(Unequals.class) || token.equals(LowerThan.class) || token.equals(LowerEquals.class)
+							|| token.equals(GreaterThan.class) || token.equals(GreaterEquals.class) || token.equals(MatchesRegExp.class))) {
 				return true;
 			}
 		}

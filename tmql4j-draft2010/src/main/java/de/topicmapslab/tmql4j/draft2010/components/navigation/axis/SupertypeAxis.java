@@ -13,7 +13,11 @@ import de.topicmapslab.tmql4j.draft2010.util.TypeHierarchyUtils;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
-
+/**
+ * The supertype axis returns all supertypes of a topic type
+ * @author Sven Krosse
+ *
+ */
 public class SupertypeAxis implements IAxis {
 
 	/**

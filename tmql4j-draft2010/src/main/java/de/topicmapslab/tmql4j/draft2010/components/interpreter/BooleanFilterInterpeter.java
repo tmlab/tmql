@@ -7,8 +7,17 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.draft2010.grammar.productions.BooleanFilter;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 
+/**
+ * The interpreter of boolean filter of the new TMQL draft
+ * @author Sven Krosse
+ *
+ */
 public class BooleanFilterInterpeter extends ExpressionInterpreterImpl<BooleanFilter> {
 
+	/**
+	 * constructor
+	 * @param ex the expression
+	 */
 	public BooleanFilterInterpeter(BooleanFilter ex) {
 		super(ex);
 	}

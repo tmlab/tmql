@@ -12,14 +12,23 @@ package de.topicmapslab.tmql4j.draft2010.grammar.lexical;
 
 import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
-
+/**
+ * The equals operator token =
+ * @author Sven Krosse
+ *
+ */
 public class Equals extends Token {
+
+	/**
+	 * the token
+	 */
+	private static final String TOKEN = "=";
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "=";
+		return TOKEN;
 	}
 
 }

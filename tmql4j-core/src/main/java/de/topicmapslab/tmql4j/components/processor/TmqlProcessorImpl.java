@@ -61,6 +61,31 @@ public abstract class TmqlProcessorImpl implements ITmqlProcessor {
 	/**
 	 * {@inheritDoc}
 	 */
+	public IResultSet<?> query(IPreparedStatement statement) {
+		/*
+		 * create context
+		 */
+		IContext context = new Context(this, statement);
+		/*
+		 * execute query
+		 */
+		QueryMatches results = statement.getParserTree().root().interpret(runtime, context);
+		/*
+		 * proceed results
+		 */
+		IResultProcessor resultProcessor = getResultProcessor();
+		resultProcessor.proceed(results);
+		/*
+		 * set results to statement and return it
+		 */
+		IResultSet<?> resultSet = resultProcessor.getResultSet();
+		statement.setResults(resultSet);
+		return resultSet;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public IParserTree parse(IQuery query) {
 		ILexer lexer = getTmqlLexer(query);
 		lexer.execute();

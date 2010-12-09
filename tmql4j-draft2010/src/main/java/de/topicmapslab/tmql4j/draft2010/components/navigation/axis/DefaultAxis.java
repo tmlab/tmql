@@ -15,6 +15,11 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The default axis. The behavior is dependent from the current context.
+ * @author Sven Krosse
+ *
+ */
 public class DefaultAxis implements IAxis {
 
 	/**

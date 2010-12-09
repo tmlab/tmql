@@ -12,10 +12,15 @@ package de.topicmapslab.tmql4j.draft2010.grammar.lexical;
 
 import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
+/**
+ * The token of the current node .
+ * @author Sven Krosse
+ *
+ */
 public class Dot extends Token {
 
 	/**
-	 * constant
+	 * the token
 	 */
 	public static final String TOKEN = ".";
 

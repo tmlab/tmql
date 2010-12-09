@@ -56,8 +56,16 @@ import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Variant;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * Handler class for axis navigation. The class provides method to extract the instance of a specific axis.
+ * @author Sven Krosse
+ *
+ */
 public class Axis {
 
+	/**
+	 * A map of all axis by the lexical token which represents this axis
+	 */
 	private static Map<Class<? extends IToken>, Class<? extends IAxis>> axes = HashUtil
 			.getHashMap();
 
@@ -89,6 +97,11 @@ public class Axis {
 		axes.put(Variant.class, VariantAxis.class);
 	}
 
+	/**
+	 * Returns the axis for the given lexical token
+	 * @param token the token
+	 * @return the axis or <code>null</code> if it does not exists any mapping for the given lexical token.
+	 */
 	public static IAxis getAxisForToken(Class<? extends IToken> token) {
 		if (axes.containsKey(token)) {
 			try {

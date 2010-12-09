@@ -21,10 +21,10 @@ import de.topicmapslab.tmql4j.draft2010.grammar.lexical.GreaterEquals;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.GreaterThan;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.LowerEquals;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.LowerThan;
+import de.topicmapslab.tmql4j.draft2010.grammar.lexical.MatchesRegExp;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Minus;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Modulo;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Plus;
-import de.topicmapslab.tmql4j.draft2010.grammar.lexical.RegularExpression;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Star;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Unequals;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
@@ -47,7 +47,7 @@ public class QueryMatchUtils {
 	 * 
 	 * @param runtime
 	 *            the runtime
-	 * @param operators
+	 * @param operator
 	 *            the operator token
 	 * @param arguments
 	 *            an array of arguments
@@ -124,7 +124,7 @@ public class QueryMatchUtils {
 		/*
 		 * is regular-expression
 		 */
-		else if (operator.equals(RegularExpression.class)) {
+		else if (operator.equals(MatchesRegExp.class)) {
 			return matchesRegExp(runtime, arguments[0], arguments[1]);
 		}
 		/*

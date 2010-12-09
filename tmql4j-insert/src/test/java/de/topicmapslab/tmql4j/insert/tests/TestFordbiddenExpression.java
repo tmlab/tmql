@@ -23,7 +23,7 @@ import de.topicmapslab.tmql4j.query.IQuery;
  */
 public class TestFordbiddenExpression extends Tmql4JTestCase {
 
-	private static String QUERY = "INSERT \"\"\" myTopic . \"\"\"";
+	private static String QUERY = "INSERT ''' myTopic . '''";
 	private static Class<? extends IExpression> forbiddenExpressionType = InsertExpression.class;
 	
 	@Test(expected = TMQLParserException.class)

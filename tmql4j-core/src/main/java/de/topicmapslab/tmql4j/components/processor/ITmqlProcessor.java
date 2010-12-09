@@ -30,6 +30,13 @@ public interface ITmqlProcessor {
 	public IResultSet<?> query(IQuery query);
 	
 	/**
+	 * Executes the querying process for the given statement object
+	 * @param stmt the statement
+	 * @return the results of querying process
+	 */
+	public IResultSet<?> query(IPreparedStatement statement);
+	
+	/**
 	 * Parse the given query and returns a prepared statement instance
 	 * @param query the query
 	 * @return the prepared statement instance

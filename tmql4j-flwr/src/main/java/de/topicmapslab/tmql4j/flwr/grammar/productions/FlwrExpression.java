@@ -25,6 +25,8 @@ import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Group;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Limit;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Offset;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Order;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Where;
 import de.topicmapslab.tmql4j.util.HashUtil;
@@ -38,7 +40,7 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  * <p>
  * The grammar production rule of the expression is: <code>
  * <p>
- * 	flwr-expression	::=	[  FOR   binding-set ] [  WHERE   boolean-expression ] [GROUP BY <variables> ] [  ORDER BY  < value-expression > ] RETURN  content
+ * 	flwr-expression	::=	[  FOR   binding-set ] [  WHERE   boolean-expression ] [GROUP BY <variables> ] [  ORDER BY  < value-expression > ] [ OFFSET integer ] [ LIMIT integer ] RETURN  content
  * </p>
  * </code> </p>
  * 
@@ -101,6 +103,18 @@ public class FlwrExpression extends ExpressionImpl {
 					checkForExtensions(OrderByClause.class, tmqlTokens, tokens, runtime);
 				}
 				/*
+				 * is keyword OFFSET
+				 */
+				else if (token.equals(Offset.class)) {
+					checkForExtensions(OffsetClause.class, tmqlTokens, tokens, runtime);
+				}
+				/*
+				 * is keyword LIMIT
+				 */
+				else if (token.equals(Limit.class)) {
+					checkForExtensions(LimitClause.class, tmqlTokens, tokens, runtime);
+				}
+				/*
 				 * is keyword RETURN or XML start-tag
 				 */
 				else if (token.equals(Return.class) || token.equals(XmlStartTag.class)) {
@@ -115,8 +129,10 @@ public class FlwrExpression extends ExpressionImpl {
 		Set<Class<? extends IToken>> delimers = HashUtil.getHashSet();
 		delimers.add(For.class);
 		delimers.add(Where.class);
-		delimers.add(Group.class);
+		delimers.add(Group.class);		
 		delimers.add(Order.class);
+		delimers.add(Offset.class);
+		delimers.add(Limit.class);
 		delimers.add(Return.class);
 
 		/*

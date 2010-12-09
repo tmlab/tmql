@@ -8,6 +8,12 @@ import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 
+/**
+ * The literal class for times
+ * 
+ * @author Sven Krosse
+ * 
+ */
 public class TimeLiteral extends Literal {
 	/**
 	 * base constructor to create a new expression without sub-nodes

@@ -16,6 +16,11 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The player axis returns the player of a role
+ * @author Sven Krosse
+ *
+ */
 public class PlayerAxis implements IAxis {
 
 	/**

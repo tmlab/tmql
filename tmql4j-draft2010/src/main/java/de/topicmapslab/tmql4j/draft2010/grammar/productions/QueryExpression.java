@@ -43,7 +43,7 @@ public class QueryExpression extends ExpressionImpl {
 	 * 
 	 * <p>
 	 * Constructor is calling
-	 * {@link QueryExpression#QueryExpression(IExpression, List, List, TMQLRuntime)}
+	 * {@link QueryExpression#QueryExpression(IExpression, List, List, ITMQLRuntime)}
 	 * </p>
 	 * 
 	 * @param runtime

@@ -28,8 +28,6 @@ public interface IConstructResolver {
 	 * @param identifier
 	 *            the string literal of a subject-identifier
 	 * @return the topic map construct if it exists or <code>null</code>.
-	 * @throws Exception
-	 *             thrown by the internal topic map engine
 	 */
 	public Topic getTopicBySubjectIdentifier(final IContext context, final String identifier);
 
@@ -42,8 +40,6 @@ public interface IConstructResolver {
 	 * @param identifier
 	 *            the string literal of a subject-locator
 	 * @return the topic map construct if it exists or <code>null</code>.
-	 * @throws Exception
-	 *             thrown by the internal topic map engine
 	 */
 	public Topic getTopicBySubjectLocator(final IContext context, final String identifier);
 
@@ -56,8 +52,6 @@ public interface IConstructResolver {
 	 * @param identifier
 	 *            the string literal of a subject-identifier
 	 * @return the topic map construct if it exists or <code>null</code>.
-	 * @throws Exception
-	 *             thrown by the internal topic map engine
 	 */
 	public Construct getConstructByItemIdentifier(final IContext context, final String identifier);
 
@@ -71,8 +65,6 @@ public interface IConstructResolver {
 	 * @param identifier
 	 *            the string literal
 	 * @return the topic map construct if it exists or <code>null</code>.
-	 * @throws Exception
-	 *             thrown by the internal topic map engine
 	 */
 	public Construct getConstructByIdentifier(final IContext context, final String identifier);
 }

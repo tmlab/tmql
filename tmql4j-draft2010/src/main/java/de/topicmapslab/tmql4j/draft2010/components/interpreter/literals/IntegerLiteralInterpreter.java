@@ -21,7 +21,9 @@ import de.topicmapslab.tmql4j.util.LiteralUtils;
  * 
  */
 public class IntegerLiteralInterpreter extends ExpressionInterpreterImpl<IntegerLiteral> {
-
+	/**
+	 * the logger
+	 */
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**

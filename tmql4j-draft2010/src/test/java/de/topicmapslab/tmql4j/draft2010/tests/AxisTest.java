@@ -21,8 +21,19 @@ import de.topicmapslab.tmql4j.util.HashUtil;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 import de.topicmapslab.tmql4j.util.XmlSchemeDatatypes;
 
+/**
+ * Test class for axis navigation
+ * 
+ * @author Sven Krosse
+ * 
+ */
 public class AxisTest extends Tmql4JTestCase {
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testAssociationAxis() throws Exception {
 		String query = null;
@@ -63,6 +74,11 @@ public class AxisTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testTopicAxis() throws Exception {
 		String query = null;
@@ -96,14 +112,10 @@ public class AxisTest extends Tmql4JTestCase {
 		query = " / topic::  ";
 		set = execute(query);
 		int nr = results.size() + 1;
-		if (factory
-				.getFeature(FeatureStrings.TOPIC_MAPS_TYPE_INSTANCE_ASSOCIATION)) {
-			results.add(topicMap.getTopicBySubjectIdentifier(topicMap
-					.createLocator(TmdmSubjectIdentifier.TMDM_TYPE_INSTANCE_ASSOCIATION_TYPE)));
-			results.add(topicMap.getTopicBySubjectIdentifier(topicMap
-					.createLocator(TmdmSubjectIdentifier.TMDM_TYPE_ROLE_TYPE)));
-			results.add(topicMap.getTopicBySubjectIdentifier(topicMap
-					.createLocator(TmdmSubjectIdentifier.TMDM_INSTANCE_ROLE_TYPE)));
+		if (factory.getFeature(FeatureStrings.TOPIC_MAPS_TYPE_INSTANCE_ASSOCIATION)) {
+			results.add(topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_TYPE_INSTANCE_ASSOCIATION_TYPE)));
+			results.add(topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_TYPE_ROLE_TYPE)));
+			results.add(topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_INSTANCE_ROLE_TYPE)));
 			nr += 3;
 		}
 		results.add(type);
@@ -114,6 +126,11 @@ public class AxisTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testDirectTypeAxis() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
@@ -154,13 +171,11 @@ public class AxisTest extends Tmql4JTestCase {
 			assertTrue(results.contains(r.first()));
 		}
 
-		int count = 100;		
-		if (factory
-				.getFeature(FeatureStrings.TOPIC_MAPS_TYPE_INSTANCE_ASSOCIATION)) {
+		int count = 100;
+		if (factory.getFeature(FeatureStrings.TOPIC_MAPS_TYPE_INSTANCE_ASSOCIATION)) {
 			// 100-times the type-instance-type
 			count += 100;
-			results.add(topicMap.getTopicBySubjectIdentifier(topicMap
-					.createLocator(TmdmSubjectIdentifier.TMDM_TYPE_INSTANCE_ASSOCIATION_TYPE)));
+			results.add(topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_TYPE_INSTANCE_ASSOCIATION_TYPE)));
 		}
 
 		query = "  / association:: / direct-type:: ";
@@ -171,16 +186,12 @@ public class AxisTest extends Tmql4JTestCase {
 			assertTrue(results.contains(r.first()));
 		}
 
-		if (factory
-				.getFeature(FeatureStrings.TOPIC_MAPS_TYPE_INSTANCE_ASSOCIATION)) {
+		if (factory.getFeature(FeatureStrings.TOPIC_MAPS_TYPE_INSTANCE_ASSOCIATION)) {
 			// 100-times the type and instance-type
 			count += 100;
-			results.remove(topicMap.getTopicBySubjectIdentifier(topicMap
-					.createLocator(TmdmSubjectIdentifier.TMDM_TYPE_INSTANCE_ASSOCIATION_TYPE)));
-			results.add(topicMap.getTopicBySubjectIdentifier(topicMap
-					.createLocator(TmdmSubjectIdentifier.TMDM_TYPE_ROLE_TYPE)));
-			results.add(topicMap.getTopicBySubjectIdentifier(topicMap
-					.createLocator(TmdmSubjectIdentifier.TMDM_INSTANCE_ROLE_TYPE)));
+			results.remove(topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_TYPE_INSTANCE_ASSOCIATION_TYPE)));
+			results.add(topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_TYPE_ROLE_TYPE)));
+			results.add(topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_INSTANCE_ROLE_TYPE)));
 		}
 		query = " / association:: / role:: / direct-type:: ";
 		set = execute(query);
@@ -192,6 +203,11 @@ public class AxisTest extends Tmql4JTestCase {
 
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testTypeAxis() throws Exception {
 		Topic supertype = createTopicBySI("mySupertype");
@@ -236,14 +252,11 @@ public class AxisTest extends Tmql4JTestCase {
 		}
 
 		int count = 200;
-		
-		if (factory
-				.getFeature(FeatureStrings.TOPIC_MAPS_TYPE_INSTANCE_ASSOCIATION)) {
-			results.add(topicMap.getTopicBySubjectIdentifier(topicMap
-					.createLocator(TmdmSubjectIdentifier.TMDM_TYPE_INSTANCE_ASSOCIATION_TYPE)));
-			results.add(topicMap.getTopicBySubjectIdentifier(topicMap
-					.createLocator(TmdmSubjectIdentifier.TMDM_SUPERTYPE_SUBTYPE_ASSOCIATION)));
-			
+
+		if (factory.getFeature(FeatureStrings.TOPIC_MAPS_TYPE_INSTANCE_ASSOCIATION)) {
+			results.add(topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_TYPE_INSTANCE_ASSOCIATION_TYPE)));
+			results.add(topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_SUPERTYPE_SUBTYPE_ASSOCIATION)));
+
 			count += 200;
 		}
 
@@ -255,21 +268,14 @@ public class AxisTest extends Tmql4JTestCase {
 			assertTrue(results.contains(r.first()));
 		}
 
-		if (factory
-				.getFeature(FeatureStrings.TOPIC_MAPS_TYPE_INSTANCE_ASSOCIATION)) {
-			results.remove(topicMap.getTopicBySubjectIdentifier(topicMap
-					.createLocator(TmdmSubjectIdentifier.TMDM_TYPE_INSTANCE_ASSOCIATION_TYPE)));
-			results.remove(topicMap.getTopicBySubjectIdentifier(topicMap
-					.createLocator(TmdmSubjectIdentifier.TMDM_SUPERTYPE_SUBTYPE_ASSOCIATION)));
-			results.add(topicMap.getTopicBySubjectIdentifier(topicMap
-					.createLocator(TmdmSubjectIdentifier.TMDM_TYPE_ROLE_TYPE)));
-			results.add(topicMap.getTopicBySubjectIdentifier(topicMap
-					.createLocator(TmdmSubjectIdentifier.TMDM_INSTANCE_ROLE_TYPE)));
-			results.add(topicMap.getTopicBySubjectIdentifier(topicMap
-					.createLocator(TmdmSubjectIdentifier.TMDM_SUPERTYPE_ROLE_TYPE)));
-			results.add(topicMap.getTopicBySubjectIdentifier(topicMap
-					.createLocator(TmdmSubjectIdentifier.TMDM_SUBTYPE_ROLE_TYPE)));
-			
+		if (factory.getFeature(FeatureStrings.TOPIC_MAPS_TYPE_INSTANCE_ASSOCIATION)) {
+			results.remove(topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_TYPE_INSTANCE_ASSOCIATION_TYPE)));
+			results.remove(topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_SUPERTYPE_SUBTYPE_ASSOCIATION)));
+			results.add(topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_TYPE_ROLE_TYPE)));
+			results.add(topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_INSTANCE_ROLE_TYPE)));
+			results.add(topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_SUPERTYPE_ROLE_TYPE)));
+			results.add(topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_SUBTYPE_ROLE_TYPE)));
+
 			count += 200;
 		}
 		query = " / association:: / role:: / type:: ";
@@ -281,6 +287,11 @@ public class AxisTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testSIAxis() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
@@ -292,10 +303,14 @@ public class AxisTest extends Tmql4JTestCase {
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(topic.getSubjectIdentifiers().iterator().next()
-				.getReference(), set.first().first());
+		assertEquals(topic.getSubjectIdentifiers().iterator().next().getReference(), set.first().first());
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testSLAxis() throws Exception {
 		Topic topic = createTopicBySL("myTopic");
@@ -307,10 +322,14 @@ public class AxisTest extends Tmql4JTestCase {
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(topic.getSubjectLocators().iterator().next()
-				.getReference(), set.first().first());
+		assertEquals(topic.getSubjectLocators().iterator().next().getReference(), set.first().first());
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testIIAxis() throws Exception {
 		Topic topic = createTopicByII("myTopic");
@@ -322,10 +341,14 @@ public class AxisTest extends Tmql4JTestCase {
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(topic.getItemIdentifiers().iterator().next()
-				.getReference(), set.first().first());
+		assertEquals(topic.getItemIdentifiers().iterator().next().getReference(), set.first().first());
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testNameAxis() throws Exception {
 		Topic type = createTopicBySI("myType");
@@ -346,6 +369,11 @@ public class AxisTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testVariantAxis() throws Exception {
 		Topic type = createTopicBySI("myType");
@@ -367,6 +395,11 @@ public class AxisTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testOccurrenceAxis() throws Exception {
 		Topic type = createTopicBySI("myType");
@@ -387,16 +420,17 @@ public class AxisTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testDatatypeAxis() throws Exception {
 		Topic type = createTopicBySI("myType");
 		Name n = type.createName("Name");
-		Variant v = n.createVariant("Variant",
-				topicMap.createLocator(XmlSchemeDatatypes.XSD_DATE),
-				createTopic());
-		Occurrence o = type.createOccurrence(createTopic(), "Value",
-				topicMap.createLocator(XmlSchemeDatatypes.XSD_INTEGER),
-				createTopic());
+		Variant v = n.createVariant("Variant", topicMap.createLocator(XmlSchemeDatatypes.XSD_DATE), createTopic());
+		Occurrence o = type.createOccurrence(createTopic(), "Value", topicMap.createLocator(XmlSchemeDatatypes.XSD_INTEGER), createTopic());
 
 		String query = null;
 		SimpleResultSet set = null;
@@ -415,6 +449,11 @@ public class AxisTest extends Tmql4JTestCase {
 
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testInstanceAxis() throws Exception {
 		Topic supertype = createTopicBySI("mySupertype");
@@ -445,6 +484,11 @@ public class AxisTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testDirectInstanceAxis() throws Exception {
 		Topic type = createTopicBySI("myType");
@@ -467,16 +511,17 @@ public class AxisTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testValueAxis() throws Exception {
 		Topic type = createTopicBySI("myType");
 		Name n = type.createName("Name");
-		Variant v = n.createVariant("Variant",
-				topicMap.createLocator(XmlSchemeDatatypes.XSD_DATE),
-				createTopic());
-		Occurrence o = type.createOccurrence(createTopic(), "Value",
-				topicMap.createLocator(XmlSchemeDatatypes.XSD_INTEGER),
-				createTopic());
+		Variant v = n.createVariant("Variant", topicMap.createLocator(XmlSchemeDatatypes.XSD_DATE), createTopic());
+		Occurrence o = type.createOccurrence(createTopic(), "Value", topicMap.createLocator(XmlSchemeDatatypes.XSD_INTEGER), createTopic());
 
 		String query = null;
 		SimpleResultSet set = null;
@@ -500,18 +545,19 @@ public class AxisTest extends Tmql4JTestCase {
 		assertEquals(v.getValue(), set.first().first());
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testParentAxis() throws Exception {
 		Association a = createAssociation();
 		a.createRole(createTopic(), createTopic());
 		Topic type = createTopicBySI("myType");
 		Name n = type.createName("Name");
-		n.createVariant("Variant",
-				topicMap.createLocator(XmlSchemeDatatypes.XSD_DATE),
-				createTopic());
-		type.createOccurrence(createTopic(), "Value",
-				topicMap.createLocator(XmlSchemeDatatypes.XSD_INTEGER),
-				createTopic());
+		n.createVariant("Variant", topicMap.createLocator(XmlSchemeDatatypes.XSD_DATE), createTopic());
+		type.createOccurrence(createTopic(), "Value", topicMap.createLocator(XmlSchemeDatatypes.XSD_INTEGER), createTopic());
 
 		String query = null;
 		SimpleResultSet set = null;
@@ -553,6 +599,11 @@ public class AxisTest extends Tmql4JTestCase {
 		assertEquals(n, set.first().first());
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testPlayerAxis() throws Exception {
 		Topic assoType = createTopicBySI("assoType");
@@ -584,10 +635,9 @@ public class AxisTest extends Tmql4JTestCase {
 			assertEquals(1, r.size());
 			assertTrue(results.contains(r.first()));
 		}
-		
+
 		int count = 100;
-		if (factory
-				.getFeature(FeatureStrings.TOPIC_MAPS_TYPE_INSTANCE_ASSOCIATION)) {
+		if (factory.getFeature(FeatureStrings.TOPIC_MAPS_TYPE_INSTANCE_ASSOCIATION)) {
 			count += 200;
 			results.add(type);
 		}
@@ -601,6 +651,11 @@ public class AxisTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testRoleAxis() throws Exception {
 		Topic assoType = createTopicBySI("assoType");
@@ -640,6 +695,11 @@ public class AxisTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testScopeAxis() throws Exception {
 		Topic otherTheme = createTopic();
@@ -647,12 +707,8 @@ public class AxisTest extends Tmql4JTestCase {
 		a.createRole(createTopic(), createTopic());
 		Topic type = createTopicBySI("myType");
 		Name n = type.createName("Name");
-		Variant v = n
-				.createVariant("Variant",
-						topicMap.createLocator(XmlSchemeDatatypes.XSD_DATE),
-						otherTheme);
-		Occurrence o = type.createOccurrence(createTopic(), "Value",
-				topicMap.createLocator(XmlSchemeDatatypes.XSD_INTEGER));
+		Variant v = n.createVariant("Variant", topicMap.createLocator(XmlSchemeDatatypes.XSD_DATE), otherTheme);
+		Occurrence o = type.createOccurrence(createTopic(), "Value", topicMap.createLocator(XmlSchemeDatatypes.XSD_INTEGER));
 		Set<Topic> results = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
 			Topic t = createTopic();
@@ -700,6 +756,11 @@ public class AxisTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testScopedAxis() throws Exception {
 		Topic otherTheme = createTopicBySI("theme");
@@ -708,13 +769,11 @@ public class AxisTest extends Tmql4JTestCase {
 		Set<Scoped> results = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
 			if (i % 4 == 0) {
-				results.add(topicMap.createAssociation(createTopic(),
-						otherTheme));
+				results.add(topicMap.createAssociation(createTopic(), otherTheme));
 			} else if (i % 4 == 1) {
 				results.add(topic.createName("Name", otherTheme));
 			} else if (i % 4 == 2) {
-				results.add(topic.createOccurrence(createTopic(), "Occ",
-						otherTheme));
+				results.add(topic.createOccurrence(createTopic(), "Occ", otherTheme));
 			} else {
 				results.add(n.createVariant("Variant", otherTheme));
 			}
@@ -732,6 +791,11 @@ public class AxisTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testReifierAxis() throws Exception {
 		Topic reifier = createTopic();
@@ -739,11 +803,8 @@ public class AxisTest extends Tmql4JTestCase {
 		Role r = a.createRole(createTopic(), createTopic());
 		Topic type = createTopicBySI("myType");
 		Name n = type.createName("Name");
-		Variant v = n.createVariant("Variant",
-				topicMap.createLocator(XmlSchemeDatatypes.XSD_DATE),
-				createTopic());
-		Occurrence o = type.createOccurrence(createTopic(), "Value",
-				topicMap.createLocator(XmlSchemeDatatypes.XSD_INTEGER));
+		Variant v = n.createVariant("Variant", topicMap.createLocator(XmlSchemeDatatypes.XSD_DATE), createTopic());
+		Occurrence o = type.createOccurrence(createTopic(), "Value", topicMap.createLocator(XmlSchemeDatatypes.XSD_INTEGER));
 
 		String query = null;
 		SimpleResultSet set = null;
@@ -797,6 +858,11 @@ public class AxisTest extends Tmql4JTestCase {
 		v.setReifier(null);
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testReifiedAxis() throws Exception {
 		Topic reifier = createTopicBySI("myReifier");
@@ -804,11 +870,8 @@ public class AxisTest extends Tmql4JTestCase {
 		Role r = a.createRole(createTopic(), createTopic());
 		Topic type = createTopicBySI("myType");
 		Name n = type.createName("Name");
-		Variant v = n.createVariant("Variant",
-				topicMap.createLocator(XmlSchemeDatatypes.XSD_DATE),
-				createTopic());
-		Occurrence o = type.createOccurrence(createTopic(), "Value",
-				topicMap.createLocator(XmlSchemeDatatypes.XSD_INTEGER));
+		Variant v = n.createVariant("Variant", topicMap.createLocator(XmlSchemeDatatypes.XSD_DATE), createTopic());
+		Occurrence o = type.createOccurrence(createTopic(), "Value", topicMap.createLocator(XmlSchemeDatatypes.XSD_INTEGER));
 
 		String query = null;
 		SimpleResultSet set = null;

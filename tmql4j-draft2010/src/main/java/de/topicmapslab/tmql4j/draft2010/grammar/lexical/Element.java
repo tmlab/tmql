@@ -12,13 +12,23 @@ package de.topicmapslab.tmql4j.draft2010.grammar.lexical;
 
 import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
+/**
+ * The token representing every topic item
+ * @author Sven Krosse
+ *
+ */
 public class Element extends Token {
 	
+	/**
+	 * the empty token
+	 */
+	private static final String TOKEN = "";
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "";
+		return TOKEN;
 	}
 
 }

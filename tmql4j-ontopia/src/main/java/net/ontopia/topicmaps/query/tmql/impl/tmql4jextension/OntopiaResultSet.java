@@ -233,7 +233,15 @@ public class OntopiaResultSet implements IResultSet<OntopiaResult> {
 	public <R extends Object> R get(int rowIndex, int colIndex) {
 		return (R) get(rowIndex).get(colIndex);
 	}
-
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isNullValue(int rowIndex, int colIndex) {
+		Object obj = get(rowIndex, colIndex);
+		return obj == null;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */

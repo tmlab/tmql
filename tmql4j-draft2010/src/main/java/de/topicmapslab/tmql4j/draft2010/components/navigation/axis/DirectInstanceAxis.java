@@ -14,6 +14,11 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The direct-instance axis returns all direct instance ( non-transitive ) of a given topic type
+ * @author Sven Krosse
+ *
+ */
 public class DirectInstanceAxis implements IAxis {
 
 	/**

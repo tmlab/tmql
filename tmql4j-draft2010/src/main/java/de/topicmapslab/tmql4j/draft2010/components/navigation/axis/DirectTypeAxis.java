@@ -15,7 +15,11 @@ import de.topicmapslab.tmql4j.draft2010.util.TypeHierarchyUtils;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
-
+/**
+ * The direct-type axis returns all direct type ( non-transitive ) of a given topic instance
+ * @author Sven Krosse
+ *
+ */
 public class DirectTypeAxis implements IAxis {
 
 	/**

@@ -32,6 +32,9 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  */
 public class ComparisonExpression extends ExpressionImpl {
 
+	/**
+	 * the operator
+	 */
 	private Class<? extends IToken> operator = null;
 
 	/**

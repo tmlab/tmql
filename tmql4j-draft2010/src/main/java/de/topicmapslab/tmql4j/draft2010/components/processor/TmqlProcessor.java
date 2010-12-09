@@ -24,6 +24,9 @@ import de.topicmapslab.tmql4j.query.IQuery;
  */
 public class TmqlProcessor extends TmqlProcessorImpl {
 
+	/**
+	 * The TMQL result processor
+	 */
 	private TmqlResultProcessor tmqlResultProcessor;
 
 	/**

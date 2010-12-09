@@ -19,7 +19,13 @@ import de.topicmapslab.tmql4j.grammar.productions.IExpression;
  */
 public class PathSpecification extends ExpressionImpl {
 
+	/**
+	 * type axis navigation
+	 */
 	public static final int TYPE_AXIS_SPEC = 0;
+	/**
+	 * type association pattern
+	 */
 	public static final int TYPE_ASSOCIATION_PATTERN = 1;
 
 	/**

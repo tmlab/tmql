@@ -25,7 +25,9 @@ import de.topicmapslab.tmql4j.util.LiteralUtils;
  * 
  */
 public class ScopeFilterInterpreter extends ExpressionInterpreterImpl<ScopeFilter> {
-
+	/**
+	 * the logger
+	 */
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**

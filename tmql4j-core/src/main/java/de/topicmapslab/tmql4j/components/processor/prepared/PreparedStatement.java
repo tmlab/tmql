@@ -311,7 +311,7 @@ public class PreparedStatement implements IPreparedStatement {
 	 */
 	public void run() {
 		validate();
-		runtime.run(this);
+		runtime.getTmqlProcessor().query(this);
 	}
 
 	/**
@@ -344,5 +344,12 @@ public class PreparedStatement implements IPreparedStatement {
 			}
 		}
 		return nonParametrizedQueryString;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public IParserTree getParserTree() {
+		return tree;
 	}
 }

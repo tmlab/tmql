@@ -15,8 +15,18 @@ import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The filter tests
+ * 
+ * @author Sven Krosse
+ * 
+ */
 public class FilterTest extends Tmql4JTestCase {
-
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws TMQLRuntimeException
+	 */
 	@Test
 	public void testScopeFilter() throws Exception {
 		Topic otherTheme = createTopicBySI("theme");
@@ -25,13 +35,11 @@ public class FilterTest extends Tmql4JTestCase {
 		Set<Scoped> results = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
 			if (i % 4 == 0) {
-				results.add(topicMap.createAssociation(createTopic(),
-						otherTheme));
+				results.add(topicMap.createAssociation(createTopic(), otherTheme));
 			} else if (i % 4 == 1) {
 				results.add(topic.createName("Name", otherTheme));
 			} else if (i % 4 == 2) {
-				results.add(topic.createOccurrence(createTopic(), "Occ",
-						otherTheme));
+				results.add(topic.createOccurrence(createTopic(), "Occ", otherTheme));
 			} else {
 				results.add(n.createVariant("Variant", otherTheme));
 			}
@@ -73,6 +81,11 @@ public class FilterTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws TMQLRuntimeException
+	 */
 	@Test
 	public void testBooleanFilterWithExpression() throws TMQLRuntimeException {
 		Topic topic = createTopicBySI("myTopic");
@@ -98,6 +111,11 @@ public class FilterTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws TMQLRuntimeException
+	 */
 	@Test
 	public void testBooleanFilterWithConjunction() throws TMQLRuntimeException {
 		Topic topic = createTopicBySI("myTopic");
@@ -107,8 +125,7 @@ public class FilterTest extends Tmql4JTestCase {
 			t.addType(topic);
 			if (i % 2 == 0) {
 				t.createName("Name");
-				t.addSubjectIdentifier(createLocator("si-"
-						+ Integer.toString(i)));
+				t.addSubjectIdentifier(createLocator("si-" + Integer.toString(i)));
 				results.add(t);
 			}
 		}
@@ -149,6 +166,11 @@ public class FilterTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws TMQLRuntimeException
+	 */
 	@Test
 	public void testBooleanFilterWithDisjunction() throws TMQLRuntimeException {
 		Topic topic = createTopicBySI("myTopic");
@@ -159,8 +181,7 @@ public class FilterTest extends Tmql4JTestCase {
 			if (i % 2 == 0) {
 				t.createName("Name");
 			} else {
-				t.addSubjectIdentifier(createLocator("si-"
-						+ Integer.toString(i)));
+				t.addSubjectIdentifier(createLocator("si-" + Integer.toString(i)));
 			}
 			results.add(t);
 		}
@@ -185,6 +206,11 @@ public class FilterTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws TMQLRuntimeException
+	 */
 	@Test
 	public void testBooleanFilterWithNegation() throws TMQLRuntimeException {
 		Topic topic = createTopicBySI("myTopic");
@@ -211,6 +237,11 @@ public class FilterTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws TMQLRuntimeException
+	 */
 	@Test
 	public void testBooleanFilterComparison() throws TMQLRuntimeException {
 		Topic topic = createTopicBySI("myTopic");
@@ -271,8 +302,7 @@ public class FilterTest extends Tmql4JTestCase {
 			assertTrue(results.contains(r.first()));
 		}
 
-		query = " / topic::myTopic [ . / subject-identifier:: =~ \"" + base
-				+ ".+\" ]";
+		query = " / topic::myTopic [ . / subject-identifier:: =~ \"" + base + ".+\" ]";
 		set = execute(query);
 		assertEquals(results.size(), set.size());
 		for (IResult r : set) {

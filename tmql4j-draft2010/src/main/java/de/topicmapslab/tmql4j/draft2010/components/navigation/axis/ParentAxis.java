@@ -13,6 +13,11 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The parent axis returns the higher lever construct similar to the TMDM definition.
+ * @author Sven Krosse
+ *
+ */
 public class ParentAxis implements IAxis {
 
 	/**

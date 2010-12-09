@@ -70,11 +70,11 @@ public class TypeHierarchyUtils {
 	}
 
 	/**
-	 * Static method to extract all types of the given instance by looking for
+	 * Static method to extract all types of the given typed construct by looking for
 	 * all types and their supertypes
 	 * 
-	 * @param instance
-	 *            the instance
+	 * @param typed
+	 *            the typed
 	 * @param transitive
 	 *            handle type hierarchy as transitive
 	 * @return a {@link List} of all instances

@@ -19,6 +19,11 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The scoped axis returns all scoped construct of a specific theme
+ * @author Sven Krosse
+ *
+ */
 public class ScopedAxis implements IAxis {
 
 	/**

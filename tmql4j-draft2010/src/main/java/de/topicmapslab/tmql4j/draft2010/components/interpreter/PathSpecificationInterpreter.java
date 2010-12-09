@@ -31,6 +31,9 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  */
 public class PathSpecificationInterpreter extends ExpressionInterpreterImpl<PathSpecification> {
 
+	/**
+	 * the logger
+	 */
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**

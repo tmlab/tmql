@@ -57,8 +57,6 @@ public class TmqlResultProcessor implements IResultProcessor {
 	 *            the type of contained result type of the result set
 	 * @param runtime
 	 *            the TMQL4J runtime
-	 * @param clazz
-	 *            the class of the result set to generate
 	 */
 	public <T extends IResult> TmqlResultProcessor(final ITMQLRuntime runtime) {
 		this.runtime = runtime;

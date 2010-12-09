@@ -15,6 +15,11 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The role axis returns all roles of a topic
+ * @author Sven Krosse
+ *
+ */
 public class RoleAxis implements IAxis {
 
 	/**

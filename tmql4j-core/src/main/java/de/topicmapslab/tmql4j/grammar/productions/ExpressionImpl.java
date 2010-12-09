@@ -225,24 +225,24 @@ public abstract class ExpressionImpl implements IExpression {
 		this.children.addAll(reorder);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int hashCode() {
-		return this.tokens.hashCode();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof IExpression) {
-			return ((IExpression) obj).getTokens().equals(tokens);
-		}
-		return false;
-	}
+//	/**
+//	 * {@inheritDoc}
+//	 */
+//	@Override
+//	public int hashCode() {
+//		return this.tokens.hashCode();
+//	}
+//
+//	/**
+//	 * {@inheritDoc}
+//	 */
+//	@Override
+//	public boolean equals(Object obj) {
+//		if (obj instanceof IExpression) {
+//			return ((IExpression) obj).getTokens().equals(tokens);
+//		}
+//		return false;
+//	}
 
 	/**
 	 * {@inheritDoc}

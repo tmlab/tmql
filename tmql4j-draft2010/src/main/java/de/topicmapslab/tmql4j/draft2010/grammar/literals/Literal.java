@@ -9,6 +9,11 @@ import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 
+/**
+ * the abstract literal class
+ * @author Sven Krosse
+ *
+ */
 public class Literal extends ExpressionImpl {
 	/**
 	 * base constructor to create a new expression without sub-nodes

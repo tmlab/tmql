@@ -21,6 +21,9 @@ import java.util.StringTokenizer;
 import de.topicmapslab.tmql4j.components.lexer.TMQLTokenizer;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.PrefixHandler;
+import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Pragma;
+import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Prefix;
+import de.topicmapslab.tmql4j.draft2010.grammar.lexical.WhiteSpace;
 import de.topicmapslab.tmql4j.util.HashUtil;
 import de.topicmapslab.tmql4j.util.LiteralUtils;
 
@@ -34,8 +37,38 @@ import de.topicmapslab.tmql4j.util.LiteralUtils;
  */
 public class TmqlQueryTransformer {
 
-	private static final String WHITESPACE = " ";
-
+	/**
+	 * the colon token 
+	 */
+	private static final String TOKEN_COLON = ":";
+	/**
+	 * the IRI start
+	 */
+	private static final String TOKEN_IRI_END = ">";
+	/**
+	 * the IRI end
+	 */
+	private static final String TOKEN_IRI_START = "<";
+	/**
+	 * the slash token
+	 */
+	private static final String SLASH = "\\";
+	/**
+	 * the datatyped token
+	 */
+	private static final String DATATYPE = "^^";
+	/**
+	 * the quote character
+	 */
+	private static final char CHAR_QUOTE = '"';
+	/**
+	 * the quote token
+	 */
+	private static final String QUOTE = "\"";
+	/**
+	 * the backslash token
+	 */
+	private static final String BACKSLASH = "//";
 	/**
 	 * List of internal system tokens which can isolate without use protection
 	 * of other tokens
@@ -61,7 +94,7 @@ public class TmqlQueryTransformer {
 		patterns.add("}");
 		patterns.add("[");
 		patterns.add("]");
-		patterns.add("\\");
+		patterns.add(SLASH);
 		patterns.add("\\.\\.\\.");
 	}
 
@@ -82,19 +115,21 @@ public class TmqlQueryTransformer {
 		specials.put("<=", new String[] {});
 		specials.put("-", new String[] { "<->", "->", "<-", "--" });
 		specials.put("+", new String[] { "++" });
-		specials.put(":", new String[] {});
-		specials.put("//", new String[] {});
-		specials.put("/", new String[] { "//", "/>", "</" });
+		specials.put(TOKEN_COLON, new String[] {});
+		specials.put(BACKSLASH, new String[] {});
+		specials.put("/", new String[] { BACKSLASH, "/>", "</" });
 		specials.put("..", new String[] { "..." });
 		specials.put("*", new String[] {});
 		specials.put("!", new String[] { "!=" });
 	}
 
 	/**
-	 * Internal transformer method to remove unnecessary whitespace or insert
-	 * missing once. Method works iterative over all tokens by splitting them. <br />
+	 * Internal transformer method to remove unnecessary WhiteSpace.TOKEN or
+	 * insert missing once. Method works iterative over all tokens by splitting
+	 * them. <br />
 	 * <br />
-	 * First all unprotected tokens would be isolate by inserting whitespace. <br />
+	 * First all unprotected tokens would be isolate by inserting
+	 * WhiteSpace.TOKEN. <br />
 	 * <br />
 	 * Second all new tokens would be check for valid URIs or XML nodes. If some
 	 * URIs or XML found the URI would be isolate from token and the second step
@@ -107,8 +142,7 @@ public class TmqlQueryTransformer {
 	 *            the string representation of the TMQL Query
 	 * @return the transformed string representation of the TMQL Query
 	 */
-	public static final String transform(final ITMQLRuntime runtime,
-			final String query) {
+	public static final String transform(final ITMQLRuntime runtime, final String query) {
 		StringBuffer buffer = new StringBuffer();
 
 		/*
@@ -125,9 +159,9 @@ public class TmqlQueryTransformer {
 			 */
 			token = clean(runtime, token);
 			/*
-			 * add transformed token to buffer and insert one whitespace
+			 * add transformed token to buffer and insert one WhiteSpace.TOKEN
 			 */
-			buffer.append(token.trim() + WHITESPACE);
+			buffer.append(token.trim() + WhiteSpace.TOKEN);
 		}
 
 		return buffer.toString().trim();
@@ -136,7 +170,8 @@ public class TmqlQueryTransformer {
 	/**
 	 * Transformation of TMQL tokens <br />
 	 * <br />
-	 * First all unprotected tokens would be isolate by inserting whitespace. <br />
+	 * First all unprotected tokens would be isolate by inserting
+	 * WhiteSpace.TOKEN. <br />
 	 * <br />
 	 * Second all new tokens would be check for valid URIs or XML nodes. If some
 	 * URIs or XML found the URI would be isolate from token and the second step
@@ -161,7 +196,7 @@ public class TmqlQueryTransformer {
 		 * split query to string-represented tokens
 		 */
 		TMQLTokenizer tokenizer = new TMQLTokenizer(cleaned);
-		String tmp = new String();
+		StringBuilder builder = new StringBuilder();
 		/*
 		 * iterate over all tokens
 		 */
@@ -171,16 +206,15 @@ public class TmqlQueryTransformer {
 			 * the pattern // will be detect as URI but at the beginning they
 			 * represent the type-instance-association
 			 */
-			if (t.startsWith("//")) {
-				tmp += "//" + WHITESPACE;
+			if (t.startsWith(BACKSLASH)) {
+				builder.append(BACKSLASH);
+				builder.append(WhiteSpace.TOKEN);
 				t = t.substring(2);
 			}
-			tmp += uriProtectionAlgorithm(runtime, t);
-			tmp += WHITESPACE;
+			builder.append(uriProtectionAlgorithm(runtime, t));
+			builder.append(WhiteSpace.TOKEN);
 		}
-		cleaned = tmp;
-
-		return cleaned;
+		return builder.toString();
 	}
 
 	/**
@@ -193,41 +227,33 @@ public class TmqlQueryTransformer {
 	 * @param token
 	 *            the token to transform
 	 */
-	private static String uriProtectionAlgorithm(final ITMQLRuntime runtime,
-			final String token) {
+	private static String uriProtectionAlgorithm(final ITMQLRuntime runtime, final String token) {
 		String cleaned = new String(token);
 
 		/*
 		 * check if token is %prefix or %pragma
 		 */
-		if (token.equalsIgnoreCase("%prefix")
-				|| token.equalsIgnoreCase("%pragma")) {
+		if (token.equalsIgnoreCase(Prefix.TOKEN) || token.equalsIgnoreCase(Pragma.TOKEN)) {
 			return token;
 		}
 		/*
 		 * check if token is a string
 		 */
-		else if (token.length() > 2 && token.startsWith("\"")
-				&& token.endsWith("\"") && token.charAt(1) != '"'
-				&& token.charAt(token.length() - 2) != '"') {
+		else if (token.length() > 2 && token.startsWith(QUOTE) && token.endsWith(QUOTE) && token.charAt(1) != CHAR_QUOTE && token.charAt(token.length() - 2) != CHAR_QUOTE) {
 			return token;
 		}
 
 		/*
 		 * check protected strings with data-type
 		 */
-		if (token.length() > 2 && token.startsWith("\"")
-				&& token.contains("^^")) {
+		if (token.length() > 2 && token.startsWith(QUOTE) && token.contains(DATATYPE)) {
 			return token;
 		}
 
 		/*
 		 * save time and dateTime
 		 */
-		if (LiteralUtils.isDate(token) || LiteralUtils.isTime(token)
-				|| LiteralUtils.isDateTime(token)
-				|| LiteralUtils.isInteger(token)
-				|| LiteralUtils.isDecimal(token)) {
+		if (LiteralUtils.isDate(token) || LiteralUtils.isTime(token) || LiteralUtils.isDateTime(token) || LiteralUtils.isInteger(token) || LiteralUtils.isDecimal(token)) {
 			return token;
 		}
 		/*
@@ -245,36 +271,32 @@ public class TmqlQueryTransformer {
 			/*
 			 * changing windows size iterative
 			 */
-			for (int windowStart = 0; windowStart + windowSize <= token
-					.length(); windowStart++) {
+			for (int windowStart = 0; windowStart + windowSize <= token.length(); windowStart++) {
 				/*
 				 * extract IRI candidate
 				 */
-				String candidate = cleaned.substring(windowStart, windowSize
-						+ windowStart);
+				String candidate = cleaned.substring(windowStart, windowSize + windowStart);
 				/*
 				 * check if token is protected ( XML, IRI, string )
 				 */
 				if (isProtected(runtime, candidate)) {
-					String tmp = "";
+					StringBuilder builder = new StringBuilder();
 					/*
 					 * method add cleaned token before detected candidate
 					 */
 					if (windowStart > 0) {
-						tmp += uriProtectionAlgorithm(runtime,
-								cleaned.substring(0, windowStart));
+						builder.append(uriProtectionAlgorithm(runtime, cleaned.substring(0, windowStart)));
 					}
-					tmp += WHITESPACE;
-					tmp += candidate;
-					tmp += WHITESPACE;
+					builder.append(WhiteSpace.TOKEN);
+					builder.append(candidate);
+					builder.append(WhiteSpace.TOKEN);
 					/*
 					 * method add cleaned token after detected candidate
 					 */
 					if (windowStart + windowSize < cleaned.length()) {
-						tmp += uriProtectionAlgorithm(runtime,
-								cleaned.substring(windowStart + windowSize));
+						builder.append(uriProtectionAlgorithm(runtime, cleaned.substring(windowStart + windowSize)));
 					}
-					return tmp;
+					return builder.toString();
 
 				}
 			}
@@ -297,8 +319,7 @@ public class TmqlQueryTransformer {
 	 * @param token
 	 *            the token to transform
 	 */
-	private static String transformSecure(final ITMQLRuntime runtime,
-			final String token) {
+	private static String transformSecure(final ITMQLRuntime runtime, final String token) {
 		String cleaned = new String(token);
 		/*
 		 * iterate over tokens
@@ -312,22 +333,22 @@ public class TmqlQueryTransformer {
 				/*
 				 * isolate a short element from given query
 				 */
-				String tmp = "";
+				String temporaryString;
 				if (index > 0) {
-					tmp = cleaned.substring(index - 1);
+					temporaryString = cleaned.substring(index - 1);
 				} else {
-					tmp = cleaned.substring(index);
-				}
-				if (tmp.length() > 4) {
-					tmp = tmp.substring(0, 4);
-				}
+					temporaryString = cleaned.substring(index);
+				}				
+				if (temporaryString.length() > 4) {
+					temporaryString = temporaryString.substring(0, 4);
+				} 
 				/*
 				 * check if isolated query part matches a protection of current
 				 * token
 				 */
 				boolean matches = false;
 				for (String pattern : entry.getValue()) {
-					if (tmp.contains(pattern)) {
+					if (temporaryString.contains(pattern)) {
 						matches = true;
 						break;
 					}
@@ -337,13 +358,14 @@ public class TmqlQueryTransformer {
 				 * white-spaces
 				 */
 				if (!matches) {
-					tmp = cleaned.substring(0, index);
-					tmp += WHITESPACE;
-					tmp += entry.getKey();
-					tmp += WHITESPACE;
-					tmp += cleaned.substring(index + entry.getKey().length());
+					StringBuilder builder = new StringBuilder();
+					builder.append(cleaned.substring(0, index));
+					builder.append(WhiteSpace.TOKEN);
+					builder.append(entry.getKey());
+					builder.append(WhiteSpace.TOKEN);
+					builder.append(cleaned.substring(index + entry.getKey().length()));
 					index += 2;
-					cleaned = tmp;
+					cleaned = builder.toString();
 				} else {
 					index += 3;
 				}
@@ -362,31 +384,27 @@ public class TmqlQueryTransformer {
 	 * @param token
 	 *            the token to transform
 	 */
-	private static String transformPatterns(final ITMQLRuntime runtime,
-			final String token) {
+	private static String transformPatterns(final ITMQLRuntime runtime, final String token) {
 		String cleaned = new String(token);
 
 		/*
 		 * protect strings
 		 */
-		if (token.length() > 2 && token.startsWith("\"")
-				&& token.endsWith("\"")) {
+		if (token.length() > 2 && token.startsWith(QUOTE) && token.endsWith(QUOTE)) {
 			return token;
 		}
 
 		/*
 		 * check protected strings with data-type
 		 */
-		if (token.length() > 2 && token.startsWith("\"")
-				&& token.contains("^^")) {
+		if (token.length() > 2 && token.startsWith(QUOTE) && token.contains(DATATYPE)) {
 			return token;
 		}
 
 		/*
 		 * save time and dateTime
 		 */
-		if (LiteralUtils.isDate(token) || LiteralUtils.isTime(token)
-				|| LiteralUtils.isDateTime(token)) {
+		if (LiteralUtils.isDate(token) || LiteralUtils.isTime(token) || LiteralUtils.isDateTime(token)) {
 			return token;
 		}
 
@@ -394,8 +412,7 @@ public class TmqlQueryTransformer {
 		 * isolate patterns using white-spaces
 		 */
 		for (String pattern : patterns) {
-			String tmp = cleaned.replaceAll("\\" + pattern, WHITESPACE + "\\"
-					+ pattern + WHITESPACE);
+			String tmp = cleaned.replaceAll(SLASH + pattern, WhiteSpace.TOKEN + SLASH + pattern + WhiteSpace.TOKEN);
 			cleaned = tmp;
 		}
 
@@ -413,17 +430,16 @@ public class TmqlQueryTransformer {
 	 * @return <code>true</code> if given token is an absolute or relative URI
 	 *         or a XML node, <code>false</code> otherwise
 	 */
-	private static boolean isProtected(final ITMQLRuntime runtime,
-			final String token) {
+	private static boolean isProtected(final ITMQLRuntime runtime, final String token) {
 
 		String uri = token;
 		/*
 		 * If token starts with < and ends with > and do not contain any
-		 * whitespace characters than it will be detect as URI or XML
+		 * WhiteSpace.TOKEN characters than it will be detect as URI or XML
 		 */
-		if (token.startsWith("<") && token.endsWith(">")) {
+		if (token.startsWith(TOKEN_IRI_START) && token.endsWith(TOKEN_IRI_END)) {
 			return true;
-		} else if (token.startsWith("\"") && token.endsWith("\"")) {
+		} else if (token.startsWith(QUOTE) && token.endsWith(QUOTE)) {
 			return true;
 		} else if (patterns.contains(token.trim())) {
 			return true;
@@ -450,14 +466,17 @@ public class TmqlQueryTransformer {
 		/*
 		 * try to replace all QNames
 		 */
-		StringTokenizer tokenizer = new StringTokenizer(token, ":");
-		uri = new String();
+		StringTokenizer tokenizer = new StringTokenizer(token, TOKEN_COLON);
+		StringBuilder builder = new StringBuilder();
 		while (tokenizer.hasMoreTokens()) {
 			String tok = tokenizer.nextToken();
 			if (handler.isKnownPrefix(tok)) {
-				uri += handler.getPrefix(tok);
+				builder.append(handler.getPrefix(tok));
 			} else {
-				uri += tok + (tokenizer.hasMoreTokens() ? ":" : "");
+				builder.append(tok);
+				if (tokenizer.hasMoreTokens()) {
+					builder.append(TOKEN_COLON);
+				}
 			}
 		}
 
@@ -465,7 +484,7 @@ public class TmqlQueryTransformer {
 		 * Check if given token is an relative URI
 		 */
 		try {
-			new URI(uri);
+			new URI(builder.toString());
 			return true;
 		} catch (URISyntaxException e) {
 			// non relative URI

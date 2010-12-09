@@ -149,6 +149,12 @@ public class TupleExpressionInterpreter extends ExpressionInterpreterImpl<TupleE
 				 * check if values are empty
 				 */
 				if (values.isEmpty()) {
+					/*
+					 * add null values only for multiple results
+					 */
+					if (content.length != 1) {
+						tuple.put("$" + index, null);
+					}
 					continue;
 				}
 				/*

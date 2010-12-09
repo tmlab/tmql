@@ -15,6 +15,11 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The topic axis returns all topics of a specific type
+ * @author Sven Krosse
+ *
+ */
 public class TopicAxis implements IAxis {
 
 	/**

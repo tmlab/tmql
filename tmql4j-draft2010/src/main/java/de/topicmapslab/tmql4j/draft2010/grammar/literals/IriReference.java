@@ -7,7 +7,12 @@ import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
-
+/**
+ * The literal class for IRI references
+ * 
+ * @author Sven Krosse
+ * 
+ */
 public class IriReference extends Literal {
 	/**
 	 * base constructor to create a new expression without sub-nodes

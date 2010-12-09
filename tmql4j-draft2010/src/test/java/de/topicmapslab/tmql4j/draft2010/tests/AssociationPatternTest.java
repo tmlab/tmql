@@ -13,8 +13,17 @@ import de.topicmapslab.tmql4j.components.processor.results.IResult;
 import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * Test class for association pattern
+ * @author Sven Krosse
+ *
+ */
 public class AssociationPatternTest extends Tmql4JTestCase {
 
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFullQualifiedAssociationPattern() throws Exception {
 		String query = null;
@@ -42,6 +51,10 @@ public class AssociationPatternTest extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 	}
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testAssociationPatternWithoutOtherRole() throws Exception {
 		String query = null;
@@ -68,6 +81,10 @@ public class AssociationPatternTest extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 	}
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testAssociationPatternWithoutRoles() throws Exception {
 		String query = null;
@@ -93,6 +110,10 @@ public class AssociationPatternTest extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 	}
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testEmptyAssociationPattern() throws Exception {
 		String query = null;

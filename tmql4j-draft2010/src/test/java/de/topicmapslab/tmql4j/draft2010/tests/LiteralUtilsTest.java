@@ -8,8 +8,16 @@ import org.junit.Test;
 
 import de.topicmapslab.tmql4j.util.HashUtil;
 import de.topicmapslab.tmql4j.util.LiteralUtils;
-
+/**
+ * Test method of {@link LiteralUtils}
+ * @author Sven Krosse
+ *
+ */
 public class LiteralUtilsTest extends Tmql4JTestCase {
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testIntegerLiteral() throws Exception {
 		final Set<String> literals = HashUtil.getHashSet();
@@ -21,7 +29,10 @@ public class LiteralUtilsTest extends Tmql4JTestCase {
 			Assert.assertEquals(true, LiteralUtils.isInteger(literal));
 		}
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testDecimalLiteral() throws Exception {
 		final Set<String> literals = HashUtil.getHashSet();
@@ -37,6 +48,10 @@ public class LiteralUtilsTest extends Tmql4JTestCase {
 			Assert.assertEquals(true, LiteralUtils.isDecimal(literal));
 		}
 	}
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testTimeLiteral() throws Exception {
 		final Set<String> literals = HashUtil.getHashSet();
@@ -48,6 +63,10 @@ public class LiteralUtilsTest extends Tmql4JTestCase {
 			Assert.assertEquals(true, LiteralUtils.isTime(literal));
 		}
 	}
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testDateLiteral() throws Exception {
 		final Set<String> literals = HashUtil.getHashSet();
@@ -60,6 +79,10 @@ public class LiteralUtilsTest extends Tmql4JTestCase {
 			Assert.assertEquals(true, LiteralUtils.isDate(literal));
 		}
 	}
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testDateTimeLiteral() throws Exception {
 		final Set<String> literals = HashUtil.getHashSet();
@@ -71,6 +94,10 @@ public class LiteralUtilsTest extends Tmql4JTestCase {
 			Assert.assertEquals(true, LiteralUtils.isDateTime(literal));
 		}
 	}
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testStringLiteral() throws Exception {
 		final Set<String> literals = HashUtil.getHashSet();

@@ -10,6 +10,7 @@
  */
 package de.topicmapslab.tmql4j.flwr.components.interpreter;
 
+import java.math.BigInteger;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -23,6 +24,8 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.FlwrExpression;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.ForClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.GroupByClause;
+import de.topicmapslab.tmql4j.flwr.grammar.productions.LimitClause;
+import de.topicmapslab.tmql4j.flwr.grammar.productions.OffsetClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.OrderByClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.ReturnClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.WhereClause;
@@ -93,6 +96,26 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 		 * execute return clause
 		 */
 		QueryMatches matches = interpretReturnClause(runtime, newContext, optionalArguments);
+		if (matches.isEmpty()) {
+			return QueryMatches.emptyMatches();
+		}
+
+		/*
+		 * get limit value of limit-clause if exists
+		 */
+		long limit = -1;
+		if (containsExpressionsType(LimitClause.class)) {
+			limit = interpretLimitClause(runtime, newContext, optionalArguments);
+		}
+
+		/*
+		 * get offset value of offset-clause if exists
+		 */
+		long offset = 0;
+		if (containsExpressionsType(OffsetClause.class)) {
+			offset = interpretOffsetClause(runtime, newContext, optionalArguments);
+		}
+
 		/*
 		 * check if group-by clause exists
 		 */
@@ -102,9 +125,9 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 			if (results.isEmpty()) {
 				return QueryMatches.emptyMatches();
 			}
-			return results;
+			matches = results;
 		}
-		return matches;
+		return interpretSelectionWindow(matches, limit, offset);
 	}
 
 	/**
@@ -228,7 +251,6 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 		/*
 		 * call where-clause
 		 */
-		// TODO use for iteration results as iteration bindings
 		Context newContext = new Context(context);
 		// newContext.setContextBindings(null);
 		QueryMatches matches = whereClause.interpret(runtime, newContext, optionalArguments);
@@ -297,5 +319,80 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 		 */
 		QueryMatches[] bindings = extractArguments(runtime, ForClause.class, context, optionalArguments);
 		return new QueryMatches(runtime, bindings);
+	}
+
+	/**
+	 * Internal method to interpret the contained limit-clause if exists. The
+	 * limit-clause define the number of maximum results contained in the
+	 * overall results of this select-expression.
+	 * 
+	 * @param runtime
+	 *            the TMQL4J runtime
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the limit defined by the limit-clause or -1 if limit-clause is
+	 *         missing.
+	 * @throws TMQLRuntimeException
+	 *             thrown if interpretation fails
+	 */
+	private long interpretLimitClause(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		BigInteger limit = getInterpretersFilteredByEypressionType(runtime, LimitClause.class).get(0).interpret(runtime, context, optionalArguments);
+		return limit.longValue();
+	}
+
+	/**
+	 * Internal method to interpret the contained offset-clause if exists. The
+	 * offset-clause define the first index of the selection window which will
+	 * be used to extract the value from the overall results of this
+	 * select-expression.
+	 * 
+	 * @param runtime
+	 *            the TMQL4J runtime
+	 * @param context
+	 *            the current querying context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the offset defined by the offset-clause or 0 if offset-clause is
+	 *         missing.
+	 * @throws TMQLRuntimeException
+	 *             thrown if interpretation fails
+	 */
+	private long interpretOffsetClause(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		BigInteger limit = getInterpretersFilteredByEypressionType(runtime, OffsetClause.class).get(0).interpret(runtime, context, optionalArguments);
+		return limit.longValue();
+	}
+
+	/**
+	 * Internal method to extract the selection window from the over all results
+	 * defined by the limit- and offset-clause.
+	 * 
+	 * @param matches
+	 *            the over all results of the select-clause
+	 * @param limit
+	 *            the limit value defined by limit-clause
+	 * @param offset
+	 *            the offset value defined by offset-clause
+	 * @return the new matches containing only the tuples of the selection
+	 *         window
+	 * @throws TMQLRuntimeException
+	 *             thrown if indexes are invalid
+	 */
+	private QueryMatches interpretSelectionWindow(QueryMatches matches, long limit, long offset) throws TMQLRuntimeException {
+		if (limit == -1) {
+			if (offset == -1) {
+				return matches;
+			} else {
+				limit = matches.size();
+			}
+		}
+		if (offset == -1) {
+			offset = 0;
+		}
+		/*
+		 * redirect to QueryMatches
+		 */
+		return matches.select(offset, offset + limit);
 	}
 }

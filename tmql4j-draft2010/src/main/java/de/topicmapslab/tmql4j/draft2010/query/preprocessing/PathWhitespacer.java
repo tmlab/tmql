@@ -3,8 +3,22 @@ package de.topicmapslab.tmql4j.draft2010.query.preprocessing;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.DoubleColon;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.WhiteSpace;
 
+/**
+ * The draft 2010 whitespacer
+ * 
+ * @author Sven Krosse
+ * 
+ */
 public class PathWhitespacer {
 
+	/**
+	 * Method add optional white spaces between known tokens and return multiple
+	 * instances of white spaces.
+	 * 
+	 * @param query
+	 *            the query to transform
+	 * @return the transformed query
+	 */
 	public static String whitespace(final String query) {
 		StringBuilder builder = new StringBuilder();
 

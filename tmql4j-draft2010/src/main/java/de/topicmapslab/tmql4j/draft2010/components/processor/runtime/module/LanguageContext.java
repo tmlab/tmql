@@ -8,8 +8,6 @@
  */
 package de.topicmapslab.tmql4j.draft2010.components.processor.runtime.module;
 
-import java.util.Set;
-
 import de.topicmapslab.tmql4j.components.processor.runtime.ILanguageContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.FunctionRegistryImpl;
@@ -20,15 +18,15 @@ import de.topicmapslab.tmql4j.components.processor.runtime.module.model.IFunctio
 import de.topicmapslab.tmql4j.components.processor.runtime.module.model.IInterpreterRegistry;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.model.ITokenRegistry;
 import de.topicmapslab.tmql4j.exception.TMQLInitializationException;
-import de.topicmapslab.tmql4j.grammar.productions.IExpression;
-import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The language context encapsulates language specific items, like tokens,
+ * functions, prefixes or interpreters.
+ * 
+ * @author Sven Krosse
+ * 
+ */
 public class LanguageContext implements ILanguageContext {
-
-	/**
-	 * a set containing all allowed expression types
-	 */
-	private final Set<Class<? extends IExpression>> allowedExpressionTypes;
 
 	/**
 	 * the function register
@@ -60,7 +58,6 @@ public class LanguageContext implements ILanguageContext {
 		this.prefixHandler = new PrefixHandler();
 		this.tokenRegistry = new TokenRegistry(runtime);
 		this.interpreterRegistry = new InterpreterRegistry();
-		this.allowedExpressionTypes = HashUtil.getHashSet();
 	}
 
 	/**
@@ -89,12 +86,5 @@ public class LanguageContext implements ILanguageContext {
 	 */
 	public IInterpreterRegistry getInterpreterRegistry() {
 		return interpreterRegistry;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public Set<Class<? extends IExpression>> getAllowedExpressionTypes() {
-		return allowedExpressionTypes;
 	}
 }

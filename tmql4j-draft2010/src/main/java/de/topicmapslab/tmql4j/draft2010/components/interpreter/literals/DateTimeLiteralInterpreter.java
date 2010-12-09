@@ -23,7 +23,9 @@ import de.topicmapslab.tmql4j.util.LiteralUtils;
  * 
  */
 public class DateTimeLiteralInterpreter extends ExpressionInterpreterImpl<DateTimeLiteral> {
-
+	/**
+	 * the logger
+	 */
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**

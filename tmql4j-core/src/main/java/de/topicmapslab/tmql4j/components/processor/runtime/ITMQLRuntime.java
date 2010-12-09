@@ -37,8 +37,7 @@ public interface ITMQLRuntime {
 	/**
 	 * Execution method of the TMQL runtime. <br />
 	 * <br />
-	 * Method starts the execution of the encapsulated processing chain and
-	 * store the total execution time.
+	 *  Method starts the execution of the given query.
 	 * 
 	 * @param query
 	 *            the query to execute

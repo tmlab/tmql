@@ -22,8 +22,17 @@ import de.topicmapslab.tmql4j.query.IQuery;
 import de.topicmapslab.tmql4j.query.IQueryProcessor;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The query processor of TMQL draft 2010
+ * 
+ * @author Sven Krosse
+ * 
+ */
 public class TMQLQueryProcessor implements IQueryProcessor {
 
+	/**
+	 * the queries cache
+	 */
 	private final Map<String, TMQLQuery> queries;
 
 	/**

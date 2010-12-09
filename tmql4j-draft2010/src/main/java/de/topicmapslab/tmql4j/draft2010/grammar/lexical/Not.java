@@ -12,13 +12,23 @@ package de.topicmapslab.tmql4j.draft2010.grammar.lexical;
 
 import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
+/**
+ * The token of the boolean negation NOT
+ * @author Sven Krosse
+ *
+ */
 public class Not extends Token {
+
+	/**
+	 * thet token
+	 */
+	private static final String TOKEN = "NOT";
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "NOT";
+		return TOKEN;
 	}
 
 }

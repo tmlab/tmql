@@ -16,6 +16,11 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The association navigation axis returns all associations of a specific type
+ * @author Sven Krosse
+ *
+ */
 public class AssociationAxis implements IAxis {
 	/**
 	 * {@inheritDoc}

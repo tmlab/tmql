@@ -14,8 +14,10 @@ import java.math.BigInteger;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.select.grammar.productions.OffsetClause;
 
 /**
@@ -51,6 +53,10 @@ public class OffsetClauseInterpreter extends ExpressionInterpreterImpl<OffsetCla
 	 */
 	@SuppressWarnings("unchecked")
 	public BigInteger interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		if ( containsExpressionsType(PreparedExpression.class)){
+			QueryMatches matches = getInterpretersFilteredByEypressionType(runtime, PreparedExpression.class).get(0).interpret(runtime, context, optionalArguments);
+			return new BigInteger(matches.getFirstValue().toString());
+		}
 		return new BigInteger(getTokens().get(1));
 	}
 

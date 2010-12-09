@@ -13,21 +13,31 @@ package de.topicmapslab.tmql4j.draft2010.grammar.lexical;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
+/**
+ * The token of the boolean disjunction OR
+ * @author Sven Krosse
+ *
+ */
 public class Or extends Token {
+
+	/**
+	 * the token
+	 */
+	private static final String TOKEN = "OR";
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean isToken(ITMQLRuntime runtime, String literal) {		
-		return literal.equalsIgnoreCase("OR") || literal.equalsIgnoreCase("|");
+		return literal.equalsIgnoreCase(TOKEN);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "OR";
+		return TOKEN;
 	}
 
 }

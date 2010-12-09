@@ -13,9 +13,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.util.CollectionsUtility;
 import de.topicmapslab.tmql4j.util.HashUtil;
@@ -25,10 +22,6 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  * 
  */
 public class ProjectionUtils {
-	/**
-	 * the Logger
-	 */
-	private static Logger logger = LoggerFactory.getLogger(ProjectionUtils.class.getSimpleName());
 
 	/**
 	 * Utility method to create a set of result tuples from the given query
@@ -95,10 +88,11 @@ public class ProjectionUtils {
 		keys_.remove(key);
 
 		Object value = tuple.get(key);
-		if (value == null) {
-			logger.warn("Missing value for key " + key + ". Tuple will be ignored");
-			return;
-		}
+		// if (value == null) {
+		// logger.warn("Missing value for key " + key +
+		// ". Tuple will be ignored");
+		// return;
+		// }
 
 		/*
 		 * value is a collection
@@ -168,10 +162,11 @@ public class ProjectionUtils {
 		keys_.remove(key);
 
 		Object value = tuple.get(key);
-		if (value == null) {
-			logger.warn("Missing value for key " + key + ". Tuple will be ignored");
-			return;
-		}
+		// if (value == null) {
+		// logger.warn("Missing value for key " + key +
+		// ". Tuple will be ignored");
+		// return;
+		// }
 
 		/*
 		 * value is a collection

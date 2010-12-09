@@ -16,9 +16,11 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.grammar.lexical.Placeholder;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
-import de.topicmapslab.tmql4j.select.grammar.lexical.Offset;
+import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Offset;
 import de.topicmapslab.tmql4j.util.LiteralUtils;
 
 /*
@@ -61,6 +63,9 @@ public class OffsetClause extends ExpressionImpl {
 	public OffsetClause(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 		setGrammarType(0);
+		if ( tmqlTokens.contains(Placeholder.class)){
+			checkForExtensions(PreparedExpression.class, tmqlTokens.subList(1, 2), tokens.subList(1, 2), runtime);
+		}
 	}
 
 	/**
@@ -72,7 +77,7 @@ public class OffsetClause extends ExpressionImpl {
 		 * expects exactly two tokens beginning with the keyword OFFSET and an
 		 * integer value
 		 */
-		return getTmqlTokens().size() == 2 && getTmqlTokens().get(0).equals(Offset.class) && LiteralUtils.isInteger(getTokens().get(1));
+		return getTmqlTokens().size() == 2 && getTmqlTokens().get(0).equals(Offset.class) && ( getTmqlTokens().get(1).equals(Placeholder.class) || LiteralUtils.isInteger(getTokens().get(1)));
 	}
 
 }

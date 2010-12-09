@@ -8,7 +8,7 @@ import de.topicmapslab.tmql4j.components.parser.IParserUtilsCallback;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.draft2010.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Intersect;
-import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Substraction;
+import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Subtraction;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Union;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
@@ -26,6 +26,9 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  */
 public class SetExpression extends ExpressionImpl {
 
+	/**
+	 * the operators
+	 */
 	private List<Class<? extends IToken>> operators = new LinkedList<Class<? extends IToken>>();
 
 	/**
@@ -66,7 +69,7 @@ public class SetExpression extends ExpressionImpl {
 		Set<Class<? extends IToken>> delimers = HashUtil.getHashSet();
 		delimers.add(Union.class);
 		delimers.add(Intersect.class);
-		delimers.add(Substraction.class);
+		delimers.add(Subtraction.class);
 
 		/*
 		 * split language-specific tokens by using delimers
@@ -74,6 +77,10 @@ public class SetExpression extends ExpressionImpl {
 		ParserUtils.split(callback, tmqlTokens, tokens, delimers, true);
 	}
 
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
 	public boolean isValid() {
 		return true;
 	}

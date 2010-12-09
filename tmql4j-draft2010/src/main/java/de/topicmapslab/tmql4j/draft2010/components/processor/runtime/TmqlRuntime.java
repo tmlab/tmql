@@ -16,6 +16,7 @@ import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.IConstructResolver;
 import de.topicmapslab.tmql4j.components.processor.runtime.ILanguageContext;
+import de.topicmapslab.tmql4j.components.processor.runtime.TMQLRuntimeFactory;
 import de.topicmapslab.tmql4j.components.processor.runtime.TmqlConstructResolver;
 import de.topicmapslab.tmql4j.components.processor.runtime.TmqlRuntimeImpl;
 import de.topicmapslab.tmql4j.draft2010.components.processor.TmqlProcessor;
@@ -34,9 +35,19 @@ import de.topicmapslab.tmql4j.query.IQuery;
  */
 public class TmqlRuntime extends TmqlRuntimeImpl {
 
+	/**
+	 * Name of the language handled by this runtime. This argument should be
+	 * used for {@link TMQLRuntimeFactory#newRuntime(TopicMapSystem, String)}
+	 */
 	public static final String TMQL_2010 = "TMQL-2010";
 
+	/**
+	 * the extension point adapter
+	 */
 	private final IExtensionPointAdapter extensionPointAdapter;
+	/**
+	 * the construct resolver
+	 */
 	private final IConstructResolver constructResolver;
 
 	/**

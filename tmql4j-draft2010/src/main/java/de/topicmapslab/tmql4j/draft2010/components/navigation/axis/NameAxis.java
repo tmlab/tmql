@@ -14,6 +14,11 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The name axis returns all names of a topic
+ * @author Sven Krosse
+ *
+ */
 public class NameAxis implements IAxis {
 
 	/**

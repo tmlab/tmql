@@ -1188,8 +1188,8 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 	/**
 	 * Store a new mapping between the given keys
 	 * 
-	 * @param origins
-	 *            the origins to set
+	 * @param origin
+	 *            the origins to set @
 	 */
 	public void addOrigin(final String origin, final String mapping) {
 		if (this.origins == null) {
@@ -1323,7 +1323,7 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 		 * store projections for a specific key
 		 */
 		Map<Map<String, Object>, Map<String, Object>> projections = HashUtil.getHashMap();
-		
+
 		/*
 		 * iterate over content
 		 */
@@ -1349,16 +1349,39 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 			 */
 			for (String variable : tuple.keySet()) {
 				if (!variables.contains(variable)) {
-					Collection<Object> values = (Collection<Object>) projection.get(variable);
-					if (values == null) {
-						values = HashUtil.getList();
-						projection.put(variable, values);
-					}
 					Object value = tuple.get(variable);
-					if ( !values.contains(value)){						
-						values.add(value);
+					Collection<Object> values = (Collection<Object>) projection.get(variable);
+					/*
+					 * if value is null
+					 */
+					if (value == null) {
+						/*
+						 * if no other value for projection exists add null
+						 * value
+						 */
+						if (values == null) {
+							projection.put(variable, null);
+						}
 					}
-					
+					/*
+					 * value is not null
+					 */
+					else {
+						/*
+						 * create collection if not exists
+						 */
+						if (values == null) {
+							values = HashUtil.getList();
+							projection.put(variable, values);
+						}
+						/*
+						 * add value if not already contained
+						 */
+						if (!values.contains(value)) {
+							values.add(value);
+						}
+					}
+
 				}
 			}
 		}

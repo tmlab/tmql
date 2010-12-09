@@ -16,9 +16,11 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.grammar.lexical.Placeholder;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
-import de.topicmapslab.tmql4j.select.grammar.lexical.Limit;
+import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Limit;
 import de.topicmapslab.tmql4j.util.LiteralUtils;
 
 /*
@@ -62,6 +64,9 @@ public class LimitClause extends ExpressionImpl {
 			TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 		setGrammarType(0);
+		if ( tmqlTokens.contains(Placeholder.class)){
+			checkForExtensions(PreparedExpression.class, tmqlTokens.subList(1, 2), tokens.subList(1, 2), runtime);
+		}
 	}
 
 	/**
@@ -75,7 +80,7 @@ public class LimitClause extends ExpressionImpl {
 		 */
 		return getTmqlTokens().size() == 2
 				&& getTmqlTokens().get(0).equals(Limit.class)
-				&& LiteralUtils.isInteger(getTokens().get(1));
+				&& ( getTmqlTokens().get(1).equals(Placeholder.class) || LiteralUtils.isInteger(getTokens().get(1)));
 	}
 
 }

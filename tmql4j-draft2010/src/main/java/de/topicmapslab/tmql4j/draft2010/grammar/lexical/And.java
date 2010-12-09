@@ -13,21 +13,31 @@ package de.topicmapslab.tmql4j.draft2010.grammar.lexical;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
+/**
+ * The conjunction token AND
+ * @author Sven Krosse
+ *
+ */
 public class And extends Token {
+
+	/**
+	 * the token
+	 */
+	private static final String TOKEN = "AND";
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean isToken(ITMQLRuntime runtime, String literal) {		
-		return literal.equalsIgnoreCase("AND") || literal.equalsIgnoreCase("&");
+		return literal.equalsIgnoreCase(TOKEN);
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "AND";
+		return TOKEN;
 	}
 
 }

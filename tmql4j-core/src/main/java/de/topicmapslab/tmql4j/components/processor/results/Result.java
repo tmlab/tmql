@@ -10,9 +10,9 @@
  */
 package de.topicmapslab.tmql4j.components.processor.results;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -48,7 +48,7 @@ public abstract class Result implements IResult {
 		/*
 		 * create result list
 		 */
-		this.results = new LinkedList<Object>();
+		this.results = new ArrayList<Object>();
 
 		/*
 		 * create iterator instance
@@ -93,9 +93,7 @@ public abstract class Result implements IResult {
 	 * {@inheritDoc}
 	 */
 	public void add(Object value) {
-		if ( value != null ){
-			this.results.add(value);
-		}
+		this.results.add(value);
 	}
 
 	/**
@@ -140,11 +138,13 @@ public abstract class Result implements IResult {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("[");
-		Iterator<Object> iterator = iterator();
-		while (iterator.hasNext()) {
-			Object obj = iterator.next();
-			builder.append((obj==null?"":obj.toString())
-					+ (iterator.hasNext() ? ", " : ""));
+		boolean first = true;
+		for (Object obj : getResults()) {			
+			if ( !first){
+				builder.append(", ");
+			}
+			builder.append((obj==null?"null":obj.toString()));
+			first = false;
 		}
 		builder.append("]");
 		return builder.toString();
@@ -178,6 +178,14 @@ public abstract class Result implements IResult {
 			throw new IndexOutOfBoundsException("Result does not contains an element at position '"+ index + "'.");
 		}
 		return (T) getResults().get(index);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isNullValue(int index) {
+		Object value = get(index);
+		return value == null;
 	}
 
 }

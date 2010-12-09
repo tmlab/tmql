@@ -10,7 +10,7 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Intersect;
-import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Substraction;
+import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Subtraction;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Union;
 import de.topicmapslab.tmql4j.draft2010.grammar.productions.SetExpression;
 import de.topicmapslab.tmql4j.draft2010.util.QueryMatchUtils;
@@ -26,7 +26,9 @@ import de.topicmapslab.tmql4j.grammar.lexical.IToken;
  * 
  */
 public class SetExpressionInterpreter extends ExpressionInterpreterImpl<SetExpression> {
-
+	/**
+	 * the logger
+	 */
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**
@@ -63,7 +65,7 @@ public class SetExpressionInterpreter extends ExpressionInterpreterImpl<SetExpre
 			 */
 			if (operator.equals(Union.class)) {
 				leftHand = QueryMatchUtils.union(runtime, leftHand, arguments[index]);
-			} else if (operator.equals(Substraction.class)) {
+			} else if (operator.equals(Subtraction.class)) {
 				leftHand = QueryMatchUtils.minus(runtime, leftHand, arguments[index]);
 			} else if (operator.equals(Intersect.class)) {
 				leftHand = QueryMatchUtils.intersect(runtime, leftHand, arguments[index]);

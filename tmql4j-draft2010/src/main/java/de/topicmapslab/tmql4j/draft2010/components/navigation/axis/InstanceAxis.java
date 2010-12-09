@@ -14,6 +14,11 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The instance axis returns all instances ( transitive ) of the given topic type
+ * @author Sven Krosse
+ *
+ */
 public class InstanceAxis implements IAxis {
 
 	/**

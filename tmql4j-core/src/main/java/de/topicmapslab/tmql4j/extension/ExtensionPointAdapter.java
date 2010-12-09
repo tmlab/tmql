@@ -153,7 +153,7 @@ public class ExtensionPointAdapter implements IExtensionPointAdapter {
 			 */
 			for (String extensionPointId : disabledExtensionPoints) {
 				/*
-				 * extract language extensions of the diables extension point
+				 * extract language extensions of the disables extension point
 				 */
 				Set<ILanguageExtension> tmp = getLanguageExtensions(extensionPoints.get(extensionPointId));
 				if (tmp != null) {

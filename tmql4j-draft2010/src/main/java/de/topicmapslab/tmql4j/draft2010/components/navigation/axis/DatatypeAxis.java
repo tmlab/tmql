@@ -13,6 +13,11 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
+/**
+ * The datatype navigation axis returns the datatype of a variant or occurrence
+ * @author Sven Krosse
+ *
+ */
 public class DatatypeAxis implements IAxis {
 
 	/**

@@ -19,6 +19,8 @@ import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.extension.ILanguageExtension;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Limit;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Offset;
 import de.topicmapslab.tmql4j.select.components.interpreter.FromClauseInterpreter;
 import de.topicmapslab.tmql4j.select.components.interpreter.GroupByClauseInterpreter;
 import de.topicmapslab.tmql4j.select.components.interpreter.LimitClauseInterpreter;
@@ -29,8 +31,6 @@ import de.topicmapslab.tmql4j.select.components.interpreter.SelectClauseInterpre
 import de.topicmapslab.tmql4j.select.components.interpreter.SelectExpressionInterpreter;
 import de.topicmapslab.tmql4j.select.components.interpreter.WhereClauseInterpreter;
 import de.topicmapslab.tmql4j.select.grammar.lexical.From;
-import de.topicmapslab.tmql4j.select.grammar.lexical.Limit;
-import de.topicmapslab.tmql4j.select.grammar.lexical.Offset;
 import de.topicmapslab.tmql4j.select.grammar.lexical.Select;
 import de.topicmapslab.tmql4j.select.grammar.lexical.Unique;
 import de.topicmapslab.tmql4j.select.grammar.productions.FromClause;

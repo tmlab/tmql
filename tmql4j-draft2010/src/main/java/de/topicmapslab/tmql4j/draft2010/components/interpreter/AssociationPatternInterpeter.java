@@ -33,6 +33,9 @@ import de.topicmapslab.tmql4j.util.LiteralUtils;
  */
 public class AssociationPatternInterpeter extends ExpressionInterpreterImpl<AssociationPattern> {
 
+	/**
+	 * the logger
+	 */
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**

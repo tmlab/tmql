@@ -139,6 +139,20 @@ public interface IResultSet<T extends IResult> extends Iterable<T> {
 	public <R extends Object> R get(int rowIndex, int colIndex);
 
 	/**
+	 * Checks if the value at the given cell position is <code>null</code>
+	 * 
+	 * @param rowIndex
+	 *            the row index
+	 * @param colIndex
+	 *            the column index
+	 * @return <code>true</code> if the value is <code>null</code>,
+	 *         <code>false</code> otherwise
+	 * @throws IndexOutOfBoundsException
+	 *             thrown if index is out of bounds
+	 */
+	public boolean isNullValue(int rowIndex, int colIndex);
+
+	/**
 	 * Method returns if the number of results is 0
 	 * 
 	 * @return <code>true</code> if the result set is empty, <code>false</code>
@@ -158,7 +172,7 @@ public interface IResultSet<T extends IResult> extends Iterable<T> {
 	 * @return a list of all results.
 	 */
 	public List<T> getResults();
-	
+
 	/**
 	 * Removes duplicates from the internal result set
 	 */

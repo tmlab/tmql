@@ -23,7 +23,13 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  */
 public class PathExpression extends ExpressionImpl {
 
+	/**
+	 * type simple expression
+	 */
 	public static final int TYPE_SIMPLEEXPRESSION = 0;
+	/**
+	 * type navigation
+	 */
 	public static final int TYPE_PATHSTEPS = 1;
 
 	/**

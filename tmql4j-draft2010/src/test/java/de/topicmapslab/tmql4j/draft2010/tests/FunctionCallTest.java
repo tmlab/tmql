@@ -18,8 +18,17 @@ import org.tmapi.core.Variant;
 import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
-public class FunctionCallTest extends Tmql4JTestCase {
 
+/**
+ * Test class of function call
+ * @author Sven Krosse
+ *
+ */
+public class FunctionCallTest extends Tmql4JTestCase {
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionTopicmap() throws Exception {
 		String query = null;
@@ -31,7 +40,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertEquals(1, set.first().size());
 		assertEquals(topicMap, set.first().first());
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionCount() throws Exception {
 		Topic topic = createTopicBySI("myType");
@@ -53,7 +65,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertEquals(topics.size(),
 				((BigInteger) set.first().first()).longValue());
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionBoolean() throws Exception {
 		String query = null;
@@ -73,7 +88,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof Boolean);
 		assertEquals(false, ((Boolean) set.first().first()).booleanValue());
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionString() throws Exception {
 		Topic topic = createTopicBySI("myType");
@@ -125,7 +143,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof String);
 		assertEquals(v.getValue(), set.first().first());
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionNumber() throws Exception {
 		createTopicBySI("myType");
@@ -173,7 +194,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertEquals(1234.1, ((BigDecimal) set.first().first()).doubleValue(),
 				0);
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionRound() throws Exception {
 		createTopicBySI("myType");
@@ -205,7 +229,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof BigInteger);
 		assertEquals(2, ((BigInteger) set.first().first()).longValue());
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionCeiling() throws Exception {
 		createTopicBySI("myType");
@@ -237,7 +264,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof BigInteger);
 		assertEquals(-2, ((BigInteger) set.first().first()).longValue());
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionFloor() throws Exception {
 		createTopicBySI("myType");
@@ -269,7 +299,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof BigInteger);
 		assertEquals(-3, ((BigInteger) set.first().first()).longValue());
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionStringLength() throws Exception {
 		Topic topic = createTopicBySI("myType");
@@ -314,7 +347,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertEquals(5, ((BigInteger) set.first().first()).longValue());
 
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionNormalizeSpace() throws Exception {
 		Topic topic = createTopicBySI("myType");
@@ -358,7 +394,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue("abc dg".equalsIgnoreCase(((String) set.first().first())));
 
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionFind() throws Exception {
 		Topic topic = createTopicBySI("myType");
@@ -390,7 +429,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 				.first()).longValue());
 
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionConcat() throws Exception {
 		Topic topic = createTopicBySI("myType");
@@ -442,7 +484,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertEquals(o.getValue() + "si:", set.first().first());
 
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionContains() throws Exception {
 		Topic topic = createTopicBySI("myType");
@@ -474,7 +519,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof Boolean);
 		assertTrue(((Boolean) set.first().first()).booleanValue());
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionStartsWith() throws Exception {
 		Topic topic = createTopicBySI("myType");
@@ -504,7 +552,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof Boolean);
 		assertTrue(((Boolean) set.first().first()).booleanValue());
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionEndsWith() throws Exception {
 		Topic topic = createTopicBySI("myType");
@@ -534,7 +585,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof Boolean);
 		assertTrue(((Boolean) set.first().first()).booleanValue());
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionSubstring() throws Exception {
 		Topic topic = createTopicBySI("myType");
@@ -583,7 +637,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof String);
 		Assert.assertTrue("abcd".equalsIgnoreCase((String) set.first().first()));
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionSubstringBefore() throws Exception {
 		Topic topic = createTopicBySI("myType");
@@ -623,7 +680,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof String);
 		Assert.assertTrue("".equalsIgnoreCase((String) set.first().first()));
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionSubstringAfter() throws Exception {
 		Topic topic = createTopicBySI("myType");
@@ -664,7 +724,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof String);
 		Assert.assertTrue("".equalsIgnoreCase((String) set.first().first()));
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionMatchesRegexp() throws Exception {
 		Topic topic = createTopicBySI("myType");
@@ -703,7 +766,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof Boolean);
 		assertTrue(((Boolean) set.first().first()).booleanValue());
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionExtractRegexp() throws Exception {
 		Topic topic = createTopicBySI("myType");		
@@ -749,7 +815,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		Assert.assertTrue("foo bar".equalsIgnoreCase((String) set.first()
 				.first()));
 	}
-
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testFunctionTranslate() throws Exception {
 		Topic topic = createTopicBySI("myType");

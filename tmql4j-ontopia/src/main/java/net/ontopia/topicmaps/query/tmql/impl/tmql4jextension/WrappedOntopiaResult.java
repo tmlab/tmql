@@ -226,4 +226,12 @@ public class WrappedOntopiaResult implements IResult {
 	public void setTopicMapId(String topicMapId) {
 		this.topicMapId = topicMapId;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isNullValue(int index) {
+		Object obj = getValue(index);
+		return obj == null;
+	}
 }

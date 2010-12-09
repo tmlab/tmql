@@ -12,13 +12,23 @@ package de.topicmapslab.tmql4j.draft2010.grammar.lexical;
 
 import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
+/**
+ * The reifier axis token
+ * @author Sven Krosse
+ *
+ */
 public class AxisReifier extends Token {
+
+	/**
+	 * the token
+	 */
+	private static final String TOKEN = "reifier";
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "reifier";
+		return TOKEN;
 	}
 
 }

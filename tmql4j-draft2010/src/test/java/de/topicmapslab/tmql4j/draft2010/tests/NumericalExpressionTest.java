@@ -8,8 +8,17 @@ import org.junit.Test;
 
 import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 
+/**
+ * Test class of numerical expression
+ * @author Sven Krosse
+ *
+ */
 public class NumericalExpressionTest extends Tmql4JTestCase {
-	
+
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testAddition() throws Exception {
 		String query = null;
@@ -49,6 +58,10 @@ public class NumericalExpressionTest extends Tmql4JTestCase {
 		Assert.assertEquals(113.5, ((BigDecimal) set.first().first())
 				.doubleValue(), 0.0);
 	}
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testSubtraction() throws Exception {
 		String query = null;
@@ -88,6 +101,10 @@ public class NumericalExpressionTest extends Tmql4JTestCase {
 		Assert.assertEquals(86.5, ((BigDecimal) set.first().first())
 				.doubleValue(), 0.0);
 	}
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testMultiplication() throws Exception {
 		String query = null;
@@ -128,6 +145,10 @@ public class NumericalExpressionTest extends Tmql4JTestCase {
 		Assert.assertEquals(300.0, ((BigDecimal) set.first().first())
 				.doubleValue(), 0.0);
 	}
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testDivision() throws Exception {
 		String query = null;
@@ -168,6 +189,10 @@ public class NumericalExpressionTest extends Tmql4JTestCase {
 		Assert.assertEquals(10.0, ((BigDecimal) set.first().first())
 				.doubleValue(), 0.0);
 	}
+	/**
+	 * TEST METHOD
+	 * @throws Exception
+	 */
 	@Test
 	public void testModulo() throws Exception {
 		String query = null;

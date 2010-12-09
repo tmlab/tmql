@@ -22,7 +22,9 @@ import de.topicmapslab.tmql4j.util.LiteralUtils;
  * 
  */
 public class DateLiteralInterpreter extends ExpressionInterpreterImpl<DateLiteral> {
-
+	/**
+	 * the logger
+	 */
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**

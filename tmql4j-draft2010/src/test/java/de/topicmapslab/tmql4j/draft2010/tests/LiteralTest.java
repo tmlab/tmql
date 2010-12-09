@@ -14,8 +14,17 @@ import org.junit.Test;
 
 import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 
+/**
+ * Test class of literals
+ * 
+ * @author Sven Krosse
+ * 
+ */
 public class LiteralTest extends Tmql4JTestCase {
 
+	/**
+	 * integer values
+	 */
 	private static final List<String> integers = new LinkedList<String>();
 	static {
 		integers.add("1");
@@ -25,6 +34,9 @@ public class LiteralTest extends Tmql4JTestCase {
 		integers.add(String.valueOf(Integer.MIN_VALUE));
 	}
 
+	/**
+	 * decimal values
+	 */
 	private static final List<String> decimals = new LinkedList<String>();
 	static {
 		decimals.add("1.125");
@@ -34,6 +46,9 @@ public class LiteralTest extends Tmql4JTestCase {
 		decimals.add(String.valueOf(Double.MIN_VALUE));
 	}
 
+	/**
+	 * dates
+	 */
 	private static final List<String> dates = new LinkedList<String>();
 	static {
 		dates.add("2009-12-05");
@@ -41,6 +56,9 @@ public class LiteralTest extends Tmql4JTestCase {
 		dates.add("20009-01-05");
 	}
 
+	/**
+	 * times
+	 */
 	private static final List<String> times = new LinkedList<String>();
 	static {
 		times.add("20:00:00");
@@ -54,6 +72,11 @@ public class LiteralTest extends Tmql4JTestCase {
 		times.add("00:59:59.1234Z");
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testTopicReference() throws Exception {
 		createTopicBySI("myTopic");
@@ -66,6 +89,11 @@ public class LiteralTest extends Tmql4JTestCase {
 		assertEquals(1, set.first().size());
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testIriReference() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
@@ -88,6 +116,11 @@ public class LiteralTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof URI);
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testDateLiteral() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
@@ -102,6 +135,11 @@ public class LiteralTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testTimeLiteral() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
@@ -116,6 +154,11 @@ public class LiteralTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testDateTimeLiteral() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
@@ -133,6 +176,11 @@ public class LiteralTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testIntegerLiteral() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
@@ -147,6 +195,11 @@ public class LiteralTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testDecimalLiteral() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
@@ -161,6 +214,11 @@ public class LiteralTest extends Tmql4JTestCase {
 		}
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void testStringLiteral() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";

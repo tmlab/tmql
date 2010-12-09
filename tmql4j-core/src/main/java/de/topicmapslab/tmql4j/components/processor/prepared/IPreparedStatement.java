@@ -13,6 +13,7 @@ import java.util.Calendar;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Topic;
 
+import de.topicmapslab.tmql4j.components.parser.IParserTree;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.query.IQuery;
@@ -121,7 +122,16 @@ public interface IPreparedStatement extends IQuery {
 	 * 
 	 * @return the string
 	 * 
-	 * @throws TMQLRuntimeException thrown if at least one argument is missing
+	 * @throws TMQLRuntimeException
+	 *             thrown if at least one argument is missing
 	 */
 	public String getNonParametrizedQueryString() throws TMQLRuntimeException;
+
+	/**
+	 * Returns the parser tree
+	 * 
+	 * @return the parser tree
+	 */
+	public IParserTree getParserTree();
+
 }

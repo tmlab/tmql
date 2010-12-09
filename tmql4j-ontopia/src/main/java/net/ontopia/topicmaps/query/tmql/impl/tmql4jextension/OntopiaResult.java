@@ -253,5 +253,13 @@ public class OntopiaResult implements IResult {
 		}
 		return (T) getResults().get(index);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isNullValue(int index) {
+		Object obj = getValue(index);
+		return obj == null;
+	}
 
 }

@@ -12,7 +12,11 @@ import de.topicmapslab.tmql4j.draft2010.grammar.lexical.SubjectLocator;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
-
+/**
+ * The subject-locator axis returns all subject-locators of a topic
+ * @author Sven Krosse
+ *
+ */
 public class SubjectLocatorAxis implements IAxis {
 
 	/**
