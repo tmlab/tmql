@@ -1,8 +1,7 @@
 Bundle-SymbolicName: de.topicmapslab.tmql4j.ontopia;singleton=true
 Bundle-Version: 3.0.0
 Bundle-Name: TMQL Ontopia Extension
-Import-Package: junit.framework;optional=true;specification-version="3.8.0",
- org.osgi.framework
+Import-Package: org.osgi.framework
 Service-Component: OSGI-INF/draft2010extensionpoint.xml
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.topicmapslab.tmql4j;bundle-version="3.0.0",
