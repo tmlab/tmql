@@ -13,7 +13,7 @@ Because of that the first we need a identifier of the topic representing the com
 The next question we have to answer is the type of expression we have to use to gain our use case. Because of the fact the query is quite simple, we decide to use the path expression style.
 
 ---------------------------------
-1:	htpp://psi.ontopedia.net/Puccini
+1:	http://psi.ontopedia.net/Puccini
 ---------------------------------
 
 =================================
@@ -50,4 +50,4 @@ Returns the topic item using the string literal 'http://psi.ontopedia.net/Puccin
 
 ===== Summary =====
 
-We learn that a topic can represented by a item reference as a part of the query. In addition to that we also can use the string-literal of the IRI as start node of the navigation over the identifier axes ( 'indicators', 'locators' or 'item' ) in relation to the identifier type.
+We learned that a topic can be represented by an item reference as a part of the query. In addition we can use the string-literal of the IRI as start node of the navigation over the identifier axes ( 'indicators', 'locators' or 'item' ) in relation to the identifier type.
