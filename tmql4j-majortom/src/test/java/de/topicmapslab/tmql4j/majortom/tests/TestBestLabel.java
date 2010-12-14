@@ -19,7 +19,7 @@ import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
  * 
  */
 public class TestBestLabel extends Tmql4JTestCase {
-
+	
 	@Test
 	public void smalltest() {
 		Topic t = createTopicBySI("testtopic");
