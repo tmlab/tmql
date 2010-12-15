@@ -154,7 +154,15 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 		 */
 		else if (anchor.equals(de.topicmapslab.tmql4j.path.grammar.lexical.Variable.class)) {
 			final String variable = getTokens().get(0);
-			if (context.getContextBindings() != null) {
+			/*
+			 * is current index variable
+			 */
+			if ( "$#".equalsIgnoreCase(variable)){
+				if ( context.getCurrentIndex() > 0 ){
+					return QueryMatches.asQueryMatchNS(runtime, context.getCurrentIndex());
+				}
+				return QueryMatches.emptyMatches();
+			}else if (context.getContextBindings() != null) {
 				/*
 				 * save binding as tuple
 				 */

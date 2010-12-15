@@ -12,6 +12,7 @@ package de.topicmapslab.tmql4j.path.components.interpreter;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
@@ -71,6 +72,14 @@ public class VariableAssignmentInterpreter extends ExpressionInterpreterImpl<Var
 		 * variable-assignment
 		 */
 		if (content.getOrderedKeys().contains(QueryMatches.getNonScopedVariable())) {
+			if ( context.getCurrentTuple() != null){
+				QueryMatches matches = new QueryMatches(runtime);
+				for ( Map<String, Object> tuple : content.extractAndRenameBindingsForVariable(variable)){
+					tuple.putAll(context.getCurrentTuple());
+					matches.add(tuple);
+				}
+				return matches;
+			}
 			return content.extractAndRenameBindingsForVariable(variable);
 		}
 		List<Object> values = HashUtil.getList();

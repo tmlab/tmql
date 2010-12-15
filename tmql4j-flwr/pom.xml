@@ -81,8 +81,14 @@
 		<dependency>
 			<groupId>de.topicmapslab</groupId>
 			<artifactId>ctm-writer</artifactId>
-			<version>1.0.8-SNAPSHOT</version>
+			<version>1.0.9-SNAPSHOT</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>semagia</groupId>
+			<artifactId>semagia-mio</artifactId>
+			<version>0.9.5</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

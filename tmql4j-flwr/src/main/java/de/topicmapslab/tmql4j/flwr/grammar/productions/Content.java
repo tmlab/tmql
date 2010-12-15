@@ -34,10 +34,10 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  * <p>
  * The grammar production rule of the expression is: <code>
  * <p>
- * content ::= tm-content (0)
+ * content ::= tm-content (3)
  * </p>
  * <p>
- * content ::= xml-content (1)
+ * content ::= xml-content (4)
  * </p>
  * </code> </p>
  * 
@@ -49,11 +49,11 @@ public class Content extends ExpressionImpl {
 	/**
 	 * grammar type of content containing a tm-content
 	 */
-	public static final int TYPE_CTM_EXPRESSION = 0;
+	public static final int TYPE_CTM_EXPRESSION =3;
 	/**
 	 * grammar type of content containing a XML-content
 	 */
-	public static final int TYPE_XML_EXPRESSION = 1;
+	public static final int TYPE_XML_EXPRESSION = 4;
 
 	/**
 	 * index of set operator
