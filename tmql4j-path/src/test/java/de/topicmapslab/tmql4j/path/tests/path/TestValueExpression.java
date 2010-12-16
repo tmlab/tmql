@@ -66,7 +66,6 @@ public class TestValueExpression extends Tmql4JTestCase {
 
 		query = prefix + " 1 + 2 ";
 		set = execute(new TMQLQuery(topicMap,query));
-		System.out.println();
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();
 		if (o instanceof BigInteger) {
@@ -80,7 +79,6 @@ public class TestValueExpression extends Tmql4JTestCase {
 
 		query = prefix + " 1 + 2 + 5 + 10 ";
 		set = execute(new TMQLQuery(topicMap,query));
-		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof BigInteger) {
@@ -94,7 +92,6 @@ public class TestValueExpression extends Tmql4JTestCase {
 
 		query = prefix + " 1 + 2 + 99 ";
 		set = execute(new TMQLQuery(topicMap,query));
-		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof BigInteger) {
@@ -108,7 +105,6 @@ public class TestValueExpression extends Tmql4JTestCase {
 
 		query = prefix + " 1.0 + 2.0  ";
 		set = execute(new TMQLQuery(topicMap,query));
-		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof BigDecimal) {
@@ -122,7 +118,6 @@ public class TestValueExpression extends Tmql4JTestCase {
 
 		query = prefix + " \"abc\" + \"def\" ";
 		set = execute(new TMQLQuery(topicMap,query));
-		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof String) {
@@ -169,7 +164,6 @@ public class TestValueExpression extends Tmql4JTestCase {
 
 		query = prefix + " 99 - 2 - 99 ";
 		set = execute(new TMQLQuery(topicMap, query));
-		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof BigInteger) {
@@ -183,7 +177,6 @@ public class TestValueExpression extends Tmql4JTestCase {
 
 		query = prefix + " 3.0 - 2.0  ";
 		set = execute(new TMQLQuery(topicMap,query));
-		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof BigDecimal) {
@@ -231,7 +224,6 @@ public class TestValueExpression extends Tmql4JTestCase {
 
 		query = prefix + " - 20 * 20 ";
 		set = execute(new TMQLQuery(topicMap,query));
-		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof BigInteger) {
@@ -245,7 +237,6 @@ public class TestValueExpression extends Tmql4JTestCase {
 
 		query = prefix + " 3.0 * 2.0  ";
 		set = execute(new TMQLQuery(topicMap,query));
-		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof BigDecimal) {
@@ -292,7 +283,6 @@ public class TestValueExpression extends Tmql4JTestCase {
 
 		query = prefix + " - 20 % 20 ";
 		set = execute(new TMQLQuery(topicMap,query));
-		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof BigDecimal) {
@@ -306,7 +296,6 @@ public class TestValueExpression extends Tmql4JTestCase {
 
 		query = prefix + " 3.0 % 2.0  ";
 		set = execute(new TMQLQuery(topicMap,query));
-		System.out.println();
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
 		if (o instanceof BigDecimal) {

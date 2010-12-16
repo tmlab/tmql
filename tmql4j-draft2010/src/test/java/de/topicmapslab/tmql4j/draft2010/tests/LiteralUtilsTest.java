@@ -44,7 +44,6 @@ public class LiteralUtilsTest extends Tmql4JTestCase {
 		literals.add(String.valueOf(Double.MIN_VALUE));
 
 		for (String literal : literals) {
-			System.out.println(literal + "?");
 			Assert.assertEquals(true, LiteralUtils.isDecimal(literal));
 		}
 	}

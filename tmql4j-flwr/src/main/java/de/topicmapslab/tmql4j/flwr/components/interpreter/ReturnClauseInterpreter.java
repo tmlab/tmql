@@ -10,6 +10,7 @@
  */
 package de.topicmapslab.tmql4j.flwr.components.interpreter;
 
+import java.util.List;
 import java.util.Map;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
@@ -20,6 +21,10 @@ import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.ReturnClause;
+import de.topicmapslab.tmql4j.path.grammar.productions.Content;
+import de.topicmapslab.tmql4j.path.grammar.productions.PathExpression;
+import de.topicmapslab.tmql4j.path.grammar.productions.PostfixedExpression;
+import de.topicmapslab.tmql4j.path.grammar.productions.QueryExpression;
 
 /**
  * 
@@ -37,8 +42,7 @@ import de.topicmapslab.tmql4j.flwr.grammar.productions.ReturnClause;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class ReturnClauseInterpreter extends
-		ExpressionInterpreterImpl<ReturnClause> {
+public class ReturnClauseInterpreter extends ExpressionInterpreterImpl<ReturnClause> {
 
 	/**
 	 * base constructor to create a new instance
@@ -54,14 +58,11 @@ public class ReturnClauseInterpreter extends
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public QueryMatches interpret(final ITMQLRuntime runtime,
-			final IContext context, final Object... optionalArguments)
-			throws TMQLRuntimeException {
+	public QueryMatches interpret(final ITMQLRuntime runtime, final IContext context, final Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * get content-interpreter
 		 */
-		final IExpressionInterpreter<?> interpreter = getInterpreters(runtime)
-				.get(0);
+		final IExpressionInterpreter<?> interpreter = getInterpreters(runtime).get(0);
 
 		final QueryMatches results;
 		/*
@@ -92,8 +93,7 @@ public class ReturnClauseInterpreter extends
 				/*
 				 * call sub-expression
 				 */
-				QueryMatches matches = interpreter.interpret(runtime,
-						newContext, optionalArguments);
+				QueryMatches matches = interpreter.interpret(runtime, newContext, optionalArguments);
 				results.add(matches);
 			}
 		}
@@ -104,47 +104,47 @@ public class ReturnClauseInterpreter extends
 			/*
 			 * call sub-expression
 			 */
-			results = interpreter
-					.interpret(runtime, context, optionalArguments);
+			results = interpreter.interpret(runtime, context, optionalArguments);
 		}
 		if (results.isEmpty()) {
 			return QueryMatches.emptyMatches();
 		}
-		return results;
+		return clean(results);
 	}
 
-	// /**
-	// * Method removes all other variables bindings than the non-scoped
-	// variable.
-	// *
-	// * @param matches
-	// * the matches to clean
-	// * @return the cleaned query matches
-	// * @throws TMQLRuntimeException
-	// */
-	// private QueryMatches clean(QueryMatches matches) throws
-	// TMQLRuntimeException {
-	// List<Content> expressionFilteredByType =
-	// getExpression().getExpressionFilteredByType(Content.class);
-	// if (!expressionFilteredByType.isEmpty()) {
-	// Content content = expressionFilteredByType.get(0);
-	//
-	// if (content.getGrammarType() == Content.TYPE_QUERY_EXPRESSION) {
-	// QueryExpression qEx =
-	// content.getExpressionFilteredByType(QueryExpression.class).get(0);
-	// PathExpression pEx =
-	// qEx.getExpressionFilteredByType(PathExpression.class).get(0);
-	// if (pEx.getGrammarType() == PathExpression.TYPE_POSTFIXED_EXPRESSION) {
-	// PostfixedExpression pfEx =
-	// pEx.getExpressionFilteredByType(PostfixedExpression.class).get(0);
-	// if (pfEx.getGrammarType() == PostfixedExpression.TYPE_SIMPLE_CONTENT) {
-	// return
-	// matches.extractAndRenameBindingsForVariable(QueryMatches.getNonScopedVariable());
-	// }
-	// }
-	// }
-	// }
-	// return matches;
-	// }
+	/**
+	 * Method removes all other variables bindings than the non-scoped variable.
+	 * 
+	 * @param matches
+	 *            the matches to clean
+	 * @return the cleaned query matches
+	 * @throws TMQLRuntimeException
+	 */
+	private QueryMatches clean(QueryMatches matches) throws TMQLRuntimeException {
+		List<Content> expressionFilteredByType = getExpression().getExpressionFilteredByType(Content.class);
+		if (!expressionFilteredByType.isEmpty()) {
+			Content content = expressionFilteredByType.get(0);
+			if (content.getGrammarType() == Content.TYPE_QUERY_EXPRESSION) {
+				List<QueryExpression> queryExpressions = content.getExpressionFilteredByType(QueryExpression.class);
+				if (!queryExpressions.isEmpty()) {
+					QueryExpression qEx = queryExpressions.get(0);
+					List<PathExpression> pathExpressions = qEx.getExpressionFilteredByType(PathExpression.class);
+					if (!pathExpressions.isEmpty()) {
+						PathExpression pEx = pathExpressions.get(0);
+						if (pEx.getGrammarType() == PathExpression.TYPE_POSTFIXED_EXPRESSION) {
+							List<PostfixedExpression> postfixedExpressions = pEx.getExpressionFilteredByType(PostfixedExpression.class);
+							if (!postfixedExpressions.isEmpty()) {
+								PostfixedExpression pfEx = postfixedExpressions.get(0);
+								if (pfEx.getGrammarType() == PostfixedExpression.TYPE_SIMPLE_CONTENT) {
+									return matches.extractAndRenameBindingsForVariable(QueryMatches.getNonScopedVariable());
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return matches;
+	}
 
 }

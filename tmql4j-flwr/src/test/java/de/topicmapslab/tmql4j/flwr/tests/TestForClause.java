@@ -99,8 +99,6 @@ public class TestForClause extends Tmql4JTestCase {
 		IQuery query = QueryFactory.getFactory().getQuery(topicMap, "FOR $t IN // tm:subject [ fn:count ( . >> types ) == 0 ] RETURN $t,  $t >> characteristics >> types");
 
 		SimpleResultSet set = execute(query);
-		System.out.println(set);
-		System.out.println(set.size());
 	}
 
 }

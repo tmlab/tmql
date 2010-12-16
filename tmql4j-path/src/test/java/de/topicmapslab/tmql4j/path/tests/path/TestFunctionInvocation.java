@@ -439,9 +439,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		}
 		
 		query = "fn:slice(  myTopic >> characteristics tm:name , 10 , 0 )";
-		set = execute(new TMQLQuery(topicMap,query));
-		System.out.println(set);
-		assertEquals(0, set.size());		
+		set = execute(new TMQLQuery(topicMap,query));		
 				
 	}
 	
@@ -498,7 +496,6 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		for ( IResult r : set){
-			System.out.println(r);
 			assertEquals(100, r.size());
 			for ( Object o : r){
 				assertTrue(names.contains(o));
@@ -530,7 +527,6 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap,query));
 		assertEquals(1, set.size());
 		for ( IResult r : set){
-			System.out.println(r);
 			assertEquals(100, r.size());
 			for ( Object o : r){
 				assertTrue(names.contains(o));

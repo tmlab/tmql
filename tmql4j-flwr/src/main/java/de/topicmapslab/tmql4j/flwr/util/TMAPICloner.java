@@ -116,7 +116,6 @@ public class TMAPICloner {
 	 * @throws TMQLRuntimeException
 	 */
 	public Topic clone(Topic topic) throws Exception {
-		// System.out.println(topic.getSubjectIdentifiers().isEmpty()?"":topic.getSubjectIdentifiers().iterator().next().toExternalForm());
 		return clone(topic, false);
 	}
 

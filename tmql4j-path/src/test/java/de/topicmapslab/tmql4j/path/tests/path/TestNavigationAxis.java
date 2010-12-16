@@ -726,7 +726,6 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 
 		query = "myTopic >> characteristics theOtherType";
 		set = execute(query);
-		System.out.println(set);
 		assertEquals(0, set.size());
 	}
 

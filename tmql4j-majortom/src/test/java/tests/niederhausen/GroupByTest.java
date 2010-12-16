@@ -30,14 +30,11 @@ public class GroupByTest extends Tmql4JTestCase {
 		query = "FOR $t IN // tm:subject GROUP BY $0 RETURN $t >> id, fn:best-label($t), $t >> characteristics tm:name >> atomify, $t >> characteristics tm:occurrence >> atomify ";
 
 		IResultSet<?> resultSet = execute(query);
-		System.out.println(resultSet);
 	}
 	
 	@Test
 	public void testComplex() throws Exception{
 		fromXtm("src/test/resources/toytm.xtm");
-
-		System.out.println(topicMap.getTopics());
 		
 		final String query 	= "FOR $ot IN // tm:subject >> characteristics >> types "
 			+ "GROUP BY $0, $1, $2, $3 "	
@@ -50,7 +47,6 @@ public class GroupByTest extends Tmql4JTestCase {
 								;
 		
 		IResultSet<?> resultSet = execute(query);
-		System.out.println(resultSet);
 	}
 
 }

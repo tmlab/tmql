@@ -738,14 +738,12 @@ public class FunctionCallTest extends Tmql4JTestCase {
 
 		query = " matches-regexp ( myType , \".*T.*\" ) ";
 		set = execute(query);
-		System.out.println(set);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first() instanceof Boolean);
 
 		query = " matches-regexp ( myType / name:: , \".*m.*\" ) ";
 		set = execute(query);
-		System.out.println(set);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first() instanceof Boolean);
@@ -760,7 +758,6 @@ public class FunctionCallTest extends Tmql4JTestCase {
 
 		query = " matches-regexp ( \"foo bar\" , \".*bar\" ) ";
 		set = execute(query);
-		System.out.println(set);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first() instanceof Boolean);

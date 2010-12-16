@@ -48,7 +48,6 @@ public class TestGeographicalFunctions extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = GetCoordinatesInDistance.GetCoordinatesInDistanceIdentifier + " ( " + coordinate.getLatitude() + " , " + coordinate.getLongitude() + " , 0 )";
-		System.out.println(query);
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
@@ -90,7 +89,6 @@ public class TestGeographicalFunctions extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = GetCoordinatesInDistance.GetCoordinatesInDistanceIdentifier + " ( \"" + coordinate.toString() + "\" , 0 )";
-		System.out.println(query);
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
@@ -135,7 +133,7 @@ public class TestGeographicalFunctions extends Tmql4JTestCase {
 				+ " ) RETURN $c << characteristics";
 		set = execute(query);
 		assertEquals(2, set.size());
-		for (IResult r : set) {
+		for (IResult r : set) {		
 			assertEquals(1, r.size());
 			assertTrue(r.first().equals(topic) || r.first().equals(otherTopic));
 		}
@@ -149,7 +147,6 @@ public class TestGeographicalFunctions extends Tmql4JTestCase {
 			assertTrue(r.first().equals(topic) || r.first().equals(otherTopic));
 			assertTrue(r.get(1).equals(0D) || r.get(1).equals(coordinate.getDistance(other)));
 		}
-		System.out.println(set);
 	}
 
 	@Test
@@ -172,7 +169,6 @@ public class TestGeographicalFunctions extends Tmql4JTestCase {
 
 		query = GetDistance.GetDistanceIdentifier + " ( " + coordinate.getLatitude() + " , " + coordinate.getLongitude() + " , " + coordinate.getLatitude() + " , "
 				+ coordinate.getLongitude() + " )";
-		System.out.println(query);
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
@@ -217,7 +213,6 @@ public class TestGeographicalFunctions extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = GetDistance.GetDistanceIdentifier + " ( \"" + coordinate.toString() + "\" , \"" + coordinate.toString() + "\" )";
-		System.out.println(query);
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());

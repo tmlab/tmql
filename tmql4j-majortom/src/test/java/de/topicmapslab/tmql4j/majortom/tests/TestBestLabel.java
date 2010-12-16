@@ -29,7 +29,7 @@ public class TestBestLabel extends Tmql4JTestCase {
 
 		getBestLabel(t);
 
-		System.out.println(execute("fn:best-label( // tm:subject )"));
+		execute("fn:best-label( // tm:subject )");
 		
 		
 	}
