@@ -20,6 +20,8 @@ import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
 import org.tmapix.io.XTMTopicMapReader;
 
+import de.topicmapslab.majortom.database.jdbc.core.SqlDialect;
+import de.topicmapslab.majortom.database.store.JdbcTopicMapStoreProperty;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.runtime.TMQLRuntimeFactory;
@@ -43,9 +45,14 @@ public abstract class Tmql4JTestCase {
 	@Before
 	public void setUp() throws Exception {
 		factory = TopicMapSystemFactory.newInstance();
+		factory.setProperty(JdbcTopicMapStoreProperty.DATABASE_HOST, "localhost");
+		factory.setProperty(JdbcTopicMapStoreProperty.DATABASE_NAME, "opt");
+		factory.setProperty(JdbcTopicMapStoreProperty.DATABASE_USER, "postgres");
+		factory.setProperty(JdbcTopicMapStoreProperty.DATABASE_PASSWORD, "postgres");
+		factory.setProperty(JdbcTopicMapStoreProperty.SQL_DIALECT, SqlDialect.POSTGRESQL.name());
 		factory.setFeature("http://tmapi.org/features/type-instance-associations", true);
 		topicMapSystem = factory.newTopicMapSystem();
-		topicMap = topicMapSystem.createTopicMap(base);		
+		topicMap = topicMapSystem.createTopicMap(base);
 		runtime = TMQLRuntimeFactory.newFactory().newRuntime(topicMapSystem);
 		runtime.getLanguageContext().getPrefixHandler().setDefaultPrefix(base);
 	}
@@ -154,10 +161,9 @@ public abstract class Tmql4JTestCase {
 		runtime.run(query);
 		return (T) query.getResults();
 	}
-	
-	public void fromXtm(final String path) throws Exception{
-		XTMTopicMapReader reader = new XTMTopicMapReader(topicMap,
-				new File(path));
+
+	public void fromXtm(final String path) throws Exception {
+		XTMTopicMapReader reader = new XTMTopicMapReader(topicMap, new File(path));
 		reader.read();
 	}
 }

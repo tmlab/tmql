@@ -143,4 +143,14 @@ public class TestIndexFunction extends Tmql4JTestCase{
 			assertTrue(topics.contains(r.first()));
 		}
 	}
+	
+	@Test
+	public void testNull() throws Exception{		
+		final String query = "RETURN fn:get-null-value()";
+		IResultSet<?> rs = execute(query);
+		assertEquals(1, rs.size());
+		assertEquals(1, rs.first().size());
+		assertNull(rs.get(0,0));
+		assertTrue(rs.isNullValue(0, 0));
+	}
 }

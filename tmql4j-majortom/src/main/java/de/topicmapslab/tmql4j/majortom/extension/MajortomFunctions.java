@@ -19,9 +19,12 @@ import de.topicmapslab.tmql4j.majortom.grammar.functions.GetDatesBefore;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetDatesInRange;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetDistance;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetNameTypes;
+import de.topicmapslab.tmql4j.majortom.grammar.functions.GetNullValue;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetOccurrenceTypes;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetRoleTypes;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetTopicTypes;
+import de.topicmapslab.tmql4j.majortom.grammar.functions.GetTopicsByCharacteristicRegExp;
+import de.topicmapslab.tmql4j.majortom.grammar.functions.GetTopicsByCharacteristicValue;
 import de.topicmapslab.tmql4j.path.grammar.productions.FunctionInvocation;
 
 public class MajortomFunctions implements ILanguageExtension {
@@ -72,6 +75,10 @@ public class MajortomFunctions implements ILanguageExtension {
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetRoleTypes.GetRoleTypes, GetRoleTypes.class);
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetNameTypes.GetNameTypes, GetNameTypes.class);
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetOccurrenceTypes.GetOccurrenceTypes, GetOccurrenceTypes.class);
+		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetNullValue.GetNullValue, GetNullValue.class);
+		
+		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetTopicsByCharacteristicValue.GetTopicsByCharacteristicValue, GetTopicsByCharacteristicValue.class);
+		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetTopicsByCharacteristicRegExp.GetTopicsByCharacteristicRegExp, GetTopicsByCharacteristicRegExp.class);
 	}
 
 	/**
