@@ -55,21 +55,21 @@ public class FunctionInvocation extends ExpressionImpl {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
-	public FunctionInvocation(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public FunctionInvocation(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
-		int index = tmqlTokens.indexOf(BracketRoundOpen.class);
-
 		/*
-		 * has parameters
+		 * check if has more than 3 tokens -> has parameters
 		 */
-		if (index != -1) {
-			checkForExtensions(Parameters.class, tmqlTokens.subList(index + 1,
-					tmqlTokens.size() - 1), tokens.subList(index + 1, tokens
-					.size() - 1), runtime);
+		if (tokens.size() > 3) {
+			int index = tmqlTokens.indexOf(BracketRoundOpen.class);
+
+			/*
+			 * has parameters
+			 */
+			if (index != -1) {
+				checkForExtensions(Parameters.class, tmqlTokens.subList(index + 1, tmqlTokens.size() - 1), tokens.subList(index + 1, tokens.size() - 1), runtime);
+			}
 		}
 	}
 
@@ -81,8 +81,7 @@ public class FunctionInvocation extends ExpressionImpl {
 		/*
 		 * expects at lest one token beginning with a function identifier
 		 */
-		return !getTmqlTokens().isEmpty()
-				&& getTmqlTokens().get(0).equals(Function.class);
+		return !getTmqlTokens().isEmpty() && getTmqlTokens().get(0).equals(Function.class);
 	}
 
 }
