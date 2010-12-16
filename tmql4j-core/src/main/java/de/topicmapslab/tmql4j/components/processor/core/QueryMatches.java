@@ -675,7 +675,19 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 		List<String> keys = new LinkedList<String>();
 		if (!isEmpty()) {
 			keys.addAll(getMatches().get(0).keySet());
-			Collections.sort(keys);
+			Collections.sort(keys, new Comparator<String>() {
+				/**
+				 * {@inheritDoc}
+				 */
+				public int compare(String o1, String o2) {
+					if ( o1 == o2 ){
+						return 0;
+					}
+					int n1 = Integer.parseInt(o1.substring(1));
+					int n2 = Integer.parseInt(o2.substring(1));
+					return n1 - n2;
+				}
+			});
 		}
 		return keys;
 	}

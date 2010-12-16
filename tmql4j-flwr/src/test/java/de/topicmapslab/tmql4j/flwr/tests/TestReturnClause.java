@@ -11,6 +11,8 @@ package de.topicmapslab.tmql4j.flwr.tests;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -18,6 +20,7 @@ import org.tmapi.core.Name;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.components.processor.results.IResult;
+import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.flwr.components.processor.results.ctm.CTMResult;
 import de.topicmapslab.tmql4j.flwr.components.processor.results.xml.XMLResult;
@@ -152,4 +155,28 @@ public class TestReturnClause extends Tmql4JTestCase {
 		}
 	}
 
+	@Test
+	public void testReturnOrder() throws Exception{
+		List<String> results = new ArrayList<String>();
+		StringBuilder builder = new StringBuilder("RETURN ");
+		boolean first = true;
+		for ( int i = 0 ; i <100 ; i++ ){
+			String s = String.valueOf(i);
+			if ( !first ){
+				builder.append(", ");
+			}
+			builder.append("\"");
+			builder.append(s);
+			builder.append("\"");
+			results.add(s);
+			first = false;
+		}
+		
+		IResultSet<?> rs = execute(builder.toString());
+		assertEquals(1, rs.size());
+		for ( int i = 0 ; i < rs.size() ; i++ ){
+			assertEquals(results.get(i), rs.get(0, i));
+		}
+	}
+	
 }
