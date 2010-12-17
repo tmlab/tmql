@@ -90,5 +90,11 @@
 			<version>0.9.5</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>semagia</groupId>
+			<artifactId>semagia-mio-xtm</artifactId>
+			<version>0.9.5</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 </project>

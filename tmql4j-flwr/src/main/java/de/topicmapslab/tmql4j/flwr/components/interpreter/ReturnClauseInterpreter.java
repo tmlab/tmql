@@ -10,8 +10,14 @@
  */
 package de.topicmapslab.tmql4j.flwr.components.interpreter;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
@@ -71,31 +77,63 @@ public class ReturnClauseInterpreter extends ExpressionInterpreterImpl<ReturnCla
 		if (context.getContextBindings() != null) {
 			results = new QueryMatches(runtime);
 			int index = 0;
+			List<Future<QueryMatches>> list = new LinkedList<Future<QueryMatches>>();
+			ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 4);
 			/*
 			 * iterate over all tuples
 			 */
 			for (final Map<String, Object> tuple : context.getContextBindings()) {
+				final int index_ = index;
+				Callable<QueryMatches> callable = new Callable<QueryMatches>() {
 
-				Context newContext = new Context(context);
-				/*
-				 * get value of content
-				 */
-				String variable = QueryMatches.getNonScopedVariable();
-				if (!interpreter.getVariables().isEmpty()) {
-					variable = interpreter.getVariables().get(0);
-				}
-				Object match = tuple.get(variable);
+					/**
+					 * {@inheritDoc}
+					 */
+					public QueryMatches call() throws Exception {
+						Context newContext = new Context(context);
+						/*
+						 * get value of content
+						 */
+						String variable = QueryMatches.getNonScopedVariable();
+						if (!interpreter.getVariables().isEmpty()) {
+							variable = interpreter.getVariables().get(0);
+						}
+						Object match = tuple.get(variable);
 
-				newContext.setContextBindings(null);
-				newContext.setCurrentTuple(tuple);
-				newContext.setCurrentNode(match);
-				newContext.setCurrentIndex(index++);
-				/*
-				 * call sub-expression
-				 */
-				QueryMatches matches = interpreter.interpret(runtime, newContext, optionalArguments);
-				results.add(matches);
+						newContext.setContextBindings(null);
+						newContext.setCurrentTuple(tuple);
+						newContext.setCurrentNode(match);
+						newContext.setCurrentIndex(index_);
+						/*
+						 * call sub-expression
+						 */
+						QueryMatches matches = interpreter.interpret(runtime, newContext, optionalArguments);
+						return matches;
+					}
+				};
+				index++;
+				list.add(threadPool.submit(callable));
 			}
+
+			threadPool.shutdown();
+			/*
+			 * catch results
+			 */
+			for (Future<QueryMatches> future : list) {
+				try {
+					QueryMatches matches = future.get();
+					if (matches.isEmpty()) {
+						throw new TMQLRuntimeException("Invalid state of internal task!");
+					}
+					results.add(matches);
+				} catch (InterruptedException e) {
+					throw new TMQLRuntimeException(e);
+				} catch (ExecutionException e) {
+					throw new TMQLRuntimeException(e);
+				}
+
+			}
+
 		}
 		/*
 		 * no context given by FLWR-expression
