@@ -148,7 +148,7 @@ public class TestWhereClause extends Tmql4JTestCase {
 
 		Topic topicBySL = createTopicBySL("loc");
 
-		query = "FOR $t IN // tm:subject WHERE fn:count( $t >>locators ) > 0 RETURN $t";
+		query = "FOR $t IN // tm:subject [ fn:count( $t >>locators ) > 0 ] RETURN $t";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());

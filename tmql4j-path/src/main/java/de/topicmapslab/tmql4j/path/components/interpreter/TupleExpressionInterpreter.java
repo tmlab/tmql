@@ -10,10 +10,10 @@
  */
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -26,7 +26,6 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.TupleExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
 import de.topicmapslab.tmql4j.util.HashUtil;
@@ -109,80 +108,92 @@ public class TupleExpressionInterpreter extends ExpressionInterpreterImpl<TupleE
 	 */
 	private QueryMatches interpretValueExpression(final ITMQLRuntime runtime, final IContext context, final Object... optionalArguments) throws TMQLRuntimeException {
 		List<Future<Object>> tasks = new LinkedList<Future<Object>>();
-		ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()*4);
-		
+		ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 4);
+
 		final List<String> variables = getVariables();
-		
-		final List<IExpressionInterpreter<ValueExpression>> interpreters = getInterpretersFilteredByEypressionType(runtime, ValueExpression.class);		
-		for ( final IExpressionInterpreter<ValueExpression> interpreter : interpreters){
-			Callable<Object> callable = new Callable<Object>() {				
+
+		final List<IExpressionInterpreter<ValueExpression>> interpreters = getInterpretersFilteredByEypressionType(runtime, ValueExpression.class);
+		for (final IExpressionInterpreter<ValueExpression> interpreter : interpreters) {
+			Callable<Object> callable = new Callable<Object>() {
 				/**
 				 * {@inheritDoc}
 				 */
 				public Object call() throws Exception {
-					QueryMatches result = interpreter.interpret(runtime, context, optionalArguments);					
+					QueryMatches result = interpreter.interpret(runtime, context, optionalArguments);
 					final List<String> keys = result.getOrderedKeys();
-					QueryMatches matches = null;
-					/*
-					 * variable name of the expression
-					 */
-					final String variable = variables.get(0);
+					if (result.isEmpty()) {
+						return null;
+					}
 					/*
 					 * check if expression contains variables
 					 */
 					if (!variables.isEmpty()) {
 						/*
+						 * variable name of the expression
+						 */
+						final String variable = variables.get(0);
+						/*
 						 * contains non-scoped stuff
 						 */
-						if ( keys.contains(QueryMatches.getNonScopedVariable())){
-							return result.getPossibleValuesForVariable();
+						if (keys.contains(QueryMatches.getNonScopedVariable())) {
+							List<Object> possibleValuesForVariable = result.getPossibleValuesForVariable();
+							return possibleValuesForVariable.size() == 1 ? possibleValuesForVariable.get(0) : possibleValuesForVariable;
 						}
 						/*
 						 * contains value stuff
 						 */
-						else if ( keys.contains(variable)){
-							return result.getPossibleValuesForVariable(variable);
+						else if (keys.contains(variable)) {
+							List<Object> possibleValuesForVariable = result.getPossibleValuesForVariable(variable);
+							return possibleValuesForVariable.size() == 1 ? possibleValuesForVariable.get(0) : possibleValuesForVariable;
 						}
 						/*
 						 * no results
 						 */
-						else if ( interpreters.size() != 1 ) {
+						else if (interpreters.size() != 1) {
 							return null;
 						}
 					}
 					/*
 					 * variable independent
 					 */
-					else{
-						return result.getPossibleValuesForVariable();
+					else {
+						List<Object> possibleValuesForVariable = result.getPossibleValuesForVariable();
+						if ( possibleValuesForVariable.isEmpty()){
+							return result;
+						}
+						return possibleValuesForVariable.size() == 1 ? possibleValuesForVariable.get(0) : possibleValuesForVariable;
 					}
 					return null;
 				}
 			};
-			tasks.add(threadPool.submit(callable));		
+			tasks.add(threadPool.submit(callable));
 		}
-		
+
 		threadPool.shutdown();
-		
+
 		/*
 		 * create result
 		 */
 		QueryMatches results = new QueryMatches(runtime);
 		int index = 0;
 		Map<String, Object> tuple = HashUtil.getHashMap();
-		for ( Future<Object> task : tasks){			
-			try {				
+		for (Future<Object> task : tasks) {
+			try {
 				Object result = task.get();
-				if ( result == null && interpreters.size() == 1 ){
+				if (result == null && tasks.size() == 1) {
 					return QueryMatches.emptyMatches();
+				}else if ( tasks.size() == 1 && result instanceof Collection<?>){
+					return QueryMatches.asQueryMatch(runtime, "$0", result);
+				}else if ( result instanceof QueryMatches){
+					return (QueryMatches)result;
 				}
-				tuple.put("$"+index++, result);
+				tuple.put("$" + index++, result);
 			} catch (InterruptedException e) {
 				throw new TMQLRuntimeException(e);
 			} catch (ExecutionException e) {
 				throw new TMQLRuntimeException(e);
-			}			
-		}	
+			}
+		}
 		results.add(tuple);
 		return results;
 	}

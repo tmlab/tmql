@@ -89,7 +89,7 @@ FunctionImpl {
 						/*
 						 * add only string which is greater or equal
 						 */
-						if (ComparisonUtils.isGreaterOrEquals(obj, s)) {
+						if (ComparisonUtils.isGreaterOrEquals(obj, b)) {
 							matches.add(obj.toString());
 						}
 					}

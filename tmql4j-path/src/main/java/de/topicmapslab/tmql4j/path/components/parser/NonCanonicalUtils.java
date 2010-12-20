@@ -42,7 +42,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisPlayersMoveForwar
 import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisReifierMoveBackward;
 import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisReifierMoveForward;
 import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisTraverse;
-import de.topicmapslab.tmql4j.path.grammar.productions.Step;
+import de.topicmapslab.tmql4j.path.grammar.productions.StepDefinition;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -61,25 +61,16 @@ public class NonCanonicalUtils {
 	private final static Map<Class<? extends IToken>, String> nonCanonicals = HashUtil.getHashMap();
 
 	static {
-		nonCanonicals.put(ShortcutAxisAtomifyMoveForward.class,
-				"toCanonicalForwardAtomifyAxis");
-		nonCanonicals.put(ShortcutAxisAtomifyMoveBackward.class,
-				"toCanonicalBackwardAtomifyAxis");
-		nonCanonicals.put(ShortcutAxisPlayersMoveForward.class,
-				"toCanonicalForwardPlayersAxis");
-		nonCanonicals.put(ShortcutAxisPlayersMoveBackward.class,
-				"toCanonicalBackwardPlayersAxis");
-		nonCanonicals.put(ShortcutAxisReifierMoveForward.class,
-				"toCanonicalForwardReifierAxis");
-		nonCanonicals.put(ShortcutAxisReifierMoveBackward.class,
-				"toCanonicalBackwardReifierAxis");
-		nonCanonicals
-				.put(ShortcutAxisTraverse.class, "toCanonicalTraverseAxis");
+		nonCanonicals.put(ShortcutAxisAtomifyMoveForward.class, "toCanonicalForwardAtomifyAxis");
+		nonCanonicals.put(ShortcutAxisAtomifyMoveBackward.class, "toCanonicalBackwardAtomifyAxis");
+		nonCanonicals.put(ShortcutAxisPlayersMoveForward.class, "toCanonicalForwardPlayersAxis");
+		nonCanonicals.put(ShortcutAxisPlayersMoveBackward.class, "toCanonicalBackwardPlayersAxis");
+		nonCanonicals.put(ShortcutAxisReifierMoveForward.class, "toCanonicalForwardReifierAxis");
+		nonCanonicals.put(ShortcutAxisReifierMoveBackward.class, "toCanonicalBackwardReifierAxis");
+		nonCanonicals.put(ShortcutAxisTraverse.class, "toCanonicalTraverseAxis");
 		nonCanonicals.put(ShortcutAxisItem.class, "toCanonicalItemAxis");
-		nonCanonicals.put(ShortcutAxisIndicators.class,
-				"toCanonicalIndicatorsAxis");
-		nonCanonicals
-				.put(ShortcutAxisLocators.class, "toCanonicalLocatorsAxis");
+		nonCanonicals.put(ShortcutAxisIndicators.class, "toCanonicalIndicatorsAxis");
+		nonCanonicals.put(ShortcutAxisLocators.class, "toCanonicalLocatorsAxis");
 	}
 
 	/**
@@ -92,11 +83,9 @@ public class NonCanonicalUtils {
 	 * @return <code>true</code> if the given tokens are known as non-canonical
 	 *         production
 	 */
-	public static boolean isNonCanonicalProduction(
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens) {
+	public static boolean isNonCanonicalProduction(List<Class<? extends IToken>> tmqlTokens, List<String> tokens) {
 		if (tmqlTokens.isEmpty()) {
-			throw new IllegalArgumentException(
-					"List of language specific tokens cannot be empty!");
+			throw new IllegalArgumentException("List of language specific tokens cannot be empty!");
 		}
 		return nonCanonicals.containsKey(tmqlTokens.get(0));
 	}
@@ -116,28 +105,22 @@ public class NonCanonicalUtils {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the non-canonical expression cannot convert
 	 */
-	public static void toCanonical(ITMQLRuntime runtime, IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens)
-			throws TMQLGeneratorException {
+	public static void toCanonical(ITMQLRuntime runtime, IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens) throws TMQLGeneratorException {
 		/*
 		 * check if expression is non-canonical production
 		 */
 		if (!isNonCanonicalProduction(tmqlTokens, tokens)) {
-			throw new TMQLGeneratorException(
-					"Non-canonical expression is unknown.");
+			throw new TMQLGeneratorException("Non-canonical expression is unknown.");
 		}
 
 		/*
 		 * translate to canonical production
 		 */
 		try {
-			Method m = NonCanonicalUtils.class.getMethod(nonCanonicals
-					.get(tmqlTokens.get(0)), ITMQLRuntime.class,
-					IExpression.class, List.class, List.class);
+			Method m = NonCanonicalUtils.class.getMethod(nonCanonicals.get(tmqlTokens.get(0)), ITMQLRuntime.class, IExpression.class, List.class, List.class);
 			m.invoke(null, runtime, parent, tmqlTokens, tokens);
 		} catch (Exception e) {
-			throw new TMQLGeneratorException(
-					"Cannot translate non-canonical production.", e);
+			throw new TMQLGeneratorException("Cannot translate non-canonical production.", e);
 		}
 
 	}
@@ -157,9 +140,7 @@ public class NonCanonicalUtils {
 	 * @throws TMQLGeneratorException
 	 *             , TMQLInvalidSyntaxException thrown by constructor
 	 */
-	public static void toCanonicalForwardAtomifyAxis(ITMQLRuntime runtime,
-			IExpression parent, List<Class<? extends IToken>> tmqlTokens,
-			List<String> tokens) throws TMQLGeneratorException,
+	public static void toCanonicalForwardAtomifyAxis(ITMQLRuntime runtime, IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens) throws TMQLGeneratorException,
 			TMQLInvalidSyntaxException {
 		/*
 		 * create temporary token lists
@@ -179,7 +160,7 @@ public class NonCanonicalUtils {
 		tokens_.add(new MoveForward().getLiteral());
 		tokens_.add(new AxisCharacteristics().getLiteral());
 		tokens_.add(tokens.get(1));
-		parent.checkForExtensions(Step.class, tmqlTokens_, tokens_, runtime);
+		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 		/*
 		 * add atomify axis
@@ -190,7 +171,7 @@ public class NonCanonicalUtils {
 		tmqlTokens_.add(AxisAtomify.class);
 		tokens_.add(new MoveForward().getLiteral());
 		tokens_.add(new AxisAtomify().getLiteral());
-		parent.checkForExtensions(Step.class, tmqlTokens_, tokens_, runtime);
+		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 	}
 
@@ -209,9 +190,7 @@ public class NonCanonicalUtils {
 	 * @throws TMQLGeneratorException
 	 *             , TMQLInvalidSyntaxException thrown by constructor
 	 */
-	public static void toCanonicalBackwardAtomifyAxis(ITMQLRuntime runtime,
-			IExpression parent, List<Class<? extends IToken>> tmqlTokens,
-			List<String> tokens) throws TMQLGeneratorException,
+	public static void toCanonicalBackwardAtomifyAxis(ITMQLRuntime runtime, IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens) throws TMQLGeneratorException,
 			TMQLInvalidSyntaxException {
 
 		/*
@@ -229,7 +208,7 @@ public class NonCanonicalUtils {
 		tmqlTokens_.add(AxisAtomify.class);
 		tokens_.add(new MoveBackward().getLiteral());
 		tokens_.add(new AxisAtomify().getLiteral());
-		parent.checkForExtensions(Step.class, tmqlTokens_, tokens_, runtime);
+		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 		/*
 		 * add characteristics axis
@@ -242,7 +221,7 @@ public class NonCanonicalUtils {
 		tokens_.add(new MoveBackward().getLiteral());
 		tokens_.add(new AxisCharacteristics().getLiteral());
 		tokens_.add(tokens.get(1));
-		parent.checkForExtensions(Step.class, tmqlTokens_, tokens_, runtime);
+		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 	}
 
 	/**
@@ -260,9 +239,7 @@ public class NonCanonicalUtils {
 	 * @throws TMQLGeneratorException
 	 *             , TMQLInvalidSyntaxException thrown by constructor
 	 */
-	public static void toCanonicalForwardPlayersAxis(ITMQLRuntime runtime,
-			IExpression parent, List<Class<? extends IToken>> tmqlTokens,
-			List<String> tokens) throws TMQLGeneratorException,
+	public static void toCanonicalForwardPlayersAxis(ITMQLRuntime runtime, IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens) throws TMQLGeneratorException,
 			TMQLInvalidSyntaxException {
 		/*
 		 * create temporary token lists
@@ -278,7 +255,7 @@ public class NonCanonicalUtils {
 		tokens_.add(new MoveForward().getLiteral());
 		tokens_.add(new AxisPlayers().getLiteral());
 		tokens_.add(tokens.get(1));
-		parent.checkForExtensions(Step.class, tmqlTokens_, tokens_, runtime);
+		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 	}
 
@@ -297,9 +274,7 @@ public class NonCanonicalUtils {
 	 * @throws TMQLGeneratorException
 	 *             , TMQLInvalidSyntaxException thrown by constructor
 	 */
-	public static void toCanonicalBackwardPlayersAxis(ITMQLRuntime runtime,
-			IExpression parent, List<Class<? extends IToken>> tmqlTokens,
-			List<String> tokens) throws TMQLGeneratorException,
+	public static void toCanonicalBackwardPlayersAxis(ITMQLRuntime runtime, IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens) throws TMQLGeneratorException,
 			TMQLInvalidSyntaxException {
 		/*
 		 * create temporary token lists
@@ -315,7 +290,7 @@ public class NonCanonicalUtils {
 		tokens_.add(new MoveBackward().getLiteral());
 		tokens_.add(new AxisPlayers().getLiteral());
 		tokens_.add(tokens.get(1));
-		parent.checkForExtensions(Step.class, tmqlTokens_, tokens_, runtime);
+		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 	}
 
 	/**
@@ -333,9 +308,7 @@ public class NonCanonicalUtils {
 	 * @throws TMQLGeneratorException
 	 *             , TMQLInvalidSyntaxException thrown by constructor
 	 */
-	public static void toCanonicalForwardReifierAxis(ITMQLRuntime runtime,
-			IExpression parent, List<Class<? extends IToken>> tmqlTokens,
-			List<String> tokens) throws TMQLGeneratorException,
+	public static void toCanonicalForwardReifierAxis(ITMQLRuntime runtime, IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens) throws TMQLGeneratorException,
 			TMQLInvalidSyntaxException {
 		/*
 		 * create temporary token lists
@@ -349,7 +322,7 @@ public class NonCanonicalUtils {
 		tmqlTokens_.add(AxisReifier.class);
 		tokens_.add(new MoveForward().getLiteral());
 		tokens_.add(new AxisReifier().getLiteral());
-		parent.checkForExtensions(Step.class, tmqlTokens_, tokens_, runtime);
+		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 	}
 
@@ -368,9 +341,7 @@ public class NonCanonicalUtils {
 	 * @throws TMQLGeneratorException
 	 *             , TMQLInvalidSyntaxException thrown by constructor
 	 */
-	public static void toCanonicalBackwardReifierAxis(ITMQLRuntime runtime,
-			IExpression parent, List<Class<? extends IToken>> tmqlTokens,
-			List<String> tokens) throws TMQLGeneratorException,
+	public static void toCanonicalBackwardReifierAxis(ITMQLRuntime runtime, IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens) throws TMQLGeneratorException,
 			TMQLInvalidSyntaxException {
 		/*
 		 * create temporary token lists
@@ -384,7 +355,7 @@ public class NonCanonicalUtils {
 		tmqlTokens_.add(AxisReifier.class);
 		tokens_.add(new MoveBackward().getLiteral());
 		tokens_.add(new AxisReifier().getLiteral());
-		parent.checkForExtensions(Step.class, tmqlTokens_, tokens_, runtime);
+		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 	}
 
 	/**
@@ -402,9 +373,7 @@ public class NonCanonicalUtils {
 	 * @throws TMQLGeneratorException
 	 *             , TMQLInvalidSyntaxException thrown by constructor
 	 */
-	public static void toCanonicalTraverseAxis(ITMQLRuntime runtime,
-			IExpression parent, List<Class<? extends IToken>> tmqlTokens,
-			List<String> tokens) throws TMQLGeneratorException,
+	public static void toCanonicalTraverseAxis(ITMQLRuntime runtime, IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens) throws TMQLGeneratorException,
 			TMQLInvalidSyntaxException {
 		/*
 		 * create temporary token lists
@@ -420,7 +389,7 @@ public class NonCanonicalUtils {
 		tokens_.add(new MoveForward().getLiteral());
 		tokens_.add(new AxisTraverse().getLiteral());
 		tokens_.add(tokens.get(1));
-		parent.checkForExtensions(Step.class, tmqlTokens_, tokens_, runtime);
+		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 	}
 
 	/**
@@ -438,9 +407,7 @@ public class NonCanonicalUtils {
 	 * @throws TMQLGeneratorException
 	 *             , TMQLInvalidSyntaxException thrown by constructor
 	 */
-	public static void toCanonicalItemAxis(ITMQLRuntime runtime,
-			IExpression parent, List<Class<? extends IToken>> tmqlTokens,
-			List<String> tokens) throws TMQLGeneratorException,
+	public static void toCanonicalItemAxis(ITMQLRuntime runtime, IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens) throws TMQLGeneratorException,
 			TMQLInvalidSyntaxException {
 		/*
 		 * create temporary token lists
@@ -454,7 +421,7 @@ public class NonCanonicalUtils {
 		tmqlTokens_.add(AxisItem.class);
 		tokens_.add(new MoveBackward().getLiteral());
 		tokens_.add(new AxisItem().getLiteral());
-		parent.checkForExtensions(Step.class, tmqlTokens_, tokens_, runtime);
+		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 	}
 
@@ -473,9 +440,7 @@ public class NonCanonicalUtils {
 	 * @throws TMQLGeneratorException
 	 *             , TMQLInvalidSyntaxException thrown by constructor
 	 */
-	public static void toCanonicalIndicatorsAxis(ITMQLRuntime runtime,
-			IExpression parent, List<Class<? extends IToken>> tmqlTokens,
-			List<String> tokens) throws TMQLGeneratorException,
+	public static void toCanonicalIndicatorsAxis(ITMQLRuntime runtime, IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens) throws TMQLGeneratorException,
 			TMQLInvalidSyntaxException {
 		/*
 		 * create temporary token lists
@@ -489,7 +454,7 @@ public class NonCanonicalUtils {
 		tmqlTokens_.add(AxisIndicators.class);
 		tokens_.add(new MoveBackward().getLiteral());
 		tokens_.add(new AxisIndicators().getLiteral());
-		parent.checkForExtensions(Step.class, tmqlTokens_, tokens_, runtime);
+		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 	}
 
@@ -508,9 +473,7 @@ public class NonCanonicalUtils {
 	 * @throws TMQLGeneratorException
 	 *             , TMQLInvalidSyntaxException thrown by constructor
 	 */
-	public static void toCanonicalLocatorsAxis(ITMQLRuntime runtime,
-			IExpression parent, List<Class<? extends IToken>> tmqlTokens,
-			List<String> tokens) throws TMQLGeneratorException,
+	public static void toCanonicalLocatorsAxis(ITMQLRuntime runtime, IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens) throws TMQLGeneratorException,
 			TMQLInvalidSyntaxException {
 		/*
 		 * create temporary token lists
@@ -524,7 +487,7 @@ public class NonCanonicalUtils {
 		tmqlTokens_.add(AxisLocators.class);
 		tokens_.add(new MoveBackward().getLiteral());
 		tokens_.add(new AxisLocators().getLiteral());
-		parent.checkForExtensions(Step.class, tmqlTokens_, tokens_, runtime);
+		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 	}
 
@@ -540,8 +503,7 @@ public class NonCanonicalUtils {
 	 *         language-specific tokens at index <code>0</code> and the
 	 *         string-represented tokens at index <code>1</code>.
 	 */
-	public static List<?>[] toCanonicalInstancesAxis(
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens) {
+	public static List<?>[] toCanonicalInstancesAxis(List<Class<? extends IToken>> tmqlTokens, List<String> tokens) {
 		List<Class<? extends IToken>> tmqlTokens_ = new LinkedList<Class<? extends IToken>>();
 		List<String> tokens_ = new LinkedList<String>();
 

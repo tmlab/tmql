@@ -36,6 +36,7 @@ import de.topicmapslab.tmql4j.path.components.interpreter.PrefixDirectiveInterpr
 import de.topicmapslab.tmql4j.path.components.interpreter.ProjectionPostfixInterpreter;
 import de.topicmapslab.tmql4j.path.components.interpreter.QueryExpressionInterpreter;
 import de.topicmapslab.tmql4j.path.components.interpreter.SimpleContentInterpreter;
+import de.topicmapslab.tmql4j.path.components.interpreter.StepDefinitionInterpreter;
 import de.topicmapslab.tmql4j.path.components.interpreter.StepInterpreter;
 import de.topicmapslab.tmql4j.path.components.interpreter.TupleExpressionInterpreter;
 import de.topicmapslab.tmql4j.path.components.interpreter.ValueExpressionInterpreter;
@@ -69,6 +70,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.ProjectionPostfix;
 import de.topicmapslab.tmql4j.path.grammar.productions.QueryExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.SimpleContent;
 import de.topicmapslab.tmql4j.path.grammar.productions.Step;
+import de.topicmapslab.tmql4j.path.grammar.productions.StepDefinition;
 import de.topicmapslab.tmql4j.path.grammar.productions.TupleExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.Variable;
@@ -116,6 +118,7 @@ public class InterpreterRegistry extends InterpreterRegistryImpl {
 		registerInterpreterClass(ProjectionPostfix.class, ProjectionPostfixInterpreter.class);
 		registerInterpreterClass(QueryExpression.class, QueryExpressionInterpreter.class);
 		registerInterpreterClass(SimpleContent.class, SimpleContentInterpreter.class);
+		registerInterpreterClass(StepDefinition.class, StepDefinitionInterpreter.class);
 		registerInterpreterClass(Step.class, StepInterpreter.class);
 		registerInterpreterClass(TupleExpression.class, TupleExpressionInterpreter.class);
 		registerInterpreterClass(ValueExpression.class, ValueExpressionInterpreter.class);

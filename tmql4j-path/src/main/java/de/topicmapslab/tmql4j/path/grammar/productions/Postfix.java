@@ -18,8 +18,6 @@ import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
-import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundClose;
-import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundOpen;
 
 /**
  * Special implementation of {@link ExpressionImpl} representing a postfix.
@@ -56,21 +54,8 @@ public class Postfix extends ExpressionImpl {
 	 */
 	public Postfix(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
-
-		/*
-		 * is projection-postfix
-		 */
-		if (tmqlTokens.get(0).equals(BracketRoundOpen.class) || tmqlTokens.get(tmqlTokens.size() - 1).equals(BracketRoundClose.class)) {
-			checkForExtensions(ProjectionPostfix.class, tmqlTokens, tokens, runtime);
-			setGrammarType(1);
-		}
-		/*
-		 * is filter-postfix
-		 */
-		else {
-			checkForExtensions(FilterPostfix.class, tmqlTokens, tokens, runtime);
-			setGrammarType(0);
-		}
+		checkForExtensions(ProjectionPostfix.class, tmqlTokens, tokens, runtime);
+		setGrammarType(1);
 	}
 
 	/**

@@ -71,18 +71,18 @@ public class RegExpFunction extends FunctionImpl {
 				continue;
 			}
 			String regexp = re.toString();
+			/*
+			 * check regular expression is a sequence
+			 */
+			if (re instanceof Collection<?> && !((Collection<?>) re).isEmpty()) {
+				regexp = ((Collection<?>) re).iterator().next().toString();
+			}
 			Pattern p;
 			Matcher m = ci.matcher(regexp);
 			if (m.matches()) {
 				p = Pattern.compile(m.group(1), Pattern.CASE_INSENSITIVE);
 			} else {
 				p = Pattern.compile(regexp);
-			}
-			/*
-			 * check regular expression is a sequence
-			 */
-			if (re instanceof Collection<?> && !((Collection<?>) re).isEmpty()) {
-				regexp = ((Collection<?>) re).iterator().next().toString();
 			}
 
 			Map<String, Object> result = HashUtil.getHashMap();

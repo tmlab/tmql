@@ -33,6 +33,7 @@ public class GroupByTest extends Tmql4JTestCase {
 	}
 	
 	@Test
+	@Ignore
 	public void testComplex() throws Exception{
 		fromXtm("src/test/resources/toytm.xtm");
 		
@@ -50,6 +51,7 @@ public class GroupByTest extends Tmql4JTestCase {
 	}
 
 	@Test
+	@Ignore
 	public void testPerformanceProblem() throws Exception {
 		for ( int i = 0 ; i < 10000 ; i++ ){
 			createTopic();

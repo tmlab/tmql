@@ -23,7 +23,6 @@ import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.path.grammar.lexical.At;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketAngleClose;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketAngleOpen;
-import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundClose;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundOpen;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketSquareClose;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketSquareOpen;
@@ -44,8 +43,6 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Null;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Percent;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Plus;
 import de.topicmapslab.tmql4j.path.grammar.lexical.RegularExpression;
-import de.topicmapslab.tmql4j.path.grammar.lexical.Scope;
-import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisInstances;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Some;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Star;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Substraction;
@@ -96,32 +93,25 @@ public class PostfixedExpression extends ExpressionImpl {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
-	@SuppressWarnings("unchecked")
-	public PostfixedExpression(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public PostfixedExpression(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
 		/*
 		 * is a tuple-expression
 		 */
-		if (isTupleExpression()) {			
+		if (isTupleExpression()) {
 			/*
 			 * tuple-expression starts with round brackets
 			 */
 			if (tmqlTokens.get(0).equals(BracketRoundOpen.class)) {
-				
-				checkForExtensions(TupleExpression.class, tmqlTokens.subList(1,
-						tmqlTokens.size() - 1), tokens.subList(1,
-						tokens.size() - 1), runtime);
+
+				checkForExtensions(TupleExpression.class, tmqlTokens.subList(1, tmqlTokens.size() - 1), tokens.subList(1, tokens.size() - 1), runtime);
 			}
 			/*
 			 * tuple-expression does not start with round brackets
 			 */
 			else {
-				checkForExtensions(TupleExpression.class, tmqlTokens, tokens,
-						runtime);
+				checkForExtensions(TupleExpression.class, tmqlTokens, tokens, runtime);
 			}
 			setGrammarType(TYPE_TUPLE_EXPRESSSION);
 		}
@@ -133,8 +123,7 @@ public class PostfixedExpression extends ExpressionImpl {
 			/*
 			 * define opening brackets as beginning of protected section
 			 */
-			Set<Class<? extends IToken>> protectionStarts = HashUtil
-					.getHashSet();
+			Set<Class<? extends IToken>> protectionStarts = HashUtil.getHashSet();
 			protectionStarts.add(BracketAngleOpen.class);
 			protectionStarts.add(BracketSquareOpen.class);
 
@@ -151,72 +140,17 @@ public class PostfixedExpression extends ExpressionImpl {
 			Set<Class<? extends IToken>> indicators = HashUtil.getHashSet();
 			indicators.add(BracketRoundOpen.class);
 
-			int index = ParserUtils.indexOfTokens(tmqlTokens, indicators,
-					protectionStarts, protectionEnds);
+			int index = ParserUtils.indexOfTokens(tmqlTokens, indicators, protectionStarts, protectionEnds);
 			/*
 			 * has projection-postifx
 			 */
 			if (index != -1) {
-				checkForExtensions(SimpleContent.class, tmqlTokens.subList(0,
-						index), tokens.subList(0, index), runtime);
-				checkForExtensions(Postfix.class, tmqlTokens.subList(index,
-						tmqlTokens.size()), tokens
-						.subList(index, tokens.size()), runtime);
-			} else {
-				/*
-				 * define opening brackets as beginning of protected section
-				 */
-				protectionStarts.clear();
-				protectionStarts.add(BracketRoundOpen.class);
-				protectionStarts.add(BracketAngleOpen.class);
-
-				/*
-				 * define closing brackets as end of protected section
-				 */
-				protectionEnds.clear();
-				protectionEnds.add(BracketRoundClose.class);
-				protectionEnds.add(BracketAngleClose.class);
-
-				/*
-				 * indicators for filter-postfix
-				 */
-				indicators.clear();
-				indicators.add(BracketSquareOpen.class);
-				indicators.add(Scope.class);
-
-				index = ParserUtils.indexOfTokens(tmqlTokens, indicators,
-						protectionStarts, protectionEnds);
-				/*
-				 * has filter-postifx
-				 */
-				if (index != -1) {
-					checkForExtensions(SimpleContent.class, tmqlTokens.subList(
-							0, index), tokens.subList(0, index), runtime);
-					checkForExtensions(Postfix.class, tmqlTokens.subList(index,
-							tmqlTokens.size()), tokens.subList(index, tokens
-							.size()), runtime);
-				} else {
-					index = ParserUtils.lastIndexOfTokens(tmqlTokens,
-							ShortcutAxisInstances.class);
-					/*
-					 * has NCL type-filter
-					 */
-					if (index > 0) {
-						checkForExtensions(SimpleContent.class, tmqlTokens
-								.subList(0, index), tokens.subList(0, index),
-								runtime);
-						checkForExtensions(Postfix.class, tmqlTokens.subList(
-								index, tmqlTokens.size()), tokens.subList(
-								index, tokens.size()), runtime);
-					}
-					/*
-					 * no postfix
-					 */
-					else {
-						checkForExtensions(SimpleContent.class, tmqlTokens,
-								tokens, runtime);
-					}
-				}
+				checkForExtensions(SimpleContent.class, tmqlTokens.subList(0, index), tokens.subList(0, index), runtime);
+				checkForExtensions(Postfix.class, tmqlTokens.subList(index, tmqlTokens.size()), tokens.subList(index, tokens.size()), runtime);
+			}
+			/* no postfix */
+			else {
+				checkForExtensions(SimpleContent.class, tmqlTokens, tokens, runtime);
 			}
 			setGrammarType(TYPE_SIMPLE_CONTENT);
 		}
@@ -242,8 +176,7 @@ public class PostfixedExpression extends ExpressionImpl {
 	 */
 	private final boolean isTupleExpression() {
 
-		Set<Class<? extends IToken>> tupleExpressionIndicators = HashUtil
-				.getHashSet();
+		Set<Class<? extends IToken>> tupleExpressionIndicators = HashUtil.getHashSet();
 		/*
 		 * special tokens only allowed as tuple-expression parts
 		 */
@@ -292,8 +225,7 @@ public class PostfixedExpression extends ExpressionImpl {
 		if (getTmqlTokens().get(0).equals(BracketRoundOpen.class)) {
 			return true;
 		}
-		return ParserUtils.containsTokens(getTmqlTokens(),
-				tupleExpressionIndicators);
+		return ParserUtils.containsTokens(getTmqlTokens(), tupleExpressionIndicators);
 	}
 
 }

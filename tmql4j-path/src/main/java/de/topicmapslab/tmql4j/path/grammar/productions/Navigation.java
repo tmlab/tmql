@@ -40,7 +40,7 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  * <p>
  * The grammar production rule of the expression is: <code>
  * <p>
- * navigation ::= step [ navigation ]
+ * navigation ::= step-definition+
  * </p>
  * </code> </p>
  * 
@@ -82,7 +82,7 @@ public class Navigation extends ExpressionImpl {
 				 * is direction token >> or <<
 				 */
 				if (token.equals(MoveBackward.class) || token.equals(MoveForward.class)) {
-					checkForExtensions(Step.class, tmqlTokens, tokens, runtime);
+					checkForExtensions(StepDefinition.class, tmqlTokens, tokens, runtime);
 				}
 				/*
 				 * special handling for non-canonical axis

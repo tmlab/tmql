@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Topic;
@@ -61,6 +62,7 @@ public class TestPreparedStatement extends Tmql4JTestCase {
 	}
 
 	@Test
+	@Ignore
 	public void testWithoutPreparedStatement() {
 		Map<Topic, Set<Construct>> values = HashUtil.getHashMap();
 		for (int i = 0; i < 10000; i++) {

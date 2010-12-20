@@ -10,8 +10,6 @@
  */
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
-import java.util.List;
-
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.Context;
@@ -19,27 +17,26 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.path.grammar.productions.Navigation;
+import de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix;
+import de.topicmapslab.tmql4j.path.grammar.productions.Step;
 import de.topicmapslab.tmql4j.path.grammar.productions.StepDefinition;
-import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * 
- * Special interpreter class to interpret naviagtions.
- * 
- * 
+ * Special interpreter class to interpret steps.
  * <p>
- * The grammar production rule of the expression is: <code>
- * <p>
- * navigation ::= step [ navigation ]
+ * step-definition ::= step filter*
  * </p>
- * </code> </p>
+ * <p>
+ * step ::= // anchor
+ * </p>
+ * </code> </p>*
  * 
  * @author Sven Krosse
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class NavigationInterpreter extends ExpressionInterpreterImpl<Navigation> {
+public class StepDefinitionInterpreter extends ExpressionInterpreterImpl<StepDefinition> {
 
 	/**
 	 * base constructor to create a new instance
@@ -47,7 +44,7 @@ public class NavigationInterpreter extends ExpressionInterpreterImpl<Navigation>
 	 * @param ex
 	 *            the expression which shall be interpreted
 	 */
-	public NavigationInterpreter(Navigation ex) {
+	public StepDefinitionInterpreter(StepDefinition ex) {
 		super(ex);
 	}
 
@@ -56,30 +53,25 @@ public class NavigationInterpreter extends ExpressionInterpreterImpl<Navigation>
 	 */
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		List<Object> values = HashUtil.getList();
-		values.add(context.getCurrentNode());
 		/*
-		 * Iterate over all contained steps
+		 * execute step expression
 		 */
-		for (IExpressionInterpreter<StepDefinition> nextExpression : getInterpretersFilteredByEypressionType(runtime, StepDefinition.class)) {
-			List<Object> results = HashUtil.getList();
-			/*
-			 * Iterate over all possible bindings and navigate over axis
-			 */
-			for (Object currentNode : values) {
-				Context newContext = new Context(context);
-				newContext.setCurrentNode(currentNode);
-				/*
-				 * call next expression
-				 */
-				QueryMatches matches = nextExpression.interpret(runtime, newContext, optionalArguments);
-				results.addAll(matches.getPossibleValuesForVariable());
-			}
-			/*
-			 * Combine sequences to one new sequence
-			 */
-			values = results;
+		QueryMatches results = extractArguments(runtime, Step.class, 0, context, optionalArguments);
+		if (results.isEmpty()) {
+			return results;
 		}
-		return QueryMatches.asQueryMatchNS(runtime, values.toArray());
+		/*
+		 * handle filter parts
+		 */
+		Context newContext = new Context(context);
+		newContext.setContextBindings(results);
+		for (IExpressionInterpreter<FilterPostfix> interpreter : getInterpretersFilteredByEypressionType(runtime, FilterPostfix.class)) {
+			QueryMatches iteration = interpreter.interpret(runtime, newContext, optionalArguments);
+			if (iteration.isEmpty()) {
+				return iteration;
+			}
+			newContext.setContextBindings(iteration);
+		}
+		return newContext.getContextBindings();
 	}
 }

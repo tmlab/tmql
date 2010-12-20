@@ -496,28 +496,28 @@ public class TestValueExpression extends Tmql4JTestCase {
 	
 	@Test
 	public void testEquals() throws Exception {
-		Topic t = createTopicBySI("myTopic");
+		Topic t = createTopicBySI("myTopic");		
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = prefix + " myTopic [ 1 == 1 ]";
+		query = prefix + " // tm:subject [ 1 == 1 ]";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Assert.assertEquals(1, set.first().size());
 		Assert.assertEquals(t, set.first().first());
 		
-		query = prefix + " myTopic [ 1 == 2 ]";
+		query = prefix + " // tm:subject [ 1 == 2 ]";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(0, set.size());
 
-		query = prefix + "  myTopic [ \"a\" == \"a\" ]";
+		query = prefix + "  // tm:subject [ \"a\" == \"a\" ]";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Assert.assertEquals(1, set.first().size());
 		Assert.assertEquals(t, set.first().first());
 		
-		query = prefix + "  myTopic [ \"a\" == \"b\" ] ";
+		query = prefix + "  // tm:subject [ \"a\" == \"b\" ] ";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(0, set.size());
 	}
@@ -529,23 +529,23 @@ public class TestValueExpression extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = prefix + " myTopic [ 1 != 2 ]";
+		query = prefix + " // tm:subject [ 1 != 2 ]";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Assert.assertEquals(1, set.first().size());
 		Assert.assertEquals(t, set.first().first());
 		
-		query = prefix + " myTopic [ 1 != 1 ]";
+		query = prefix + " // tm:subject [ 1 != 1 ]";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(0, set.size());
 
-		query = prefix + "  myTopic [ \"a\" != \"b\"  ]";
+		query = prefix + "  // tm:subject [ \"a\" != \"b\"  ]";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Assert.assertEquals(1, set.first().size());
 		Assert.assertEquals(t, set.first().first());
 		
-		query = prefix + "  myTopic [ \"a\" != \"a\"  ]";
+		query = prefix + "  // tm:subject [ \"a\" != \"a\"  ]";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(0, set.size());
 	}
