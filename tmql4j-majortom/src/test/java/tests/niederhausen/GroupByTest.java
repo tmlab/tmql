@@ -49,4 +49,16 @@ public class GroupByTest extends Tmql4JTestCase {
 		IResultSet<?> resultSet = execute(query);
 	}
 
+	@Test
+	public void testPerformanceProblem() throws Exception {
+		for ( int i = 0 ; i < 10000 ; i++ ){
+			createTopic();
+		}
+		
+		final String query = " FOR $t IN // tm:subject OFFSET 0 LIMIT 10 RETURN $t , $t >> id , \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\", \"A\"";
+		
+		IResultSet<?> rs = execute(query);
+		System.out.println(rs);
+	}
+	
 }

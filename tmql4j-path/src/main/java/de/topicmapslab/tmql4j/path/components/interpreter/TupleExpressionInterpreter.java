@@ -10,11 +10,18 @@
  */
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
+import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
@@ -100,109 +107,83 @@ public class TupleExpressionInterpreter extends ExpressionInterpreterImpl<TupleE
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private QueryMatches interpretValueExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		/*
-		 * variable store of multiple tuple-expressions
-		 */
-		Map<String, Object> tuple = HashUtil.getHashMap();
-		/*
-		 * store mappings
-		 */
-		Map<String, String> origins = HashUtil.getHashMap();
-		/*
-		 * results store of singleton tuple-expressions
-		 */
-		Set<QueryMatches> matches = HashUtil.getHashSet();
-
-		QueryMatches[] content = extractArguments(runtime, ValueExpression.class, context, optionalArguments);
-		for (int index = 0; index < content.length; index++) {
-			/*
-			 * get corresponding expression
-			 */
-			IExpression ex = getExpression().getExpressionFilteredByType(ValueExpression.class).get(index);
-
-			QueryMatches result = content[index].extractAndRenameBindingsForVariable("$" + (index));
-			/*
-			 * add sequence
-			 */
-			List<Object> values = content[index].getPossibleValuesForVariable();
-			/*
-			 * check if expression contains variables
-			 */
-			if (!ex.getVariables().isEmpty()) {
-				/*
-				 * variable name of the expression
+	private QueryMatches interpretValueExpression(final ITMQLRuntime runtime, final IContext context, final Object... optionalArguments) throws TMQLRuntimeException {
+		List<Future<Object>> tasks = new LinkedList<Future<Object>>();
+		ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors()*4);
+		
+		final List<String> variables = getVariables();
+		
+		final List<IExpressionInterpreter<ValueExpression>> interpreters = getInterpretersFilteredByEypressionType(runtime, ValueExpression.class);		
+		for ( final IExpressionInterpreter<ValueExpression> interpreter : interpreters){
+			Callable<Object> callable = new Callable<Object>() {				
+				/**
+				 * {@inheritDoc}
 				 */
-				final String variable = ex.getVariables().get(0);
-				/*
-				 * current variable name
-				 */
-				String origin = QueryMatches.getNonScopedVariable();
-				/*
-				 * check if values are empty
-				 */
-				if (values.isEmpty()) {
-					values = content[index].getPossibleValuesForVariable(variable);
-					origin = variable;
-				}
-				/*
-				 * check if values are empty
-				 */
-				if (values.isEmpty()) {
+				public Object call() throws Exception {
+					QueryMatches result = interpreter.interpret(runtime, context, optionalArguments);					
+					final List<String> keys = result.getOrderedKeys();
+					QueryMatches matches = null;
 					/*
-					 * add null values only for multiple results
+					 * variable name of the expression
 					 */
-					if (content.length != 1) {
-						tuple.put("$" + index, null);
+					final String variable = variables.get(0);
+					/*
+					 * check if expression contains variables
+					 */
+					if (!variables.isEmpty()) {
+						/*
+						 * contains non-scoped stuff
+						 */
+						if ( keys.contains(QueryMatches.getNonScopedVariable())){
+							return result.getPossibleValuesForVariable();
+						}
+						/*
+						 * contains value stuff
+						 */
+						else if ( keys.contains(variable)){
+							return result.getPossibleValuesForVariable(variable);
+						}
+						/*
+						 * no results
+						 */
+						else if ( interpreters.size() != 1 ) {
+							return null;
+						}
 					}
-					continue;
+					/*
+					 * variable independent
+					 */
+					else{
+						return result.getPossibleValuesForVariable();
+					}
+					return null;
 				}
-				/*
-				 * store as tuple
-				 */
-				tuple.put("$" + (index), values.size() == 1 ? values.get(0) : values);
-				origins.put(variable, "$" + index);
-				/*
-				 * store as tuple sequence
-				 */
-				result = content[index].extractAndRenameBindingsForVariable(origin, variable);
-			}
-
-			/*
-			 * store as tuple
-			 */
-			tuple.put("$" + index, values.size() == 1 ? values.get(0) : values);
-			/*
-			 * store results
-			 */
-			if (!result.isEmpty()) {
-				matches.add(result);
-			} else {
-				matches.add(content[index]);
-			}
+			};
+			tasks.add(threadPool.submit(callable));		
 		}
-
+		
+		threadPool.shutdown();
+		
 		/*
 		 * create result
 		 */
 		QueryMatches results = new QueryMatches(runtime);
-		results.setOrigins(origins);
-		/*
-		 * is singleton tuple-expression
-		 */
-		if (content.length == 1) {
-			if (!matches.isEmpty()) {
-				results.addAll(matches);
-			} else if (!tuple.isEmpty()) {
-				results.add(tuple);
-			}
-		}
-		/*
-		 * is multiple tuple-expression
-		 */
-		else {
-			results.add(tuple);
-		}
+		int index = 0;
+		Map<String, Object> tuple = HashUtil.getHashMap();
+		for ( Future<Object> task : tasks){			
+			try {				
+				Object result = task.get();
+				if ( result == null && interpreters.size() == 1 ){
+					return QueryMatches.emptyMatches();
+				}
+				tuple.put("$"+index++, result);
+			} catch (InterruptedException e) {
+				throw new TMQLRuntimeException(e);
+			} catch (ExecutionException e) {
+				throw new TMQLRuntimeException(e);
+			}			
+		}	
+		results.add(tuple);
 		return results;
 	}
 
