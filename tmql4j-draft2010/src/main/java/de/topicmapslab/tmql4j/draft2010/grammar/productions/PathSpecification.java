@@ -3,6 +3,7 @@ package de.topicmapslab.tmql4j.draft2010.grammar.productions;
 import java.util.List;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
+import de.topicmapslab.tmql4j.draft2010.grammar.functions.topicmap.AssociationPatternFct;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.BracketRoundOpen;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
@@ -27,6 +28,10 @@ public class PathSpecification extends ExpressionImpl {
 	 * type association pattern
 	 */
 	public static final int TYPE_ASSOCIATION_PATTERN = 1;
+	/**
+	 * type association pattern function
+	 */
+	public static final int TYPE_ASSOCIATION_PATTERN_FCT = 2;
 
 	/**
 	 * base constructor to create a new expression without sub-nodes
@@ -52,6 +57,14 @@ public class PathSpecification extends ExpressionImpl {
 			TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
+		/*
+		 * is new function for association pattern
+		 */
+		if (tmqlTokens.size() > 1 && AssociationPatternFct.IDENTIFIER.equalsIgnoreCase(tokens.get(0)) ){
+			checkForExtensions(FunctionCall.class, tmqlTokens, tokens,
+					runtime);
+			setGrammarType(TYPE_ASSOCIATION_PATTERN_FCT);
+		}
 		/*
 		 * path specification is an association pattern
 		 */

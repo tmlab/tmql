@@ -4,6 +4,7 @@ import java.util.Map;
 
 import de.topicmapslab.tmql4j.draft2010.components.navigation.axis.AssociationAxis;
 import de.topicmapslab.tmql4j.draft2010.components.navigation.axis.DatatypeAxis;
+import de.topicmapslab.tmql4j.draft2010.components.navigation.axis.DefaultAxis;
 import de.topicmapslab.tmql4j.draft2010.components.navigation.axis.DirectInstanceAxis;
 import de.topicmapslab.tmql4j.draft2010.components.navigation.axis.DirectSubtypeAxis;
 import de.topicmapslab.tmql4j.draft2010.components.navigation.axis.DirectSupertypeAxis;
@@ -29,6 +30,7 @@ import de.topicmapslab.tmql4j.draft2010.components.navigation.axis.ValueAxis;
 import de.topicmapslab.tmql4j.draft2010.components.navigation.axis.VariantAxis;
 import de.topicmapslab.tmql4j.draft2010.components.navigation.model.IAxis;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Association;
+import de.topicmapslab.tmql4j.draft2010.grammar.lexical.AxisDefault;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.AxisReifier;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.AxisScope;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Datatype;
@@ -84,6 +86,7 @@ public class Axis {
 		axes.put(Player.class, PlayerAxis.class);
 		axes.put(Reified.class, ReifiedAxis.class);
 		axes.put(AxisReifier.class, ReifierAxis.class);
+		axes.put(AxisDefault.class, DefaultAxis.class);
 		axes.put(Role.class, RoleAxis.class);
 		axes.put(AxisScope.class, ScopeAxis.class);
 		axes.put(Scoped.class, ScopedAxis.class);

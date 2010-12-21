@@ -1,0 +1,12 @@
+Bundle-SymbolicName: de.topicmapslab.tmql4j.hatana;singleton=true
+Bundle-Version: 3.0.0
+Bundle-Name: TMQL4J Hatana Extension
+Provide-Package: de.topicmapslab.tmql4j.hatana.query,
+ de.topicmapslab.tmql4j.hatana.query.transformer
+Import-Package: org.osgi.framework,
+ org.slf4j;specification-version="1.6.1"
+Service-Component: OSGI-INF/tmql4j-hatana.xml
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.tmapi;bundle-version="2.0.3",
+ de.topicmapslab.tmql4j;bundle-version="3.0.0",
+ de.topicmapslab.tmql4j.draft2010;bundle-version="3.0.0"

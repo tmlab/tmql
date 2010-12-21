@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.tmapi.core.Association;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
 import org.tmapi.core.Topic;
@@ -18,15 +19,16 @@ import org.tmapi.core.Variant;
 import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
-
 /**
  * Test class of function call
+ * 
  * @author Sven Krosse
- *
+ * 
  */
 public class FunctionCallTest extends Tmql4JTestCase {
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -40,8 +42,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertEquals(1, set.first().size());
 		assertEquals(topicMap, set.first().first());
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -62,11 +66,12 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first() instanceof BigInteger);
-		assertEquals(topics.size(),
-				((BigInteger) set.first().first()).longValue());
+		assertEquals(topics.size(), ((BigInteger) set.first().first()).longValue());
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -88,8 +93,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof Boolean);
 		assertEquals(false, ((Boolean) set.first().first()).booleanValue());
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -112,8 +119,7 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first() instanceof String);
-		assertEquals(topic.getSubjectIdentifiers().iterator().next()
-				.getReference(), set.first().first());
+		assertEquals(topic.getSubjectIdentifiers().iterator().next().getReference(), set.first().first());
 
 		query = " string ( 1234 ) ";
 		set = execute(query);
@@ -143,8 +149,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof String);
 		assertEquals(v.getValue(), set.first().first());
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -183,19 +191,19 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first() instanceof BigDecimal);
-		assertEquals(1234.1, ((BigDecimal) set.first().first()).doubleValue(),
-				0);
+		assertEquals(1234.1, ((BigDecimal) set.first().first()).doubleValue(), 0);
 
 		query = " number ( 1234.1 ) ";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first() instanceof BigDecimal);
-		assertEquals(1234.1, ((BigDecimal) set.first().first()).doubleValue(),
-				0);
+		assertEquals(1234.1, ((BigDecimal) set.first().first()).doubleValue(), 0);
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -229,8 +237,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof BigInteger);
 		assertEquals(2, ((BigInteger) set.first().first()).longValue());
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -264,8 +274,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof BigInteger);
 		assertEquals(-2, ((BigInteger) set.first().first()).longValue());
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -299,8 +311,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof BigInteger);
 		assertEquals(-3, ((BigInteger) set.first().first()).longValue());
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -322,15 +336,13 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first() instanceof BigInteger);
-		assertEquals(n.getValue().length(),
-				((BigInteger) set.first().first()).longValue());
+		assertEquals(n.getValue().length(), ((BigInteger) set.first().first()).longValue());
 
 		query = " string-length ( myType / occurrence:: ) ";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(o.getValue().length(),
-				((BigInteger) set.first().first()).longValue());
+		assertEquals(o.getValue().length(), ((BigInteger) set.first().first()).longValue());
 
 		query = " string-length ( \"abcdg\" ) ";
 		set = execute(query);
@@ -347,8 +359,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertEquals(5, ((BigInteger) set.first().first()).longValue());
 
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -394,8 +408,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue("abc dg".equalsIgnoreCase(((String) set.first().first())));
 
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -417,20 +433,20 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first() instanceof BigInteger);
-		assertEquals(n.getValue().indexOf("a"), ((BigInteger) set.first()
-				.first()).longValue());
+		assertEquals(n.getValue().indexOf("a"), ((BigInteger) set.first().first()).longValue());
 
 		query = " find ( myType / occurrence:: , \"a\" ) ";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first() instanceof BigInteger);
-		assertEquals(o.getValue().indexOf("a"), ((BigInteger) set.first()
-				.first()).longValue());
+		assertEquals(o.getValue().indexOf("a"), ((BigInteger) set.first().first()).longValue());
 
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -484,8 +500,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertEquals(o.getValue() + "si:", set.first().first());
 
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -501,10 +519,9 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof Boolean);
 		assertTrue(((Boolean) set.first().first()).booleanValue());
 
-
 		topic.createName("Name");
 		topic.createOccurrence(createTopic(), "value");
-		
+
 		query = " contains ( myType / name:: , \"a\" ) ";
 		set = execute(query);
 		assertEquals(1, set.size());
@@ -519,8 +536,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof Boolean);
 		assertTrue(((Boolean) set.first().first()).booleanValue());
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -552,8 +571,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof Boolean);
 		assertTrue(((Boolean) set.first().first()).booleanValue());
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -585,8 +606,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof Boolean);
 		assertTrue(((Boolean) set.first().first()).booleanValue());
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -637,8 +660,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof String);
 		Assert.assertTrue("abcd".equalsIgnoreCase((String) set.first().first()));
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -680,8 +705,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof String);
 		Assert.assertTrue("".equalsIgnoreCase((String) set.first().first()));
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -724,8 +751,10 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof String);
 		Assert.assertTrue("".equalsIgnoreCase((String) set.first().first()));
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -763,13 +792,15 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertTrue(set.first().first() instanceof Boolean);
 		assertTrue(((Boolean) set.first().first()).booleanValue());
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
 	public void testFunctionExtractRegexp() throws Exception {
-		Topic topic = createTopicBySI("myType");		
+		Topic topic = createTopicBySI("myType");
 		String query = null;
 		SimpleResultSet set = null;
 
@@ -789,7 +820,7 @@ public class FunctionCallTest extends Tmql4JTestCase {
 
 		topic.createName("Name");
 		topic.createOccurrence(createTopic(), "value");
-		
+
 		query = " extract-regexp ( myType / name:: , \".*m\" ) ";
 		set = execute(query);
 		assertEquals(1, set.size());
@@ -809,11 +840,12 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first() instanceof String);
-		Assert.assertTrue("foo bar".equalsIgnoreCase((String) set.first()
-				.first()));
+		Assert.assertTrue("foo bar".equalsIgnoreCase((String) set.first().first()));
 	}
+
 	/**
 	 * TEST METHOD
+	 * 
 	 * @throws Exception
 	 */
 	@Test
@@ -851,8 +883,7 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first() instanceof String);
-		Assert.assertTrue("xxxxxyyyyyzzzzz".equalsIgnoreCase((String) set
-				.first().first()));
+		Assert.assertTrue("xxxxxyyyyyzzzzz".equalsIgnoreCase((String) set.first().first()));
 
 		query = " translate ( \"uuu\" , \"psi\" , \"xyz\") ";
 		set = execute(query);
@@ -862,4 +893,120 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		Assert.assertTrue("uuu".equalsIgnoreCase((String) set.first().first()));
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testFunctionTopicBySubjectIdentifier() throws Exception {
+		Topic topic = createTopicBySI("myType");
+		Topic otherTopic = createTopicBySI("myOtherTopic");
+		String query = null;
+		SimpleResultSet set = null;
+
+		query = " topic-by-subjectidentifier ( \"" + topic.getSubjectIdentifiers().iterator().next().getReference() + "\" , \"" + otherTopic.getSubjectIdentifiers().iterator().next().getReference()
+				+ "\" ) ";
+		set = execute(query);
+		assertEquals(2, set.size());
+		assertEquals(1, set.get(0).size());
+		assertTrue(topic.equals(set.get(0, 0)) || otherTopic.equals(set.get(0, 0)));
+		assertEquals(1, set.get(1).size());
+		assertTrue(topic.equals(set.get(1, 0)) || otherTopic.equals(set.get(1, 0)));
+	}
+
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testFunctionTopicBySubjectLocator() throws Exception {
+		Topic topic = createTopicBySL("myType");
+		Topic otherTopic = createTopicBySL("myOtherTopic");
+		String query = null;
+		SimpleResultSet set = null;
+
+		query = " topic-by-subjectlocator ( \"" + topic.getSubjectLocators().iterator().next().getReference() + "\" , \"" + otherTopic.getSubjectLocators().iterator().next().getReference() + "\" ) ";
+		set = execute(query);
+		assertEquals(2, set.size());
+		assertEquals(1, set.get(0).size());
+		assertTrue(topic.equals(set.get(0, 0)) || otherTopic.equals(set.get(0, 0)));
+		assertEquals(1, set.get(1).size());
+		assertTrue(topic.equals(set.get(1, 0)) || otherTopic.equals(set.get(1, 0)));
+	}
+
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testFunctionTopicByItemIdentifier() throws Exception {
+		Topic topic = createTopicByII("myType");
+		Topic otherTopic = createTopicByII("myOtherTopic");
+		String query = null;
+		SimpleResultSet set = null;
+
+		query = " topic-by-itemidentifier ( \"" + topic.getItemIdentifiers().iterator().next().getReference() + "\" , \"" + otherTopic.getItemIdentifiers().iterator().next().getReference() + "\" ) ";
+		set = execute(query);
+		assertEquals(2, set.size());
+		assertEquals(1, set.get(0).size());
+		assertTrue(topic.equals(set.get(0, 0)) || otherTopic.equals(set.get(0, 0)));
+		assertEquals(1, set.get(1).size());
+		assertTrue(topic.equals(set.get(1, 0)) || otherTopic.equals(set.get(1, 0)));
+	}
+
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testFunctionAssociationPattern() throws Exception {
+		Topic topic = createTopicBySI("myType");
+		Topic player = createTopicBySI("myPlayer");
+		Topic coPlayer = createTopicBySI("myCoPlayer");
+		Association a = createAssociation(topic);
+		a.createRole(topic, player);
+		a.createRole(topic, coPlayer);
+		String query = null;
+		SimpleResultSet set = null;
+
+		final String iri = topic.getSubjectIdentifiers().iterator().next().getReference();
+
+		query = " myPlayer / association-pattern ( topic-by-subjectidentifier ( \"" + iri + "\" ) , topic-by-subjectidentifier ( \"" + iri + "\" ) , topic-by-subjectidentifier ( \"" + iri + "\" ) )";
+		set = execute(query);
+		assertEquals(1, set.size());
+		assertEquals(1, set.get(0).size());
+		assertTrue(coPlayer.equals(set.get(0, 0)));
+	}
+
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testFunctionArrayFunction() throws Exception {
+		String query = null;
+		SimpleResultSet set = null;
+		query = " array ( \"Hallo\", \"Welt\", \"das\",\"sollte\",\"ein\",\"array\",\"werden\")";
+		set = execute(query);
+		assertEquals(7, set.size());
+		assertEquals(1, set.get(0).size());
+		assertEquals("Hallo", set.get(0, 0));
+		assertEquals(1, set.get(1).size());
+		assertEquals("Welt", set.get(1, 0));
+		assertEquals(1, set.get(2).size());
+		assertEquals("das", set.get(2, 0));
+		assertEquals(1, set.get(3).size());
+		assertEquals("sollte", set.get(3, 0));
+		assertEquals(1, set.get(4).size());
+		assertEquals("ein", set.get(4, 0));
+		assertEquals(1, set.get(5).size());
+		assertEquals("array", set.get(5, 0));
+		assertEquals(1, set.get(6).size());
+		assertEquals("werden", set.get(6, 0));
+	}
 }

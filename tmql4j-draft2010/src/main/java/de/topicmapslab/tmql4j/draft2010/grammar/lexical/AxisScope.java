@@ -22,7 +22,7 @@ public class AxisScope extends Token {
 	/**
 	 * token
 	 */
-	private static final String TOKEN = "scope";
+	public static final String TOKEN = "scope";
 
 	/**
 	 * {@inheritDoc}

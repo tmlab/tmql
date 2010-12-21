@@ -10,6 +10,7 @@ package de.topicmapslab.tmql4j.draft2010.components.processor.runtime.module;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.FunctionRegistryImpl;
+import de.topicmapslab.tmql4j.draft2010.grammar.functions.ArrayFunction;
 import de.topicmapslab.tmql4j.draft2010.grammar.functions.CountFunction;
 import de.topicmapslab.tmql4j.draft2010.grammar.functions.TopicMapFunction;
 import de.topicmapslab.tmql4j.draft2010.grammar.functions.literal.BooleanFunction;
@@ -31,6 +32,10 @@ import de.topicmapslab.tmql4j.draft2010.grammar.functions.string.SubstringAfterF
 import de.topicmapslab.tmql4j.draft2010.grammar.functions.string.SubstringBeforeFunction;
 import de.topicmapslab.tmql4j.draft2010.grammar.functions.string.SubstringFunction;
 import de.topicmapslab.tmql4j.draft2010.grammar.functions.string.TranslateFunction;
+import de.topicmapslab.tmql4j.draft2010.grammar.functions.topicmap.AssociationPatternFct;
+import de.topicmapslab.tmql4j.draft2010.grammar.functions.topicmap.TopicsByItemIdentifier;
+import de.topicmapslab.tmql4j.draft2010.grammar.functions.topicmap.TopicsBySubjectIdentifier;
+import de.topicmapslab.tmql4j.draft2010.grammar.functions.topicmap.TopicsBySubjectLocator;
 
 /**
  * @author Sven Krosse
@@ -75,5 +80,10 @@ public class FunctionRegistry extends FunctionRegistryImpl {
 
 		registerFunction(CountFunction.IDENTIFIER, CountFunction.class);
 		registerFunction(TopicMapFunction.IDENTIFIER, TopicMapFunction.class);
+		registerFunction(ArrayFunction.IDENTIFIER, ArrayFunction.class);
+		registerFunction(TopicsBySubjectIdentifier.IDENTIFIER, TopicsBySubjectIdentifier.class);
+		registerFunction(TopicsBySubjectLocator.IDENTIFIER, TopicsBySubjectLocator.class);
+		registerFunction(TopicsByItemIdentifier.IDENTIFIER, TopicsByItemIdentifier.class);
+		registerFunction(AssociationPatternFct.IDENTIFIER, AssociationPatternFct.class);
 	}
 }

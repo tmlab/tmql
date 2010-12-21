@@ -11,6 +11,7 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 
 import de.topicmapslab.tmql4j.draft2010.components.navigation.model.IAxis;
+import de.topicmapslab.tmql4j.draft2010.grammar.lexical.AxisDefault;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.util.HashUtil;
@@ -26,7 +27,7 @@ public class DefaultAxis implements IAxis {
 	 * {@inheritDoc}
 	 */
 	public IToken getIdentifier() {
-		return null;
+		return new AxisDefault();
 	}
 
 	/**

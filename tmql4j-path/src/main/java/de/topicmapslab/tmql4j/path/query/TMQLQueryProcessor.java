@@ -32,6 +32,7 @@ public class TMQLQueryProcessor implements IQueryProcessor {
 	public TMQLQueryProcessor() {
 		this.queries = HashUtil.getHashMap();
 	}
+
 	/**
 	 * 
 	 * {@inheritDoc}
@@ -46,6 +47,7 @@ public class TMQLQueryProcessor implements IQueryProcessor {
 		}
 		throw new IllegalArgumentException("String represenation cannot convert to a TMQL query!");
 	}
+
 	/**
 	 * 
 	 * {@inheritDoc}
@@ -54,14 +56,16 @@ public class TMQLQueryProcessor implements IQueryProcessor {
 	public String getLanguageName() {
 		return "TMQL";
 	}
+
 	/**
 	 * 
 	 * {@inheritDoc}
 	 */
 	@Override
-	public IQuery getQuery(TopicMap topicMap, String query) {
+	public IQuery getQuery(TopicMap topicMap, String query, Object...  objects) {
 		return asTmqlQuery(topicMap, query);
 	}
+
 	/**
 	 * 
 	 * {@inheritDoc}

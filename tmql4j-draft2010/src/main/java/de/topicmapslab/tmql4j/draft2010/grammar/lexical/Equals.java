@@ -22,7 +22,7 @@ public class Equals extends Token {
 	/**
 	 * the token
 	 */
-	private static final String TOKEN = "=";
+	public static final String TOKEN = "=";
 
 	/**
 	 * {@inheritDoc}

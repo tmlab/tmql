@@ -13,7 +13,7 @@ public class Type extends Token {
 	/**
 	 * the token
 	 */
-	private static final String TOKEN = "type";
+	public static final String TOKEN = "type";
 
 	/**
 	 * {@inheritDoc}

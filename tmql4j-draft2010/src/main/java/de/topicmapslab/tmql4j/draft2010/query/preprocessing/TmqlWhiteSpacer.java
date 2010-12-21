@@ -41,7 +41,11 @@ public class TmqlWhiteSpacer {
 		/*
 		 * call query transformer
 		 */
-		final String string = TmqlQueryTransformer.transform(runtime, query.toString());
+		String string = TmqlQueryTransformer.transform(runtime, query.toString());
+		/*
+		 * clean string
+		 */
+		string = string.replaceAll(":  :" , "::");
 		return PathWhitespacer.whitespace(string);
 	}
 

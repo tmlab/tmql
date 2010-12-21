@@ -71,7 +71,7 @@ public class TMQLQueryProcessor implements IQueryProcessor {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public IQuery getQuery(TopicMap topicMap, String query) {
+	public IQuery getQuery(TopicMap topicMap, String query, Object...  objects) {
 		return asTmqlQuery(topicMap, query);
 	}
 

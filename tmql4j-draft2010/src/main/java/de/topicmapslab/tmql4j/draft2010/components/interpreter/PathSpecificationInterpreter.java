@@ -18,6 +18,7 @@ import de.topicmapslab.tmql4j.draft2010.components.navigation.model.IAxis;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.DoubleColon;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Star;
 import de.topicmapslab.tmql4j.draft2010.grammar.productions.AssociationPattern;
+import de.topicmapslab.tmql4j.draft2010.grammar.productions.FunctionCall;
 import de.topicmapslab.tmql4j.draft2010.grammar.productions.PathSpecification;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.util.HashUtil;
@@ -60,6 +61,16 @@ public class PathSpecificationInterpreter extends ExpressionInterpreterImpl<Path
 			 * call association-pattern to interpret
 			 */
 			IExpressionInterpreter<AssociationPattern> interpreter = getInterpretersFilteredByEypressionType(runtime, AssociationPattern.class).get(0);
+			return interpreter.interpret(runtime, context, optionalArguments);
+		}
+		/*
+		 * is association pattern function
+		 */
+		else if (getGrammarTypeOfExpression() == PathSpecification.TYPE_ASSOCIATION_PATTERN_FCT) {
+			/*
+			 * call to interpret
+			 */
+			IExpressionInterpreter<FunctionCall> interpreter = getInterpretersFilteredByEypressionType(runtime, FunctionCall.class).get(0);
 			return interpreter.interpret(runtime, context, optionalArguments);
 		}
 		/*

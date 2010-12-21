@@ -12,7 +12,7 @@ public class DoubleColon extends Token {
 	/**
 	 * the token
 	 */
-	private static final String TOKEN = "::";
+	public static final String TOKEN = "::";
 
 	/**
 	 * 

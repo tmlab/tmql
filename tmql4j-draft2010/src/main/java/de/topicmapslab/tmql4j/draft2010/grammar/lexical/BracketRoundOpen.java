@@ -22,7 +22,7 @@ public class BracketRoundOpen extends Token {
 	/**
 	 * 
 	 */
-	private static final String TOKEN = "(";
+	public static final String TOKEN = "(";
 
 	/**
 	 * {@inheritDoc}

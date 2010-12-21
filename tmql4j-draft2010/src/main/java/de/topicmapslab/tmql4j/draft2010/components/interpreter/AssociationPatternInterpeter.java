@@ -125,7 +125,7 @@ public class AssociationPatternInterpeter extends ExpressionInterpreterImpl<Asso
 	 *            the role type of the traversal player or <code>null</code>
 	 * @return a collection of all traversal players
 	 */
-	private Collection<Topic> getTraversalPlayers(final Topic topic, final Topic associationType, final Topic roleType, final Topic otherRoleType) {
+	public static Collection<Topic> getTraversalPlayers(final Topic topic, final Topic associationType, final Topic roleType, final Topic otherRoleType) {
 		List<Topic> topics = new LinkedList<Topic>();
 
 		/*

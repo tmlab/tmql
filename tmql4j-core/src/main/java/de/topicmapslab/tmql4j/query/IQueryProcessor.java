@@ -42,15 +42,18 @@ public interface IQueryProcessor {
 	 *            the topic map
 	 * @param query
 	 *            the query
+	 * @param optional
+	 *            optional arguments
 	 * @return a data object representing the query of the specific language
 	 * @throws IllegalArgumentException
 	 *             thrown if the given string cannot represent within the
 	 *             current language
 	 */
-	public IQuery getQuery(TopicMap topicMap, final String query);
+	public IQuery getQuery(TopicMap topicMap, final String query, Object... optional);
 
 	/**
 	 * Method transforms the given query to a TMQL query.
+	 * 
 	 * @param topicMap
 	 *            the topic map
 	 * @param query
