@@ -72,13 +72,13 @@ public class Expression extends
 			checkForExtensions(ValueExpression.class, tmqlTokens, tokens,
 					runtime);
 		}
-		/*
-		 * is known function
-		 */
-		else if ( tmqlTokens.get(0).equals(Function.class)){
-			checkForExtensions(ValueExpression.class, tmqlTokens, tokens,
-					runtime);
-		}
+//		/*
+//		 * is known function
+//		 */
+//		else if ( tmqlTokens.get(0).equals(Function.class)){
+//			checkForExtensions(ValueExpression.class, tmqlTokens, tokens,
+//					runtime);
+//		}
 		/*
 		 * is path-expression
 		 */
