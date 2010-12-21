@@ -41,6 +41,7 @@ import de.topicmapslab.tmql4j.draft2010.grammar.productions.ComparisonExpression
 import de.topicmapslab.tmql4j.draft2010.grammar.productions.FunctionCall;
 import de.topicmapslab.tmql4j.draft2010.grammar.productions.PathSpecification;
 import de.topicmapslab.tmql4j.draft2010.grammar.productions.ScopeFilter;
+import de.topicmapslab.tmql4j.draft2010.grammar.productions.SimpleExpression;
 import de.topicmapslab.tmql4j.exception.TMQLConverterException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
@@ -73,7 +74,8 @@ public class HatanaQueryTransformer {
 	 * @return the transformed query
 	 * @throws TMQLConverterException
 	 */
-	public static String transform(final IParserTree tree, final IPSIRegistry registry) throws TMQLConverterException {
+	public static String transform(final IParserTree tree,
+			final IPSIRegistry registry) throws TMQLConverterException {
 		StringBuilder builder = new StringBuilder();
 		transform(tree.root(), registry, builder);
 		return builder.toString();
@@ -91,7 +93,9 @@ public class HatanaQueryTransformer {
 	 *            the builder to write in
 	 * @throws TMQLConverterException
 	 */
-	private static void transform(final IExpression expression, final IPSIRegistry registry, final StringBuilder builder) throws TMQLConverterException {
+	private static void transform(final IExpression expression,
+			final IPSIRegistry registry, final StringBuilder builder)
+			throws TMQLConverterException {
 		try {
 			/*
 			 * is path step
@@ -107,13 +111,15 @@ public class HatanaQueryTransformer {
 				 * is association pattern
 				 */
 				else if (expression.getGrammarType() == PathSpecification.TYPE_ASSOCIATION_PATTERN) {
-					transformAssociationPattern(expression.getExpressions().get(0), registry, builder);
+					transformAssociationPattern(expression.getExpressions()
+							.get(0), registry, builder);
 				}
 				/*
 				 * is association pattern function
 				 */
 				else {
-					transformFunctionCall(expression.getExpressions().get(0), registry, builder);
+					transformFunctionCall(expression.getExpressions().get(0),
+							registry, builder);
 				}
 			}
 			/*
@@ -126,7 +132,8 @@ public class HatanaQueryTransformer {
 			 * is comparison
 			 */
 			else if (expression instanceof ComparisonExpression) {
-				transformComparisonExpression((ComparisonExpression) expression, registry, builder);
+				transformComparisonExpression(
+						(ComparisonExpression) expression, registry, builder);
 			}
 			/*
 			 * is function call
@@ -135,17 +142,44 @@ public class HatanaQueryTransformer {
 				transformFunctionCall(expression, registry, builder);
 			}
 			/*
+			 * is simple expression
+			 */
+			else if (expression instanceof SimpleExpression) {
+				/*
+				 * is function
+				 */
+				if (expression.getGrammarType() == SimpleExpression.TYPE_FUNCTION) {
+					transformFunctionCall(expression.getExpressions().get(0),
+							registry, builder);
+				}
+				/*
+				 * is topic reference
+				 */
+				else if (expression.getGrammarType() == SimpleExpression.TYPE_TOPICREF) {
+					buildArrayBySubjectIdentifier(builder, registry, expression
+							.getTokens().get(0));
+				}
+				/*
+				 * is anything else
+				 */
+				else {
+					tokensToQuery(builder, expression);
+				}
+			}
+			/*
 			 * has children
 			 */
 			else if (!expression.getExpressions().isEmpty()) {
-				Iterator<IExpression> iterator = expression.getExpressions().iterator();
+				Iterator<IExpression> iterator = expression.getExpressions()
+						.iterator();
 				IExpression ex = iterator.next();
 				int index = 0;
 				/*
 				 * move over expression
 				 */
 				for (; index < expression.getTmqlTokens().size(); index++) {
-					Class<? extends IToken> token = expression.getTmqlTokens().get(index);
+					Class<? extends IToken> token = expression.getTmqlTokens()
+							.get(index);
 					/*
 					 * is first token of child
 					 */
@@ -159,7 +193,9 @@ public class HatanaQueryTransformer {
 							ex = iterator.next();
 							index -= 1;
 						} else {
-							tokensToQuery(builder, expression.getTokens().subList(index, expression.getTokens().size()));
+							tokensToQuery(builder, expression.getTokens()
+									.subList(index,
+											expression.getTokens().size()));
 							break;
 						}
 					} else {
@@ -195,7 +231,9 @@ public class HatanaQueryTransformer {
 	 * @return <code>true</code> if the next expression should be ignored,
 	 *         <code>false</code> otherwise
 	 */
-	private static void transformAssociationPattern(final IExpression expression, final IPSIRegistry registry, final StringBuilder builder) {
+	private static void transformAssociationPattern(
+			final IExpression expression, final IPSIRegistry registry,
+			final StringBuilder builder) {
 		builder.append(AssociationPatternFct.IDENTIFIER);
 		builder.append(WHITESPACE);
 		builder.append(BracketRoundOpen.TOKEN);
@@ -205,7 +243,8 @@ public class HatanaQueryTransformer {
 		 * get association type by identifier if it isn't *
 		 */
 		if (expression.getTmqlTokens().get(0).equals(Element.class)) {
-			buildArrayBySubjectIdentifier(builder, registry, LiteralUtils.asString(expression.getTokens().get(0)));
+			buildArrayBySubjectIdentifier(builder, registry, LiteralUtils
+					.asString(expression.getTokens().get(0)));
 		} else {
 			buildEmptyArray(builder);
 		}
@@ -217,7 +256,8 @@ public class HatanaQueryTransformer {
 		 */
 		int index = expression.getTmqlTokens().indexOf(BracketRoundOpen.class) + 1;
 		if (expression.getTmqlTokens().get(index).equals(Element.class)) {
-			buildArrayBySubjectIdentifier(builder, registry, LiteralUtils.asString(expression.getTokens().get(index)));
+			buildArrayBySubjectIdentifier(builder, registry, LiteralUtils
+					.asString(expression.getTokens().get(index)));
 		} else {
 			buildEmptyArray(builder);
 		}
@@ -229,11 +269,12 @@ public class HatanaQueryTransformer {
 		 */
 		index = expression.getTmqlTokens().indexOf(Arrow.class) + 1;
 		if (expression.getTmqlTokens().get(index).equals(Element.class)) {
-			buildArrayBySubjectIdentifier(builder, registry, LiteralUtils.asString(expression.getTokens().get(index)));
+			buildArrayBySubjectIdentifier(builder, registry, LiteralUtils
+					.asString(expression.getTokens().get(index)));
 		} else {
 			buildEmptyArray(builder);
 		}
-		
+
 		builder.append(BracketRoundClose.TOKEN); // round bracket
 		builder.append(WHITESPACE); // white space
 	}
@@ -255,7 +296,8 @@ public class HatanaQueryTransformer {
 	 * @return <code>true</code> if the next expression should be ignored,
 	 *         <code>false</code> otherwise
 	 */
-	private static void transformFunctionCall(final IExpression expression, final IPSIRegistry registry, final StringBuilder builder) {
+	private static void transformFunctionCall(final IExpression expression,
+			final IPSIRegistry registry, final StringBuilder builder) {
 		final String functionName = expression.getTokens().get(0);
 		/*
 		 * temporary sets
@@ -265,14 +307,18 @@ public class HatanaQueryTransformer {
 		Set<String> itemIdentifiers = HashUtil.getHashSet();
 		Set<String> otherExpressions = HashUtil.getHashSet();
 
-		boolean isSubjectIdentifierFct = TopicsBySubjectIdentifier.IDENTIFIER.equalsIgnoreCase(functionName);
-		boolean isSubjectLocatorFct = TopicsBySubjectLocator.IDENTIFIER.equalsIgnoreCase(functionName);
-		boolean isItemIdentifierFct = TopicsByItemIdentifier.IDENTIFIER.equalsIgnoreCase(functionName);
+		boolean isSubjectIdentifierFct = TopicsBySubjectIdentifier.IDENTIFIER
+				.equalsIgnoreCase(functionName);
+		boolean isSubjectLocatorFct = TopicsBySubjectLocator.IDENTIFIER
+				.equalsIgnoreCase(functionName);
+		boolean isItemIdentifierFct = TopicsByItemIdentifier.IDENTIFIER
+				.equalsIgnoreCase(functionName);
 
 		/*
 		 * is any other function
 		 */
-		if (!isSubjectIdentifierFct && !isSubjectLocatorFct && !isItemIdentifierFct) {
+		if (!isSubjectIdentifierFct && !isSubjectLocatorFct
+				&& !isItemIdentifierFct) {
 			builder.append(functionName);
 			builder.append(WHITESPACE);
 			builder.append(BracketRoundOpen.TOKEN);
@@ -299,28 +345,32 @@ public class HatanaQueryTransformer {
 			 * is string literal -> extract equal identifiers
 			 */
 			if (ex.getTmqlTokens().get(0).equals(Element.class)) {
-				String identifier = LiteralUtils.asString(ex.getTokens().get(0));
+				String identifier = LiteralUtils
+						.asString(ex.getTokens().get(0));
 				List<Set<String>> identifiers = null;
 				/*
 				 * extract by subject-identifier
 				 */
 				if (isSubjectIdentifierFct) {
 					subjectIdentifiers.add(identifier);
-					identifiers = registry.getIdentifiersBySubjectIdentifier(identifier);
+					identifiers = registry
+							.getIdentifiersBySubjectIdentifier(identifier);
 				}
 				/*
 				 * extract by subject-locator
 				 */
 				else if (isSubjectLocatorFct) {
 					subjectLocators.add(identifier);
-					identifiers = registry.getIdentifiersBySubjectLocator(identifier);
+					identifiers = registry
+							.getIdentifiersBySubjectLocator(identifier);
 				}
 				/*
 				 * extract by item-identifier
 				 */
 				else {
 					itemIdentifiers.add(identifier);
-					identifiers = registry.getIdentifiersByItemIdentifier(identifier);
+					identifiers = registry
+							.getIdentifiersByItemIdentifier(identifier);
 				}
 				subjectIdentifiers.addAll(identifiers.get(0));
 				subjectLocators.addAll(identifiers.get(1));
@@ -353,7 +403,8 @@ public class HatanaQueryTransformer {
 			first = false;
 		}
 
-		buildArray(builder, subjectIdentifiers, subjectLocators, itemIdentifiers, first ? null : tempBuilder.toString());
+		buildArray(builder, subjectIdentifiers, subjectLocators,
+				itemIdentifiers, first ? null : tempBuilder.toString());
 	}
 
 	/**
@@ -375,7 +426,9 @@ public class HatanaQueryTransformer {
 	 *            the builder
 	 */
 	@SuppressWarnings("unchecked")
-	private static void transformComparisonExpression(final ComparisonExpression expression, final IPSIRegistry registry, final StringBuilder builder) throws Exception {
+	private static void transformComparisonExpression(
+			final ComparisonExpression expression, final IPSIRegistry registry,
+			final StringBuilder builder) throws Exception {
 		Comparison type = TransformerUtils.getTypeOfComparison(expression);
 		/*
 		 * is any but no identity expression
@@ -394,38 +447,56 @@ public class HatanaQueryTransformer {
 		switch (type) {
 		case LEFT_SUBJECT_IDENTIFIER: {
 			axisExpression = expression.getExpressions().get(0);
-			index = ParserUtils.indexOfTokens(axisExpression.getTmqlTokens(), SubjectIdentifier.class);
-			buildArrayBySubjectIdentifier(arrayBuilder, registry, LiteralUtils.asString(expression.getExpressions().get(1).getTokens().get(0)));
+			index = ParserUtils.indexOfTokens(axisExpression.getTmqlTokens(),
+					SubjectIdentifier.class);
+			buildArrayBySubjectIdentifier(arrayBuilder, registry, LiteralUtils
+					.asString(expression.getExpressions().get(1).getTokens()
+							.get(0)));
 		}
 			break;
 		case RIGHT_SUBJECT_IDENTIFIER: {
 			axisExpression = expression.getExpressions().get(1);
-			index = ParserUtils.indexOfTokens(axisExpression.getTmqlTokens(), SubjectIdentifier.class);
-			buildArrayBySubjectIdentifier(arrayBuilder, registry, LiteralUtils.asString(expression.getExpressions().get(0).getTokens().get(0)));
+			index = ParserUtils.indexOfTokens(axisExpression.getTmqlTokens(),
+					SubjectIdentifier.class);
+			buildArrayBySubjectIdentifier(arrayBuilder, registry, LiteralUtils
+					.asString(expression.getExpressions().get(0).getTokens()
+							.get(0)));
 		}
 			break;
 		case LEFT_SUBJECT_LOCATOR: {
 			axisExpression = expression.getExpressions().get(0);
-			index = ParserUtils.indexOfTokens(axisExpression.getTmqlTokens(), SubjectLocator.class);
-			buildArrayBySubjectLocator(arrayBuilder, registry, LiteralUtils.asString(expression.getExpressions().get(1).getTokens().get(0)));
+			index = ParserUtils.indexOfTokens(axisExpression.getTmqlTokens(),
+					SubjectLocator.class);
+			buildArrayBySubjectLocator(arrayBuilder, registry, LiteralUtils
+					.asString(expression.getExpressions().get(1).getTokens()
+							.get(0)));
 		}
 			break;
 		case RIGHT_SUBJECT_LOCATOR: {
 			axisExpression = expression.getExpressions().get(1);
-			index = ParserUtils.indexOfTokens(axisExpression.getTmqlTokens(), SubjectLocator.class);
-			buildArrayBySubjectLocator(arrayBuilder, registry, LiteralUtils.asString(expression.getExpressions().get(0).getTokens().get(0)));
+			index = ParserUtils.indexOfTokens(axisExpression.getTmqlTokens(),
+					SubjectLocator.class);
+			buildArrayBySubjectLocator(arrayBuilder, registry, LiteralUtils
+					.asString(expression.getExpressions().get(0).getTokens()
+							.get(0)));
 		}
 			break;
 		case LEFT_ITEM_IDENTIFIER: {
 			axisExpression = expression.getExpressions().get(0);
-			index = ParserUtils.indexOfTokens(axisExpression.getTmqlTokens(), ItemIdentifier.class);
-			buildArrayByItemIdentifier(arrayBuilder, registry, LiteralUtils.asString(expression.getExpressions().get(1).getTokens().get(0)));
+			index = ParserUtils.indexOfTokens(axisExpression.getTmqlTokens(),
+					ItemIdentifier.class);
+			buildArrayByItemIdentifier(arrayBuilder, registry, LiteralUtils
+					.asString(expression.getExpressions().get(1).getTokens()
+							.get(0)));
 		}
 			break;
 		case RIGHT_ITEM_IDENTIFIER: {
 			axisExpression = expression.getExpressions().get(1);
-			index = ParserUtils.indexOfTokens(axisExpression.getTmqlTokens(), ItemIdentifier.class);
-			buildArrayByItemIdentifier(arrayBuilder, registry, LiteralUtils.asString(expression.getExpressions().get(0).getTokens().get(0)));
+			index = ParserUtils.indexOfTokens(axisExpression.getTmqlTokens(),
+					ItemIdentifier.class);
+			buildArrayByItemIdentifier(arrayBuilder, registry, LiteralUtils
+					.asString(expression.getExpressions().get(0).getTokens()
+							.get(0)));
 		}
 			break;
 		}
@@ -435,7 +506,8 @@ public class HatanaQueryTransformer {
 		 */
 		index -= 1;
 		if (index > 0) {
-			tokensToQuery(arrayBuilder, axisExpression.getTokens().subList(0, index));
+			tokensToQuery(arrayBuilder, axisExpression.getTokens().subList(0,
+					index));
 		}
 		builder.append(WHITESPACE);
 		builder.append(Equals.TOKEN);
@@ -456,7 +528,8 @@ public class HatanaQueryTransformer {
 	 * @param builder
 	 *            the builder
 	 */
-	private static void transformScopeFilter(final IExpression expression, final IPSIRegistry registry, final StringBuilder builder) {
+	private static void transformScopeFilter(final IExpression expression,
+			final IPSIRegistry registry, final StringBuilder builder) {
 		List<String> tokens = HashUtil.getList();
 		tokens.add(BracketSquareOpen.TOKEN); // filter start
 		tokens.add(Dot.TOKEN); // dot
@@ -466,7 +539,8 @@ public class HatanaQueryTransformer {
 		tokens.add(Star.TOKEN); // the star
 		tokens.add(Equals.TOKEN); // equals token
 		tokensToQuery(builder, tokens);
-		buildArrayBySubjectIdentifier(builder, registry, expression.getTokens().get(1));
+		buildArrayBySubjectIdentifier(builder, registry, expression.getTokens()
+				.get(1));
 		builder.append(BracketSquareClose.TOKEN); // filter end
 		builder.append(WHITESPACE); // white space
 	}
@@ -486,7 +560,9 @@ public class HatanaQueryTransformer {
 	 * @param builder
 	 *            the builder
 	 */
-	private static void transformPathSpecification(final IExpression expression, final IPSIRegistry registry, final StringBuilder builder) {
+	private static void transformPathSpecification(
+			final IExpression expression, final IPSIRegistry registry,
+			final StringBuilder builder) {
 		/*
 		 * has filter pattern
 		 */
@@ -494,7 +570,8 @@ public class HatanaQueryTransformer {
 			/*
 			 * has type filter reference
 			 */
-			if (expression.getTmqlTokens().size() == 3 && !expression.getTmqlTokens().get(2).equals(Star.class)) {
+			if (expression.getTmqlTokens().size() == 3
+					&& !expression.getTmqlTokens().get(2).equals(Star.class)) {
 				List<String> tokens = HashUtil.getList();
 				tokens.add(expression.getTokens().get(0)); // axis
 				tokens.add(expression.getTokens().get(1)); // double colon
@@ -507,7 +584,8 @@ public class HatanaQueryTransformer {
 				tokens.add(Star.TOKEN); // the star
 				tokens.add(Equals.TOKEN); // equals token
 				tokensToQuery(builder, tokens);
-				buildArrayBySubjectIdentifier(builder, registry, expression.getTokens().get(2));
+				buildArrayBySubjectIdentifier(builder, registry, expression
+						.getTokens().get(2));
 				builder.append(BracketSquareClose.TOKEN); // filter end
 				builder.append(WHITESPACE); // white space
 				return;
@@ -535,7 +613,8 @@ public class HatanaQueryTransformer {
 		tokens.add(Star.TOKEN); // the star
 		tokens.add(Equals.TOKEN); // equals token
 		tokensToQuery(builder, tokens);
-		buildArrayBySubjectIdentifier(builder, registry, expression.getTokens().get(0));
+		buildArrayBySubjectIdentifier(builder, registry, expression.getTokens()
+				.get(0));
 		builder.append(BracketSquareClose.TOKEN); // filter end
 		builder.append(WHITESPACE); // white space
 	}
@@ -550,9 +629,13 @@ public class HatanaQueryTransformer {
 	 * @param subjectIdentifier
 	 *            the subject identifier to check
 	 */
-	private static void buildArrayBySubjectIdentifier(final StringBuilder builder, final IPSIRegistry registry, final String subjectIdentifier) {
-		List<Set<String>> identifiers = registry.getIdentifiersBySubjectIdentifier(subjectIdentifier);
-		buildArray(builder, identifiers.get(0), identifiers.get(1), identifiers.get(2), null);
+	private static void buildArrayBySubjectIdentifier(
+			final StringBuilder builder, final IPSIRegistry registry,
+			final String subjectIdentifier) {
+		List<Set<String>> identifiers = registry
+				.getIdentifiersBySubjectIdentifier(subjectIdentifier);
+		buildArray(builder, identifiers.get(0), identifiers.get(1), identifiers
+				.get(2), null);
 	}
 
 	/**
@@ -565,9 +648,12 @@ public class HatanaQueryTransformer {
 	 * @param subjectLocator
 	 *            the subject locator to check
 	 */
-	private static void buildArrayBySubjectLocator(final StringBuilder builder, final IPSIRegistry registry, final String subjectLocator) {
-		List<Set<String>> identifiers = registry.getIdentifiersBySubjectLocator(subjectLocator);
-		buildArray(builder, identifiers.get(0), identifiers.get(1), identifiers.get(2), null);
+	private static void buildArrayBySubjectLocator(final StringBuilder builder,
+			final IPSIRegistry registry, final String subjectLocator) {
+		List<Set<String>> identifiers = registry
+				.getIdentifiersBySubjectLocator(subjectLocator);
+		buildArray(builder, identifiers.get(0), identifiers.get(1), identifiers
+				.get(2), null);
 	}
 
 	/**
@@ -580,9 +666,12 @@ public class HatanaQueryTransformer {
 	 * @param itemIdentifier
 	 *            the item identifier to check
 	 */
-	private static void buildArrayByItemIdentifier(final StringBuilder builder, final IPSIRegistry registry, final String itemIdentifier) {
-		List<Set<String>> identifiers = registry.getIdentifiersByItemIdentifier(itemIdentifier);
-		buildArray(builder, identifiers.get(0), identifiers.get(1), identifiers.get(2), null);
+	private static void buildArrayByItemIdentifier(final StringBuilder builder,
+			final IPSIRegistry registry, final String itemIdentifier) {
+		List<Set<String>> identifiers = registry
+				.getIdentifiersByItemIdentifier(itemIdentifier);
+		buildArray(builder, identifiers.get(0), identifiers.get(1), identifiers
+				.get(2), null);
 	}
 
 	/**
@@ -600,7 +689,10 @@ public class HatanaQueryTransformer {
 	 * @param optional
 	 *            the optional part or <code>null</code>
 	 */
-	private static void buildArray(final StringBuilder builder, final Set<String> subjectIdentifiers, final Set<String> subjectLocators, final Set<String> itemIdentifiers, final String optional) {
+	private static void buildArray(final StringBuilder builder,
+			final Set<String> subjectIdentifiers,
+			final Set<String> subjectLocators,
+			final Set<String> itemIdentifiers, final String optional) {
 		builder.append(ArrayFunction.IDENTIFIER); // array-function
 		builder.append(WHITESPACE); // white space
 		builder.append(BracketRoundOpen.TOKEN); // round bracket
@@ -741,7 +833,8 @@ public class HatanaQueryTransformer {
 	 * @param expression
 	 *            the expression
 	 */
-	private static void tokensToQuery(final StringBuilder builder, IExpression expression) {
+	private static void tokensToQuery(final StringBuilder builder,
+			IExpression expression) {
 		tokensToQuery(builder, expression.getTokens());
 	}
 
@@ -753,7 +846,8 @@ public class HatanaQueryTransformer {
 	 * @param tokens
 	 *            the tokens
 	 */
-	private static void tokensToQuery(final StringBuilder builder, List<String> tokens) {
+	private static void tokensToQuery(final StringBuilder builder,
+			List<String> tokens) {
 		for (String token : tokens) {
 			builder.append(token);
 			builder.append(WHITESPACE);

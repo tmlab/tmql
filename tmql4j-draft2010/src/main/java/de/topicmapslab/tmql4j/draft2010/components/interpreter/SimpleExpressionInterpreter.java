@@ -90,6 +90,12 @@ public class SimpleExpressionInterpreter extends ExpressionInterpreterImpl<Simpl
 		else if ( getGrammarTypeOfExpression() == SimpleExpression.TYPE_PREPARED){
 			return getInterpreters(runtime).get(0).interpret(runtime, context, optionalArguments);
 		}
+		/*
+		 * is function
+		 */
+		else if ( getGrammarTypeOfExpression() == SimpleExpression.TYPE_FUNCTION){
+			return getInterpreters(runtime).get(0).interpret(runtime, context, optionalArguments);
+		}
 		return QueryMatches.emptyMatches();
 
 	}

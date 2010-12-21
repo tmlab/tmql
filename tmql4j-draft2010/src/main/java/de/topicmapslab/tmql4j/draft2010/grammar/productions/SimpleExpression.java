@@ -5,6 +5,7 @@ import java.util.List;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Dot;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Element;
+import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Function;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Variable;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
@@ -39,6 +40,10 @@ public class SimpleExpression extends ExpressionImpl {
 	 * type prepared
 	 */
 	public static final int TYPE_PREPARED = 3;
+	/**
+	 * function
+	 */
+	public static final int TYPE_FUNCTION = 3;
 
 	/**
 	 * base constructor to create a new expression without sub-nodes
@@ -63,9 +68,16 @@ public class SimpleExpression extends ExpressionImpl {
 
 		Class<? extends IToken> token = getTmqlTokens().get(0);
 		/*
+		 * is function
+		 */
+		if ( token.equals(Function.class)){
+			checkForExtensions(FunctionCall.class, tmqlTokens, tokens, runtime);
+			setGrammarType(TYPE_FUNCTION);
+		}
+		/*
 		 * current node
 		 */
-		if (token.equals(Dot.class)) {
+		else if (token.equals(Dot.class)) {
 			setGrammarType(TYPE_DOT);
 		}
 		/*
@@ -95,7 +107,10 @@ public class SimpleExpression extends ExpressionImpl {
 		 * expression has to contain only one token
 		 */
 		if (getTmqlTokens().size() != 1) {
-			return false;
+			if ( getTmqlTokens().isEmpty()){
+				return false;
+			}
+			return getTmqlTokens().get(0).equals(Function.class);
 		}
 		Class<? extends IToken> token = getTmqlTokens().get(0);
 		/*
