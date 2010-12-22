@@ -1009,4 +1009,30 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertEquals(1, set.get(6).size());
 		assertEquals("werden", set.get(6, 0));
 	}
+	
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testFunctionAsNavigationEntry() throws Exception {
+		Topic topic = createTopicBySI("myTopic");
+		Topic other = createTopicBySI("myOtherTopic");
+		
+		Set<Name> names = HashUtil.getHashSet();
+		names.add(topic.createName("Name"));
+		names.add(other.createName("Name"));
+		
+		String query = null;
+		SimpleResultSet set = null;
+		query = " topic-by-subjectidentifier ( \"myTopic\", \"myOtherTopic\") / name:: *";
+		set = execute(query);
+		assertEquals(2, set.size());
+		assertEquals(1, set.get(0).size());
+		assertTrue(names.contains(set.get(0,0)));
+		assertEquals(1, set.get(1).size());
+		assertTrue(names.contains(set.get(1,0)));
+		
+	}
 }

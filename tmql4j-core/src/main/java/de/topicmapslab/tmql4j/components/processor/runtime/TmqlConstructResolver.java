@@ -8,6 +8,7 @@
  */
 package de.topicmapslab.tmql4j.components.processor.runtime;
 
+import java.net.URI;
 import java.util.StringTokenizer;
 
 import org.tmapi.core.Construct;
@@ -59,34 +60,37 @@ public class TmqlConstructResolver implements IConstructResolver {
 	 * {@inheritDoc}
 	 */
 	public final Construct getConstructByIdentifier(final IContext context, final String identifier) throws TMQLRuntimeException {
-		Construct construct = null;
+		// Construct construct = null;
 		/*
 		 * try to get element by identifier
 		 */
-		construct = tryToGetElementByIdentifier(context, identifier);
-		if (construct == null) {
-			/*
-			 * check if identifier contains QNames
-			 */
-			if (!isAbsolute(context, identifier)) {
-				/*
-				 * try to get item by absolute IRI
-				 */
-				construct = tryToGetElementByIdentifier(context, toAbsoluteIRI(context, identifier));
-			} else {
-				final String defaultPrefix = runtime.getLanguageContext().getPrefixHandler().getDefaultPrefix();
-				/*
-				 * no default prefix set
-				 */
-				if (defaultPrefix != null && !defaultPrefix.isEmpty()) {
-					/*
-					 * try to get element by identifier
-					 */
-					construct = tryToGetElementByIdentifier(context, defaultPrefix + identifier);
-				}
-			}
-		}
-		return construct;
+		return tryToGetElementByIdentifier(context, getAbsoluteIdentifier(context, identifier));
+		// if (construct == null) {
+		// /*
+		// * check if identifier contains QNames
+		// */
+		// if (!isAbsolute(context, identifier)) {
+		// /*
+		// * try to get item by absolute IRI
+		// */
+		// construct = tryToGetElementByIdentifier(context,
+		// toAbsoluteIRI(context, identifier));
+		// } else {
+		// final String defaultPrefix =
+		// runtime.getLanguageContext().getPrefixHandler().getDefaultPrefix();
+		// /*
+		// * no default prefix set
+		// */
+		// if (defaultPrefix != null && !defaultPrefix.isEmpty()) {
+		// /*
+		// * try to get element by identifier
+		// */
+		// construct = tryToGetElementByIdentifier(context, defaultPrefix +
+		// identifier);
+		// }
+		// }
+		// }
+		// return construct;
 
 	}
 
@@ -102,30 +106,31 @@ public class TmqlConstructResolver implements IConstructResolver {
 	 * @throws TMQLRuntimeException
 	 *             thrown if no topic map element can be found
 	 */
-	protected final Construct tryToGetElementByIdentifier(final IContext context, final String identifier) throws TMQLRuntimeException {
+	private final Construct tryToGetElementByIdentifier(final IContext context, final String identifier) throws TMQLRuntimeException {
 		TopicMap topicMap = context.getQuery().getTopicMap();
-		/*
-		 * the temporary instance of identifier
-		 */
-		String identifier_ = identifier;
-		/*
-		 * Check if identifier is known symbolic constant like tm:name or
-		 * tm:subject
-		 */
-		PrefixHandler handler = runtime.getLanguageContext().getPrefixHandler();
-		if (handler.isKnownSystemIdentifier(identifier_)) {
-			/*
-			 * translate to absolute IRI
-			 */
-			identifier_ = handler.getAbsoluteSystemIdentifier(identifier);
-		}
+		// /*
+		// * the temporary instance of identifier
+		// */
+		// String identifier_ = identifier;
+		// /*
+		// * Check if identifier is known symbolic constant like tm:name or
+		// * tm:subject
+		// */
+		// PrefixHandler handler =
+		// runtime.getLanguageContext().getPrefixHandler();
+		// if (handler.isKnownSystemIdentifier(identifier_)) {
+		// /*
+		// * translate to absolute IRI
+		// */
+		// identifier_ = handler.getAbsoluteSystemIdentifier(identifier);
+		// }
 
 		try {
 			Construct construct;
 			/*
 			 * Look for construct by item identifier in queried map
 			 */
-			Locator locator = topicMap.createLocator(clean(identifier_));
+			Locator locator = topicMap.createLocator(identifier);
 			construct = topicMap.getConstructByItemIdentifier(locator);
 			if (construct != null) {
 				return construct;
@@ -148,7 +153,57 @@ public class TmqlConstructResolver implements IConstructResolver {
 			// NOTHING TO DO
 		}
 		return null;
+	}
 
+	/**
+	 * Utility method convert the given identifier to an absolute IRI
+	 * identifier. If the given identifier is absolute, it will be returned
+	 * unmodified. If it contains a prefix part, it will be replace. Otherwise
+	 * the default prefix is used.
+	 * 
+	 * @param context
+	 *            the context
+	 * @param identifier
+	 *            the identifier
+	 * @return the absolute identifier
+	 */
+	private final String getAbsoluteIdentifier(IContext context, final String identifier) {
+		/*
+		 * remove <...> if exists
+		 */
+		String identifier_ = clean(identifier);
+		/*
+		 * is absolute
+		 */
+		if (!isAbsolute(context, identifier_)) {
+			/*
+			 * is system identifier
+			 */
+			if (runtime.getLanguageContext().getPrefixHandler().isKnownSystemIdentifier(identifier_)) {
+				identifier_ = runtime.getLanguageContext().getPrefixHandler().getAbsoluteSystemIdentifier(identifier_);
+			}
+			/*
+			 * contains prefix
+			 */
+			else if (identifier_.contains(":")) {
+				identifier_ = toAbsoluteIRI(context, identifier_);
+			}
+			/*
+			 * check default prefix
+			 */
+			else {
+				final String defaultPrefix = runtime.getLanguageContext().getPrefixHandler().getDefaultPrefix();
+				/*
+				 * default prefix set
+				 */
+				if (defaultPrefix != null && !defaultPrefix.isEmpty()) {
+					identifier_ = defaultPrefix + identifier;
+				} else {
+					throw new TMQLRuntimeException("Invalid IRI, non default prefix set, but IRI is relative.");
+				}
+			}
+		}
+		return identifier_;
 	}
 
 	/**
@@ -205,15 +260,16 @@ public class TmqlConstructResolver implements IConstructResolver {
 					return false;
 				}
 			}
-			/*
-			 * IRI doesn't contain any known QName
-			 */
-			return true;
 		}
 		/*
-		 * IRI doesn't contain a QName
+		 * try to create IRI
 		 */
-		return true;
+		try {
+			URI uri = new URI(identifier);
+			return uri.isAbsolute();
+		} catch (Exception e) {
+			return false;
+		}
 	}
 
 	/**
@@ -260,7 +316,8 @@ public class TmqlConstructResolver implements IConstructResolver {
 	 */
 	public Construct getConstructByItemIdentifier(IContext context, String identifier) {
 		TopicMap topicMap = context.getQuery().getTopicMap();
-		return topicMap.getConstructByItemIdentifier(topicMap.createLocator(identifier));
+		Locator locator = topicMap.createLocator(getAbsoluteIdentifier(context, identifier));
+		return topicMap.getConstructByItemIdentifier(locator);
 	}
 
 	/**
@@ -268,7 +325,8 @@ public class TmqlConstructResolver implements IConstructResolver {
 	 */
 	public Topic getTopicBySubjectIdentifier(IContext context, String identifier) {
 		TopicMap topicMap = context.getQuery().getTopicMap();
-		return topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(identifier));
+		Locator locator = topicMap.createLocator(getAbsoluteIdentifier(context, identifier));
+		return topicMap.getTopicBySubjectIdentifier(locator);
 	}
 
 	/**
@@ -276,7 +334,8 @@ public class TmqlConstructResolver implements IConstructResolver {
 	 */
 	public Topic getTopicBySubjectLocator(IContext context, String identifier) {
 		TopicMap topicMap = context.getQuery().getTopicMap();
-		return topicMap.getTopicBySubjectLocator(topicMap.createLocator(identifier));
+		Locator locator = topicMap.createLocator(getAbsoluteIdentifier(context, identifier));
+		return topicMap.getTopicBySubjectLocator(locator);
 	}
 
 }

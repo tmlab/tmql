@@ -9,7 +9,6 @@
 package de.topicmapslab.tmql4j.draft2010.grammar.functions;
 
 import java.util.List;
-import java.util.Set;
 
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
@@ -52,8 +51,8 @@ public class ArrayFunction extends FunctionImpl {
 		 */
 		List<Object> array = HashUtil.getList();
 		for (QueryMatches argument : arguments) {
-			for ( Object o : argument.getPossibleValuesForVariable()){
-				if ( !array.contains(o)){
+			for (Object o : argument.getPossibleValuesForVariable()) {
+				if (!array.contains(o)) {
 					array.add(o);
 				}
 			}

@@ -4,7 +4,6 @@ import java.util.List;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Dot;
-import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Function;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
@@ -18,8 +17,7 @@ import de.topicmapslab.tmql4j.grammar.productions.IExpression;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class Expression extends
-		ExpressionImpl {
+public class Expression extends ExpressionImpl {
 
 	/**
 	 * the parent expression
@@ -44,47 +42,40 @@ public class Expression extends
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
-	public Expression(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public Expression(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 		this.parent = parent;
 
 		/*
 		 * is only one token
 		 */
-		if ( tmqlTokens.size() == 1 && !tmqlTokens.get(0).equals(Dot.class)){
-			checkForExtensions(ValueExpression.class, tmqlTokens, tokens,
-					runtime);
+		if (tmqlTokens.size() == 1 && !tmqlTokens.get(0).equals(Dot.class)) {
+			checkForExtensions(ValueExpression.class, tmqlTokens, tokens, runtime);
 		}
 		/*
 		 * contains 'union' | 'intersect' | 'minus'
 		 */
-		else if ( ValueExpression.isSetExpression(tmqlTokens)){
-			checkForExtensions(ValueExpression.class, tmqlTokens, tokens,
-					runtime);
+		else if (ValueExpression.isSetExpression(tmqlTokens)) {
+			checkForExtensions(ValueExpression.class, tmqlTokens, tokens, runtime);
 		}
 		/*
 		 * contains numerical operator
 		 */
-		else if ( ValueExpression.isNumericalExpression(tmqlTokens)){
-			checkForExtensions(ValueExpression.class, tmqlTokens, tokens,
-					runtime);
+		else if (ValueExpression.isNumericalExpression(tmqlTokens)) {
+			checkForExtensions(ValueExpression.class, tmqlTokens, tokens, runtime);
 		}
-//		/*
-//		 * is known function
-//		 */
-//		else if ( tmqlTokens.get(0).equals(Function.class)){
-//			checkForExtensions(ValueExpression.class, tmqlTokens, tokens,
-//					runtime);
-//		}
+		// /*
+		// * is known function
+		// */
+		// else if ( tmqlTokens.get(0).equals(Function.class)){
+		// checkForExtensions(ValueExpression.class, tmqlTokens, tokens,
+		// runtime);
+		// }
 		/*
 		 * is path-expression
 		 */
-		else{
-			checkForExtensions(PathExpression.class, tmqlTokens, tokens,
-					runtime);
+		else {
+			checkForExtensions(PathExpression.class, tmqlTokens, tokens, runtime);
 		}
 	}
 
@@ -103,16 +94,13 @@ public class Expression extends
 	/**
 	 * {@inheritDoc}
 	 */
-	
+
 	public IExpression getParent() {
 		return parent;
 	}
 
-	
 	public boolean isValid() {
 		return true;
 	}
-	
-	
 
 }

@@ -23,9 +23,9 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  * @author Sven Krosse
  * 
  */
-public class TopicsBySubjectIdentifier extends FunctionImpl {
+public class TopicByItemIdentifier extends FunctionImpl {
 
-	public static final String IDENTIFIER = "topic-by-subjectidentifier";
+	public static final String IDENTIFIER = "topic-by-itemidentifier";
 
 	/**
 	 * {@inheritDoc}
@@ -56,7 +56,7 @@ public class TopicsBySubjectIdentifier extends FunctionImpl {
 		for (QueryMatches argument : arguments) {
 			for (Object obj : argument.getPossibleValuesForVariable()) {
 				try {
-					array.add(runtime.getConstructResolver().getTopicBySubjectIdentifier(context, obj.toString()));
+					array.add((Topic)runtime.getConstructResolver().getConstructByItemIdentifier(context, obj.toString()));
 				} catch (Exception e) {
 					// IGNORE
 				}

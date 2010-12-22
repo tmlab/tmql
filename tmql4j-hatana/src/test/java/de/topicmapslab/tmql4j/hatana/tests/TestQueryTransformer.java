@@ -105,7 +105,7 @@ public class TestQueryTransformer {
 
 		String query = "/ topic:: * @ topic-type";
 		String transform = transformer.getQuery(null, query, registry).getQueryString().trim();
-		System.out.println(transform);
+		
 		assertEquals(
 				"/ topic :: * [ . / scope :: * = array ( topic-by-subjectidentifier ( \"topic-type\"  ) , topic-by-subjectlocator ( \"sl-topic-type\"  ) , topic-by-itemidentifier ( \"ii-topic-type\"  )  ) ]",
 				transform);
@@ -119,7 +119,7 @@ public class TestQueryTransformer {
 
 		String query = "topic-by-subjectidentifier( \"identifier\" )";
 		String transform = transformer.getQuery(null, query, registry).getQueryString().trim();
-		System.out.println(transform);
+		
 		assertEquals("array ( topic-by-subjectidentifier ( \"identifier\"  ) , topic-by-subjectlocator ( \"sl-identifier\"  ) , topic-by-itemidentifier ( \"ii-identifier\"  )  )", transform);
 
 		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
@@ -131,7 +131,7 @@ public class TestQueryTransformer {
 
 		String query = "topic-by-itemidentifier( \"identifier\" )";
 		String transform = transformer.getQuery(null, query, registry).getQueryString().trim();
-		System.out.println(transform);
+	
 		assertEquals("array ( topic-by-subjectidentifier ( \"si-identifier\"  ) , topic-by-subjectlocator ( \"sl-identifier\"  ) , topic-by-itemidentifier ( \"identifier\"  )  )", transform);
 
 		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
@@ -143,7 +143,7 @@ public class TestQueryTransformer {
 
 		String query = "topic-by-subjectlocator( \"identifier\" )";
 		String transform = transformer.getQuery(null, query, registry).getQueryString().trim();
-		System.out.println(transform);
+		
 		assertEquals("array ( topic-by-subjectidentifier ( \"si-identifier\"  ) , topic-by-subjectlocator ( \"identifier\"  ) , topic-by-itemidentifier ( \"ii-identifier\"  )  )", transform);
 
 		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
@@ -155,8 +155,7 @@ public class TestQueryTransformer {
 
 		String query = "/ identifier ( identifier -> identifier )";
 		String transform = transformer.getQuery(null, query, registry).getQueryString().trim();
-		System.out.println(transform);
-
+	
 		String array = "array ( topic-by-subjectidentifier ( \"identifier\"  ) , topic-by-subjectlocator ( \"sl-identifier\"  ) , topic-by-itemidentifier ( \"ii-identifier\"  )  )";
 		String expected = "/ association-pattern ( " + array + " , " + array + " , " + array + " )";
 
@@ -164,6 +163,88 @@ public class TestQueryTransformer {
 
 		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
 
+	}
+	
+	@Test
+	public void testSimpleExpression() throws Exception{
+		String query = "identifier  / name :: ";
+		
+		String transform = transformer.getQuery(null, query, registry).getQueryString().trim();		
+		String array = "array ( topic-by-subjectidentifier ( \"identifier\"  ) , topic-by-subjectlocator ( \"sl-identifier\"  ) , topic-by-itemidentifier ( \"ii-identifier\"  )  )";
+		assertEquals(array + " / name ::", transform);
+		
+		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
+	}
+	
+	@Test
+	public void testFilter() throws Exception{
+		String query = "/ topic :: * [ . / subject-identifier :: == \"identifier\" ]";
+		String array = "array ( topic-by-subjectidentifier ( \"identifier\"  ) , topic-by-subjectlocator ( \"sl-identifier\"  ) , topic-by-itemidentifier ( \"ii-identifier\"  )  )";
+		
+		String transform = transformer.getQuery(null, query, registry).getQueryString().trim();		
+		assertEquals("/ topic :: * [ . = " + array + " ]", transform);
+		
+		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
+		
+		query = "/ topic :: * [ . / subject-locator :: == \"identifier\" ]";
+		
+		transform = transformer.getQuery(null, query, registry).getQueryString().trim();
+		
+		array = "array ( topic-by-subjectidentifier ( \"si-identifier\"  ) , topic-by-subjectlocator ( \"identifier\"  ) , topic-by-itemidentifier ( \"ii-identifier\"  )  )";
+		assertEquals("/ topic :: * [ . = " + array + " ]", transform);
+		
+		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
+		
+		query = "/ topic :: * [ . / item-identifier :: == \"identifier\" ]";
+		
+		transform = transformer.getQuery(null, query, registry).getQueryString().trim();
+		
+		array = "array ( topic-by-subjectidentifier ( \"si-identifier\"  ) , topic-by-subjectlocator ( \"sl-identifier\"  ) , topic-by-itemidentifier ( \"identifier\"  )  )";
+		assertEquals("/ topic :: * [ . = " + array + " ]", transform);
+		
+		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
+		
+		query = "/ topic :: * [ . / item-identifier :: == . / subject-identifier :: ]";
+		transform = transformer.getQuery(null, query, registry).getQueryString().trim();
+		
+		assertEquals(query, transform);
+		
+		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
+		
+		query = "/ topic :: * [ . / item-identifier :: == . / subject-locator :: ]";
+		transform = transformer.getQuery(null, query, registry).getQueryString().trim();
+	
+		assertEquals(query, transform);
+		
+		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
+		
+		query = "/ topic :: * [ . / subject-identifier :: == . / subject-locator :: ]";
+		transform = transformer.getQuery(null, query, registry).getQueryString().trim();
+		
+		assertEquals(query, transform);
+		
+		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
+		
+		query = "/ topic :: * [ . / subject-identifier :: == . / item-identifier :: ]";
+		transform = transformer.getQuery(null, query, registry).getQueryString().trim();
+		
+		assertEquals(query, transform);
+		
+		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
+		
+		query = "/ topic :: * [ . / subject-locator :: == . / subject-identifier :: ]";
+		transform = transformer.getQuery(null, query, registry).getQueryString().trim();
+		
+		assertEquals(query, transform);
+		
+		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
+		
+		query = "/ topic :: * [ . / subject-locator :: == . / item-identifier :: ]";
+		transform = transformer.getQuery(null, query, registry).getQueryString().trim();
+		
+		assertEquals(query, transform);
+		
+		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
 	}
 
 }
