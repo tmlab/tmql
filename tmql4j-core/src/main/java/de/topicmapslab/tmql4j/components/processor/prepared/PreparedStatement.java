@@ -97,12 +97,20 @@ public class PreparedStatement implements IPreparedStatement {
 	 * @param value
 	 *            the value
 	 */
-	private void set(int index, Object value) {
+	private void internalSet(int index, Object value) {
 		if (values == null) {
 			values = HashUtil.getHashMap();
 		}
 		values.put(index, value);
 		nonParametrizedQueryString = null;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void set(int index, Object object) {
+		checkIndex(index);
+		internalSet(index, object);
 	}
 
 	/**
@@ -110,7 +118,7 @@ public class PreparedStatement implements IPreparedStatement {
 	 */
 	public void setLong(int index, long value) {
 		checkIndex(index);
-		set(index, value);
+		internalSet(index, value);
 	}
 
 	/**
@@ -118,7 +126,7 @@ public class PreparedStatement implements IPreparedStatement {
 	 */
 	public void setDouble(int index, double value) {
 		checkIndex(index);
-		set(index, value);
+		internalSet(index, value);
 	}
 
 	/**
@@ -126,7 +134,7 @@ public class PreparedStatement implements IPreparedStatement {
 	 */
 	public void setDate(int index, Calendar value) {
 		checkIndex(index);
-		set(index, value);
+		internalSet(index, value);
 	}
 
 	/**
@@ -134,7 +142,7 @@ public class PreparedStatement implements IPreparedStatement {
 	 */
 	public void setString(int index, String value) {
 		checkIndex(index);
-		set(index, value);
+		internalSet(index, value);
 	}
 
 	/**
@@ -142,7 +150,7 @@ public class PreparedStatement implements IPreparedStatement {
 	 */
 	public void setTopic(int index, Topic topic) {
 		checkIndex(index);
-		set(index, topic);
+		internalSet(index, topic);
 	}
 
 	/**
@@ -150,7 +158,7 @@ public class PreparedStatement implements IPreparedStatement {
 	 */
 	public void setConstruct(int index, Construct construct) {
 		checkIndex(index);
-		set(index, construct);
+		internalSet(index, construct);
 	}
 
 	/**
@@ -309,7 +317,10 @@ public class PreparedStatement implements IPreparedStatement {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void run() {
+	public void run(Object... parameters) {
+		for ( int index = 0 ; index < parameters.length ; index++ ){
+			set(index, parameters[index]);
+		}
 		validate();
 		runtime.getTmqlProcessor().query(this);
 	}

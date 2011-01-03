@@ -82,6 +82,17 @@ public interface IPreparedStatement extends IQuery {
 	public void setTopic(int index, Topic topic);
 
 	/**
+	 * Setting the object at the current index. If the index is invalid an
+	 * exception will be thrown. The indexes are zero-based.
+	 * 
+	 * @param index
+	 *            the index
+	 * @param object
+	 *            the object
+	 */
+	public void set(int index, Object object);
+
+	/**
 	 * Setting the construct at the current index. If the index is invalid an
 	 * exception will be thrown. The indexes are zero-based.
 	 * 
@@ -94,8 +105,11 @@ public interface IPreparedStatement extends IQuery {
 
 	/**
 	 * Executes the prepared statement
+	 * 
+	 * @param parameters
+	 *            the optional parameters for used wildcards
 	 */
-	public void run();
+	public void run(Object... parameters);
 
 	/**
 	 * Get the value setting to the given index

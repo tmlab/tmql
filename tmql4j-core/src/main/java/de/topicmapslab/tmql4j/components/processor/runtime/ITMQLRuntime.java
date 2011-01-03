@@ -33,18 +33,21 @@ import de.topicmapslab.tmql4j.query.QueryFactory;
  * 
  */
 public interface ITMQLRuntime {
-	
+
 	/**
 	 * Execution method of the TMQL runtime. <br />
 	 * <br />
-	 *  Method starts the execution of the given query.
+	 * Method starts the execution of the given query.
 	 * 
 	 * @param query
 	 *            the query to execute
+	 * @param parameters
+	 *            optional parameters, if the query string contains question
+	 *            marks
 	 * @throws TMQLRuntimeException
 	 *             thrown if execution fails
 	 */
-	public void run(IQuery query) throws TMQLRuntimeException;
+	public void run(IQuery query, Object... parameters) throws TMQLRuntimeException;
 
 	/**
 	 * Execution method of the TMQL runtime. <br />
@@ -62,11 +65,14 @@ public interface ITMQLRuntime {
 	 *            the topicMap
 	 * @param query
 	 *            the query to execute
+	 *@param parameters
+	 *            optional parameters, if the query string contains question
+	 *            marks
 	 * @return the create query
 	 * @throws TMQLRuntimeException
 	 *             thrown if execution fails
 	 */
-	public IQuery run(TopicMap topicMap, String query) throws TMQLRuntimeException;
+	public IQuery run(TopicMap topicMap, String query, Object... parameters) throws TMQLRuntimeException;
 
 	/**
 	 * Method return the internal instance of the language context containing
@@ -176,26 +182,32 @@ public interface ITMQLRuntime {
 	 * @return the language name
 	 */
 	public String getLanguageName();
-	
+
 	/**
 	 * Forbid the expression as part of the parsed tree
-	 * @param forbiddenExpressionType the expression to forbid
+	 * 
+	 * @param forbiddenExpressionType
+	 *            the expression to forbid
 	 */
 	public void forbidExpression(Class<? extends IExpression> forbiddenExpressionType);
-	
+
 	/**
-	 * Allow the expression as part of the parsed tree. Please note, that this has only an effect if the expression was forbid before.
-	 * @param allowedExpressionType the expression to allow
+	 * Allow the expression as part of the parsed tree. Please note, that this
+	 * has only an effect if the expression was forbid before.
+	 * 
+	 * @param allowedExpressionType
+	 *            the expression to allow
 	 */
 	public void allowExpression(Class<? extends IExpression> allowedExpressionType);
-	
+
 	/**
 	 * Forbid any expression which modify the topic map
 	 */
 	public void forbidModificationQueries();
-	
+
 	/**
-	 * Allow any expression which modify the topic map. Please note, that this has only an effect if the expressions were forbid before.
+	 * Allow any expression which modify the topic map. Please note, that this
+	 * has only an effect if the expressions were forbid before.
 	 */
 	public void allowModificationQueries();
 

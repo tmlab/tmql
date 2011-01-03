@@ -63,7 +63,7 @@
 		<repository>
 			<id>topicmapslab-public</id>
 			<name>Topic Maps Lab Repositiory</name>
-			<url>scpexe://maven.topicmapslab.de/home/maven/webdir/maven.topicmapslab.de/public/public</url>
+			<url>scpexe://atlantis.tm.informatik.uni-leipzig.de/home/maven/webdir/maven.topicmapslab.de/public/public</url>
 		</repository>
 	</distributionManagement>
 	<modules>
@@ -77,5 +77,6 @@
 		<module>tmql4j-merge</module>
 		<module>tmql4j-draft2010</module>
 		<module>tmql4j-majortom</module>
+		<module>tmql4j-hatana</module>
 	</modules>
 </project>

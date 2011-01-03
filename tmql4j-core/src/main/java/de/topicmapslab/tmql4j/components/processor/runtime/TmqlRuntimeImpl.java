@@ -126,7 +126,24 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void run(IQuery query) throws TMQLRuntimeException {
+	public void run(IQuery query, Object... parameters) throws TMQLRuntimeException {
+		/*
+		 * is prepared statement
+		 */
+		if ( parameters.length > 0 ){
+			if ( query instanceof IPreparedStatement ){
+				IPreparedStatement stmt = (IPreparedStatement) query;
+				for ( int i = 0 ; i < parameters.length ; i++ ){
+					stmt.set(i, parameters[i]);
+				}
+				stmt.run();
+				return;
+			}
+			/*
+			 * no prepared statement
+			 */
+			throw new TMQLRuntimeException("Parameters only allowed for prepared statements");			
+		}
 		/*
 		 * add restrictions
 		 */
@@ -150,12 +167,25 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 	/**
 	 * {@inheritDoc}
 	 */
-	public IQuery run(TopicMap topicMap, String query) throws TMQLRuntimeException {
-		IQuery q = QueryFactory.getFactory().getTmqlQuery(topicMap, query);
+	public IQuery run(TopicMap topicMap, String query, Object... parameters ) throws TMQLRuntimeException {		
+		IQuery q = null;
+		/*
+		 * is prepared statement
+		 */
+		if ( parameters.length > 0){
+			q = preparedStatement(query);
+			q.setTopicMap(topicMap);
+		}
+		/*
+		 * is simple query without wildcards
+		 */
+		else{
+			q = QueryFactory.getFactory().getTmqlQuery(topicMap, query);
+		}
 		if (q == null) {
 			throw new TMQLRuntimeException(GIVEN_QUERY_IS_NOT_A_TMQL_QUERY_OR_CANNOT_TRANSFORM_TO_TMQL);
 		}
-		run(q);
+		run(q, parameters);
 		return q;
 	}
 

@@ -48,6 +48,9 @@ public class TestPreparedStatement extends Tmql4JTestCase {
 			values.put(topic, set);
 		}
 
+		/*
+		 * test set before querying
+		 */
 		for (Entry<Topic, Set<Construct>> entry : values.entrySet()) {
 			statement.setTopic(0, entry.getKey());
 			statement.run();
@@ -58,6 +61,42 @@ public class TestPreparedStatement extends Tmql4JTestCase {
 				assertTrue(entry.getValue().contains(result.first()));
 			}
 			assertEquals("\"" + entry.getKey().getId() + "\" << id >> characteristics", statement.getNonParametrizedQueryString());
+		}
+		
+		/*
+		 * test set with run method
+		 */
+		for (Entry<Topic, Set<Construct>> entry : values.entrySet()) {
+			statement.run(entry.getKey());
+			IResultSet<?> set = statement.getResults();
+			assertEquals(10, set.size());
+			for (IResult result : set) {
+				assertEquals(1, result.size());
+				assertTrue(entry.getValue().contains(result.first()));
+			}
+			assertEquals("\"" + entry.getKey().getId() + "\" << id >> characteristics", statement.getNonParametrizedQueryString());
+		}
+	}
+	
+	@Test
+	public void testProtectedStatement() {
+		Map<Topic, Set<Construct>> values = HashUtil.getHashMap();
+		for (int i = 0; i < 10000; i++) {
+			Topic topic = createTopic();
+			Set<Construct> set = HashUtil.getHashSet();
+			for (int j = 0; j < 10; j++) {
+				set.add(topic.createName("Name"));
+			}
+			values.put(topic, set);
+		}
+
+		for (Entry<Topic, Set<Construct>> entry : values.entrySet()) {			
+			IResultSet<?> set = runtime.run(topicMap, " ? >> characteristics", entry.getKey()).getResults();
+			assertEquals(10, set.size());
+			for (IResult result : set) {
+				assertEquals(1, result.size());
+				assertTrue(entry.getValue().contains(result.first()));
+			}			
 		}
 	}
 
