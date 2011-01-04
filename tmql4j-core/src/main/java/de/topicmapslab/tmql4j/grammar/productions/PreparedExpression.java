@@ -14,7 +14,7 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
-import de.topicmapslab.tmql4j.grammar.lexical.Placeholder;
+import de.topicmapslab.tmql4j.grammar.lexical.Wildcard;
 
 /**
  * A special expression symbolize a place-holder of a prepared statement
@@ -51,7 +51,7 @@ public class PreparedExpression extends ExpressionImpl {
 		/*
 		 * only one token is expected
 		 */
-		return getTmqlTokens().size() == 1 && getTmqlTokens().get(0).equals(Placeholder.class);
+		return getTmqlTokens().size() == 1 && getTmqlTokens().get(0).equals(Wildcard.class);
 	}
 
 }

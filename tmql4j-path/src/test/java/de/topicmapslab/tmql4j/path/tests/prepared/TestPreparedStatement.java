@@ -79,6 +79,123 @@ public class TestPreparedStatement extends Tmql4JTestCase {
 	}
 	
 	@Test
+	public void testAnonymousNamedWildcards() {
+		IPreparedStatement statement = runtime.preparedStatement(" ? ( ? , . >> characteristics )");
+		statement.setTopicMap(topicMap);
+		
+		Map<Topic, Set<Construct>> values = HashUtil.getHashMap();
+		for (int i = 0; i < 10000; i++) {
+			Topic topic = createTopic();
+			Set<Construct> set = HashUtil.getHashSet();
+			for (int j = 0; j < 10; j++) {
+				set.add(topic.createName("Name"));
+			}
+			values.put(topic, set);
+		}
+
+		for (Entry<Topic, Set<Construct>> entry : values.entrySet()) {
+			statement.set(entry.getKey());
+			statement.run();
+			IResultSet<?> set = statement.getResults();
+			assertEquals(10, set.size());
+			for (IResult result : set) {
+				assertEquals(2, result.size());
+				assertEquals(entry.getKey(),result.first());
+				assertTrue(entry.getValue().contains(result.get(1)));
+			}			
+		}
+		
+		for (Entry<Topic, Set<Construct>> entry : values.entrySet()) {
+			statement.set(IPreparedStatement.ANONYMOUS,entry.getKey());
+			statement.run();
+			IResultSet<?> set = statement.getResults();
+			assertEquals(10, set.size());
+			for (IResult result : set) {
+				assertEquals(2, result.size());
+				assertEquals(entry.getKey(),result.first());
+				assertTrue(entry.getValue().contains(result.get(1)));
+			}			
+		}
+		
+		for (Entry<Topic, Set<Construct>> entry : values.entrySet()) {
+			statement.set("?",entry.getKey());
+			statement.run();
+			IResultSet<?> set = statement.getResults();
+			assertEquals(10, set.size());
+			for (IResult result : set) {
+				assertEquals(2, result.size());
+				assertEquals(entry.getKey(),result.first());
+				assertTrue(entry.getValue().contains(result.get(1)));
+			}			
+		}
+		
+		for (Entry<Topic, Set<Construct>> entry : values.entrySet()) {
+			statement.set("",entry.getKey());
+			statement.run();
+			IResultSet<?> set = statement.getResults();
+			assertEquals(10, set.size());
+			for (IResult result : set) {
+				assertEquals(2, result.size());
+				assertEquals(entry.getKey(),result.first());
+				assertTrue(entry.getValue().contains(result.get(1)));
+			}			
+		}
+	}
+	
+	@Test
+	public void testNamedWildcards() {
+		IPreparedStatement statement = runtime.preparedStatement(" ?topic ( ?topic , . >> characteristics )");
+		statement.setTopicMap(topicMap);
+		
+		Map<Topic, Set<Construct>> values = HashUtil.getHashMap();
+		for (int i = 0; i < 10000; i++) {
+			Topic topic = createTopic();
+			Set<Construct> set = HashUtil.getHashSet();
+			for (int j = 0; j < 10; j++) {
+				set.add(topic.createName("Name"));
+			}
+			values.put(topic, set);
+		}
+
+		for (Entry<Topic, Set<Construct>> entry : values.entrySet()) {
+			statement.set(0,entry.getKey());
+			statement.set(1,entry.getKey());
+			statement.run();
+			IResultSet<?> set = statement.getResults();
+			assertEquals(10, set.size());
+			for (IResult result : set) {
+				assertEquals(2, result.size());
+				assertEquals(entry.getKey(),result.first());
+				assertTrue(entry.getValue().contains(result.get(1)));
+			}			
+		}
+		
+		for (Entry<Topic, Set<Construct>> entry : values.entrySet()) {
+			statement.set("?topic",entry.getKey());
+			statement.run();
+			IResultSet<?> set = statement.getResults();
+			assertEquals(10, set.size());
+			for (IResult result : set) {
+				assertEquals(2, result.size());
+				assertEquals(entry.getKey(),result.first());
+				assertTrue(entry.getValue().contains(result.get(1)));
+			}			
+		}
+		
+		for (Entry<Topic, Set<Construct>> entry : values.entrySet()) {
+			statement.set("topic",entry.getKey());
+			statement.run();
+			IResultSet<?> set = statement.getResults();
+			assertEquals(10, set.size());
+			for (IResult result : set) {
+				assertEquals(2, result.size());
+				assertEquals(entry.getKey(),result.first());
+				assertTrue(entry.getValue().contains(result.get(1)));
+			}			
+		}
+	}
+	
+	@Test
 	public void testProtectedStatement() {
 		Map<Topic, Set<Construct>> values = HashUtil.getHashMap();
 		for (int i = 0; i < 10000; i++) {

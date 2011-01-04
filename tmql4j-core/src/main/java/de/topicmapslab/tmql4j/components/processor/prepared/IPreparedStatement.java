@@ -15,6 +15,7 @@ import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.components.parser.IParserTree;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.grammar.lexical.Wildcard;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.query.IQuery;
 
@@ -25,6 +26,11 @@ import de.topicmapslab.tmql4j.query.IQuery;
  * 
  */
 public interface IPreparedStatement extends IQuery {
+
+	/**
+	 * the anonymous wildcard
+	 */
+	public static final String ANONYMOUS = Wildcard.TOKEN;
 
 	/**
 	 * Setting the long value at the current index. If the index is invalid an
@@ -102,6 +108,95 @@ public interface IPreparedStatement extends IQuery {
 	 *            the construct
 	 */
 	public void setConstruct(int index, Construct construct);
+
+	/**
+	 * Setting the long value for all wildcards matching the given name. If the
+	 * wildcard is invalid an exception will be thrown..
+	 * 
+	 * @param wildcard
+	 *            the wildcard
+	 * @param value
+	 *            the value
+	 */
+	public void setLong(String wildcard, long value);
+
+	/**
+	 * Setting the double value for all wildcards matching the given name. If
+	 * the wildcard is invalid an exception will be thrown..
+	 * 
+	 * @param wildcard
+	 *            the wildcard
+	 * @param value
+	 *            the value
+	 */
+	public void setDouble(String wildcard, double value);
+
+	/**
+	 * Setting the date value for all wildcards matching the given name. If the
+	 * wildcard is invalid an exception will be thrown..
+	 * 
+	 * @param wildcard
+	 *            the wildcard
+	 * @param value
+	 *            the value
+	 */
+	public void setDate(String wildcard, Calendar value);
+
+	/**
+	 * Setting the string value for all wildcards matching the given name. If
+	 * the wildcard is invalid an exception will be thrown..
+	 * 
+	 * @param wildcard
+	 *            the wildcard
+	 * @param value
+	 *            the value
+	 */
+	public void setString(String wildcard, String value);
+
+	/**
+	 * Setting the topic value for all wildcards matching the given name. If the
+	 * wildcard is invalid an exception will be thrown..
+	 * 
+	 * @param wildcard
+	 *            the wildcard
+	 * @param topic
+	 *            the topic
+	 */
+	public void setTopic(String wildcard, Topic topic);
+
+	/**
+	 * Setting the construct value for all wildcards matching the given name. If
+	 * the wildcard is invalid an exception will be thrown..
+	 * 
+	 * @param wildcard
+	 *            the wildcard
+	 * @param construct
+	 *            the construct
+	 */
+	public void setConstruct(String wildcard, Construct construct);
+
+	/**
+	 * Setting the object value for all wildcards matching the given name. If
+	 * the wildcard is invalid an exception will be thrown..
+	 * 
+	 * @param wildcard
+	 *            the wildcard
+	 * @param object
+	 *            the object
+	 */
+	public void set(String wildcard, Object object);
+
+	/**
+	 * Setting the object for all anonymous wildcards. If the wildcard is
+	 * invalid an exception will be thrown.
+	 * 
+	 * @see IPreparedStatement#set(String, Object)
+	 * @see IPreparedStatement#ANONYMOUS
+	 * 
+	 * @param object
+	 *            the object
+	 */
+	public void set(Object object);
 
 	/**
 	 * Executes the prepared statement

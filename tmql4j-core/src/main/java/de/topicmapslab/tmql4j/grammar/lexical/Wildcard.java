@@ -8,19 +8,28 @@
  */
 package de.topicmapslab.tmql4j.grammar.lexical;
 
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
+
 
 /**
  * A special token represent the wild card of a prepared statement
  * @author Sven Krosse
  *
  */
-public class Placeholder extends Token {
+public class Wildcard extends Token {
 
 	/**
 	 * the token
 	 */
 	public static final String TOKEN = "?";
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isToken(ITMQLRuntime runtime, String literal) {
+		return literal.startsWith(TOKEN);
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */

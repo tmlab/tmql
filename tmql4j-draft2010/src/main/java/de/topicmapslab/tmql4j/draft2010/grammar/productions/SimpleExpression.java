@@ -10,7 +10,7 @@ import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Variable;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
-import de.topicmapslab.tmql4j.grammar.lexical.Placeholder;
+import de.topicmapslab.tmql4j.grammar.lexical.Wildcard;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
@@ -89,7 +89,7 @@ public class SimpleExpression extends ExpressionImpl {
 		/*
 		 * is prepared 
 		 */
-		else if ( token.equals(Placeholder.class)){
+		else if ( token.equals(Wildcard.class)){
 			checkForExtensions(PreparedExpression.class, tmqlTokens, tokens, runtime);
 			setGrammarType(TYPE_PREPARED);
 		}
