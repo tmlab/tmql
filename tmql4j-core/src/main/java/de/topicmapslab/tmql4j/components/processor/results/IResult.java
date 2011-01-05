@@ -117,6 +117,35 @@ public interface IResult extends Iterable<Object> {
 	public boolean isNullValue(int index);
 
 	/**
+	 * Returns the item at the given position represented by the alias
+	 * 
+	 * @param <T>
+	 *            the type of item at this position
+	 * @param alias
+	 *            the alias
+	 * @since 3.0.0
+	 * @return the construct
+	 * @throws ClassCastException
+	 *             thrown if construct at position has other type
+	 * @throws IllegalArgumentException
+	 *             thrown if the given alias is unknown
+	 */
+	public <T extends Object> T get(String alias);
+
+	/**
+	 * Checks if the value at the given position represented by the alias is
+	 * <code>null</code>
+	 * 
+	 * @param alias
+	 *            the alias
+	 * @since 3.0.0
+	 * 
+	 * @return <code>true</code> if the value at the given position is
+	 *         <code>null</code>, <code>false</code> otherwise.
+	 */
+	public boolean isNullValue(String alias);
+
+	/**
 	 * Method returns the number of contained values.
 	 * 
 	 * @return the number of contained values

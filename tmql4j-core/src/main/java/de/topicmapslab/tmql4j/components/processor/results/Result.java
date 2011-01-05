@@ -35,16 +35,22 @@ public abstract class Result implements IResult {
 	 * list of contained results
 	 */
 	private final List<Object> results;
-
 	/**
 	 * internal iterator instance
 	 */
 	private Iterator<Object> iterator;
+	/**
+	 * the parent result set
+	 */
+	private final ResultSet<?> parent;
 
 	/**
 	 * base constructor to create a new instance
+	 * 
+	 * @param parent
+	 *            the parent result set
 	 */
-	public Result() {
+	public Result(ResultSet<?> parent) {
 		/*
 		 * create result list
 		 */
@@ -54,6 +60,8 @@ public abstract class Result implements IResult {
 		 * create iterator instance
 		 */
 		this.iterator = results.iterator();
+
+		this.parent = parent;
 	}
 
 	/**
@@ -109,7 +117,7 @@ public abstract class Result implements IResult {
 	 * {@inheritDoc}
 	 */
 	public void add(Object... values) {
-		for (Object value : values) {			
+		for (Object value : values) {
 			add(value);
 		}
 	}
@@ -139,11 +147,11 @@ public abstract class Result implements IResult {
 		StringBuilder builder = new StringBuilder();
 		builder.append("[");
 		boolean first = true;
-		for (Object obj : getResults()) {			
-			if ( !first){
+		for (Object obj : getResults()) {
+			if (!first) {
 				builder.append(", ");
 			}
-			builder.append((obj==null?"null":obj.toString()));
+			builder.append((obj == null ? "null" : obj.toString()));
 			first = false;
 		}
 		builder.append("]");
@@ -168,24 +176,47 @@ public abstract class Result implements IResult {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends Object> T get(int index) {
-		if ( getResults().size() <= index ){
-			throw new IndexOutOfBoundsException("Result does not contains an element at position '"+ index + "'.");
+		if (getResults().size() <= index) {
+			throw new IndexOutOfBoundsException("Result does not contains an element at position '" + index + "'.");
 		}
 		return (T) getResults().get(index);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public <T> T get(String alias) {
+		Integer index = parent.getAlias().get(alias);
+		if (index == null) {
+			throw new IllegalArgumentException("Given alias is unknown for the result set.");
+		}
+		T value = get(index);
+		return value;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public boolean isNullValue(int index) {
 		Object value = get(index);
 		return value == null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isNullValue(String alias) {
+		Integer index = parent.getAlias().get(alias);
+		if (index == null) {
+			throw new IllegalArgumentException("Given alias is unknown for the result set.");
+		}
+		return isNullValue(index);
 	}
 
 }

@@ -66,4 +66,24 @@ public interface IResultProcessor {
 	 */
 	public void setAutoReduction(boolean autoReduction);
 
+	/**
+	 * Setting an alias for the given index.
+	 * 
+	 * @param index
+	 *            the index
+	 * @param alias
+	 *            the alias
+	 */
+	public void setColumnAlias(final int index, final String alias);
+
+	/**
+	 * Checks if the given alias is known by the result processor.
+	 * 
+	 * @param alias
+	 *            the alias
+	 * @return <code>true</code> if the alias is known, <code>false</code>
+	 *         otherwise.
+	 */
+	public boolean isKnownAlias(final String alias);
+
 }

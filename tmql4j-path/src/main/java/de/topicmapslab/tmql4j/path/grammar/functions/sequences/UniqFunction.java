@@ -10,7 +10,6 @@
  */
 package de.topicmapslab.tmql4j.path.grammar.functions.sequences;
 
-import java.util.Collection;
 import java.util.List;
 
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
@@ -55,7 +54,7 @@ public class UniqFunction extends FunctionImpl {
 		}
 
 		List<Object> unique = HashUtil.getList();
-		for (Object value : parameters.getPossibleValuesForVariable("$0")) {		
+		for (Object value : parameters.getPossibleValuesForVariable("$0")) {
 			if (!unique.contains(value)) {
 				unique.add(value);
 			}

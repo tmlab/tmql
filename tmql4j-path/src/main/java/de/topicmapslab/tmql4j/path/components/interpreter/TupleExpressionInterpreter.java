@@ -22,12 +22,13 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.processor.core.Context;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.path.grammar.productions.AliasValueExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.TupleExpression;
-import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -35,7 +36,7 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  * Special interpreter class to interpret tuple-expressions.
  * 
  * <p>
- * tuple-expression ::= ( < value-expression [ asc | desc ] > )
+ * tuple-expression ::= ( < alias-value-expression > )
  * </p>
  * <p>
  * tuple-expression ::= null ==> ( )
@@ -69,10 +70,10 @@ public class TupleExpressionInterpreter extends ExpressionInterpreterImpl<TupleE
 		 */
 		switch (getGrammarTypeOfExpression()) {
 		/*
-		 * is value-expression
+		 * is alias-value-expression
 		 */
 		case 0: {
-			return interpretValueExpression(runtime, context, optionalArguments);
+			return interpretAliasValueExpression(runtime, context, optionalArguments);
 		}
 			/*
 			 * is null
@@ -106,20 +107,24 @@ public class TupleExpressionInterpreter extends ExpressionInterpreterImpl<TupleE
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private QueryMatches interpretValueExpression(final ITMQLRuntime runtime, final IContext context, final Object... optionalArguments) throws TMQLRuntimeException {
+	private QueryMatches interpretAliasValueExpression(final ITMQLRuntime runtime, final IContext context, final Object... optionalArguments) throws TMQLRuntimeException {
 		List<Future<Object>> tasks = new LinkedList<Future<Object>>();
 		ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 4);
 
 		final List<String> variables = getVariables();
 
-		final List<IExpressionInterpreter<ValueExpression>> interpreters = getInterpretersFilteredByEypressionType(runtime, ValueExpression.class);
-		for (final IExpressionInterpreter<ValueExpression> interpreter : interpreters) {
+		final List<IExpressionInterpreter<AliasValueExpression>> interpreters = getInterpretersFilteredByEypressionType(runtime, AliasValueExpression.class);
+		int index = 0;
+		for (final IExpressionInterpreter<AliasValueExpression> interpreter : interpreters) {
+			final int index_ = index;
 			Callable<Object> callable = new Callable<Object>() {
 				/**
 				 * {@inheritDoc}
 				 */
 				public Object call() throws Exception {
-					QueryMatches result = interpreter.interpret(runtime, context, optionalArguments);
+					Context newContext = new Context(context);
+					newContext.setCurrentIndexInTuple(index_);
+					QueryMatches result = interpreter.interpret(runtime, newContext, optionalArguments);
 					final List<String> keys = result.getOrderedKeys();
 					if (result.isEmpty()) {
 						return null;
@@ -158,7 +163,7 @@ public class TupleExpressionInterpreter extends ExpressionInterpreterImpl<TupleE
 					 */
 					else {
 						List<Object> possibleValuesForVariable = result.getPossibleValuesForVariable();
-						if ( possibleValuesForVariable.isEmpty()){
+						if (possibleValuesForVariable.isEmpty()) {
 							return result;
 						}
 						return possibleValuesForVariable.size() == 1 ? possibleValuesForVariable.get(0) : possibleValuesForVariable;
@@ -167,6 +172,7 @@ public class TupleExpressionInterpreter extends ExpressionInterpreterImpl<TupleE
 				}
 			};
 			tasks.add(threadPool.submit(callable));
+			index++;
 		}
 
 		threadPool.shutdown();
@@ -175,17 +181,17 @@ public class TupleExpressionInterpreter extends ExpressionInterpreterImpl<TupleE
 		 * create result
 		 */
 		QueryMatches results = new QueryMatches(runtime);
-		int index = 0;
+		index = 0;
 		Map<String, Object> tuple = HashUtil.getHashMap();
 		for (Future<Object> task : tasks) {
 			try {
 				Object result = task.get();
 				if (result == null && tasks.size() == 1) {
 					return QueryMatches.emptyMatches();
-				}else if ( tasks.size() == 1 && result instanceof Collection<?>){
+				} else if (tasks.size() == 1 && result instanceof Collection<?>) {
 					return QueryMatches.asQueryMatch(runtime, "$0", result);
-				}else if ( result instanceof QueryMatches){
-					return (QueryMatches)result;
+				} else if (result instanceof QueryMatches) {
+					return (QueryMatches) result;
 				}
 				tuple.put("$" + index++, result);
 			} catch (InterruptedException e) {

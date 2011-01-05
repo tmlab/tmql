@@ -55,7 +55,7 @@ public class TestResultSets extends Tmql4JTestCase {
 	@Test
 	public void testIsNull() throws Exception {
 		SimpleResultSet set = new SimpleResultSet();
-		SimpleResult result = new SimpleResult();
+		SimpleResult result = new SimpleResult(set);
 		result.add((Object) null);
 		result.add("Topic");
 		result.add((Object) null);

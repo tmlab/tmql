@@ -49,11 +49,18 @@ public interface IContext {
 	public Object getCurrentNode();
 
 	/**
-	 * Returns the current index of iteration.
+	 * Returns the current index of iteration in context of the sequence of tuples.
 	 * 
 	 * @return the current index
 	 */
-	public int getCurrentIndex();
+	public int getCurrentIndexInSequence();
+	
+	/**
+	 * Returns the current index of iteration in context of the tuple.
+	 * 
+	 * @return the current index
+	 */
+	public int getCurrentIndexInTuple();
 
 	/**
 	 * Checks if the current context is transitive

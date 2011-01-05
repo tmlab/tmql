@@ -20,7 +20,7 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
+import de.topicmapslab.tmql4j.path.grammar.productions.AliasValueExpression;
 import de.topicmapslab.tmql4j.select.grammar.productions.SelectClause;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
@@ -83,9 +83,9 @@ public class SelectClauseInterpreter extends ExpressionInterpreterImpl<SelectCla
 				/*
 				 * iterate over all value-expression
 				 */
-				List<IExpressionInterpreter<ValueExpression>> interpreters = getInterpretersFilteredByEypressionType(runtime, ValueExpression.class);
+				List<IExpressionInterpreter<AliasValueExpression>> interpreters = getInterpretersFilteredByEypressionType(runtime, AliasValueExpression.class);
 				for (int i = 0; i < interpreters.size(); i++) {
-					IExpressionInterpreter<ValueExpression> ex = interpreters.get(i);
+					IExpressionInterpreter<AliasValueExpression> ex = interpreters.get(i);
 					/*
 					 * get current variable name
 					 */
@@ -117,7 +117,8 @@ public class SelectClauseInterpreter extends ExpressionInterpreterImpl<SelectCla
 						newContext.setContextBindings(null);
 						newContext.setCurrentNode(match);
 						newContext.setCurrentTuple(tuple);
-						newContext.setCurrentIndex(i);
+						newContext.setCurrentIndexInTuple(i);
+						newContext.setCurrentIndexInSequence(index);
 						index = updateResultTuple(runtime, mapping, resultTuple, countableTuple, index, ex, variable, newContext, optionalArguments);
 					}
 				}
@@ -152,9 +153,9 @@ public class SelectClauseInterpreter extends ExpressionInterpreterImpl<SelectCla
 			/*
 			 * iterate over value-expressions
 			 */
-			List<IExpressionInterpreter<ValueExpression>> interpreters = getInterpretersFilteredByEypressionType(runtime, ValueExpression.class);
+			List<IExpressionInterpreter<AliasValueExpression>> interpreters = getInterpretersFilteredByEypressionType(runtime, AliasValueExpression.class);
 			for (int i = 0; i < interpreters.size(); i++) {
-				IExpressionInterpreter<ValueExpression> interpreter = interpreters.get(i);
+				IExpressionInterpreter<AliasValueExpression> interpreter = interpreters.get(i);
 				/*
 				 * get variable of current value-expression or set to non-scoped
 				 * variable
@@ -175,7 +176,10 @@ public class SelectClauseInterpreter extends ExpressionInterpreterImpl<SelectCla
 				 * value-expression is not fn:count
 				 */
 				else {
-					index = updateResultTuple(runtime, mapping, resultTuple, countableTuple, index, interpreter, variable, context, optionalArguments);
+					Context newContext = new Context(context);
+					newContext.setCurrentIndexInTuple(i);
+					newContext.setCurrentIndexInSequence(index);
+					index = updateResultTuple(runtime, mapping, resultTuple, countableTuple, index, interpreter, variable, newContext, optionalArguments);
 				}
 			}
 			/*
@@ -213,7 +217,7 @@ public class SelectClauseInterpreter extends ExpressionInterpreterImpl<SelectCla
 	 * @return the new tuple index
 	 */
 	private int updateResultTuple(ITMQLRuntime runtime, final Map<String, String> mapping, Map<String, Object> resultTuple, Map<String, Object> countableTuple, int index,
-			IExpressionInterpreter<ValueExpression> interpreter, String variable, IContext context, Object... optionalArguments) {
+			IExpressionInterpreter<AliasValueExpression> interpreter, String variable, IContext context, Object... optionalArguments) {
 		/*
 		 * call sub-expression
 		 */

@@ -14,6 +14,7 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 
 import de.topicmapslab.tmql4j.components.processor.results.Result;
+import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.flwr.util.CTMConverter;
 
@@ -29,18 +30,12 @@ public class CTMFragment extends Result {
 
 	/**
 	 * base constructor to create an empty result
-	 */
-	public CTMFragment() {
-		// VOID
-	}
-
-	/**
-	 * constructor to create a result representing the given CTM fragment
 	 * 
-	 * @param fragment
+	 * @param parent
+	 *            the parent result set
 	 */
-	public CTMFragment(final String fragment) {
-		add(fragment);
+	public CTMFragment(ResultSet<?> parent) {
+		super(parent);
 	}
 
 	/**
@@ -59,8 +54,7 @@ public class CTMFragment extends Result {
 	 * @throws TMQLRuntimeException
 	 *             thrown if generation failed
 	 */
-	public TopicMap toTopicMap(final TopicMapSystem system)
-			throws TMQLRuntimeException {
+	public TopicMap toTopicMap(final TopicMapSystem system) throws TMQLRuntimeException {
 		return CTMConverter.toTopicMap(first().toString(), system);
 	}
 

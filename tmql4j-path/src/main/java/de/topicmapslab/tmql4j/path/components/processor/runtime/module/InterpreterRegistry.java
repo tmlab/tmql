@@ -10,6 +10,8 @@ package de.topicmapslab.tmql4j.path.components.processor.runtime.module;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.module.InterpreterRegistryImpl;
 import de.topicmapslab.tmql4j.path.components.interpreter.AKOExpressionInterpreter;
+import de.topicmapslab.tmql4j.path.components.interpreter.AliasExpressionInterpreter;
+import de.topicmapslab.tmql4j.path.components.interpreter.AliasValueExpressionInterpreter;
 import de.topicmapslab.tmql4j.path.components.interpreter.AnchorInterpreter;
 import de.topicmapslab.tmql4j.path.components.interpreter.BindingSetInterpreter;
 import de.topicmapslab.tmql4j.path.components.interpreter.BooleanExpressionInterpreter;
@@ -43,6 +45,8 @@ import de.topicmapslab.tmql4j.path.components.interpreter.ValueExpressionInterpr
 import de.topicmapslab.tmql4j.path.components.interpreter.VariableAssignmentInterpreter;
 import de.topicmapslab.tmql4j.path.components.interpreter.VariableInterpreter;
 import de.topicmapslab.tmql4j.path.grammar.productions.AKOExpression;
+import de.topicmapslab.tmql4j.path.grammar.productions.AliasExpression;
+import de.topicmapslab.tmql4j.path.grammar.productions.AliasValueExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.Anchor;
 import de.topicmapslab.tmql4j.path.grammar.productions.BindingSet;
 import de.topicmapslab.tmql4j.path.grammar.productions.BooleanExpression;
@@ -91,6 +95,8 @@ public class InterpreterRegistry extends InterpreterRegistryImpl {
 	 * {@inheritDoc}
 	 */
 	protected void initialize() {
+		registerInterpreterClass(AliasExpression.class, AliasExpressionInterpreter.class);
+		registerInterpreterClass(AliasValueExpression.class, AliasValueExpressionInterpreter.class);
 		registerInterpreterClass(BindingSet.class, BindingSetInterpreter.class);
 		registerInterpreterClass(BooleanExpression.class, BooleanExpressionInterpreter.class);
 		registerInterpreterClass(BooleanPrimitive.class, BooleanPrimitiveInterpreter.class);

@@ -103,7 +103,7 @@ public class ReturnClauseInterpreter extends ExpressionInterpreterImpl<ReturnCla
 						newContext.setContextBindings(null);
 						newContext.setCurrentTuple(tuple);
 						newContext.setCurrentNode(match);
-						newContext.setCurrentIndex(index_);
+						newContext.setCurrentIndexInSequence(index_);
 						/*
 						 * call sub-expression
 						 */

@@ -16,6 +16,7 @@ import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Ako;
 import de.topicmapslab.tmql4j.path.grammar.lexical.All;
 import de.topicmapslab.tmql4j.path.grammar.lexical.And;
+import de.topicmapslab.tmql4j.path.grammar.lexical.As;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Asc;
 import de.topicmapslab.tmql4j.path.grammar.lexical.At;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisAtomify;
@@ -146,6 +147,7 @@ public class TokenRegistry extends TokenRegistryImpl {
 			register(All.class);
 			register(And.class);
 			register(Asc.class);
+			register(As.class);
 			register(At.class);
 			register(AxisAtomify.class);
 			register(AxisCharacteristics.class);

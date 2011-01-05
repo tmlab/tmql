@@ -11,14 +11,19 @@
 package de.topicmapslab.tmql4j.components.results;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.results.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.IResultProcessor;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.ProjectionUtils;
+import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Base implementation of {@link IResultProcessor}. A result processor transform
@@ -31,6 +36,8 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
  */
 public class TmqlResultProcessor implements IResultProcessor {
 
+	private Lock lock = new ReentrantLock(true);
+	
 	/**
 	 * the state of auto-reduction
 	 */
@@ -39,6 +46,16 @@ public class TmqlResultProcessor implements IResultProcessor {
 	 * the class of used result set
 	 */
 	private Class<? extends IResultSet<?>> resultSetClass = SimpleResultSet.class;
+
+	/**
+	 * map to store alias of columns
+	 */
+	private Map<Integer, String> columnAlias;
+
+	/**
+	 * map to store alias of columns
+	 */
+	private Map<String, Integer> aliasIndex;
 
 	/**
 	 * the generated result set
@@ -86,13 +103,19 @@ public class TmqlResultProcessor implements IResultProcessor {
 			 */
 			resultSet = resultSetClass.getConstructor().newInstance();
 			/*
+			 * set alias
+			 */
+			if ( resultSet instanceof ResultSet<?>){
+				((ResultSet<?>) resultSet).setAlias(aliasIndex);
+			}
+			/*
 			 * iterate over query matches per tuple
 			 */
 			for (List<Object> tuple : results) {
 				/*
 				 * create new instance of result
 				 */
-				IResult result = resultSet.getResultClass().getConstructor().newInstance();
+				IResult result = resultSet.createResult();
 				result.add(tuple);
 				/*
 				 * add result to result set
@@ -123,5 +146,30 @@ public class TmqlResultProcessor implements IResultProcessor {
 	 */
 	public void setAutoReduction(boolean autoReduction) {
 		this.autoReduction = autoReduction;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setColumnAlias(int index, String alias) {		
+		while(!lock.tryLock()){
+			// WAIT
+		}		
+		if (columnAlias == null) {
+			columnAlias = HashUtil.getHashMap();
+		}
+		columnAlias.put(index, alias);
+		if (aliasIndex == null) {
+			aliasIndex = HashUtil.getHashMap();
+		}
+		aliasIndex.put(alias, index);
+		lock.unlock();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isKnownAlias(String alias) {
+		return aliasIndex != null && aliasIndex.containsKey(alias);
 	}
 }

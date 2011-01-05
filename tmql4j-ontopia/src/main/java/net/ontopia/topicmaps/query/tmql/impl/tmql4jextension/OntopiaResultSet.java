@@ -9,100 +9,20 @@
  */
 package net.ontopia.topicmaps.query.tmql.impl.tmql4jextension;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import de.topicmapslab.tmql4j.components.processor.results.IResult;
-import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.ResultType;
 
-public class OntopiaResultSet implements IResultSet<OntopiaResult> {
-
-	private final List<OntopiaResult> results;
-	private Iterator<OntopiaResult> iterator;
+public class OntopiaResultSet extends ResultSet<OntopiaResult> {
 
 	/**
 	 * constructor
 	 */
 	public OntopiaResultSet() {
-		results = new LinkedList<OntopiaResult>();
-	}
-	/**
-	 * constructor
-	 * @param results the results
-	 */
-	public OntopiaResultSet(Collection<OntopiaResult> results) {
-		this.results = new LinkedList<OntopiaResult>();
-		this.results.addAll(results);
-	}
 
-	/**
-	 * constructor
-	 * @param results the results
-	 */
-	public OntopiaResultSet(OntopiaResult... results) {
-		this.results = Arrays.asList(results);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void addResult(OntopiaResult result) {
-		this.results.add(result);
-		iterator = null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public OntopiaResult first() {
-		return this.results.iterator().next();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public OntopiaResult last() {
-		return this.results.get(this.results.size() - 1);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public Iterator<OntopiaResult> iterator() {
-		return this.results.iterator();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public int size() {
-		return this.results.size();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public Class<OntopiaResult> getResultClass() {
-		return OntopiaResult.class;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("{\r\n");
-		Iterator<OntopiaResult> iterator = iterator();
-		while (iterator.hasNext()) {
-			builder.append(iterator.next().toString() + (iterator.hasNext() ? "," : "") + "\r\n");
-		}
-		builder.append("}");
-		return builder.toString();
 	}
 
 	/**
@@ -111,7 +31,7 @@ public class OntopiaResultSet implements IResultSet<OntopiaResult> {
 	 * @return all values
 	 */
 	public OntopiaResult[] getValues() {
-		return results.toArray(new OntopiaResult[0]);
+		return getResults().toArray(new OntopiaResult[0]);
 	}
 
 	/**
@@ -125,7 +45,7 @@ public class OntopiaResultSet implements IResultSet<OntopiaResult> {
 		List<Object> values = new LinkedList<Object>();
 		for (Integer index : indizes) {
 			if (index < size()) {
-				values.add(results.get(index));
+				values.add(get(index));
 			}
 		}
 		return values.toArray(new OntopiaResult[0]);
@@ -140,46 +60,9 @@ public class OntopiaResultSet implements IResultSet<OntopiaResult> {
 	 */
 	public OntopiaResult getValue(Integer index) {
 		if (index < size()) {
-			return (OntopiaResult) results.get(index);
+			return (OntopiaResult) get(index);
 		}
 		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void addResults(Collection<OntopiaResult> results) {
-		for (IResult result : results) {
-			addResult(result);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void addResults(OntopiaResult... results) {
-		for (IResult result : results) {
-			addResult(result);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void addResult(IResult result) {
-		if (result instanceof OntopiaResult) {
-			addResult((OntopiaResult) result);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void clear() {
-		iterator = null;
-		results.clear();
 	}
 
 	/**
@@ -193,60 +76,8 @@ public class OntopiaResultSet implements IResultSet<OntopiaResult> {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public List<OntopiaResult> getResults() {
-		return results;
+	public IResult createResult() {
+		return new OntopiaResult(this);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public OntopiaResult next() throws NoSuchElementException {
-		if (iterator == null) {
-			iterator = results.iterator();
-		}
-		return iterator.next();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean isEmpty() {
-		return results.isEmpty();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public OntopiaResult get(int index) {
-		if (getResults().size() <= index) {
-			throw new IndexOutOfBoundsException("Result does not contains an element at position '" + index + "'.");
-		}
-		return getResults().get(index);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@SuppressWarnings("unchecked")
-	public <R extends Object> R get(int rowIndex, int colIndex) {
-		return (R) get(rowIndex).get(colIndex);
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public boolean isNullValue(int rowIndex, int colIndex) {
-		Object obj = get(rowIndex, colIndex);
-		return obj == null;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public void unify() {
-		// NOTHING TO DO HERE		
-	}
-	
 }

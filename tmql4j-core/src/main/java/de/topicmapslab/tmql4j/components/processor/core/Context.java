@@ -23,7 +23,8 @@ public class Context implements IContext {
 
 	private final IQuery query;
 	private QueryMatches context;
-	private int iterationIndex = -1;
+	private int currentIndexInSequence = -1;
+	private int currentIndexInTuple = -1;
 	private Map<String, Object> currentTuple;
 	private Object currentNode;
 	private boolean transitive;
@@ -54,7 +55,8 @@ public class Context implements IContext {
 		this.query = clone.getQuery();
 		this.context = clone.getContextBindings();
 		this.currentTuple = clone.getCurrentTuple();
-		this.iterationIndex = clone.getCurrentIndex();
+		this.currentIndexInSequence = clone.getCurrentIndexInSequence();
+		this.currentIndexInTuple = clone.getCurrentIndexInTuple();
 		this.currentNode = clone.getCurrentNode();
 		this.transitive = clone.isTransitive();
 		this.prefixes = clone.getPrefixes();
@@ -87,16 +89,31 @@ public class Context implements IContext {
 	/**
 	 * {@inheritDoc}
 	 */
-	public int getCurrentIndex() {
-		return iterationIndex;
+	public int getCurrentIndexInSequence() {
+		return currentIndexInSequence;
 	}
 
 	/**
 	 * @param currentIndex
 	 *            the current index
 	 */
-	public void setCurrentIndex(int currentIndex) {
-		this.iterationIndex = currentIndex;
+	public void setCurrentIndexInSequence(int currentIndex) {
+		this.currentIndexInSequence = currentIndex;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getCurrentIndexInTuple() {
+		return currentIndexInTuple;
+	}
+	
+	/**
+	 * @param currentIndex
+	 *            the current index
+	 */
+	public void setCurrentIndexInTuple(int currentIndex) {
+		this.currentIndexInTuple = currentIndex;
 	}
 
 	/**

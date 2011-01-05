@@ -26,9 +26,13 @@ public class TMQL4JQueryResult implements QueryResultIF {
 
 	/**
 	 * constructor
-	 * @param tmid the topic map id
-	 * @param resultSet the result set
-	 * @param columnNames the column names
+	 * 
+	 * @param tmid
+	 *            the topic map id
+	 * @param resultSet
+	 *            the result set
+	 * @param columnNames
+	 *            the column names
 	 */
 	public TMQL4JQueryResult(final String tmid, final IResultSet<?> resultSet, final List<String> columnNames) {
 		if (columnNames != null) {
@@ -44,7 +48,8 @@ public class TMQL4JQueryResult implements QueryResultIF {
 		 */
 		if (resultSet != null) {
 			for (IResult result : resultSet) {
-				WrappedOntopiaResult result_ = new WrappedOntopiaResult(result.getResults());
+				WrappedOntopiaResult result_ = new WrappedOntopiaResult(this.resultSet);
+				result_.add(result.getResults());
 				result_.setTopicMapId(tmid);
 				this.resultSet.addResult(result_);
 			}
@@ -79,7 +84,8 @@ public class TMQL4JQueryResult implements QueryResultIF {
 		 */
 		if (resultSet != null) {
 			for (IResult result : resultSet) {
-				WrappedOntopiaResult result_ =new WrappedOntopiaResult(result.getResults());
+				WrappedOntopiaResult result_ = new WrappedOntopiaResult(this.resultSet);
+				result_.add(result.getResults());
 				result_.setTopicMapId(tmid);
 				this.resultSet.addResult(result_);
 			}
@@ -90,7 +96,7 @@ public class TMQL4JQueryResult implements QueryResultIF {
 			for (int index = 0; index < size; index++) {
 				this.columnNames.add("Column " + index);
 			}
-		} 
+		}
 
 		this.currentRow = -1;
 	}

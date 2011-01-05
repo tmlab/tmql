@@ -24,49 +24,63 @@ public interface ITmqlProcessor {
 
 	/**
 	 * Executes the querying process for the given query object
-	 * @param query the query
+	 * 
+	 * @param query
+	 *            the query
 	 * @return the results of querying process
 	 */
 	public IResultSet<?> query(IQuery query);
-	
+
 	/**
 	 * Executes the querying process for the given statement object
-	 * @param stmt the statement
+	 * 
+	 * @param stmt
+	 *            the statement
 	 * @return the results of querying process
 	 */
 	public IResultSet<?> query(IPreparedStatement statement);
-	
+
 	/**
 	 * Parse the given query and returns a prepared statement instance
-	 * @param query the query
+	 * 
+	 * @param query
+	 *            the query
 	 * @return the prepared statement instance
 	 */
 	public IPreparedStatement prepared(IQuery query);
-	
+
 	/**
 	 * Parse the given query and returns the query as parser tree
-	 * @param query the query
+	 * 
+	 * @param query
+	 *            the query
 	 * @return the parser tree instance
 	 */
-	public IParserTree parse(IQuery query);	
+	public IParserTree parse(IQuery query);
 
 	/**
 	 * Returns the lexical scanner instance for the current TMQL processor
-	 * @param query the query
+	 * 
+	 * @param query
+	 *            the query
 	 * @return the lexical scanner
 	 */
 	public ILexer getTmqlLexer(IQuery query);
 
 	/**
 	 * Returns the parser instance for the current TMQL processor
-	 * @param query the query
+	 * 
+	 * @param query
+	 *            the query
 	 * @return the parser
 	 */
 	public IParser getTmqlParser(ILexer lexer);
 
 	/**
 	 * Returns the result processor instance for the current TMQL processor
-	 * @param query the query
+	 * 
+	 * @param query
+	 *            the query
 	 * @return the result processor
 	 */
 	public IResultProcessor getResultProcessor();

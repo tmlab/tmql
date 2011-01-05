@@ -13,49 +13,22 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
-import net.ontopia.topicmaps.core.OccurrenceIF;
-import net.ontopia.topicmaps.impl.tmapi2.OntopiaToTMAPIWrapper;
+import de.topicmapslab.tmql4j.components.processor.results.Result;
+import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
 
-import org.tmapi.core.Construct;
-import org.tmapi.core.Locator;
+public class WrappedOntopiaResult extends Result {
 
-import de.topicmapslab.tmql4j.components.processor.results.IResult;
-
-public class WrappedOntopiaResult implements IResult {
-
-	private final List<Object> results;
-	private Iterator<Object> iterator = null;
 	private String topicMapId;
 
 	/**
 	 * constructor
-	 */
-	public WrappedOntopiaResult() {
-		this.results = new LinkedList<Object>();
-	}
-
-	/**
-	 * constructor
 	 * 
-	 * @param results
-	 *            the results
+	 * @param parent
+	 *            the parent
 	 */
-	public WrappedOntopiaResult(Collection<Object> results) {
-		this.results = new LinkedList<Object>();
-		add(results);
-	}
-
-	/**
-	 * constructor
-	 * 
-	 * @param results
-	 *            the results
-	 */
-	public WrappedOntopiaResult(Object... results) {
-		this.results = new LinkedList<Object>();
-		add(results);
+	public WrappedOntopiaResult(ResultSet<?> parent) {
+		super(parent);
 	}
 
 	/**
@@ -66,30 +39,6 @@ public class WrappedOntopiaResult implements IResult {
 		for (Object o : values) {
 			add(o);
 		}
-	}
-
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	public Object first() {
-		return results.iterator().next();
-	}
-
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	public Object last() {
-		return results.get(results.size() - 1);
-	}
-
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	public Iterator<Object> iterator() {
-		return results.iterator();
 	}
 
 	/**
@@ -108,20 +57,12 @@ public class WrappedOntopiaResult implements IResult {
 	}
 
 	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	public int size() {
-		return this.results.size();
-	}
-
-	/**
 	 * Returns all values
 	 * 
 	 * @return all values
 	 */
 	public Object[] getValues() {
-		return results.toArray();
+		return getResults().toArray();
 	}
 
 	/**
@@ -135,7 +76,7 @@ public class WrappedOntopiaResult implements IResult {
 		List<Object> values = new LinkedList<Object>();
 		for (Integer index : indizes) {
 			if (index < size()) {
-				values.add(results.get(index));
+				values.add(getResults().get(index));
 			}
 		}
 		return values.toArray();
@@ -150,41 +91,9 @@ public class WrappedOntopiaResult implements IResult {
 	 */
 	public Object getValue(Integer index) {
 		if (index < size()) {
-			return results.get(index);
+			return getResults().get(index);
 		}
 		return null;
-	}
-
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	public List<Object> getResults() {
-		return results;
-	}
-
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void add(Object o) {
-		if (o instanceof List<?>) {
-			this.results.add(OntopiaToTMAPIWrapper.toTMObjectIF((List<?>) o, topicMapId));
-		} else if (o instanceof Construct) {
-			Object obj = OntopiaToTMAPIWrapper.toTMObjectIF(o, topicMapId);
-			if (obj instanceof OccurrenceIF) {
-				this.results.add(OntopiaToTMAPIWrapper.toTMObjectIF((OccurrenceIF) obj, topicMapId));
-			} else {
-				this.results.add(obj);
-			}
-
-		} else if (o instanceof Locator) {
-			this.results.add(((Locator) o).toExternalForm());
-		} else {
-			this.results.add(o);
-		}
-		iterator = null;
 	}
 
 	/**
@@ -197,18 +106,6 @@ public class WrappedOntopiaResult implements IResult {
 	}
 
 	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Object next() throws NoSuchElementException {
-		if (iterator == null) {
-			iterator = results.iterator();
-		}
-		return iterator.next();
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
@@ -218,20 +115,29 @@ public class WrappedOntopiaResult implements IResult {
 		}
 		return (T) getResults().get(index);
 	}
-	
+
 	/**
 	 * Setting the topic map id
-	 * @param topicMapId the topicMapId to set
+	 * 
+	 * @param topicMapId
+	 *            the topicMapId to set
 	 */
 	public void setTopicMapId(String topicMapId) {
 		this.topicMapId = topicMapId;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public boolean isNullValue(int index) {
 		Object obj = getValue(index);
 		return obj == null;
+	}
+	
+	/**
+	 * @return the topicMapId
+	 */
+	public String getTopicMapId() {
+		return topicMapId;
 	}
 }

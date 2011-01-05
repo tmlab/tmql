@@ -34,6 +34,7 @@ public class TmqlProcessor2007 extends TmqlProcessorImpl {
 	 */
 	public TmqlProcessor2007(ITMQLRuntime runtime) {
 		super(runtime);
+		getResultProcessor();
 	}
 
 	/**

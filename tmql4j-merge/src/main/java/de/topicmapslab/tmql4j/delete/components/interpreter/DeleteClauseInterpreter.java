@@ -82,7 +82,7 @@ public class DeleteClauseInterpreter extends ExpressionInterpreterImpl<DeleteCla
 					Context newContext = new Context(context);
 					newContext.setContextBindings(null);
 					newContext.setCurrentTuple(tuple);
-					newContext.setCurrentIndex(index);
+					newContext.setCurrentIndexInSequence(index);
 					newContext.setCurrentNode(match);
 					/*
 					 * interpret sub-expression

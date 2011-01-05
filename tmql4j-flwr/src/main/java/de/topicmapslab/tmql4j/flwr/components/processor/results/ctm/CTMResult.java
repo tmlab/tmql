@@ -16,6 +16,7 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
 
+import de.topicmapslab.tmql4j.components.processor.results.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.ResultType;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
@@ -126,6 +127,13 @@ public class CTMResult extends ResultSet<CTMFragment> {
 	 */
 	public String getResultType() {
 		return ResultType.CTM.name();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public IResult createResult() {
+		return new CTMFragment(this);
 	}
 
 }

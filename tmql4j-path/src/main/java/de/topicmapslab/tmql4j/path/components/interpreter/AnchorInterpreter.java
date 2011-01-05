@@ -158,8 +158,8 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 			 * is current index variable
 			 */
 			if ( "$#".equalsIgnoreCase(variable)){
-				if ( context.getCurrentIndex() > 0 ){
-					return QueryMatches.asQueryMatchNS(runtime, context.getCurrentIndex());
+				if ( context.getCurrentIndexInSequence() > 0 ){
+					return QueryMatches.asQueryMatchNS(runtime, context.getCurrentIndexInSequence());
 				}
 				return QueryMatches.emptyMatches();
 			}else if (context.getContextBindings() != null) {

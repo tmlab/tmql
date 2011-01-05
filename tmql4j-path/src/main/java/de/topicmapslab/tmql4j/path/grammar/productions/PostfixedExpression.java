@@ -20,6 +20,7 @@ import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
+import de.topicmapslab.tmql4j.path.grammar.lexical.As;
 import de.topicmapslab.tmql4j.path.grammar.lexical.At;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketAngleClose;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketAngleOpen;
@@ -218,6 +219,10 @@ public class PostfixedExpression extends ExpressionImpl {
 		 * the NULL keyword
 		 */
 		tupleExpressionIndicators.add(Null.class);
+		/*
+		 * the alias keyword AS
+		 */
+		tupleExpressionIndicators.add(As.class);
 
 		/*
 		 * starts with round bracket

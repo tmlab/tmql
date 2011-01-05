@@ -179,7 +179,7 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 				Object object = storedMatches.getMatches().get(index).get(variable);
 				List<Object> results = HashUtil.getList();
 				Context newContext = new Context(context);
-				newContext.setCurrentIndex(index);			
+				newContext.setCurrentIndexInSequence(index);			
 				newContext.setContextBindings(null);
 				/*
 				 * check if value is a sequence

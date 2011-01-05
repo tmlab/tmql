@@ -10,8 +10,7 @@
  */
 package de.topicmapslab.tmql4j.components.results;
 
-import java.util.Collection;
-
+import de.topicmapslab.tmql4j.components.processor.results.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.ResultType;
 
@@ -33,30 +32,16 @@ public class SimpleResultSet extends ResultSet<SimpleResult> {
 	}
 
 	/**
-	 * base constructor create a new result set containing the given results
-	 * 
-	 * @param results
-	 *            the results to add
-	 */
-	public SimpleResultSet(Collection<SimpleResult> results) {
-		addResults(results);
-	}
-
-	/**
-	 * base constructor create a new result set containing the given results
-	 * 
-	 * @param results
-	 *            the results to add
-	 */
-	public SimpleResultSet(SimpleResult... results) {
-		addResults(results);
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	public String getResultType() {
 		return ResultType.TMAPI.name();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public IResult createResult() {
+		return new SimpleResult(this);
+	}
 }

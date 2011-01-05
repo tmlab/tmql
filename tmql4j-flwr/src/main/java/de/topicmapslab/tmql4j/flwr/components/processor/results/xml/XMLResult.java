@@ -29,6 +29,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
+import de.topicmapslab.tmql4j.components.processor.results.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.ResultType;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
@@ -161,6 +162,13 @@ public class XMLResult extends ResultSet<XMLFragment> {
 	 */
 	public String getResultType() {
 		return ResultType.XML.name();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public IResult createResult() {
+		return new XMLFragment(this);
 	}
 
 }

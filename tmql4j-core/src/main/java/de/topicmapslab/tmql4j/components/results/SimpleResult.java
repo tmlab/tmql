@@ -10,8 +10,6 @@
  */
 package de.topicmapslab.tmql4j.components.results;
 
-import java.util.Collection;
-
 import de.topicmapslab.tmql4j.components.processor.results.Result;
 
 /**
@@ -26,28 +24,11 @@ public class SimpleResult extends Result {
 
 	/**
 	 * base constructor create a new empty result
-	 */
-	public SimpleResult() {
-		// VOID
-	}
-
-	/**
-	 * base constructor create a new result containing the given results
 	 * 
-	 * @param results
-	 *            the results to add
+	 * @param parent
+	 *            the parent result set
 	 */
-	public SimpleResult(Collection<Object> results) {
-		add(results);
-	}
-
-	/**
-	 * base constructor create a new result containing the given results
-	 * 
-	 * @param results
-	 *            the results to add
-	 */
-	public SimpleResult(Object... results) {
-		add(results);
+	public SimpleResult(SimpleResultSet parent) {
+		super(parent);
 	}
 }

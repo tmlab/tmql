@@ -153,6 +153,35 @@ public interface IResultSet<T extends IResult> extends Iterable<T> {
 	public boolean isNullValue(int rowIndex, int colIndex);
 
 	/**
+	 * Returns the item at the given cell position
+	 * 
+	 * @param <R>
+	 *            the type of item at this position
+	 * @param rowIndex
+	 *            the rowIndex
+	 * @param alias
+	 *            the alias of colIndex
+	 * @return the construct
+	 * @throws ClassCastException
+	 *             thrown if construct at position has other type
+	 * @throws IllegalArgumentException
+	 *             thrown if the given alias is unknown
+	 */
+	public <R extends Object> R get(int rowIndex, String alias);
+
+	/**
+	 * Checks if the value at the given cell position is <code>null</code>
+	 * 
+	 * @param rowIndex
+	 *            the row index
+	 * @param alias
+	 *            the alias of column index
+	 * @return <code>true</code> if the value is <code>null</code>,
+	 *         <code>false</code> otherwise
+	 */
+	public boolean isNullValue(int rowIndex, String alias);
+
+	/**
 	 * Method returns if the number of results is 0
 	 * 
 	 * @return <code>true</code> if the result set is empty, <code>false</code>
@@ -177,4 +206,11 @@ public interface IResultSet<T extends IResult> extends Iterable<T> {
 	 * Removes duplicates from the internal result set
 	 */
 	public void unify();
+
+	/**
+	 * Creates a new result for the result set
+	 * 
+	 * @return the new result set
+	 */
+	public IResult createResult();
 }

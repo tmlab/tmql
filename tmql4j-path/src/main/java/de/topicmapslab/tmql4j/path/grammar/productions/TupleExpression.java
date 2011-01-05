@@ -32,7 +32,7 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  * <p>
  * The grammar production rule of the expression is: <code>
  * <p>
- * tuple-expression ::= ( < value-expression [ asc | desc ] > )
+ * tuple-expression ::= ( < alias-value-expression > )
  * </p>
  * <p>
  * tuple-expression ::= null ==> ( )
@@ -82,7 +82,7 @@ public class TupleExpression extends ExpressionImpl {
 			IParserUtilsCallback callback = new IParserUtilsCallback() {
 				@Override
 				public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
-					checkForExtensions(ValueExpression.class, tmqlTokens, tokens, runtime);
+					checkForExtensions(AliasValueExpression.class, tmqlTokens, tokens, runtime);
 				}
 			};
 

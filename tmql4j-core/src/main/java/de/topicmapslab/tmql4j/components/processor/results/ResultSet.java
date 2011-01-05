@@ -12,9 +12,11 @@ package de.topicmapslab.tmql4j.components.processor.results;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import de.topicmapslab.tmql4j.util.HashUtil;
@@ -47,6 +49,11 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	private final Class<T> clazz;
 
 	/**
+	 * the alias map
+	 */
+	private Map<String, Integer> alias;
+
+	/**
 	 * base constructor to create a new instance
 	 */
 	@SuppressWarnings("unchecked")
@@ -77,6 +84,16 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 		 * create iterator instance
 		 */
 		this.iterator = results.iterator();
+	}
+
+	/**
+	 * Internal method to set the alias
+	 * 
+	 * @param alias
+	 *            the alias to set
+	 */
+	public void setAlias(Map<String, Integer> alias) {
+		this.alias = alias;
 	}
 
 	/**
@@ -229,12 +246,29 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 		T result = get(rowIndex);
 		return (R) result.get(colIndex);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public boolean isNullValue(int rowIndex, int colIndex) {
 		Object obj = get(rowIndex, colIndex);
+		return obj == null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public <R> R get(int rowIndex, String alias) {
+		T result = get(rowIndex);
+		R value = result.get(alias);
+		return value;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isNullValue(int rowIndex, String alias) {
+		Object obj = get(rowIndex, alias);
 		return obj == null;
 	}
 
@@ -279,37 +313,54 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 				public Class<? extends IResult> getResultClass() {
 					return IResult.class;
 				}
-				
+
 				/**
 				 * {@inheritDoc}
 				 */
 				public void unify() {
-					// NOTHING TO DO					
+					// NOTHING TO DO
 				}
-				
+
 				/**
 				 * {@inheritDoc}
 				 */
-				public boolean isNullValue(int rowIndex, int colIndex) {					
+				public boolean isNullValue(int rowIndex, int colIndex) {
 					return false;
+				}
+
+				/**
+				 * {@inheritDoc}
+				 */
+				public IResult createResult() {
+					throw new UnsupportedOperationException("Unmodifiable result set does not supports creation of new results.");
 				}
 			};
 		}
 		return emptyResultSet;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public void unify() {
 		List<T> results = HashUtil.getList();
-		for ( T result : getResults()){
-			if ( !results.contains(result)){
+		for (T result : getResults()) {
+			if (!results.contains(result)) {
 				results.add(result);
 			}
 		}
 		this.results.clear();
 		this.results.addAll(results);
+	}
+
+	/**
+	 * @return the alias
+	 */
+	Map<String, Integer> getAlias() {
+		if (alias == null) {
+			return Collections.emptyMap();
+		}
+		return alias;
 	}
 
 }

@@ -9,7 +9,6 @@
  */
 package net.ontopia.topicmaps.query.tmql.impl.tmql4jextension;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -24,49 +23,20 @@ import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 import org.tmapi.core.Variant;
 
-import de.topicmapslab.tmql4j.components.processor.results.IResult;
+import de.topicmapslab.tmql4j.components.processor.results.Result;
+import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
 
-public class OntopiaResult implements IResult {
+public class OntopiaResult extends Result {
 
-	private final List<Object> results;
 	private final List<Object> ontopiaStringRepresentations;
 	private Iterator<Object> iterator;
 
 	/**
 	 * constructor
 	 */
-	public OntopiaResult() {
-		this.results = new LinkedList<Object>();
+	public OntopiaResult(ResultSet<?> parent) {
+		super(parent);
 		this.ontopiaStringRepresentations = new LinkedList<Object>();
-	}
-
-	/**
-	 * constructor
-	 * 
-	 * @param results
-	 *            the results
-	 */
-	public OntopiaResult(Collection<Object> results) {
-		this.results = new LinkedList<Object>();
-		this.ontopiaStringRepresentations = new LinkedList<Object>();
-		this.results.addAll(results);
-		for (Object o : results) {
-			this.ontopiaStringRepresentations.add(tmapiObjectToString(o));
-		}
-	}
-
-	/**
-	 * constructor
-	 * 
-	 * @param results
-	 *            the results
-	 */
-	public OntopiaResult(Object... results) {
-		this.results = Arrays.asList(results);
-		this.ontopiaStringRepresentations = new LinkedList<Object>();
-		for (Object o : results) {
-			this.ontopiaStringRepresentations.add(tmapiObjectToString(o));
-		}
 	}
 
 	/**
@@ -98,7 +68,7 @@ public class OntopiaResult implements IResult {
 	 * {@inheritDoc}
 	 */
 	public void add(Object... values) {
-		results.addAll(Arrays.asList(values));
+		add(values);
 		for (Object o : values) {
 			add(o);
 		}
@@ -117,14 +87,6 @@ public class OntopiaResult implements IResult {
 		}
 		builder.append("]");
 		return builder.toString();
-	}
-
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
-	public int size() {
-		return this.results.size();
 	}
 
 	/**
@@ -208,14 +170,6 @@ public class OntopiaResult implements IResult {
 	 * 
 	 * {@inheritDoc}
 	 */
-	public List<Object> getResults() {
-		return results;
-	}
-
-	/**
-	 * 
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void add(Object o) {
 		this.ontopiaStringRepresentations.add(tmapiObjectToString(o));
@@ -253,7 +207,7 @@ public class OntopiaResult implements IResult {
 		}
 		return (T) getResults().get(index);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
