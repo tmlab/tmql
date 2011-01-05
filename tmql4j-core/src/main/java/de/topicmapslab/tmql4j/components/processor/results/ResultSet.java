@@ -258,10 +258,10 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public <R> R get(int rowIndex, String alias) {
-		T result = get(rowIndex);
-		R value = result.get(alias);
-		return value;
+	@SuppressWarnings("unchecked")
+	public <R extends Object> R get(int rowIndex, String alias) {
+		IResult result = get(rowIndex);
+		return (R) result.get(alias);
 	}
 
 	/**

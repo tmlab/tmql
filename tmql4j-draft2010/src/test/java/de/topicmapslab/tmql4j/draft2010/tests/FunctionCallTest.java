@@ -975,7 +975,7 @@ public class FunctionCallTest extends Tmql4JTestCase {
 
 		final String iri = topic.getSubjectIdentifiers().iterator().next().getReference();
 
-		query = " myPlayer / association-pattern ( topic-by-subjectidentifier ( \"" + iri + "\" ) , topic-by-subjectidentifier ( \"" + iri + "\" ) , topic-by-subjectidentifier ( \"" + iri + "\" ) )";
+		query = " myPlayer / association-pattern ( topics-by-subjectidentifier ( \"" + iri + "\" ) , topics-by-subjectidentifier ( \"" + iri + "\" ) , topics-by-subjectidentifier ( \"" + iri + "\" ) )";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.get(0).size());
@@ -1026,7 +1026,7 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		
 		String query = null;
 		SimpleResultSet set = null;
-		query = " topic-by-subjectidentifier ( \"myTopic\", \"myOtherTopic\") / name:: *";
+		query = " topics-by-subjectidentifier ( \"myTopic\", \"myOtherTopic\") / name:: *";
 		set = execute(query);
 		assertEquals(2, set.size());
 		assertEquals(1, set.get(0).size());

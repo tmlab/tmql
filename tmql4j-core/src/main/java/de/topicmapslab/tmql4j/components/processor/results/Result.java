@@ -191,13 +191,13 @@ public abstract class Result implements IResult {
 	/**
 	 * {@inheritDoc}
 	 */
-	public <T> T get(String alias) {
+	@SuppressWarnings("unchecked")
+	public <T extends Object> T get(String alias) {
 		Integer index = parent.getAlias().get(alias);
 		if (index == null) {
 			throw new IllegalArgumentException("Given alias is unknown for the result set.");
 		}
-		T value = get(index);
-		return value;
+		return (T)get(index);
 	}
 
 	/**

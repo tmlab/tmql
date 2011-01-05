@@ -85,7 +85,7 @@ public class TestQueryTransformer {
 		String query = "/ topic::topic-type";
 		String transform = transformer.getQuery(null, query, registry).getQueryString().trim();
 		assertEquals(
-				"/ topic :: * [ . / type :: * = array ( topic-by-subjectidentifier ( \"topic-type\"  ) , topic-by-subjectlocator ( \"sl-topic-type\"  ) , topic-by-itemidentifier ( \"ii-topic-type\"  )  ) ]",
+				"/ topic :: * [ . / type :: * = array ( topics-by-subjectidentifier ( \"topic-type\"  ) , topics-by-subjectlocator ( \"sl-topic-type\"  ) , topics-by-itemidentifier ( \"ii-topic-type\"  )  ) ]",
 				transform);
 
 		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
@@ -93,7 +93,7 @@ public class TestQueryTransformer {
 		query = "/ topic-type";
 		transform = transformer.getQuery(null, query, registry).getQueryString().trim();
 		assertEquals(
-				"/ default :: * [ . / type :: * = array ( topic-by-subjectidentifier ( \"topic-type\"  ) , topic-by-subjectlocator ( \"sl-topic-type\"  ) , topic-by-itemidentifier ( \"ii-topic-type\"  )  ) ]",
+				"/ default :: * [ . / type :: * = array ( topics-by-subjectidentifier ( \"topic-type\"  ) , topics-by-subjectlocator ( \"sl-topic-type\"  ) , topics-by-itemidentifier ( \"ii-topic-type\"  )  ) ]",
 				transform);
 
 		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
@@ -107,7 +107,7 @@ public class TestQueryTransformer {
 		String transform = transformer.getQuery(null, query, registry).getQueryString().trim();
 		
 		assertEquals(
-				"/ topic :: * [ . / scope :: * = array ( topic-by-subjectidentifier ( \"topic-type\"  ) , topic-by-subjectlocator ( \"sl-topic-type\"  ) , topic-by-itemidentifier ( \"ii-topic-type\"  )  ) ]",
+				"/ topic :: * [ . / scope :: * = array ( topics-by-subjectidentifier ( \"topic-type\"  ) , topics-by-subjectlocator ( \"sl-topic-type\"  ) , topics-by-itemidentifier ( \"ii-topic-type\"  )  ) ]",
 				transform);
 
 		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
@@ -117,10 +117,10 @@ public class TestQueryTransformer {
 	@Test
 	public void testTopicBySubjectIdentifierFct() throws Exception {
 
-		String query = "topic-by-subjectidentifier( \"identifier\" )";
+		String query = "topics-by-subjectidentifier( \"identifier\" )";
 		String transform = transformer.getQuery(null, query, registry).getQueryString().trim();
 		
-		assertEquals("array ( topic-by-subjectidentifier ( \"identifier\"  ) , topic-by-subjectlocator ( \"sl-identifier\"  ) , topic-by-itemidentifier ( \"ii-identifier\"  )  )", transform);
+		assertEquals("array ( topics-by-subjectidentifier ( \"identifier\"  ) , topics-by-subjectlocator ( \"sl-identifier\"  ) , topics-by-itemidentifier ( \"ii-identifier\"  )  )", transform);
 
 		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
 
@@ -129,10 +129,10 @@ public class TestQueryTransformer {
 	@Test
 	public void testTopicByItemIdentifierFct() throws Exception {
 
-		String query = "topic-by-itemidentifier( \"identifier\" )";
+		String query = "topics-by-itemidentifier( \"identifier\" )";
 		String transform = transformer.getQuery(null, query, registry).getQueryString().trim();
 	
-		assertEquals("array ( topic-by-subjectidentifier ( \"si-identifier\"  ) , topic-by-subjectlocator ( \"sl-identifier\"  ) , topic-by-itemidentifier ( \"identifier\"  )  )", transform);
+		assertEquals("array ( topics-by-subjectidentifier ( \"si-identifier\"  ) , topics-by-subjectlocator ( \"sl-identifier\"  ) , topics-by-itemidentifier ( \"identifier\"  )  )", transform);
 
 		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
 
@@ -141,10 +141,10 @@ public class TestQueryTransformer {
 	@Test
 	public void testTopicBySubjectLocatorFct() throws Exception {
 
-		String query = "topic-by-subjectlocator( \"identifier\" )";
+		String query = "topics-by-subjectlocator( \"identifier\" )";
 		String transform = transformer.getQuery(null, query, registry).getQueryString().trim();
 		
-		assertEquals("array ( topic-by-subjectidentifier ( \"si-identifier\"  ) , topic-by-subjectlocator ( \"identifier\"  ) , topic-by-itemidentifier ( \"ii-identifier\"  )  )", transform);
+		assertEquals("array ( topics-by-subjectidentifier ( \"si-identifier\"  ) , topics-by-subjectlocator ( \"identifier\"  ) , topics-by-itemidentifier ( \"ii-identifier\"  )  )", transform);
 
 		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
 
@@ -156,7 +156,7 @@ public class TestQueryTransformer {
 		String query = "/ identifier ( identifier -> identifier )";
 		String transform = transformer.getQuery(null, query, registry).getQueryString().trim();
 	
-		String array = "array ( topic-by-subjectidentifier ( \"identifier\"  ) , topic-by-subjectlocator ( \"sl-identifier\"  ) , topic-by-itemidentifier ( \"ii-identifier\"  )  )";
+		String array = "array ( topics-by-subjectidentifier ( \"identifier\"  ) , topics-by-subjectlocator ( \"sl-identifier\"  ) , topics-by-itemidentifier ( \"ii-identifier\"  )  )";
 		String expected = "/ association-pattern ( " + array + " , " + array + " , " + array + " )";
 
 		assertEquals(expected, transform);
@@ -170,7 +170,7 @@ public class TestQueryTransformer {
 		String query = "identifier  / name :: ";
 		
 		String transform = transformer.getQuery(null, query, registry).getQueryString().trim();		
-		String array = "array ( topic-by-subjectidentifier ( \"identifier\"  ) , topic-by-subjectlocator ( \"sl-identifier\"  ) , topic-by-itemidentifier ( \"ii-identifier\"  )  )";
+		String array = "array ( topics-by-subjectidentifier ( \"identifier\"  ) , topics-by-subjectlocator ( \"sl-identifier\"  ) , topics-by-itemidentifier ( \"ii-identifier\"  )  )";
 		assertEquals(array + " / name ::", transform);
 		
 		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
@@ -179,7 +179,7 @@ public class TestQueryTransformer {
 	@Test
 	public void testFilter() throws Exception{
 		String query = "/ topic :: * [ . / subject-identifier :: == \"identifier\" ]";
-		String array = "array ( topic-by-subjectidentifier ( \"identifier\"  ) , topic-by-subjectlocator ( \"sl-identifier\"  ) , topic-by-itemidentifier ( \"ii-identifier\"  )  )";
+		String array = "array ( topics-by-subjectidentifier ( \"identifier\"  ) , topics-by-subjectlocator ( \"sl-identifier\"  ) , topics-by-itemidentifier ( \"ii-identifier\"  )  )";
 		
 		String transform = transformer.getQuery(null, query, registry).getQueryString().trim();		
 		assertEquals("/ topic :: * [ . = " + array + " ]", transform);
@@ -190,7 +190,7 @@ public class TestQueryTransformer {
 		
 		transform = transformer.getQuery(null, query, registry).getQueryString().trim();
 		
-		array = "array ( topic-by-subjectidentifier ( \"si-identifier\"  ) , topic-by-subjectlocator ( \"identifier\"  ) , topic-by-itemidentifier ( \"ii-identifier\"  )  )";
+		array = "array ( topics-by-subjectidentifier ( \"si-identifier\"  ) , topics-by-subjectlocator ( \"identifier\"  ) , topics-by-itemidentifier ( \"ii-identifier\"  )  )";
 		assertEquals("/ topic :: * [ . = " + array + " ]", transform);
 		
 		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
@@ -199,7 +199,7 @@ public class TestQueryTransformer {
 		
 		transform = transformer.getQuery(null, query, registry).getQueryString().trim();
 		
-		array = "array ( topic-by-subjectidentifier ( \"si-identifier\"  ) , topic-by-subjectlocator ( \"sl-identifier\"  ) , topic-by-itemidentifier ( \"identifier\"  )  )";
+		array = "array ( topics-by-subjectidentifier ( \"si-identifier\"  ) , topics-by-subjectlocator ( \"sl-identifier\"  ) , topics-by-itemidentifier ( \"identifier\"  )  )";
 		assertEquals("/ topic :: * [ . = " + array + " ]", transform);
 		
 		TMQLRuntimeFactory.newFactory().newRuntime().parse(transform);
