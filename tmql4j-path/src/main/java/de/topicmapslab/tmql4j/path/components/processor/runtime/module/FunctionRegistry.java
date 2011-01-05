@@ -10,6 +10,7 @@ package de.topicmapslab.tmql4j.path.components.processor.runtime.module;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.FunctionRegistryImpl;
+import de.topicmapslab.tmql4j.path.grammar.functions.sequences.ArrayFunction;
 import de.topicmapslab.tmql4j.path.grammar.functions.sequences.CompareFunction;
 import de.topicmapslab.tmql4j.path.grammar.functions.sequences.ConcatFunction;
 import de.topicmapslab.tmql4j.path.grammar.functions.sequences.CountFunction;
@@ -28,6 +29,9 @@ import de.topicmapslab.tmql4j.path.grammar.functions.string.StringGtFunction;
 import de.topicmapslab.tmql4j.path.grammar.functions.string.StringLeqFunction;
 import de.topicmapslab.tmql4j.path.grammar.functions.string.StringLtFunction;
 import de.topicmapslab.tmql4j.path.grammar.functions.string.SubStringFunction;
+import de.topicmapslab.tmql4j.path.grammar.functions.topicmap.TopicsByItemIdentifier;
+import de.topicmapslab.tmql4j.path.grammar.functions.topicmap.TopicsBySubjectIdentifier;
+import de.topicmapslab.tmql4j.path.grammar.functions.topicmap.TopicsBySubjectLocator;
 import de.topicmapslab.tmql4j.path.grammar.functions.url.UrlDecodeFunction;
 import de.topicmapslab.tmql4j.path.grammar.functions.url.UrlEncodeFunction;
 
@@ -55,29 +59,36 @@ public class FunctionRegistry extends FunctionRegistryImpl {
 		/*
 		 * initialize all string functions
 		 */
-		registerFunction("fn:string-concat", StringConcatFunction.class);
-		registerFunction("fn:length", LengthFunction.class);
-		registerFunction("fn:string-lt", StringLtFunction.class);
-		registerFunction("fn:string-leq", StringLeqFunction.class);
-		registerFunction("fn:string-gt", StringGtFunction.class);
-		registerFunction("fn:string-geq", StringGeqFunction.class);
-		registerFunction("fn:regexp", RegExpFunction.class);
-		registerFunction("fn:substring", SubStringFunction.class);
+		registerFunction(StringConcatFunction.IDENTIFIER, StringConcatFunction.class);
+		registerFunction(LengthFunction.IDENTIFIER, LengthFunction.class);
+		registerFunction(StringLtFunction.IDENTIFIER, StringLtFunction.class);
+		registerFunction(StringLeqFunction.IDENTIFIER, StringLeqFunction.class);
+		registerFunction(StringGtFunction.IDENTIFIER, StringGtFunction.class);
+		registerFunction(StringGeqFunction.IDENTIFIER, StringGeqFunction.class);
+		registerFunction(RegExpFunction.IDENTIFIER, RegExpFunction.class);
+		registerFunction(SubStringFunction.IDENTIFIER, SubStringFunction.class);
 		/*
 		 * set all tuple-sequence functions
 		 */
-		registerFunction("fn:has-datatype", HasDatatypeFunction.class);
-		registerFunction("fn:has-variant", HasVariantsFunction.class);
-		registerFunction("fn:slice", SliceFunction.class);
-		registerFunction("fn:count", CountFunction.class);
-		registerFunction("fn:uniq", UniqFunction.class);
-		registerFunction("fn:concat", ConcatFunction.class);
-		registerFunction("fn:except", ExceptFunction.class);
-		registerFunction("fn:compare", CompareFunction.class);
-		registerFunction("fn:zigzag", ZigZagFunction.class);
-		registerFunction("fn:zagzig", ZagZigFunction.class);
-		registerFunction("fn:url-encode", UrlEncodeFunction.class);
-		registerFunction("fn:url-decode", UrlDecodeFunction.class);
+		registerFunction(HasDatatypeFunction.IDENTIFIER, HasDatatypeFunction.class);
+		registerFunction(HasVariantsFunction.IDENTIFIER, HasVariantsFunction.class);
+		registerFunction(SliceFunction.IDENTIFIER, SliceFunction.class);
+		registerFunction(CountFunction.IDENTIFIER, CountFunction.class);
+		registerFunction(UniqFunction.IDENTIFIER, UniqFunction.class);
+		registerFunction(ConcatFunction.IDENTIFIER, ConcatFunction.class);
+		registerFunction(ExceptFunction.IDENTIFIER, ExceptFunction.class);
+		registerFunction(CompareFunction.IDENTIFIER, CompareFunction.class);
+		registerFunction(ZigZagFunction.IDENTIFIER, ZigZagFunction.class);
+		registerFunction(ZagZigFunction.IDENTIFIER, ZagZigFunction.class);
+		registerFunction(ArrayFunction.IDENTIFIER, ArrayFunction.class);
+
+		registerFunction(UrlEncodeFunction.IDENTIFIER, UrlEncodeFunction.class);
+		registerFunction(UrlDecodeFunction.IDENTIFIER, UrlDecodeFunction.class);
+
+		registerFunction(TopicsByItemIdentifier.IDENTIFIER, TopicsByItemIdentifier.class);
+		registerFunction(TopicsBySubjectIdentifier.IDENTIFIER, TopicsBySubjectIdentifier.class);
+		registerFunction(TopicsBySubjectLocator.IDENTIFIER, TopicsBySubjectLocator.class);
+
 	}
 
 }

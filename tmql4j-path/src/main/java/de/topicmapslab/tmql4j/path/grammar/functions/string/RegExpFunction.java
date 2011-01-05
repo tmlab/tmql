@@ -42,6 +42,11 @@ import de.topicmapslab.tmql4j.util.HashUtil;
 public class RegExpFunction extends FunctionImpl {
 
 	/**
+	 * 
+	 */
+	public static final String IDENTIFIER = "fn:regexp";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public de.topicmapslab.tmql4j.components.processor.core.QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
@@ -120,7 +125,7 @@ public class RegExpFunction extends FunctionImpl {
 	 * {@inheritDoc}
 	 */
 	public String getItemIdentifier() {
-		return "fn:regexp";
+		return IDENTIFIER;
 	}
 
 	/**

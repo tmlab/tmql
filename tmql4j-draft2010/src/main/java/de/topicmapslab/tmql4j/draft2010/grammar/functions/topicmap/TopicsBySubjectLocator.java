@@ -23,9 +23,9 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  * @author Sven Krosse
  * 
  */
-public class TopicBySubjectLocator extends FunctionImpl {
+public class TopicsBySubjectLocator extends FunctionImpl {
 
-	public static final String IDENTIFIER = "topic-by-subjectlocator";
+	public static final String IDENTIFIER = "topics-by-subjectlocator";
 
 	/**
 	 * {@inheritDoc}

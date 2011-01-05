@@ -43,6 +43,11 @@ public class StringGeqFunction extends
 FunctionImpl {
 
 	/**
+	 * 
+	 */
+	public static final String IDENTIFIER = "fn:string-geq";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public de.topicmapslab.tmql4j.components.processor.core.QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
@@ -121,7 +126,7 @@ FunctionImpl {
 	 * {@inheritDoc}
 	 */
 	public String getItemIdentifier() {
-		return "fn:string-geq";
+		return IDENTIFIER;
 	}
 
 	/**

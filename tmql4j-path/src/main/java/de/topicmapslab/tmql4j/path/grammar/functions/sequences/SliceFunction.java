@@ -41,6 +41,11 @@ import de.topicmapslab.tmql4j.util.HashUtil;
 public class SliceFunction extends FunctionImpl {
 
 	/**
+	 * 
+	 */
+	public static final String IDENTIFIER = "fn:slice";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public de.topicmapslab.tmql4j.components.processor.core.QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
@@ -115,7 +120,7 @@ public class SliceFunction extends FunctionImpl {
 	 * {@inheritDoc}
 	 */
 	public String getItemIdentifier() {
-		return "fn:slice";
+		return IDENTIFIER;
 	}
 
 	/**

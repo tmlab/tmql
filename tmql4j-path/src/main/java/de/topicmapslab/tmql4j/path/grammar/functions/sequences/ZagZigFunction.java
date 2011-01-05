@@ -35,8 +35,12 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class ZagZigFunction extends
-FunctionImpl{
+public class ZagZigFunction extends FunctionImpl {
+
+	/**
+	 * 
+	 */
+	public static final String IDENTIFIER = "fn:zagzig";
 
 	/**
 	 * {@inheritDoc}
@@ -69,7 +73,7 @@ FunctionImpl{
 	 * {@inheritDoc}
 	 */
 	public String getItemIdentifier() {
-		return "fn:zagzig";
+		return IDENTIFIER;
 	}
 
 	/**

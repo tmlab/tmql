@@ -41,6 +41,11 @@ public class ExceptFunction extends
 FunctionImpl {
 
 	/**
+	 * 
+	 */
+	public static final String IDENTIFIER = "fn:except";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
@@ -103,7 +108,7 @@ FunctionImpl {
 	 * {@inheritDoc}
 	 */
 	public String getItemIdentifier() {
-		return "fn:except";
+		return IDENTIFIER;
 	}
 
 	/**

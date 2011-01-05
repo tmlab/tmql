@@ -16,9 +16,9 @@ import de.topicmapslab.tmql4j.components.parser.IParserTree;
 import de.topicmapslab.tmql4j.draft2010.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.draft2010.grammar.functions.ArrayFunction;
 import de.topicmapslab.tmql4j.draft2010.grammar.functions.topicmap.AssociationPatternFct;
-import de.topicmapslab.tmql4j.draft2010.grammar.functions.topicmap.TopicByItemIdentifier;
-import de.topicmapslab.tmql4j.draft2010.grammar.functions.topicmap.TopicBySubjectIdentifier;
-import de.topicmapslab.tmql4j.draft2010.grammar.functions.topicmap.TopicBySubjectLocator;
+import de.topicmapslab.tmql4j.draft2010.grammar.functions.topicmap.TopicsByItemIdentifier;
+import de.topicmapslab.tmql4j.draft2010.grammar.functions.topicmap.TopicsBySubjectIdentifier;
+import de.topicmapslab.tmql4j.draft2010.grammar.functions.topicmap.TopicsBySubjectLocator;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Arrow;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Axis;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.AxisDefault;
@@ -307,11 +307,11 @@ public class HatanaQueryTransformer {
 		Set<String> itemIdentifiers = HashUtil.getHashSet();
 		Set<String> otherExpressions = HashUtil.getHashSet();
 
-		boolean isSubjectIdentifierFct = TopicBySubjectIdentifier.IDENTIFIER
+		boolean isSubjectIdentifierFct = TopicsBySubjectIdentifier.IDENTIFIER
 				.equalsIgnoreCase(functionName);
-		boolean isSubjectLocatorFct = TopicBySubjectLocator.IDENTIFIER
+		boolean isSubjectLocatorFct = TopicsBySubjectLocator.IDENTIFIER
 				.equalsIgnoreCase(functionName);
-		boolean isItemIdentifierFct = TopicByItemIdentifier.IDENTIFIER
+		boolean isItemIdentifierFct = TopicsByItemIdentifier.IDENTIFIER
 				.equalsIgnoreCase(functionName);
 
 		/*
@@ -717,7 +717,7 @@ public class HatanaQueryTransformer {
 				builder.append(Comma.TOKEN);
 				builder.append(WHITESPACE);
 			}
-			builder.append(TopicBySubjectIdentifier.IDENTIFIER);
+			builder.append(TopicsBySubjectIdentifier.IDENTIFIER);
 			builder.append(WHITESPACE); // white space
 			builder.append(BracketRoundOpen.TOKEN); // round bracket
 			builder.append(WHITESPACE); // white space
@@ -750,7 +750,7 @@ public class HatanaQueryTransformer {
 				builder.append(Comma.TOKEN);
 				builder.append(WHITESPACE);
 			}
-			builder.append(TopicBySubjectLocator.IDENTIFIER);
+			builder.append(TopicsBySubjectLocator.IDENTIFIER);
 			builder.append(WHITESPACE); // white space
 			builder.append(BracketRoundOpen.TOKEN); // round bracket
 			builder.append(WHITESPACE); // white space
@@ -783,7 +783,7 @@ public class HatanaQueryTransformer {
 				builder.append(Comma.TOKEN);
 				builder.append(WHITESPACE);
 			}
-			builder.append(TopicByItemIdentifier.IDENTIFIER);
+			builder.append(TopicsByItemIdentifier.IDENTIFIER);
 			builder.append(WHITESPACE); // white space
 			builder.append(BracketRoundOpen.TOKEN); // round bracket
 			builder.append(WHITESPACE); // white space

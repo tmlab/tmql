@@ -43,6 +43,11 @@ public class StringLtFunction extends
 FunctionImpl {
 
 	/**
+	 * 
+	 */
+	public static final String IDENTIFIER = "fn:string-lt";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public de.topicmapslab.tmql4j.components.processor.core.QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
@@ -122,7 +127,7 @@ FunctionImpl {
 	 * {@inheritDoc}
 	 */
 	public String getItemIdentifier() {
-		return "fn:string-lt";
+		return IDENTIFIER;
 	}
 
 	/**

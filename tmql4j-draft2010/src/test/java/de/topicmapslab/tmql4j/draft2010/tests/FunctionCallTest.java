@@ -905,7 +905,7 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = " topic-by-subjectidentifier ( \"" + topic.getSubjectIdentifiers().iterator().next().getReference() + "\" , \"" + otherTopic.getSubjectIdentifiers().iterator().next().getReference()
+		query = " topics-by-subjectidentifier ( \"" + topic.getSubjectIdentifiers().iterator().next().getReference() + "\" , \"" + otherTopic.getSubjectIdentifiers().iterator().next().getReference()
 				+ "\" ) ";
 		set = execute(query);
 		assertEquals(2, set.size());
@@ -927,7 +927,7 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = " topic-by-subjectlocator ( \"" + topic.getSubjectLocators().iterator().next().getReference() + "\" , \"" + otherTopic.getSubjectLocators().iterator().next().getReference() + "\" ) ";
+		query = " topics-by-subjectlocator ( \"" + topic.getSubjectLocators().iterator().next().getReference() + "\" , \"" + otherTopic.getSubjectLocators().iterator().next().getReference() + "\" ) ";
 		set = execute(query);
 		assertEquals(2, set.size());
 		assertEquals(1, set.get(0).size());
@@ -948,7 +948,7 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = " topic-by-itemidentifier ( \"" + topic.getItemIdentifiers().iterator().next().getReference() + "\" , \"" + otherTopic.getItemIdentifiers().iterator().next().getReference() + "\" ) ";
+		query = " topics-by-itemidentifier ( \"" + topic.getItemIdentifiers().iterator().next().getReference() + "\" , \"" + otherTopic.getItemIdentifiers().iterator().next().getReference() + "\" ) ";
 		set = execute(query);
 		assertEquals(2, set.size());
 		assertEquals(1, set.get(0).size());

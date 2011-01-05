@@ -6,8 +6,9 @@
  * @email krosse@informatik.uni-leipzig.de
  *
  */
-package de.topicmapslab.tmql4j.draft2010.grammar.functions.topicmap;
+package de.topicmapslab.tmql4j.path.grammar.functions.topicmap;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.tmapi.core.Topic;
@@ -16,16 +17,16 @@ import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.draft2010.grammar.functions.FunctionImpl;
+import de.topicmapslab.tmql4j.path.grammar.functions.FunctionImpl;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * @author Sven Krosse
  * 
  */
-public class TopicByItemIdentifier extends FunctionImpl {
+public class TopicsByItemIdentifier extends FunctionImpl {
 
-	public static final String IDENTIFIER = "topic-by-itemidentifier";
+	public static final String IDENTIFIER = "fn:topics-by-itemidentifier";
 
 	/**
 	 * {@inheritDoc}
@@ -48,13 +49,16 @@ public class TopicByItemIdentifier extends FunctionImpl {
 		/*
 		 * get arguments
 		 */
-		QueryMatches[] arguments = getParameters(runtime, context, caller);
+		QueryMatches arguments = getParameters(runtime, context, caller);
 		/*
 		 * iterate over arguments
 		 */
 		Set<Topic> array = HashUtil.getHashSet();
-		for (QueryMatches argument : arguments) {
-			for (Object obj : argument.getPossibleValuesForVariable()) {
+		/*
+		 * iterate over parameters
+		 */
+		for (Map<String, Object> tuple : arguments) {
+			for (Object obj : tuple.values()) {
 				try {
 					array.add((Topic)runtime.getConstructResolver().getConstructByItemIdentifier(context, obj.toString()));
 				} catch (Exception e) {

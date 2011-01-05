@@ -41,6 +41,11 @@ import de.topicmapslab.tmql4j.util.HashUtil;
 public class CountFunction extends FunctionImpl {
 
 	/**
+	 * 
+	 */
+	public static final String IDENTIFIER = "fn:count";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
@@ -96,7 +101,7 @@ public class CountFunction extends FunctionImpl {
 	 * {@inheritDoc}
 	 */
 	public String getItemIdentifier() {
-		return "fn:count";
+		return IDENTIFIER;
 	}
 
 	/**

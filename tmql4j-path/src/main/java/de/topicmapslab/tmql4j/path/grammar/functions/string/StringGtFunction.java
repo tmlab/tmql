@@ -42,6 +42,11 @@ import de.topicmapslab.tmql4j.util.HashUtil;
 public class StringGtFunction extends FunctionImpl {
 
 	/**
+	 * 
+	 */
+	public static final String IDENTIFIER = "fn:string-gt";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public de.topicmapslab.tmql4j.components.processor.core.QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
@@ -115,7 +120,7 @@ public class StringGtFunction extends FunctionImpl {
 	 * {@inheritDoc}
 	 */
 	public String getItemIdentifier() {
-		return "fn:string-gt";
+		return IDENTIFIER;
 	}
 
 	/**

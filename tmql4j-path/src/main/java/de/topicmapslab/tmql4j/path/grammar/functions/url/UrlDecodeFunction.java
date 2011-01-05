@@ -32,6 +32,11 @@ import de.topicmapslab.tmql4j.util.HashUtil;
 public class UrlDecodeFunction extends FunctionImpl {
 
 	/**
+	 * 
+	 */
+	public static final String IDENTIFIER = "fn:url-decode";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
@@ -111,7 +116,7 @@ public class UrlDecodeFunction extends FunctionImpl {
 	 * {@inheritDoc}
 	 */
 	public String getItemIdentifier() {
-		return "fn:url-decode";
+		return IDENTIFIER;
 	}
 
 	/**
@@ -121,12 +126,5 @@ public class UrlDecodeFunction extends FunctionImpl {
 		return numberOfParameters == 1;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public <R> R interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

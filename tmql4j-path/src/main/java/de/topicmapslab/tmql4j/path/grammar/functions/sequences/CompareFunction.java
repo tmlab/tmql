@@ -40,6 +40,11 @@ import de.topicmapslab.tmql4j.util.HashUtil;
 public class CompareFunction extends FunctionImpl {
 
 	/**
+	 * 
+	 */
+	public static final String IDENTIFIER = "fn:compare";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
@@ -97,7 +102,7 @@ public class CompareFunction extends FunctionImpl {
 	 * {@inheritDoc}
 	 */
 	public String getItemIdentifier() {
-		return "fn:compare";
+		return IDENTIFIER;
 	}
 
 	/**

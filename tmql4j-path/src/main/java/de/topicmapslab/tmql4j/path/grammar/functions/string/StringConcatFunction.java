@@ -41,6 +41,11 @@ public class StringConcatFunction extends
 		FunctionImpl {
 
 	/**
+	 * 
+	 */
+	public static final String IDENTIFIER = "fn:string-concat";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public de.topicmapslab.tmql4j.components.processor.core.QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
@@ -124,7 +129,7 @@ public class StringConcatFunction extends
 	 * {@inheritDoc}
 	 */
 	public String getItemIdentifier() {
-		return "fn:string-concat";
+		return IDENTIFIER;
 	}
 
 	/**

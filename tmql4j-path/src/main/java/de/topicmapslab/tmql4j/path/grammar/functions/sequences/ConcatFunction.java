@@ -37,8 +37,12 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class ConcatFunction extends
-FunctionImpl {
+public class ConcatFunction extends FunctionImpl {
+	/**
+	 * 
+	 */
+	public static final String IDENTIFIER = "fn:concat";
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -55,8 +59,7 @@ FunctionImpl {
 		 * check count of variables
 		 */
 		if (!isExpectedNumberOfParameters(parameters.getOrderedKeys().size())) {
-			throw new TMQLRuntimeException(getItemIdentifier()
-					+ "() requieres 2 parameters.");
+			throw new TMQLRuntimeException(getItemIdentifier() + "() requieres 2 parameters.");
 		}
 
 		/*
@@ -102,9 +105,9 @@ FunctionImpl {
 	 * {@inheritDoc}
 	 */
 	public String getItemIdentifier() {
-		return "fn:compare";
+		return IDENTIFIER;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

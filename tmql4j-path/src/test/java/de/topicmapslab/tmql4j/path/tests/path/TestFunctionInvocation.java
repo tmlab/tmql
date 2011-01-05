@@ -541,5 +541,97 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 			assertTrue(names.contains(r.first()));
 		}			
 	}
+
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testFunctionTopicBySubjectIdentifier() throws Exception {
+		Topic topic = createTopicBySI("myType");
+		Topic otherTopic = createTopicBySI("myOtherTopic");
+		String query = null;
+		SimpleResultSet set = null;
+
+		query = " fn:topics-by-subjectidentifier ( \"" + topic.getSubjectIdentifiers().iterator().next().getReference() + "\" , \"" + otherTopic.getSubjectIdentifiers().iterator().next().getReference()
+				+ "\" ) ";
+		set = execute(query);
+		assertEquals(2, set.size());
+		assertEquals(1, set.get(0).size());
+		assertTrue(topic.equals(set.get(0, 0)) || otherTopic.equals(set.get(0, 0)));
+		assertEquals(1, set.get(1).size());
+		assertTrue(topic.equals(set.get(1, 0)) || otherTopic.equals(set.get(1, 0)));
+	}
+
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testFunctionTopicBySubjectLocator() throws Exception {
+		Topic topic = createTopicBySL("myType");
+		Topic otherTopic = createTopicBySL("myOtherTopic");
+		String query = null;
+		SimpleResultSet set = null;
+
+		query = " fn:topics-by-subjectlocator ( \"" + topic.getSubjectLocators().iterator().next().getReference() + "\" , \"" + otherTopic.getSubjectLocators().iterator().next().getReference() + "\" ) ";
+		set = execute(query);
+		assertEquals(2, set.size());
+		assertEquals(1, set.get(0).size());
+		assertTrue(topic.equals(set.get(0, 0)) || otherTopic.equals(set.get(0, 0)));
+		assertEquals(1, set.get(1).size());
+		assertTrue(topic.equals(set.get(1, 0)) || otherTopic.equals(set.get(1, 0)));
+	}
+
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testFunctionTopicByItemIdentifier() throws Exception {
+		Topic topic = createTopicByII("myType");
+		Topic otherTopic = createTopicByII("myOtherTopic");
+		String query = null;
+		SimpleResultSet set = null;
+
+		query = " fn:topics-by-itemidentifier ( \"" + topic.getItemIdentifiers().iterator().next().getReference() + "\" , \"" + otherTopic.getItemIdentifiers().iterator().next().getReference() + "\" ) ";
+		set = execute(query);
+		assertEquals(2, set.size());
+		assertEquals(1, set.get(0).size());
+		assertTrue(topic.equals(set.get(0, 0)) || otherTopic.equals(set.get(0, 0)));
+		assertEquals(1, set.get(1).size());
+		assertTrue(topic.equals(set.get(1, 0)) || otherTopic.equals(set.get(1, 0)));
+	}
+	
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testFunctionArrayFunction() throws Exception {
+		String query = null;
+		SimpleResultSet set = null;
+		query = " fn:array ( \"Hallo\", \"Welt\", \"das\",\"sollte\",\"ein\",\"array\",\"werden\")";
+		set = execute(query);
+		assertEquals(7, set.size());
+		assertEquals(1, set.get(0).size());
+		assertEquals("Hallo", set.get(0, 0));
+		assertEquals(1, set.get(1).size());
+		assertEquals("Welt", set.get(1, 0));
+		assertEquals(1, set.get(2).size());
+		assertEquals("das", set.get(2, 0));
+		assertEquals(1, set.get(3).size());
+		assertEquals("sollte", set.get(3, 0));
+		assertEquals(1, set.get(4).size());
+		assertEquals("ein", set.get(4, 0));
+		assertEquals(1, set.get(5).size());
+		assertEquals("array", set.get(5, 0));
+		assertEquals(1, set.get(6).size());
+		assertEquals("werden", set.get(6, 0));
+	}
 	
 }

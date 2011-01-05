@@ -41,6 +41,11 @@ import de.topicmapslab.tmql4j.util.HashUtil;
 public class LengthFunction extends FunctionImpl {
 
 	/**
+	 * 
+	 */
+	public static final String IDENTIFIER = "fn:length";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public de.topicmapslab.tmql4j.components.processor.core.QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
@@ -93,7 +98,7 @@ public class LengthFunction extends FunctionImpl {
 	 * {@inheritDoc}
 	 */
 	public String getItemIdentifier() {
-		return "fn:length";
+		return IDENTIFIER;
 	}
 
 	/**
