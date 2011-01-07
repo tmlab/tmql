@@ -9,7 +9,6 @@
 package de.topicmapslab.tmql4j.path.grammar.functions.sequences;
 
 import java.util.List;
-import java.util.Map;
 
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;

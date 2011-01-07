@@ -77,6 +77,5 @@
 		<module>tmql4j-merge</module>
 		<module>tmql4j-draft2010</module>
 		<module>tmql4j-majortom</module>
-		<module>tmql4j-hatana</module>
 	</modules>
 </project>

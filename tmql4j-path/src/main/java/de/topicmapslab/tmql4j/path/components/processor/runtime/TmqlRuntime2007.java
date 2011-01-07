@@ -8,6 +8,7 @@
  */
 package de.topicmapslab.tmql4j.path.components.processor.runtime;
 
+import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 
 import de.topicmapslab.tmql4j.components.parser.IParserTree;
@@ -86,6 +87,13 @@ public class TmqlRuntime2007 extends TmqlRuntimeImpl {
 		} else {
 			query.setResults(ResultSet.emptyResultSet());
 		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	protected IQuery toQuery(TopicMap topicMap, String query) {
+		return new TMQLQuery(topicMap, query);
 	}
 	
 	/**

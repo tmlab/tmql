@@ -8,6 +8,7 @@
  */
 package de.topicmapslab.tmql4j.draft2010.components.processor.runtime;
 
+import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 
 import de.topicmapslab.tmql4j.components.parser.IParserTree;
@@ -159,5 +160,12 @@ public class TmqlRuntime extends TmqlRuntimeImpl {
 	 */
 	protected String[] getModificationExpressionTypeNames() {
 		return TMQLQuery.modificationExpressions;
+	}
+		
+	/**
+	 * {@inheritDoc}
+	 */
+	protected IQuery toQuery(TopicMap topicMap, String query) {
+		return new TMQLQuery(topicMap, query);
 	}
 }

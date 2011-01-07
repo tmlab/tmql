@@ -85,10 +85,8 @@ public class TMQLQueryProcessor implements IQueryProcessor {
 			TMQLRuntimeFactory.newFactory().newRuntime(TmqlRuntime.TMQL_2010).parse(query);
 			return true;
 		} catch (TMQLInvalidSyntaxException e) {
-			e.printStackTrace();
 			return false;
 		} catch (TMQLGeneratorException e) {
-			e.printStackTrace();
 			return false;
 		}
 	}

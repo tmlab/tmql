@@ -115,7 +115,7 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 	public void setTopicMapSystem(TopicMapSystem system) {
 		this.topicMapSystem = system;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -130,10 +130,10 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 		/*
 		 * is prepared statement
 		 */
-		if ( parameters.length > 0 ){
-			if ( query instanceof IPreparedStatement ){
+		if (parameters.length > 0) {
+			if (query instanceof IPreparedStatement) {
 				IPreparedStatement stmt = (IPreparedStatement) query;
-				for ( int i = 0 ; i < parameters.length ; i++ ){
+				for (int i = 0; i < parameters.length; i++) {
 					stmt.set(i, parameters[i]);
 				}
 				stmt.run();
@@ -142,7 +142,7 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 			/*
 			 * no prepared statement
 			 */
-			throw new TMQLRuntimeException("Parameters only allowed for prepared statements");			
+			throw new TMQLRuntimeException("Parameters only allowed for prepared statements");
 		}
 		/*
 		 * add restrictions
@@ -167,20 +167,23 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 	/**
 	 * {@inheritDoc}
 	 */
-	public IQuery run(TopicMap topicMap, String query, Object... parameters ) throws TMQLRuntimeException {		
+	public IQuery run(TopicMap topicMap, String query, Object... parameters) throws TMQLRuntimeException {
 		IQuery q = null;
 		/*
 		 * is prepared statement
 		 */
-		if ( parameters.length > 0){
+		if (parameters.length > 0) {
 			q = preparedStatement(query);
 			q.setTopicMap(topicMap);
 		}
 		/*
 		 * is simple query without wildcards
 		 */
-		else{
-			q = QueryFactory.getFactory().getTmqlQuery(topicMap, query);
+		else {
+			q = toQuery(topicMap, query);
+			if (q == null) {
+				q = QueryFactory.getFactory().getTmqlQuery(topicMap, query);
+			}
 		}
 		if (q == null) {
 			throw new TMQLRuntimeException(GIVEN_QUERY_IS_NOT_A_TMQL_QUERY_OR_CANNOT_TRANSFORM_TO_TMQL);
@@ -188,6 +191,19 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 		run(q, parameters);
 		return q;
 	}
+
+	/**
+	 * Transforms the given query to
+	 * 
+	 * @param topicMap
+	 *            the topic map
+	 * @param query
+	 *            the query string
+	 * @return the create query or <code>null</code>. If the return value is
+	 *         <code>null</code> the abstract runtime try to initialize with
+	 *         {@link QueryFactory}.
+	 */
+	protected abstract IQuery toQuery(final TopicMap topicMap, final String query);
 
 	/**
 	 * {@inheritDoc}
