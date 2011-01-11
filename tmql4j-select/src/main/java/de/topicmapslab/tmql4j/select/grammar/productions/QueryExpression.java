@@ -17,10 +17,10 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.grammar.lexical.Pragma;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
-import de.topicmapslab.tmql4j.path.grammar.lexical.Pragma;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Prefix;
 import de.topicmapslab.tmql4j.path.grammar.productions.EnvironmentClause;
 import de.topicmapslab.tmql4j.select.grammar.lexical.Select;
@@ -80,11 +80,11 @@ public class QueryExpression extends ExpressionImpl {
 		/*
 		 * check if first token is %prefix or %pragma
 		 */
-		if (token.equals(de.topicmapslab.tmql4j.path.grammar.lexical.Pragma.class) || token.equals(Prefix.class)) {
+		if (token.equals(de.topicmapslab.tmql4j.grammar.lexical.Pragma.class) || token.equals(Prefix.class)) {
 			/*
 			 * lookup last index of keyword %pragma
 			 */
-			List<Integer> indizes = ParserUtils.indizes(tmqlTokens, de.topicmapslab.tmql4j.path.grammar.lexical.Pragma.class);
+			List<Integer> indizes = ParserUtils.indizes(tmqlTokens, de.topicmapslab.tmql4j.grammar.lexical.Pragma.class);
 			int pragmaIndex = indizes.isEmpty() ? -1 : indizes.get(indizes.size() - 1);
 			/*
 			 * lookup last index of keyword %prefix

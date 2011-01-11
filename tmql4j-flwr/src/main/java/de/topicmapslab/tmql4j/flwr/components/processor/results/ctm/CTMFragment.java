@@ -55,7 +55,7 @@ public class CTMFragment extends Result {
 	 *             thrown if generation failed
 	 */
 	public TopicMap toTopicMap(final TopicMapSystem system) throws TMQLRuntimeException {
-		return CTMConverter.toTopicMap(first().toString(), system);
+		return CTMConverter.toTopicMap(system, first().toString());
 	}
 
 }

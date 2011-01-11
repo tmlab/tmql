@@ -19,7 +19,6 @@ import java.util.UUID;
 import org.tmapi.core.Construct;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
-import org.tmapi.core.TopicMapSystemFactory;
 import org.tmapix.io.XTM2TopicMapWriter;
 import org.tmapix.io.XTMTopicMapReader;
 import org.tmapix.io.XTMVersion;
@@ -55,15 +54,16 @@ public class XTMConverter {
 	 * {@link XTM20TopicMapReader} and create a new instance of {@link TopicMap}
 	 * by using the given topic map system.
 	 * 
-	 * @param xtm
-	 *            the XTM fragment
 	 * @param tms
 	 *            the topic map system used to create a new topic map
+	 * 
+	 * @param xtm
+	 *            the XTM fragment
 	 * @return the new topic map fragment and never <code>null</code>
 	 * @throws TMQLRuntimeException
 	 *             thrown if XTM parsing fails
 	 */
-	public static TopicMap toTopicMap(final String xtm, final TopicMapSystem tms) throws TMQLRuntimeException {
+	public static TopicMap toTopicMap(TopicMapSystem tms, final String xtm) throws TMQLRuntimeException {
 		try {
 			/*
 			 * create a temporary file containing the CTM fragment
@@ -99,17 +99,19 @@ public class XTMConverter {
 	 * fragment. The method serialize the given topic map with the
 	 * {@link XTM20TopicMapWriter}.
 	 * 
+	 * @param tms
+	 *            the topic map system used to create a new topic map
 	 * @param values
 	 *            set containing all values to convert to XTM
 	 * @return the string-represented XTM-fragment
 	 * @throws TMQLRuntimeException
 	 *             thrown if items can not be serialized
 	 */
-	public static String toXTMString(Collection<?> values) throws TMQLRuntimeException {
+	public static String toXTMString(TopicMapSystem tms, Collection<?> values) throws TMQLRuntimeException {
 		StringBuilder builder = new StringBuilder();
 
 		for (Object o : values) {
-			builder.append(getReplacement(o));
+			builder.append(getReplacement(tms, o));
 		}
 		return builder.toString();
 	}
@@ -137,20 +139,22 @@ public class XTMConverter {
 	 * If value is an atom, the string-representation will be returned.
 	 * </p>
 	 * 
+	 * @param tms
+	 *            the topic map system used to create a new topic map
 	 * @param value
 	 *            the value to transform
 	 * @return the XTM-string-representation
 	 * @throws TMQLRuntimeException
 	 *             thrown if serialization fails
 	 */
-	private static final String getReplacement(Object value) throws TMQLRuntimeException {
+	private static final String getReplacement(TopicMapSystem tms, Object value) throws TMQLRuntimeException {
 		StringBuilder builder = new StringBuilder();
 		/*
 		 * check if value is a tuple sequence
 		 */
 		if (value instanceof Collection<?>) {
 			for (Object object : (Collection<?>) value) {
-				builder.append(getReplacement(object) + "\r\n");
+				builder.append(getReplacement(tms, object) + "\r\n");
 			}
 		}
 		/*
@@ -166,7 +170,6 @@ public class XTMConverter {
 				 * serialize topic map construct
 				 */
 				XTM2TopicMapWriter writer = new XTM2TopicMapWriter(stream, "www.topicmapslab.de", XTMVersion.XTM_2_0);
-				TopicMapSystem tms = TopicMapSystemFactory.newInstance().newTopicMapSystem();
 				TopicMap map = tms.createTopicMap("http://xtm-conversion");
 				writer.write(new TMAPICloner(map).clone((Construct) value));
 				builder.append(cleanXTM2(stream.toString(encoding)));

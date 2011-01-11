@@ -4,6 +4,8 @@ target
 *.class
 *.log
 *.zip
+*.ctm
+*.xtm
 build.properties
 .settings
 .classpath

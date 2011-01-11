@@ -12,10 +12,12 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ILanguageContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.FunctionRegistryImpl;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.InterpreterRegistryImpl;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.PragmaRegistry;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.PrefixHandler;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.TokenRegistryImpl;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.model.IFunctionRegistry;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.model.IInterpreterRegistry;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.model.IPragmaRegistry;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.model.ITokenRegistry;
 import de.topicmapslab.tmql4j.exception.TMQLInitializationException;
 
@@ -44,6 +46,10 @@ public class LanguageContext implements ILanguageContext {
 	 * the interpreter register
 	 */
 	private final InterpreterRegistryImpl interpreterRegistry;
+	/**
+	 * the pragma register
+	 */
+	private final PragmaRegistry pragmaRegistry; 
 
 	/**
 	 * constructor
@@ -58,6 +64,7 @@ public class LanguageContext implements ILanguageContext {
 		this.prefixHandler = new PrefixHandler();
 		this.tokenRegistry = new TokenRegistry(runtime);
 		this.interpreterRegistry = new InterpreterRegistry();
+		this.pragmaRegistry = new PragmaRegistry();
 	}
 
 	/**
@@ -86,5 +93,12 @@ public class LanguageContext implements ILanguageContext {
 	 */
 	public IInterpreterRegistry getInterpreterRegistry() {
 		return interpreterRegistry;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public IPragmaRegistry getPragmaRegistry() {
+		return pragmaRegistry;
 	}
 }

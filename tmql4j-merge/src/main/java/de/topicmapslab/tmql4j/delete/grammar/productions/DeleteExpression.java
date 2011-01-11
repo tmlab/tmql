@@ -13,13 +13,16 @@ package de.topicmapslab.tmql4j.delete.grammar.productions;
 import java.util.List;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.delete.grammar.tokens.Delete;
+import de.topicmapslab.tmql4j.delete.grammar.tokens.Cascade;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.path.grammar.lexical.All;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Delete;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Element;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Where;
 
 /**
@@ -113,6 +116,7 @@ public class DeleteExpression extends ExpressionImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean isValid() {
 		if (getTmqlTokens().isEmpty()) {
@@ -120,7 +124,7 @@ public class DeleteExpression extends ExpressionImpl {
 		} else if (!getTmqlTokens().get(0).equals(Delete.class)) {
 			return false;
 		}
-		return true;
+		return  getTmqlTokens().get(1).equals(Cascade.class) || getTmqlTokens().get(1).equals(Element.class)  || ParserUtils.containsTokens(getTmqlTokens(), Where.class);
 	}
 
 }

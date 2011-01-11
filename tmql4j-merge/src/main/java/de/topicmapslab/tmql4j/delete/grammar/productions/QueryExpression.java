@@ -4,13 +4,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.delete.grammar.tokens.Delete;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.grammar.lexical.Pragma;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
-import de.topicmapslab.tmql4j.path.grammar.lexical.Pragma;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Delete;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Prefix;
 import de.topicmapslab.tmql4j.path.grammar.productions.EnvironmentClause;
 

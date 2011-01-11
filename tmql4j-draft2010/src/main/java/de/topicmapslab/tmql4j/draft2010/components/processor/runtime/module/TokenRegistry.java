@@ -52,7 +52,6 @@ import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Or;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Parent;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Player;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Plus;
-import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Pragma;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Prefix;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Reified;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Role;
@@ -151,7 +150,6 @@ public class TokenRegistry extends TokenRegistryImpl {
 		register(Parent.class);
 		register(Player.class);
 		register(Plus.class);
-		register(Pragma.class);
 		register(Prefix.class);
 		register(Reified.class);
 		register(Role.class);

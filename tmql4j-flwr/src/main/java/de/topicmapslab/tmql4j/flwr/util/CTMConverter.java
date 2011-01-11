@@ -60,15 +60,15 @@ public class CTMConverter {
 	 * {@link CTMTopicMapReader} and create a new instance of {@link TopicMap}
 	 * by using the given topic map system.
 	 * 
-	 * @param ctm
-	 *            the CTM fragment
 	 * @param tms
 	 *            the topic map system used to create a new topic map
+	 * @param ctm
+	 *            the CTM fragment
 	 * @return the new topic map fragment and never <code>null</code>
 	 * @throws TMQLRuntimeException
 	 *             thrown if CTM parsing fails
 	 */
-	public static TopicMap toTopicMap(final String ctm, final TopicMapSystem tms)
+	public static TopicMap toTopicMap( final TopicMapSystem tms, final String ctm)
 			throws TMQLRuntimeException {
 		try {
 			/*

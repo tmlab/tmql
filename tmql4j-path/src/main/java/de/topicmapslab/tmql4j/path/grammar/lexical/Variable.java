@@ -16,12 +16,17 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 public class Variable extends Token {
 
 	/**
+	 * the dollar token
+	 */
+	public static final String TOKEN = "$";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean isToken(ITMQLRuntime runtime, String literal) {
 		return literal.length() > 1
-				&& (literal.startsWith("$") || literal.startsWith("%") || literal
+				&& (literal.startsWith(TOKEN) || literal.startsWith("%") || literal
 						.startsWith("@"))
 				&& !literal.equalsIgnoreCase("%prefix")
 				&& !literal.equalsIgnoreCase("%pragma");

@@ -8,11 +8,12 @@
  */
 package de.topicmapslab.tmql4j.tests;
 
+import static junit.framework.Assert.assertEquals;
+
 import org.junit.Test;
 
 import de.topicmapslab.tmql4j.components.results.SimpleResult;
 import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
-import static junit.framework.Assert.*;
 /**
  * @author Sven Krosse
  * 

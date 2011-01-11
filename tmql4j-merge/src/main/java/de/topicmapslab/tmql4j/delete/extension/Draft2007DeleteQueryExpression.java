@@ -22,7 +22,6 @@ import de.topicmapslab.tmql4j.delete.grammar.productions.DeleteExpression;
 import de.topicmapslab.tmql4j.delete.grammar.productions.QueryExpression;
 import de.topicmapslab.tmql4j.delete.grammar.productions.WhereClause;
 import de.topicmapslab.tmql4j.delete.grammar.tokens.Cascade;
-import de.topicmapslab.tmql4j.delete.grammar.tokens.Delete;
 import de.topicmapslab.tmql4j.exception.TMQLExtensionRegistryException;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
@@ -42,7 +41,6 @@ public class Draft2007DeleteQueryExpression implements ILanguageExtension {
 	public void registerExtension(ITMQLRuntime runtime) throws TMQLExtensionRegistryException {
 		ITokenRegistry tokens = runtime.getLanguageContext().getTokenRegistry();
 		tokens.register(Cascade.class);
-		tokens.register(Delete.class);
 
 		IInterpreterRegistry interpreterRegistry = runtime.getLanguageContext().getInterpreterRegistry();
 		interpreterRegistry.registerInterpreterClass(DeleteClause.class, DeleteClauseInterpreter.class);

@@ -20,6 +20,7 @@ import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.grammar.productions.Pragma;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Prefix;
 import de.topicmapslab.tmql4j.util.HashUtil;
@@ -89,7 +90,7 @@ public class EnvironmentClause extends ExpressionImpl {
 		 * create set containing all delimers
 		 */
 		Set<Class<? extends IToken>> delimers = HashUtil.getHashSet();
-		delimers.add(de.topicmapslab.tmql4j.path.grammar.lexical.Pragma.class);
+		delimers.add(de.topicmapslab.tmql4j.grammar.lexical.Pragma.class);
 		delimers.add(Prefix.class);
 
 		/*

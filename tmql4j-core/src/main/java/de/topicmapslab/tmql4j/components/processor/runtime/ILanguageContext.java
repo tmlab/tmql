@@ -11,6 +11,7 @@ package de.topicmapslab.tmql4j.components.processor.runtime;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.PrefixHandler;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.model.IFunctionRegistry;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.model.IInterpreterRegistry;
+import de.topicmapslab.tmql4j.components.processor.runtime.module.model.IPragmaRegistry;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.model.ITokenRegistry;
 
 /**
@@ -50,4 +51,11 @@ public interface ILanguageContext {
 	 * @return the reference of the interpreter register
 	 */
 	public IInterpreterRegistry getInterpreterRegistry();
+
+	/**
+	 * Method to get access to the internal instance of the pragma register
+	 * 
+	 * @return the reference of the pragma register
+	 */
+	public IPragmaRegistry getPragmaRegistry();
 }

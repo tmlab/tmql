@@ -12,11 +12,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.interpreter.PragmaInterpreter;
 import de.topicmapslab.tmql4j.components.interpreter.PreparedExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.model.IInterpreterRegistry;
 import de.topicmapslab.tmql4j.exception.TMQLInitializationException;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.grammar.productions.Pragma;
 import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
@@ -40,6 +42,7 @@ public abstract class InterpreterRegistryImpl implements IInterpreterRegistry {
 	 */
 	public InterpreterRegistryImpl() {
 		registerInterpreterClass(PreparedExpression.class, PreparedExpressionInterpreter.class);
+		registerInterpreterClass(Pragma.class, PragmaInterpreter.class);
 		initialize();
 	}
 

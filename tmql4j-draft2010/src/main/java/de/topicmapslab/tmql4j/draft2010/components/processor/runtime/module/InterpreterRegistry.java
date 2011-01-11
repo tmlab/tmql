@@ -21,7 +21,6 @@ import de.topicmapslab.tmql4j.draft2010.components.interpreter.NumericalExpressi
 import de.topicmapslab.tmql4j.draft2010.components.interpreter.PathExpressionInterpreter;
 import de.topicmapslab.tmql4j.draft2010.components.interpreter.PathSpecificationInterpreter;
 import de.topicmapslab.tmql4j.draft2010.components.interpreter.PathStepInterpreter;
-import de.topicmapslab.tmql4j.draft2010.components.interpreter.PragmaInterpreter;
 import de.topicmapslab.tmql4j.draft2010.components.interpreter.PrefixDirectiveInterpreter;
 import de.topicmapslab.tmql4j.draft2010.components.interpreter.QueryExpressionInterpreter;
 import de.topicmapslab.tmql4j.draft2010.components.interpreter.ScopeFilterInterpreter;
@@ -55,7 +54,6 @@ import de.topicmapslab.tmql4j.draft2010.grammar.productions.NumericalExpression;
 import de.topicmapslab.tmql4j.draft2010.grammar.productions.PathExpression;
 import de.topicmapslab.tmql4j.draft2010.grammar.productions.PathSpecification;
 import de.topicmapslab.tmql4j.draft2010.grammar.productions.PathStep;
-import de.topicmapslab.tmql4j.draft2010.grammar.productions.Pragma;
 import de.topicmapslab.tmql4j.draft2010.grammar.productions.PrefixDirective;
 import de.topicmapslab.tmql4j.draft2010.grammar.productions.QueryExpression;
 import de.topicmapslab.tmql4j.draft2010.grammar.productions.ScopeFilter;
@@ -99,7 +97,6 @@ public class InterpreterRegistry extends InterpreterRegistryImpl {
 		registerInterpreterClass(PathExpression.class, PathExpressionInterpreter.class);
 		registerInterpreterClass(PathSpecification.class, PathSpecificationInterpreter.class);
 		registerInterpreterClass(PathStep.class, PathStepInterpreter.class);
-		registerInterpreterClass(Pragma.class, PragmaInterpreter.class);
 		registerInterpreterClass(PrefixDirective.class, PrefixDirectiveInterpreter.class);
 		registerInterpreterClass(QueryExpression.class, QueryExpressionInterpreter.class);
 		registerInterpreterClass(ScopeFilter.class, ScopeFilterInterpreter.class);

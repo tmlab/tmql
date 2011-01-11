@@ -21,9 +21,9 @@ import java.util.StringTokenizer;
 import de.topicmapslab.tmql4j.components.lexer.TMQLTokenizer;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.PrefixHandler;
-import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Pragma;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Prefix;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.WhiteSpace;
+import de.topicmapslab.tmql4j.grammar.lexical.Pragma;
 import de.topicmapslab.tmql4j.util.HashUtil;
 import de.topicmapslab.tmql4j.util.LiteralUtils;
 

@@ -671,59 +671,11 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 	 * 
 	 * @return an ordered list of variables
 	 */
-	public List<String> getOrderedKeys() {
-		List<String> keys = new LinkedList<String>();
+	public List<String> getOrderedKeys() {		
 		if (!isEmpty()) {
-			keys.addAll(getMatches().get(0).keySet());
-			Collections.sort(keys, new Comparator<String>() {
-				/**
-				 * {@inheritDoc}
-				 */
-				public int compare(String o1, String o2) {
-					if (o1 == o2) {
-						return 0;
-					}
-					int n1 = -1;
-					int n2 = -1;
-					try {
-						n1 = Integer.parseInt(o1.substring(1));
-					} catch (NumberFormatException e) {
-						// IGNORE
-					}
-					try {
-						n2 = Integer.parseInt(o2.substring(1));
-					} catch (NumberFormatException e) {
-						// IGNORE
-					}
-					/*
-					 * n1 is a number
-					 */
-					if (n1 != -1) {
-						/*
-						 * n2 is a number
-						 */
-						if (n2 != -1) {
-							return n1 - n2;
-						}
-						/*
-						 * n2 is a string literal
-						 */
-						return -1;						
-					}
-					/*
-					 * n1 is a literal and n2 is a number
-					 */
-					if (n2 != -1) {
-						return -1;
-					}
-					/*
-					 * both are literals
-					 */
-					return o1.compareTo(o2);
-				}
-			});
+			return CollectionsUtility.getOrderedKeys(getMatches().get(0));
 		}
-		return keys;
+		return Collections.emptyList();
 	}
 
 	/**

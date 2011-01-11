@@ -99,7 +99,7 @@ public class XMLContentInterpreter extends ExpressionInterpreterImpl<XMLContent>
 				/*
 				 * results as CTM
 				 */
-				builder.append(XTMConverter.toXTMString(values));
+				builder.append(XTMConverter.toXTMString(runtime.getTopicMapSystem(), values));
 			}
 		}
 		/*

@@ -15,6 +15,7 @@ import de.topicmapslab.tmql4j.components.processor.runtime.module.model.ITokenRe
 import de.topicmapslab.tmql4j.exception.TMQLExtensionRegistryException;
 import de.topicmapslab.tmql4j.exception.TMQLInitializationException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.grammar.lexical.Pragma;
 import de.topicmapslab.tmql4j.grammar.lexical.Wildcard;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
@@ -52,6 +53,7 @@ public abstract class TokenRegistryImpl implements ITokenRegistry {
 	public TokenRegistryImpl(final ITMQLRuntime runtime) throws TMQLInitializationException {
 		this.runtime = runtime;
 		register(Wildcard.class);
+		register(Pragma.class);
 		initialize();
 	}
 

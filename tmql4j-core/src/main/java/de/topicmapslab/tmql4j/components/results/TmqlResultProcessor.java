@@ -37,7 +37,7 @@ import de.topicmapslab.tmql4j.util.HashUtil;
 public class TmqlResultProcessor implements IResultProcessor {
 
 	private Lock lock = new ReentrantLock(true);
-	
+
 	/**
 	 * the state of auto-reduction
 	 */
@@ -105,7 +105,7 @@ public class TmqlResultProcessor implements IResultProcessor {
 			/*
 			 * set alias
 			 */
-			if ( resultSet instanceof ResultSet<?>){
+			if (resultSet instanceof ResultSet<?>) {
 				((ResultSet<?>) resultSet).setAlias(aliasIndex);
 			}
 			/*
@@ -151,10 +151,10 @@ public class TmqlResultProcessor implements IResultProcessor {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setColumnAlias(int index, String alias) {		
-		while(!lock.tryLock()){
+	public void setColumnAlias(int index, String alias) {
+		while (!lock.tryLock()) {
 			// WAIT
-		}		
+		}
 		if (columnAlias == null) {
 			columnAlias = HashUtil.getHashMap();
 		}
@@ -164,6 +164,16 @@ public class TmqlResultProcessor implements IResultProcessor {
 		}
 		aliasIndex.put(alias, index);
 		lock.unlock();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getIndexOfAlias(String alias) {
+		if (isKnownAlias(alias)) {
+			return this.aliasIndex.get(alias);
+		}
+		return -1;
 	}
 
 	/**

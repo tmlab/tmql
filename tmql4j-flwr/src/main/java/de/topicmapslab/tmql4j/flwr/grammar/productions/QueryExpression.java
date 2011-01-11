@@ -104,11 +104,11 @@ public class QueryExpression extends ExpressionImpl {
 		/*
 		 * check if first token is %prefix or %pragma
 		 */
-		if (token.equals(de.topicmapslab.tmql4j.path.grammar.lexical.Pragma.class) || token.equals(Prefix.class)) {
+		if (token.equals(de.topicmapslab.tmql4j.grammar.lexical.Pragma.class) || token.equals(Prefix.class)) {
 			/*
 			 * lookup last index of keyword %pragma
 			 */
-			List<Integer> indizes = ParserUtils.indizes(tmqlTokens, de.topicmapslab.tmql4j.path.grammar.lexical.Pragma.class);
+			List<Integer> indizes = ParserUtils.indizes(tmqlTokens, de.topicmapslab.tmql4j.grammar.lexical.Pragma.class);
 			int pragmaIndex = indizes.isEmpty() ? -1 : indizes.get(indizes.size() - 1);
 			/*
 			 * lookup last index of keyword %prefix

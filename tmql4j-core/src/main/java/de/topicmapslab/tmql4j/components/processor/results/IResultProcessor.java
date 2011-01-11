@@ -75,6 +75,13 @@ public interface IResultProcessor {
 	 *            the alias
 	 */
 	public void setColumnAlias(final int index, final String alias);
+	
+	/**
+	 * Returns the index of the alias
+	 * @param alias the alias
+	 * @return the index or <code>-1</code> if the alias is unknown.
+	 */
+	public int getIndexOfAlias(final String alias);
 
 	/**
 	 * Checks if the given alias is known by the result processor.

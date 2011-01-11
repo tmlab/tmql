@@ -12,6 +12,7 @@ package de.topicmapslab.tmql4j.util;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -284,6 +285,68 @@ public final class CollectionsUtility {
 			}
 		}
 		return list;
+	}
+
+	/**
+	 * Returns the ordered keys of the given map
+	 * 
+	 * @param map
+	 *            the map
+	 * @return the ordered keys
+	 */
+	public final static List<String> getOrderedKeys(final Map<String, Object> map) {
+		List<String> keys = new LinkedList<String>();
+		if (!map.isEmpty()) {
+			keys.addAll(map.keySet());
+			Collections.sort(keys, new Comparator<String>() {
+				/**
+				 * {@inheritDoc}
+				 */
+				public int compare(String o1, String o2) {
+					if (o1 == o2) {
+						return 0;
+					}
+					int n1 = -1;
+					int n2 = -1;
+					try {
+						n1 = Integer.parseInt(o1.substring(1));
+					} catch (NumberFormatException e) {
+						// IGNORE
+					}
+					try {
+						n2 = Integer.parseInt(o2.substring(1));
+					} catch (NumberFormatException e) {
+						// IGNORE
+					}
+					/*
+					 * n1 is a number
+					 */
+					if (n1 != -1) {
+						/*
+						 * n2 is a number
+						 */
+						if (n2 != -1) {
+							return n1 - n2;
+						}
+						/*
+						 * n2 is a string literal
+						 */
+						return -1;
+					}
+					/*
+					 * n1 is a literal and n2 is a number
+					 */
+					if (n2 != -1) {
+						return -1;
+					}
+					/*
+					 * both are literals
+					 */
+					return o1.compareTo(o2);
+				}
+			});
+		}
+		return keys;
 	}
 
 }

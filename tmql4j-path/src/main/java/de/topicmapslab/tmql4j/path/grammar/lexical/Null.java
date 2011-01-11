@@ -15,10 +15,15 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 public class Null extends Token {
 
 	/**
+	 * 
+	 */
+	public static final String TOKEN = "NULL";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "NULL";
+		return TOKEN;
 	}
 
 }
