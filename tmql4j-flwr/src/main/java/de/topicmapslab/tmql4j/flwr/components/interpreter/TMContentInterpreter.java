@@ -100,7 +100,7 @@ public class TMContentInterpreter extends ExpressionInterpreterImpl<TMContent> {
 				/*
 				 * results as CTM
 				 */
-				builder.append(CTMConverter.toCTMString(values));
+				builder.append(CTMConverter.toCTMString(runtime, context, values));
 			}
 		}
 		/*

@@ -16,9 +16,9 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.Anchor;
 import de.topicmapslab.tmql4j.path.grammar.productions.SimpleContent;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.IState;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.IState.State;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.StateImpl;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext.State;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslaterContext;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TmqlSqlTranslatorImpl;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 
@@ -30,11 +30,12 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 
 	private static final String TOPIC_REF = "SELECT id FROM rel_subject_identifiers, locators WHERE id = id_locator AND reference = {0}";
 	private static final String TM_SUBJECT = "SELECT id FROM topics WHERE id_topicmap = {0}";
+	private static final String SELECTION = "id";
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public IState transform(ITMQLRuntime runtime, IContext context, IExpression expression, IState state) throws TMQLRuntimeException {
+	public ITranslatorContext transform(ITMQLRuntime runtime, IContext context, IExpression expression, ITranslatorContext state) throws TMQLRuntimeException {
 		switch (expression.getGrammarType()) {
 		case Anchor.TYPE_TOPICREF: {
 			final String token = expression.getTokens().get(0);
@@ -44,7 +45,9 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 			} else {
 				result = MessageFormat.format(TOPIC_REF, "'" + runtime.getConstructResolver().toAbsoluteIRI(context, token) + "'");
 			}
-			return new StateImpl(State.TOPIC, result);
+			ITranslatorContext translatorContext = new TranslaterContext(State.TOPIC, SELECTION);
+			translatorContext.setContextOfCurrentNode(result);
+			return translatorContext;
 		}
 		case Anchor.TYPE_DOT: {
 			return state;

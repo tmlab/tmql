@@ -13,6 +13,7 @@ package de.topicmapslab.tmql4j.flwr.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Collection;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.tmapi.core.Construct;
@@ -21,6 +22,8 @@ import org.tmapi.core.TopicMapSystem;
 import org.tmapix.io.CTMTopicMapReader;
 
 import de.topicmapslab.ctm.writer.core.CTMTopicMapWriter;
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 
 /**
@@ -41,12 +44,8 @@ public class CTMConverter {
 	/**
 	 * property line of the CTM-writer
 	 */
-	private static final String line = "writer.features.export.itemidentifier = false, "
-			+ "writer.features.prefixDetection.enabled = false, "
-			+ "writer.features.templateDetection.enabled = false, "
-			+ "writer.features.templateDetection.topicTemplates = false , "
-			+ "writer.features.templateDetection.associationTemplates = false, "
-			+ "writer.features.templateMerger.enabled = false";
+	private static final String line = "writer.features.export.itemidentifier = false, " + "writer.features.prefixDetection.enabled = false, " + "writer.features.templateDetection.enabled = false, "
+			+ "writer.features.templateDetection.topicTemplates = false , " + "writer.features.templateDetection.associationTemplates = false, " + "writer.features.templateMerger.enabled = false";
 
 	/**
 	 * private and hidden constructor
@@ -68,32 +67,27 @@ public class CTMConverter {
 	 * @throws TMQLRuntimeException
 	 *             thrown if CTM parsing fails
 	 */
-	public static TopicMap toTopicMap( final TopicMapSystem tms, final String ctm)
-			throws TMQLRuntimeException {
+	public static TopicMap toTopicMap(final TopicMapSystem tms, final String ctm) throws TMQLRuntimeException {
 		try {
 			/*
 			 * create a byte stream containing the CTM fragment
 			 */
-			ByteArrayInputStream stream = new ByteArrayInputStream(ctm
-					.getBytes());
+			ByteArrayInputStream stream = new ByteArrayInputStream(ctm.getBytes());
 
 			/*
 			 * create a new topic map
 			 */
-			final String baseLocator = "file://ctm-snippet-"
-					+ UUID.randomUUID().toString();
+			final String baseLocator = "file://ctm-snippet-" + UUID.randomUUID().toString();
 			TopicMap map = tms.createTopicMap(baseLocator);
 			/*
 			 * parse the CTM fragment
 			 */
-			CTMTopicMapReader reader = new CTMTopicMapReader(map, stream,
-					baseLocator);
+			CTMTopicMapReader reader = new CTMTopicMapReader(map, stream, baseLocator);
 			reader.read();
 
 			return map;
 		} catch (Exception ex) {
-			throw new TMQLRuntimeException("Cannot convert construct to CTM",
-					ex);
+			throw new TMQLRuntimeException("Cannot convert construct to CTM", ex);
 		}
 	}
 
@@ -108,8 +102,7 @@ public class CTMConverter {
 	 * @throws TMQLRuntimeException
 	 *             thrown if topic map fragment can not be serialized
 	 */
-	public static String toCTMString(TopicMap topicMap)
-			throws TMQLRuntimeException {
+	public static String toCTMString(TopicMap topicMap) throws TMQLRuntimeException {
 		try {
 			/*
 			 * create temporary output-stream
@@ -118,13 +111,11 @@ public class CTMConverter {
 			/*
 			 * serialize the topic map
 			 */
-			CTMTopicMapWriter writer = new CTMTopicMapWriter(stream,
-					"www.topicmapslab.de", line);
+			CTMTopicMapWriter writer = new CTMTopicMapWriter(stream, "www.topicmapslab.de", line);
 			writer.write(topicMap);
 			return stream.toString();
 		} catch (Exception e) {
-			throw new TMQLRuntimeException("Cannot convert construct to CTM.",
-					e);
+			throw new TMQLRuntimeException("Cannot convert construct to CTM.", e);
 		}
 	}
 
@@ -133,23 +124,26 @@ public class CTMConverter {
 	 * fragment. The method serialize the given topic map with the
 	 * {@link CTMTopicMapWriter}.
 	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param context
+	 *            the context
 	 * @param values
 	 *            a collection containing all values, to convert as CTM
 	 * @return the string-represented CTM-fragment
 	 * @throws TMQLRuntimeException
 	 *             thrown if items can not be serialized
 	 */
-	public static String toCTMString(Collection<?> values)
-			throws TMQLRuntimeException {
+	public static String toCTMString(ITMQLRuntime runtime, IContext context, Collection<?> values) throws TMQLRuntimeException {
 
 		StringBuilder builder = new StringBuilder();
 
-		for ( Object o : values){
-			String content = getReplacement(o);
+		for (Object o : values) {
+			String content = getReplacement(runtime, context, o);
 			builder.append(content);
-		}		
+		}
 		return builder.toString();
-	}	
+	}
 
 	/**
 	 * Internal method which transform the given value of the matches to their
@@ -174,21 +168,25 @@ public class CTMConverter {
 	 * If value is an atom, the string-representation will be returned.
 	 * </p>
 	 * 
+	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param context
+	 *            the context
 	 * @param value
 	 *            the value to transform
 	 * @return the CTM-string-representation
 	 * @throws TMQLRuntimeException
 	 *             thrown if serialization fails
 	 */
-	private static final String getReplacement(Object value)
-			throws TMQLRuntimeException {
+	private static final String getReplacement(ITMQLRuntime runtime, IContext context, Object value) throws TMQLRuntimeException {
 		StringBuilder builder = new StringBuilder();
 		/*
 		 * check if value is a tuple sequence
 		 */
 		if (value instanceof Collection<?>) {
 			for (Object object : (Collection<?>) value) {
-				builder.append(getReplacement(object) + "\r\n");
+				builder.append(getReplacement(runtime, context, object) + "\r\n");
 			}
 		}
 		/*
@@ -204,17 +202,42 @@ public class CTMConverter {
 				/*
 				 * serialize topic map construct
 				 */
-				CTMTopicMapWriter writer = new CTMTopicMapWriter(stream,
-						"www.topicmapslab.de", line);
+				CTMTopicMapWriter writer = new CTMTopicMapWriter(stream, "www.topicmapslab.de", line);
+				copyPrefixes(runtime, context, writer);
 				writer.write((Construct) value);
 				builder.append(stream.toString());
 			} catch (Exception e) {
-				throw new TMQLRuntimeException(
-						"Cannot convert construct to CTM.", e);
+				throw new TMQLRuntimeException("Cannot convert construct to CTM.", e);
 			}
 		} else {
 			builder.append(value.toString());
 		}
 		return builder.toString();
+	}
+
+	/**
+	 * Utility method to copy the prefixes of the runtime and the context to the
+	 * topic map writer
+	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param context
+	 *            the context
+	 * @param writer
+	 *            the writer
+	 */
+	private static final void copyPrefixes(ITMQLRuntime runtime, IContext context, CTMTopicMapWriter writer) {
+		/*
+		 * copy prefixes of runtime
+		 */
+		for (Entry<String, String> entry : runtime.getLanguageContext().getPrefixHandler().getPrefixMap().entrySet()) {
+			writer.setPrefix(entry.getKey(), entry.getValue());
+		}
+		/*
+		 * copy prefixes of context
+		 */
+		for (Entry<String, String> entry : context.getPrefixes().entrySet()) {
+			writer.setPrefix(entry.getKey(), entry.getValue());
+		}
 	}
 }

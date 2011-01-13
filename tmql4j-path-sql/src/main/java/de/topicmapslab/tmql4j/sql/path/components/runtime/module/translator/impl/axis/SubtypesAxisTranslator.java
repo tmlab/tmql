@@ -8,8 +8,8 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.axis;
 
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.IState;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.IState.State;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext.State;
 
 /**
  * @author Sven Krosse
@@ -20,7 +20,7 @@ public class SubtypesAxisTranslator extends AxisTranslatorImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected String getBackward(IState state) {
+	protected String getBackward(ITranslatorContext state) {
 		return SupertypesAxisTranslator.FORWARD;
 	}
 
@@ -34,7 +34,7 @@ public class SubtypesAxisTranslator extends AxisTranslatorImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected String getForward(IState state) {
+	protected String getForward(ITranslatorContext state) {
 		return SupertypesAxisTranslator.BACKWARD;
 	}
 
@@ -43,6 +43,20 @@ public class SubtypesAxisTranslator extends AxisTranslatorImpl {
 	 */
 	protected State getForwardState() {
 		return State.TOPIC;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	protected String getBackwardSelection(ITranslatorContext state) {
+		return SupertypesAxisTranslator.SELECTION_FORWARD;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	protected String getForwardSelection(ITranslatorContext state) {
+		return SupertypesAxisTranslator.SELECTION_BACKWARD;
 	}
 
 }

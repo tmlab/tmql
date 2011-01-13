@@ -16,9 +16,9 @@ import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.path.components.processor.TmqlProcessor2007;
 import de.topicmapslab.tmql4j.query.IQuery;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.IState;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.IState.State;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.StateImpl;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext.State;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslaterContext;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslatorRegistry;
 
 /**
@@ -44,8 +44,8 @@ public class TmqlSqlProcessor extends TmqlProcessor2007 {
 		IParserTree tree = parse(query);
 		if (tree != null) {
 			IContext context = new Context(this, query);
-			IState state = new StateImpl(State.TOPICMAP, null);
-			IState sqlState = TranslatorRegistry.getTranslator(tree.root().getClass()).transform(getRuntime(), context, tree.root(), state);
+			ITranslatorContext state = new TranslaterContext(State.TOPICMAP);
+			ITranslatorContext sqlState = TranslatorRegistry.getTranslator(tree.root().getClass()).transform(getRuntime(), context, tree.root(), state);
 			System.out.println(sqlState);
 		}
 		return ResultSet.emptyResultSet();

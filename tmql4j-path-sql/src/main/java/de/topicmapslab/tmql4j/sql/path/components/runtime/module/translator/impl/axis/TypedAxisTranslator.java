@@ -8,8 +8,8 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.axis;
 
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.IState;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.IState.State;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext.State;
 
 /**
  * @author Sven Krosse
@@ -17,19 +17,21 @@ import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ISta
  */
 public class TypedAxisTranslator extends AxisTranslatorImpl {
 	
+	static final String SELECTION_FORWARD = "id";
+	
 	static final String FORWARD = "SELECT id FROM typeables WHERE id_type IN ( {0} )";
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected String getForward(IState state) {
+	protected String getForward(ITranslatorContext state) {
 		return FORWARD;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected String getBackward(IState state) {
+	protected String getBackward(ITranslatorContext state) {
 		return TypesAxisTranslator.FORWARD_TYPEABLES;
 	}
 
@@ -37,14 +39,28 @@ public class TypedAxisTranslator extends AxisTranslatorImpl {
 	 * {@inheritDoc}
 	 */
 	protected State getBackwardState() {
-		return IState.State.TOPIC;
+		return ITranslatorContext.State.TOPIC;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	protected State getForwardState() {
-		return IState.State.ANY;
+		return ITranslatorContext.State.ANY;
 	}
 
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	protected String getBackwardSelection(ITranslatorContext state) {
+		return TypesAxisTranslator.SELECTION_FORWARD;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	protected String getForwardSelection(ITranslatorContext state) {
+		return SELECTION_FORWARD;
+	}
 }

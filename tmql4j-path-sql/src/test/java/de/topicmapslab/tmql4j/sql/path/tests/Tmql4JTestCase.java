@@ -58,10 +58,6 @@ public abstract class Tmql4JTestCase {
 		runtime.getLanguageContext().getPrefixHandler().setDefaultPrefix(base);
 	}
 
-	@After
-	public void tearDown() throws Exception {
-		topicMap.remove();
-	}
 
 	/**
 	 * Create a locator

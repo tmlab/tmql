@@ -12,10 +12,9 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
-import de.topicmapslab.tmql4j.path.grammar.productions.Navigation;
-import de.topicmapslab.tmql4j.path.grammar.productions.StepDefinition;
+import de.topicmapslab.tmql4j.path.grammar.productions.Content;
+import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITmqlSqlTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TmqlSqlTranslatorImpl;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslatorRegistry;
 
@@ -23,18 +22,16 @@ import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.Tran
  * @author Sven Krosse
  * 
  */
-public class NavigationTranslator extends TmqlSqlTranslatorImpl<Navigation> {
+public class ValueExpressionTranslator extends TmqlSqlTranslatorImpl<ValueExpression> {
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public ITranslatorContext transform(ITMQLRuntime runtime, IContext context, IExpression expression, ITranslatorContext state) throws TMQLRuntimeException {
-		ITranslatorContext state_ = state;
-		ITmqlSqlTranslator<?> translator = TranslatorRegistry.getTranslator(StepDefinition.class);
-		for (IExpression e : expression.getExpressions()) {
-			state_ = translator.transform(runtime, context, e, state_);
+		if (expression.getGrammarType() == ValueExpression.TYPE_CONTENT) {
+			return TranslatorRegistry.getTranslator(Content.class).transform(runtime, context, expression.getExpressions().get(0), state);
 		}
-		return state_;
+		throw new TMQLRuntimeException("Unsupported expression type for SQL translator.");
 	}
 
 }

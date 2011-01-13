@@ -34,9 +34,9 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTyped;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.MoveForward;
 import de.topicmapslab.tmql4j.path.grammar.productions.Step;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.IState;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.StateImpl;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TmqlSqlTranslatorImpl;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslaterContext;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -48,26 +48,31 @@ public abstract class AxisTranslatorImpl extends TmqlSqlTranslatorImpl<Step> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public IState transform(ITMQLRuntime runtime, IContext context, IExpression expression, IState state) throws TMQLRuntimeException {
+	public ITranslatorContext transform(ITMQLRuntime runtime, IContext context, IExpression expression, ITranslatorContext state) throws TMQLRuntimeException {
 		Class<? extends IToken> token = expression.getTmqlTokens().get(0);
 
 		final String result;
-		final IState.State newState;
+		final String selection;
+		final ITranslatorContext.State newState;
 		/*
 		 * navigation is forward
 		 */
 		if (MoveForward.class.equals(token)) {
-			result = MessageFormat.format(getForward(state), state.getInnerContext());
+			result = MessageFormat.format(getForward(state), state.getContextOfCurrentNode());
 			newState = getForwardState();
+			selection = getForwardSelection(state);
 		}
 		/*
 		 * navigation is backward
 		 */
 		else {
-			result = MessageFormat.format(getBackward(state), state.getInnerContext());
+			result = MessageFormat.format(getBackward(state), state.getContextOfCurrentNode());
 			newState = getBackwardState();
+			selection = getBackwardSelection(state);
 		}
-		return new StateImpl(newState, result);
+		ITranslatorContext translatorContext = new TranslaterContext(newState, selection);
+		translatorContext.setContextOfCurrentNode(result);
+		return translatorContext;
 	}
 
 	/**
@@ -77,7 +82,7 @@ public abstract class AxisTranslatorImpl extends TmqlSqlTranslatorImpl<Step> {
 	 *            the current state
 	 * @return the message
 	 */
-	protected abstract String getForward(IState state);
+	protected abstract String getForward(ITranslatorContext state);
 
 	/**
 	 * Returns the message format of backward navigation
@@ -86,21 +91,39 @@ public abstract class AxisTranslatorImpl extends TmqlSqlTranslatorImpl<Step> {
 	 *            the current state
 	 * @return the message
 	 */
-	protected abstract String getBackward(IState state);
+	protected abstract String getBackward(ITranslatorContext state);
+
+	/**
+	 * Returns the selection of the forward navigation
+	 * 
+	 * @param state
+	 *            the state
+	 * @return the selection
+	 */
+	protected abstract String getForwardSelection(ITranslatorContext state);
+	
+	/**
+	 * Returns the selection of the backward navigation
+	 * 
+	 * @param state
+	 *            the state
+	 * @return the selection
+	 */
+	protected abstract String getBackwardSelection(ITranslatorContext state);
 
 	/**
 	 * Returns the result state after forward navigation
 	 * 
 	 * @return the state
 	 */
-	protected abstract IState.State getForwardState();
+	protected abstract ITranslatorContext.State getForwardState();
 
 	/**
 	 * Returns the result state after backward navigation
 	 * 
 	 * @return the state
 	 */
-	protected abstract IState.State getBackwardState();
+	protected abstract ITranslatorContext.State getBackwardState();
 
 	private static Map<Class<? extends IToken>, AxisTranslatorImpl> translators = HashUtil.getHashMap();
 	static {
@@ -132,7 +155,7 @@ public abstract class AxisTranslatorImpl extends TmqlSqlTranslatorImpl<Step> {
 	 *            the expression
 	 * @return the translator
 	 */
-	public static AxisTranslatorImpl getTranslator(final ITMQLRuntime runtime, Step expression ){
+	public static AxisTranslatorImpl getTranslator(final ITMQLRuntime runtime, Step expression) {
 		Class<? extends IToken> token = expression.getTmqlTokens().get(1);
 		return translators.get(token);
 	}

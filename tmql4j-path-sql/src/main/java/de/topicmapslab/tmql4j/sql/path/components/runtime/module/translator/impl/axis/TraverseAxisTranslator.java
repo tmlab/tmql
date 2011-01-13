@@ -15,55 +15,61 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.path.grammar.lexical.MoveForward;
 import de.topicmapslab.tmql4j.path.grammar.productions.Step;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.IState;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.StateImpl;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.IState.State;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslaterContext;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext.State;
 
 /**
  * @author Sven Krosse
  * 
  */
 public class TraverseAxisTranslator extends AxisTranslatorImpl {
-
+	static final String SELECTION_FORWARD = "id_player";
+	static final String SELECTION_BACKWARD = "id_parent";
 	static final String FORWARD = "SELECT id_player FROM roles WHERE id_player NOT IN ( {0} ) AND id_parent IN ( SELECT id_parent FROM roles WHERE id_player IN ( {1} ) )";
 	static final String BACKWARD = "SELECT id_parent FROM roles WHERE id_parent NOT IN ( {0} ) AND id_player IN ( SELECT id_player FROM roles WHERE id_parent IN ( {1} ) )";
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public IState transform(ITMQLRuntime runtime, Step expression, IState state) throws TMQLRuntimeException {
+	public ITranslatorContext transform(ITMQLRuntime runtime, Step expression, ITranslatorContext state) throws TMQLRuntimeException {
 		Class<? extends IToken> token = expression.getTmqlTokens().get(0);
 
 		final String result;
-		final IState.State newState;
+		final String selection;
+		final ITranslatorContext.State newState;
 		/*
 		 * navigation is forward
 		 */
 		if (MoveForward.class.equals(token)) {
-			result = MessageFormat.format(getForward(state), state.getInnerContext(), state.getInnerContext());
+			result = MessageFormat.format(getForward(state), state.getContextOfCurrentNode(), state.getContextOfCurrentNode());
 			newState = getForwardState();
+			selection = getForwardSelection(state);
 		}
 		/*
 		 * navigation is backward
 		 */
 		else {
-			result = MessageFormat.format(getBackward(state), state.getInnerContext(), state.getInnerContext());
+			result = MessageFormat.format(getBackward(state), state.getContextOfCurrentNode(), state.getContextOfCurrentNode());
 			newState = getBackwardState();
+			selection = getBackwardSelection(state);
 		}
-		return new StateImpl(newState, result);
+		ITranslatorContext translatorContext = new TranslaterContext(newState, selection);
+		translatorContext.setContextOfCurrentNode(result);
+		return translatorContext;
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	protected String getForward(IState state) {
+	protected String getForward(ITranslatorContext state) {
 		return FORWARD;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected String getBackward(IState state) {
+	protected String getBackward(ITranslatorContext state) {
 		return BACKWARD;
 	}
 
@@ -81,4 +87,18 @@ public class TraverseAxisTranslator extends AxisTranslatorImpl {
 		return State.TOPIC;
 	}
 
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	protected String getBackwardSelection(ITranslatorContext state) {
+		return SELECTION_BACKWARD;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	protected String getForwardSelection(ITranslatorContext state) {
+		return SELECTION_FORWARD;
+	}
 }

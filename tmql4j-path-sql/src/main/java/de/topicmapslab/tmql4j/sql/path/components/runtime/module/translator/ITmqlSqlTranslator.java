@@ -52,6 +52,6 @@ public interface ITmqlSqlTranslator<T extends IExpression> {
 	 * @throws TMQLRuntimeException
 	 *             thrown if anything fails
 	 */
-	public IState transform(ITMQLRuntime runtime, IContext context, IExpression expression, IState state) throws TMQLRuntimeException;
+	public ITranslatorContext transform(ITMQLRuntime runtime, IContext context, IExpression expression, ITranslatorContext state) throws TMQLRuntimeException;
 
 }
