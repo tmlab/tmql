@@ -99,8 +99,7 @@ public class PredicateInvocationInterpreter extends ExpressionInterpreterImpl<Pr
 		Construct c = runtime.getConstructResolver().getConstructByIdentifier(context, reference);
 		if (c instanceof Topic) {
 			associationType = (Topic) c;
-		}
-		if (c == null) {
+		}else if (c == null) {
 			count++;
 			associationType = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(runtime.getLanguageContext().getPrefixHandler().toAbsoluteIRI(reference)));
 		} else {

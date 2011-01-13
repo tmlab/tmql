@@ -12,6 +12,7 @@ import org.tmapi.core.Construct;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 
 /**
  * @author Sven Krosse
@@ -67,4 +68,19 @@ public interface IConstructResolver {
 	 * @return the topic map construct if it exists or <code>null</code>.
 	 */
 	public Construct getConstructByIdentifier(final IContext context, final String identifier);
+	
+	/**
+	 * method transform the given identifier to an absolute IRI by replacing the
+	 * QNames with the defined prefixes. The prefixes will be defined in the
+	 * {@link TMQLRuntimeProperties}.
+	 * 
+	 * @param context
+	 *            the context
+	 * @param identifier
+	 *            the identifier to transform
+	 * @return the absolute IRI and never <code>null</code>
+	 * @throws TMQLRuntimeException
+	 *             thrown if QNames cannot be read from properties
+	 */
+	public String toAbsoluteIRI(final IContext context, final String identifier) throws TMQLRuntimeException;
 }

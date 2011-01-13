@@ -10,6 +10,7 @@ import de.topicmapslab.tmql4j.extension.ILanguageExtension;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetAssociationTypes;
+import de.topicmapslab.tmql4j.majortom.grammar.functions.GetBestIdentifier;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetBestLabel;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetCharacteristicTypes;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetCoordinatesInDistance;
@@ -63,9 +64,10 @@ public class MajortomFunctions implements ILanguageExtension {
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetDatesBefore.GetDatesBeforeIdentifier, GetDatesBefore.class);
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetDatesInRange.GetDatesInRangeIdentifier, GetDatesInRange.class);
 		/*
-		 * best label function
+		 * best label and identifier function
 		 */
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetBestLabel.GETBESTLABEL, GetBestLabel.class);
+		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetBestIdentifier.IDENTIFIER, GetBestIdentifier.class);
 		/*
 		 * index methods
 		 */
@@ -76,7 +78,7 @@ public class MajortomFunctions implements ILanguageExtension {
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetNameTypes.GetNameTypes, GetNameTypes.class);
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetOccurrenceTypes.GetOccurrenceTypes, GetOccurrenceTypes.class);
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetNullValue.GetNullValue, GetNullValue.class);
-		
+
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetTopicsByCharacteristicValue.GetTopicsByCharacteristicValue, GetTopicsByCharacteristicValue.class);
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetTopicsByCharacteristicRegExp.GetTopicsByCharacteristicRegExp, GetTopicsByCharacteristicRegExp.class);
 	}

@@ -170,7 +170,7 @@ public class XTMConverter {
 				 * serialize topic map construct
 				 */
 				XTM2TopicMapWriter writer = new XTM2TopicMapWriter(stream, "www.topicmapslab.de", XTMVersion.XTM_2_0);
-				TopicMap map = tms.createTopicMap("http://xtm-conversion");
+				TopicMap map = tms.createTopicMap("http://xtm-conversion-" + UUID.randomUUID().toString());
 				writer.write(new TMAPICloner(map).clone((Construct) value));
 				builder.append(cleanXTM2(stream.toString(encoding)));
 				map.remove();

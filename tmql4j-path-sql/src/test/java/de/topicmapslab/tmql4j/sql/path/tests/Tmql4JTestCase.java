@@ -6,9 +6,7 @@
  * @email krosse@informatik.uni-leipzig.de
  *
  */
-package de.topicmapslab.tmql4j.majortom.tests;
-
-import java.io.File;
+package de.topicmapslab.tmql4j.sql.path.tests;
 
 import org.junit.After;
 import org.junit.Before;
@@ -18,13 +16,17 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
-import org.tmapix.io.XTMTopicMapReader;
 
+import de.topicmapslab.majortom.database.jdbc.core.SqlDialect;
+import de.topicmapslab.majortom.database.store.JdbcTopicMapStore;
+import de.topicmapslab.majortom.database.store.JdbcTopicMapStoreProperty;
+import de.topicmapslab.majortom.store.TopicMapStoreProperty;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.runtime.TMQLRuntimeFactory;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.query.IQuery;
+import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.TmqlSqlRuntime;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 
 /**
@@ -43,10 +45,16 @@ public abstract class Tmql4JTestCase {
 	@Before
 	public void setUp() throws Exception {
 		factory = TopicMapSystemFactory.newInstance();
+		factory.setProperty(TopicMapStoreProperty.TOPICMAPSTORE_CLASS, JdbcTopicMapStore.class.getName());
+		factory.setProperty(JdbcTopicMapStoreProperty.DATABASE_HOST, "localhost");
+		factory.setProperty(JdbcTopicMapStoreProperty.DATABASE_NAME, "majortom");
+		factory.setProperty(JdbcTopicMapStoreProperty.DATABASE_USER, "postgres");
+		factory.setProperty(JdbcTopicMapStoreProperty.DATABASE_PASSWORD, "postgres");
 		factory.setFeature("http://tmapi.org/features/type-instance-associations", true);
+		factory.setProperty(JdbcTopicMapStoreProperty.SQL_DIALECT, SqlDialect.POSTGRESQL.name());
 		topicMapSystem = factory.newTopicMapSystem();
 		topicMap = topicMapSystem.createTopicMap(base);
-		runtime = TMQLRuntimeFactory.newFactory().newRuntime(topicMapSystem);
+		runtime = TMQLRuntimeFactory.newFactory().newRuntime(topicMapSystem, TmqlSqlRuntime.TMQL_SQL);
 		runtime.getLanguageContext().getPrefixHandler().setDefaultPrefix(base);
 	}
 
@@ -153,10 +161,5 @@ public abstract class Tmql4JTestCase {
 		query.setTopicMap(topicMap);
 		runtime.run(query);
 		return (T) query.getResults();
-	}
-
-	public void fromXtm(final String path) throws Exception {
-		XTMTopicMapReader reader = new XTMTopicMapReader(topicMap, new File(path));
-		reader.read();
 	}
 }

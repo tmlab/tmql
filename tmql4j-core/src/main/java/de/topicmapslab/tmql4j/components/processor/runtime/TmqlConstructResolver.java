@@ -60,38 +60,10 @@ public class TmqlConstructResolver implements IConstructResolver {
 	 * {@inheritDoc}
 	 */
 	public final Construct getConstructByIdentifier(final IContext context, final String identifier) throws TMQLRuntimeException {
-		// Construct construct = null;
 		/*
 		 * try to get element by identifier
 		 */
-		return tryToGetElementByIdentifier(context, getAbsoluteIdentifier(context, identifier));
-		// if (construct == null) {
-		// /*
-		// * check if identifier contains QNames
-		// */
-		// if (!isAbsolute(context, identifier)) {
-		// /*
-		// * try to get item by absolute IRI
-		// */
-		// construct = tryToGetElementByIdentifier(context,
-		// toAbsoluteIRI(context, identifier));
-		// } else {
-		// final String defaultPrefix =
-		// runtime.getLanguageContext().getPrefixHandler().getDefaultPrefix();
-		// /*
-		// * no default prefix set
-		// */
-		// if (defaultPrefix != null && !defaultPrefix.isEmpty()) {
-		// /*
-		// * try to get element by identifier
-		// */
-		// construct = tryToGetElementByIdentifier(context, defaultPrefix +
-		// identifier);
-		// }
-		// }
-		// }
-		// return construct;
-
+		return tryToGetElementByIdentifier(context, getAbsoluteIdentifier(context, identifier));	
 	}
 
 	/**
@@ -108,23 +80,7 @@ public class TmqlConstructResolver implements IConstructResolver {
 	 */
 	private final Construct tryToGetElementByIdentifier(final IContext context, final String identifier) throws TMQLRuntimeException {
 		TopicMap topicMap = context.getQuery().getTopicMap();
-		// /*
-		// * the temporary instance of identifier
-		// */
-		// String identifier_ = identifier;
-		// /*
-		// * Check if identifier is known symbolic constant like tm:name or
-		// * tm:subject
-		// */
-		// PrefixHandler handler =
-		// runtime.getLanguageContext().getPrefixHandler();
-		// if (handler.isKnownSystemIdentifier(identifier_)) {
-		// /*
-		// * translate to absolute IRI
-		// */
-		// identifier_ = handler.getAbsoluteSystemIdentifier(identifier);
-		// }
-
+	
 		try {
 			Construct construct;
 			/*
@@ -273,17 +229,8 @@ public class TmqlConstructResolver implements IConstructResolver {
 	}
 
 	/**
-	 * method transform the given identifier to an absolute IRI by replacing the
-	 * QNames with the defined prefixes. The prefixes will be defined in the
-	 * {@link TMQLRuntimeProperties}.
 	 * 
-	 * @param context
-	 *            the context
-	 * @param identifier
-	 *            the identifier to transform
-	 * @return the absolute IRI and never <code>null</code>
-	 * @throws TMQLRuntimeException
-	 *             thrown if QNames cannot be read from properties
+	 * {@inheritDoc}
 	 */
 	public String toAbsoluteIRI(final IContext context, final String identifier) throws TMQLRuntimeException {
 		String identifier_ = identifier;
