@@ -1,28 +1,29 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <artifactId>tmql4j-parent</artifactId>
-    <groupId>de.topicmapslab.tmql4j</groupId>
-    <version>3.0.0-SNAPSHOT</version>
-  </parent>
-  <groupId>de.topicmapslab.tmql4j.sql</groupId>
-  <artifactId>tmql4j-path-sql</artifactId>
-  <version>${project.parent.version}</version>
-  <name>TMQL Path Style Translater For SQL</name>
-  <build>
-  	<resources>
-  			<resource>
-  				<directory>META-INF</directory>
-  				 <targetPath>${project.build.directory}/classes/META-INF</targetPath>
-  			</resource>
-  			<resource>
-  				<directory>OSGI-INF</directory>
-  				<targetPath>${project.build.directory}/classes/OSGI-INF</targetPath>
-  			</resource>  			
-  			<resource>
-  				<directory>src/main/resources</directory>
-  			</resource>
-  		</resources>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>tmql4j-parent</artifactId>
+		<groupId>de.topicmapslab.tmql4j</groupId>
+		<version>3.0.0-SNAPSHOT</version>
+	</parent>
+	<groupId>de.topicmapslab.tmql4j.sql</groupId>
+	<artifactId>tmql4j-path-sql</artifactId>
+	<version>${project.parent.version}</version>
+	<name>TMQL Path Style Translater For SQL</name>
+	<build>
+		<resources>
+			<resource>
+				<directory>META-INF</directory>
+				<targetPath>${project.build.directory}/classes/META-INF</targetPath>
+			</resource>
+			<resource>
+				<directory>OSGI-INF</directory>
+				<targetPath>${project.build.directory}/classes/OSGI-INF</targetPath>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -43,6 +44,20 @@
 			</plugin>
 		</plugins>
 	</build>
+	<repositories>
+		<repository>
+			<id>tmlab</id>
+			<url>http://maven.topicmapslab.de/public</url>
+		</repository>
+		<repository>
+			<id>ontopia</id>
+			<url>http://ontopia.googlecode.com/svn/maven-repository/</url>
+		</repository>
+		<repository>
+			<id>ontopia snapshot</id>
+			<url>http://ontopia.googlecode.com/svn/maven-snapshot-repository/</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>de.topicmapslab.tmql4j</groupId>

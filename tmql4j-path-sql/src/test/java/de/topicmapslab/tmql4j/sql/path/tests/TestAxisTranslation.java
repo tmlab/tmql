@@ -25,6 +25,8 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.MoveBackward;
 import de.topicmapslab.tmql4j.path.grammar.lexical.MoveForward;
 import de.topicmapslab.tmql4j.path.grammar.productions.Step;
 import de.topicmapslab.tmql4j.path.query.TMQLQuery;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.SqlDefinition;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext.State;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslaterContext;
@@ -37,24 +39,23 @@ import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl
  */
 public class TestAxisTranslation extends Tmql4JTestCase {
 
-	private ITranslatorContext state = new TranslaterContext(State.TOPIC);
+	private ISqlDefinition state = new SqlDefinition();
 
 	/**
 	 * constructor
 	 */
 	public TestAxisTranslation() {
-		state.setContextOfCurrentNode("id");
 	}
 
 	@Test
 	public void testInstancesAxisTranslator() throws Exception {
-		String expected = MessageFormat.format(IndicatorsAxisTranslator.FORWARD, "id");
-		testAxisTranslator(new IndicatorsAxisTranslator(), toExpression(new AxisIndicators(), true), expected);
+//		String expected = MessageFormat.format(IndicatorsAxisTranslator.FORWARD, "id");
+//		testAxisTranslator(new IndicatorsAxisTranslator(), toExpression(new AxisIndicators(), true), expected);
 	}
 
 	@Test
 	public void testname() throws Exception {
-		execute("// tm:subject >> characteristics ( . , . >> scope )");
+		execute("// tm:subject ( . , . >> indicators )");
 	}
 
 	public IExpression toExpression(IToken token, boolean forward) {
@@ -71,7 +72,7 @@ public class TestAxisTranslation extends Tmql4JTestCase {
 
 	public void testAxisTranslator(AxisTranslatorImpl translator, IExpression expression, String expected) throws Exception {
 		IContext context = new Context(runtime.getTmqlProcessor(), new TMQLQuery(topicMap, ""));
-		final String actual = translator.transform(runtime, context, expression, state).getContextOfCurrentNode();
+		final String actual = translator.toSql(runtime, context, expression, state).toString();
 		Assert.assertEquals(expected, actual);
 	}
 

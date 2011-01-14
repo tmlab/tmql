@@ -47,7 +47,7 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  */
 public class TranslatorRegistry {
 
-	private final static Map<Class<? extends IExpression>, ITmqlSqlTranslator<?>> translators = HashUtil.getHashMap();
+	private final static Map<Class<? extends IExpression>, ISqlTranslator<?>> translators = HashUtil.getHashMap();
 
 	static {
 		translators.put(AliasValueExpression.class, new AliasValueExpressionTranslator());
@@ -66,7 +66,7 @@ public class TranslatorRegistry {
 		translators.put(ValueExpression.class, new ValueExpressionTranslator());
 	}
 
-	public static ITmqlSqlTranslator<?> getTranslator(Class<? extends IExpression> type) {
+	public static ISqlTranslator<?> getTranslator(Class<? extends IExpression> type) {
 		return translators.get(type);
 	}
 

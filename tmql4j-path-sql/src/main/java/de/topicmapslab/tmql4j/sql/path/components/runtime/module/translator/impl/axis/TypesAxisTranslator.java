@@ -8,8 +8,17 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.axis;
 
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext.State;
+import java.text.MessageFormat;
+
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
+import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.FromPart;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.Selection;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
 
 /**
  * @author Sven Krosse
@@ -23,46 +32,59 @@ public class TypesAxisTranslator extends AxisTranslatorImpl {
 	static final String FORWARD_TYPEABLES = "SELECT id_type FROM typeables WHERE id IN ( {0} )";
 	static final String BACKWARD = "SELECT id_instance FROM rel_instance_of WHERE id_type IN ( {0} )";
 
+	static final String FORWARD_SELECTION = "id_type";
+	static final String BACKWARD_SELECTION = "id_instance";
+	static final String TABLE = "rel_instance_of";
+	static final String TYPEABLES = "typeables";
+	static final String FORWARD_CONDITION = "{0} = {1}.id_instance";
+	static final String FORWARD_CONDITION_TYPEABLES = "{0} = {1}.id";
+	static final String BACKWARD_CONDITION = "{0} = {1}.id_type";
+
 	/**
 	 * {@inheritDoc}
 	 */
-	protected String getForward(ITranslatorContext state) {
-		return (state.getState() == ITranslatorContext.State.TOPIC) ? FORWARD_TOPIC : FORWARD_TYPEABLES;
+	protected ISqlDefinition forward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
+		ISqlDefinition result = definition.clone();
+		result.clearSelection();
+		/*
+		 * append from clause for characteristics
+		 */
+		IFromPart fromPart = new FromPart(definition.getCurrentTable() == SqlTables.TOPIC ? TABLE : TYPEABLES, result.getAlias(), true);
+		result.addFromPart(fromPart);
+		/*
+		 * append condition as connection to incoming SQL definition
+		 */
+		ISelection selection = definition.getLastSelection();
+		result.add(MessageFormat.format(definition.getCurrentTable() == SqlTables.TOPIC ? FORWARD_CONDITION : FORWARD_TYPEABLES, selection.getSelection(), fromPart.getAlias()));
+		/*
+		 * add new selection
+		 */
+		result.addSelection(new Selection(FORWARD_SELECTION, fromPart.getAlias()));
+		result.setCurrentTable(SqlTables.TOPIC);
+		return result;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected String getBackward(ITranslatorContext state) {
-		return BACKWARD;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected State getBackwardState() {
-		return ITranslatorContext.State.TOPIC;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected State getForwardState() {
-		return ITranslatorContext.State.TOPIC;
-	}
-
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	protected String getBackwardSelection(ITranslatorContext state) {
-		return SELECTION_BACKWARD;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	protected String getForwardSelection(ITranslatorContext state) {
-		return SELECTION_FORWARD;
+	protected ISqlDefinition backward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
+		ISqlDefinition result = definition.clone();
+		result.clearSelection();
+		/*
+		 * append from clause for characteristics
+		 */
+		IFromPart fromPart = new FromPart(TABLE, result.getAlias(), true);
+		result.addFromPart(fromPart);
+		/*
+		 * append condition as connection to incoming SQL definition
+		 */
+		ISelection selection = definition.getLastSelection();
+		result.add(MessageFormat.format(BACKWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));
+		/*
+		 * add new selection
+		 */
+		result.addSelection(new Selection(BACKWARD_SELECTION, fromPart.getAlias()));
+		result.setCurrentTable(SqlTables.TOPIC);
+		return result;
 	}
 }

@@ -10,96 +10,74 @@ package de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.imp
 
 import java.text.MessageFormat;
 
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.grammar.lexical.IToken;
-import de.topicmapslab.tmql4j.path.grammar.lexical.MoveForward;
-import de.topicmapslab.tmql4j.path.grammar.productions.Step;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext.State;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslaterContext;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.FromPart;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.Selection;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
 
 /**
  * @author Sven Krosse
  * 
  */
 public class AtomifyAxisTranslator extends AxisTranslatorImpl {
-	
-	static final String SELECTION_FORWARD = "value";
-	static final String SELECTION_BACKWARD = "id";
-	static final String BACKWARD = "SELECT value FROM names WHERE id IN ( {0} ) UNION SELECT value FROM occurrences WHERE id IN ( {1} )";
-	static final String FORWARD = "SELECT id FROM names WHERE value IN ( {0} ) UNION SELECT id FROM occurrences WHERE value IN ( {1} )";
+
+	static final String FORWARD_SELECTION = "value";
+	static final String BACKWARD_SELECTION = "id";
+	static final String CHARACTERISTICS = "SELECT id_parent, id, value FROM names UNION SELECT id_parent, id, value FROM occurrences";
+	static final String FORWARD_CONDITION = "{0} = {1}.id";
+	static final String BACKWARD_CONDITION = "{0} = {1}.value";
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public ITranslatorContext transform(ITMQLRuntime runtime, Step expression, ITranslatorContext state) throws TMQLRuntimeException {
-		Class<? extends IToken> token = expression.getTmqlTokens().get(0);
-
-		final String result;
-		final ITranslatorContext.State newState;
-		final String selection;
+	protected ISqlDefinition forward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
+		ISqlDefinition result = definition.clone();
+		result.clearSelection();
 		/*
-		 * navigation is forward
+		 * append from clause for characteristics
 		 */
-		if (MoveForward.class.equals(token)) {
-			result = MessageFormat.format(getForward(state), state.getContextOfCurrentNode(), state.getContextOfCurrentNode());
-			newState = getForwardState();
-			selection = getForwardSelection(state);
-		}
+		IFromPart fromPart = new FromPart(CHARACTERISTICS, result.getAlias(), false);
+		result.addFromPart(fromPart);
 		/*
-		 * navigation is backward
+		 * append condition as connection to incoming SQL definition
 		 */
-		else {
-			result = MessageFormat.format(getBackward(state), state.getContextOfCurrentNode(), state.getContextOfCurrentNode());
-			newState = getBackwardState();
-			selection = getBackwardSelection(state);
-		}
-		ITranslatorContext translatorContext = new TranslaterContext(newState, selection);
-		translatorContext.setContextOfCurrentNode(result);
-		return translatorContext;
+		ISelection selection = definition.getLastSelection();
+		result.add(MessageFormat.format(FORWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));
+		/*
+		 * add new selection
+		 */
+		result.addSelection(new Selection(FORWARD_SELECTION, fromPart.getAlias()));
+		result.setCurrentTable(SqlTables.STRING);
+		return result;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected String getForward(ITranslatorContext state) {
-		return FORWARD;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected String getBackward(ITranslatorContext state) {
-		return BACKWARD;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected State getBackwardState() {
-		return State.CHARACTERISTICS;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected State getForwardState() {
-		return State.STRING;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	protected String getBackwardSelection(ITranslatorContext state) {
-		return SELECTION_BACKWARD;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	protected String getForwardSelection(ITranslatorContext state) {
-		return SELECTION_FORWARD;
+	protected ISqlDefinition backward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
+		ISqlDefinition result = definition.clone();
+		result.clearSelection();
+		/*
+		 * append from clause for characteristics
+		 */
+		IFromPart fromPart = new FromPart(CHARACTERISTICS, result.getAlias(), false);
+		result.addFromPart(fromPart);
+		/*
+		 * append condition as connection to incoming SQL definition
+		 */
+		ISelection selection = definition.getLastSelection();
+		result.add(MessageFormat.format(BACKWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));
+		/*
+		 * add new selection
+		 */
+		result.addSelection(new Selection(BACKWARD_SELECTION, fromPart.getAlias()));
+		result.setCurrentTable(SqlTables.CHARACTERISTICS);
+		return result;
 	}
 
 }

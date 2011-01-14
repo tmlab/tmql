@@ -16,18 +16,23 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 public class And extends Token {
 
 	/**
+	 * 
+	 */
+	public static final String TOKEN = "AND";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean isToken(ITMQLRuntime runtime, String literal) {		
-		return literal.equalsIgnoreCase("AND") || literal.equalsIgnoreCase("&");
+		return literal.equalsIgnoreCase(TOKEN) || literal.equalsIgnoreCase("&");
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "AND";
+		return TOKEN;
 	}
 
 }

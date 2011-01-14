@@ -14,8 +14,8 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.Navigation;
 import de.topicmapslab.tmql4j.path.grammar.productions.StepDefinition;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITmqlSqlTranslator;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ISqlTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TmqlSqlTranslatorImpl;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslatorRegistry;
 
@@ -28,13 +28,13 @@ public class NavigationTranslator extends TmqlSqlTranslatorImpl<Navigation> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public ITranslatorContext transform(ITMQLRuntime runtime, IContext context, IExpression expression, ITranslatorContext state) throws TMQLRuntimeException {
-		ITranslatorContext state_ = state;
-		ITmqlSqlTranslator<?> translator = TranslatorRegistry.getTranslator(StepDefinition.class);
+	public ISqlDefinition toSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
+		ISqlDefinition definition_ = definition;
+		ISqlTranslator<?> translator = TranslatorRegistry.getTranslator(StepDefinition.class);
 		for (IExpression e : expression.getExpressions()) {
-			state_ = translator.transform(runtime, context, e, state_);
+			definition_ = translator.toSql(runtime, context, e, definition_);
 		}
-		return state_;
+		return definition_;
 	}
 
 }

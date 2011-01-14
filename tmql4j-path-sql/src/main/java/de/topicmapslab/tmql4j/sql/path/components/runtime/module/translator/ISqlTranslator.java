@@ -12,12 +12,13 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 
 /**
  * @author Sven Krosse
  * 
  */
-public interface ITmqlSqlTranslator<T extends IExpression> {
+public interface ISqlTranslator<T extends IExpression> {
 
 	/**
 	 * Returns the type of expression which can be handled by this SQL
@@ -38,7 +39,7 @@ public interface ITmqlSqlTranslator<T extends IExpression> {
 	public boolean isApplicable(IExpression expression);
 
 	/**
-	 * Transform the given expression by using the given state
+	 * Transform the given expression by using the given SQL definition
 	 * 
 	 * @param runtime
 	 *            the runtime
@@ -46,12 +47,12 @@ public interface ITmqlSqlTranslator<T extends IExpression> {
 	 *            the current context
 	 * @param expression
 	 *            the expression to transform
-	 * @param state
-	 *            the current state of state machine
-	 * @return the new state of state machine
+	 * @param definition
+	 *            the current SQL definition
+	 * @return the new SQL definition
 	 * @throws TMQLRuntimeException
 	 *             thrown if anything fails
 	 */
-	public ITranslatorContext transform(ITMQLRuntime runtime, IContext context, IExpression expression, ITranslatorContext state) throws TMQLRuntimeException;
+	public ISqlDefinition toSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException;
 
 }

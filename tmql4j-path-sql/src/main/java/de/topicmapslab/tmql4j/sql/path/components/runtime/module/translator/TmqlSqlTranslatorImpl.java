@@ -16,7 +16,7 @@ import de.topicmapslab.tmql4j.grammar.productions.IExpression;
  * @author Sven Krosse
  *
  */
-public abstract class TmqlSqlTranslatorImpl<T extends IExpression> implements ITmqlSqlTranslator<T> {
+public abstract class TmqlSqlTranslatorImpl<T extends IExpression> implements ISqlTranslator<T> {
 	
 	private Class<T> type;
 	

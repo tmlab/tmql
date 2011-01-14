@@ -1,29 +1,26 @@
 /*
- * TMQL4J - Javabased TMQL Engine
- * 
  * Copyright: Copyright 2010 Topic Maps Lab, University of Leipzig. http://www.topicmapslab.de/    
  * License:   Apache License, Version 2.0 http://www.apache.org/licenses/LICENSE-2.0.html
- * 
+ *  
  * @author Sven Krosse
  * @email krosse@informatik.uni-leipzig.de
  *
  */
-package de.topicmapslab.tmql4j.path.grammar.lexical;
+package de.topicmapslab.tmql4j.sql.path.components.definition.core;
 
-import de.topicmapslab.tmql4j.grammar.lexical.Token;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Or;
 
-public class BracketRoundClose extends Token {
-
-	/**
-	 * 
-	 */
-	public static final String TOKEN = ")";
+/**
+ * @author Sven Krosse
+ * 
+ */
+public class Disjunction extends Criteria {
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public String getLiteral() {
-		return TOKEN;
+	protected String getBooleanOperator() {
+		return Or.TOKEN;
 	}
 
 }

@@ -16,10 +16,15 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 public class Where extends Token {
 
 	/**
+	 * 
+	 */
+	public static final String TOKEN = "WHERE";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "WHERE";
+		return TOKEN;
 	}
 
 }

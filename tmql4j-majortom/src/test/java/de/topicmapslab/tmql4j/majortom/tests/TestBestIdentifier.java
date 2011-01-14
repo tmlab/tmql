@@ -80,5 +80,8 @@ public class TestBestIdentifier extends Tmql4JTestCase {
 		topic.addSubjectIdentifier(oSi);
 		assertEquals(base + refOSi, getBestIdentifier(topic, false));
 		assertEquals("si:" + base + refOSi, getBestIdentifier(topic, true));
+		
+		String query ="FOR $var IN tm:subject >> instances RETURN ( fn:best-label($var) , fn:best-identifier($var, \"true\") )";
+		System.out.println(execute(query).toString());
 	}
 }

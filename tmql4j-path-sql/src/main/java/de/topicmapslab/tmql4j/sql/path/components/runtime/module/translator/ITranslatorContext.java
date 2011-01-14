@@ -56,7 +56,6 @@ public interface ITranslatorContext {
 		 * current nodes are strings
 		 */
 		STRING,
-
 	}
 
 	/**

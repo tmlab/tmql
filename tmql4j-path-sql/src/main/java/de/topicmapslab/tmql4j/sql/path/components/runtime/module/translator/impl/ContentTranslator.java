@@ -14,7 +14,7 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.Content;
 import de.topicmapslab.tmql4j.path.grammar.productions.QueryExpression;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TmqlSqlTranslatorImpl;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslatorRegistry;
 
@@ -27,9 +27,9 @@ public class ContentTranslator extends TmqlSqlTranslatorImpl<Content> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public ITranslatorContext transform(ITMQLRuntime runtime, IContext context, IExpression expression, ITranslatorContext state) throws TMQLRuntimeException {
+	public ISqlDefinition toSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
 		if ( expression.getGrammarType() == Content.TYPE_QUERY_EXPRESSION ){
-			return TranslatorRegistry.getTranslator(QueryExpression.class).transform(runtime, context, expression.getExpressions().get(0), state);
+			return TranslatorRegistry.getTranslator(QueryExpression.class).toSql(runtime, context, expression.getExpressions().get(0), definition);
 		}
 		throw new TMQLRuntimeException("Unsupported expression type for SQL translator.");
 	}

@@ -16,7 +16,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.Postfix;
 import de.topicmapslab.tmql4j.path.grammar.productions.PostfixedExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.SimpleContent;
 import de.topicmapslab.tmql4j.path.grammar.productions.TupleExpression;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TmqlSqlTranslatorImpl;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslatorRegistry;
 
@@ -29,15 +29,15 @@ public class PostfixedExpressionTranslator extends TmqlSqlTranslatorImpl<Postfix
 	/**
 	 * {@inheritDoc}
 	 */
-	public ITranslatorContext transform(ITMQLRuntime runtime, IContext context, IExpression expression, ITranslatorContext state) throws TMQLRuntimeException {
+	public ISqlDefinition toSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
 		if ( expression.getGrammarType() == PostfixedExpression.TYPE_SIMPLE_CONTENT){
-			ITranslatorContext newContext = TranslatorRegistry.getTranslator(SimpleContent.class).transform(runtime, context, expression.getExpressions().get(0), state);
+			ISqlDefinition newDefinition = TranslatorRegistry.getTranslator(SimpleContent.class).toSql(runtime, context, expression.getExpressions().get(0), definition);
 			if ( expression.getExpressions().size() > 1){
-				newContext = TranslatorRegistry.getTranslator(Postfix.class).transform(runtime, context, expression.getExpressions().get(1), newContext);
+				newDefinition = TranslatorRegistry.getTranslator(Postfix.class).toSql(runtime, context, expression.getExpressions().get(1), newDefinition);
 			}
-			return newContext;
+			return newDefinition;
 		}
-		return TranslatorRegistry.getTranslator(TupleExpression.class).transform(runtime, context, expression.getExpressions().get(0), state);
+		return TranslatorRegistry.getTranslator(TupleExpression.class).toSql(runtime, context, expression.getExpressions().get(0), definition);
 	}
 
 }

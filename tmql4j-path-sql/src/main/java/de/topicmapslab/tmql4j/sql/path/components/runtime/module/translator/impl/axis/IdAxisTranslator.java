@@ -8,65 +8,29 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.axis;
 
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.path.grammar.productions.Step;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext.State;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 
 /**
  * @author Sven Krosse
  * 
  */
 public class IdAxisTranslator extends AxisTranslatorImpl {
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
-	public ITranslatorContext transform(ITMQLRuntime runtime, Step expression, ITranslatorContext state) throws TMQLRuntimeException {
-		return state;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	protected String getForward(ITranslatorContext state) {
-		return null;
+	protected ISqlDefinition forward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
+		return definition;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected String getBackward(ITranslatorContext state) {
-		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected State getBackwardState() {
-		return null;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected State getForwardState() {
-		return null;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	protected String getBackwardSelection(ITranslatorContext state) {
-		return state.getTopLevelSelections().get(0);
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	protected String getForwardSelection(ITranslatorContext state) {
-		return state.getTopLevelSelections().get(0);
+	protected ISqlDefinition backward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
+		return definition;
 	}
 
 }

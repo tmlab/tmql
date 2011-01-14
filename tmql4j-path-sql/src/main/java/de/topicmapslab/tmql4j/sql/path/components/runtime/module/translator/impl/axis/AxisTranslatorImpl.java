@@ -8,7 +8,6 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.axis;
 
-import java.text.MessageFormat;
 import java.util.Map;
 
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
@@ -34,9 +33,8 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTyped;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.MoveForward;
 import de.topicmapslab.tmql4j.path.grammar.productions.Step;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TmqlSqlTranslatorImpl;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslaterContext;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -48,82 +46,59 @@ public abstract class AxisTranslatorImpl extends TmqlSqlTranslatorImpl<Step> {
 	/**
 	 * {@inheritDoc}
 	 */
-	public ITranslatorContext transform(ITMQLRuntime runtime, IContext context, IExpression expression, ITranslatorContext state) throws TMQLRuntimeException {
+	public ISqlDefinition toSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
 		Class<? extends IToken> token = expression.getTmqlTokens().get(0);
-
-		final String result;
-		final String selection;
-		final ITranslatorContext.State newState;
+		String optionalType = null;
+		if (expression.getTmqlTokens().size() > 2) {
+			optionalType = expression.getTokens().get(2);
+		}
 		/*
 		 * navigation is forward
 		 */
 		if (MoveForward.class.equals(token)) {
-			result = MessageFormat.format(getForward(state), state.getContextOfCurrentNode());
-			newState = getForwardState();
-			selection = getForwardSelection(state);
+			return forward(runtime, context, optionalType, definition);
 		}
 		/*
 		 * navigation is backward
 		 */
-		else {
-			result = MessageFormat.format(getBackward(state), state.getContextOfCurrentNode());
-			newState = getBackwardState();
-			selection = getBackwardSelection(state);
-		}
-		ITranslatorContext translatorContext = new TranslaterContext(newState, selection);
-		translatorContext.setContextOfCurrentNode(result);
-		return translatorContext;
+		return backward(runtime, context, optionalType, definition);
 	}
 
 	/**
-	 * Returns the message format of forward navigation
+	 * Calling the implementations to transform the given forward navigation of
+	 * this axis with the optional type to an SQL definition
 	 * 
-	 * @param state
-	 *            the current state
-	 * @return the message
+	 * @param runtime
+	 *            the runtime
+	 * @param context
+	 *            the context
+	 * @param optionalType
+	 *            the optional type or <code>null</code>
+	 * @param definition
+	 *            the incoming SQL definition
+	 * @return the outgoing SQL definition
+	 * @throws TMQLRuntimeException
+	 *             thrown if anything fails
 	 */
-	protected abstract String getForward(ITranslatorContext state);
+	protected abstract ISqlDefinition forward(ITMQLRuntime runtime, IContext context, final String optionalType, ISqlDefinition definition) throws TMQLRuntimeException;
 
 	/**
-	 * Returns the message format of backward navigation
+	 * Calling the implementations to transform the given backward navigation of
+	 * this axis with the optional type to an SQL definition
 	 * 
-	 * @param state
-	 *            the current state
-	 * @return the message
+	 * @param runtime
+	 *            the runtime
+	 * @param context
+	 *            the context
+	 * @param optionalType
+	 *            the optional type or <code>null</code>
+	 * @param definition
+	 *            the incoming SQL definition
+	 * @return the outgoing SQL definition
+	 * @throws TMQLRuntimeException
+	 *             thrown if anything fails
 	 */
-	protected abstract String getBackward(ITranslatorContext state);
-
-	/**
-	 * Returns the selection of the forward navigation
-	 * 
-	 * @param state
-	 *            the state
-	 * @return the selection
-	 */
-	protected abstract String getForwardSelection(ITranslatorContext state);
-	
-	/**
-	 * Returns the selection of the backward navigation
-	 * 
-	 * @param state
-	 *            the state
-	 * @return the selection
-	 */
-	protected abstract String getBackwardSelection(ITranslatorContext state);
-
-	/**
-	 * Returns the result state after forward navigation
-	 * 
-	 * @return the state
-	 */
-	protected abstract ITranslatorContext.State getForwardState();
-
-	/**
-	 * Returns the result state after backward navigation
-	 * 
-	 * @return the state
-	 */
-	protected abstract ITranslatorContext.State getBackwardState();
+	protected abstract ISqlDefinition backward(ITMQLRuntime runtime, IContext context, final String optionalType, ISqlDefinition definition) throws TMQLRuntimeException;
 
 	private static Map<Class<? extends IToken>, AxisTranslatorImpl> translators = HashUtil.getHashMap();
 	static {

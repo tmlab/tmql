@@ -16,9 +16,10 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.Anchor;
 import de.topicmapslab.tmql4j.path.grammar.productions.SimpleContent;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext.State;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslaterContext;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.FromPart;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.Selection;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TmqlSqlTranslatorImpl;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 
@@ -28,29 +29,56 @@ import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
  */
 public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 
-	private static final String TOPIC_REF = "SELECT id FROM rel_subject_identifiers, locators WHERE id = id_locator AND reference = {0}";
-	private static final String TM_SUBJECT = "SELECT id FROM topics WHERE id_topicmap = {0}";
 	private static final String SELECTION = "id";
+	private static final String TOPICS = "topics";
+	private static final String LOCATORS = "locators";
+	private static final String REL_SUBJECT_IDENTIFIERS = "rel_subject_identifiers";
+	private static final String TOPICMAP_CONDITION = "{0}.id_topicmap = {1}";
+	private static final String CONDITION_LOCATOR_REL = "{0}.id = {1}.id_locator";
+	private static final String CONDITION_REL_TOPIC = "{0}.id_topic = {1}.id";
+	private static final String CONDITION_REFERENCE = "{0}.reference = {0}";
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public ITranslatorContext transform(ITMQLRuntime runtime, IContext context, IExpression expression, ITranslatorContext state) throws TMQLRuntimeException {
+	public ISqlDefinition toSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
 		switch (expression.getGrammarType()) {
 		case Anchor.TYPE_TOPICREF: {
 			final String token = expression.getTokens().get(0);
-			String result;
+			ISqlDefinition newDefinition = definition.clone();
+			newDefinition.clearSelection();
+			/*
+			 * create from part for topics table
+			 */
+			IFromPart part = new FromPart(TOPICS, newDefinition.getAlias(), true);
+			newDefinition.addFromPart(part);
+			/*
+			 * create condition
+			 */
+			newDefinition.add(MessageFormat.format(TOPICMAP_CONDITION, part.getAlias(), context.getQuery().getTopicMap().getId()));
 			if (TmdmSubjectIdentifier.isTmdmSubject(token)) {
-				result = MessageFormat.format(TM_SUBJECT, context.getQuery().getTopicMap().getId());
+				// NOTHING TO DO ANYMORE
 			} else {
-				result = MessageFormat.format(TOPIC_REF, "'" + runtime.getConstructResolver().toAbsoluteIRI(context, token) + "'");
+				/*
+				 * add additional tables
+				 */
+				IFromPart fromPartLocs = new FromPart(LOCATORS, newDefinition.getAlias(), true);
+				newDefinition.addFromPart(fromPartLocs);
+				IFromPart fromPartRel = new FromPart(REL_SUBJECT_IDENTIFIERS, newDefinition.getAlias(), true);
+				newDefinition.addFromPart(fromPartRel);
+				/*
+				 * add additional condition
+				 */
+				newDefinition.add(MessageFormat.format(CONDITION_LOCATOR_REL, fromPartLocs.getAlias(), fromPartRel.getAlias()));
+				newDefinition.add(MessageFormat.format(CONDITION_REL_TOPIC, fromPartRel.getAlias(), part.getAlias()));
+				newDefinition.add(MessageFormat.format(CONDITION_REFERENCE, fromPartLocs.getAlias(), "'" + runtime.getConstructResolver().toAbsoluteIRI(context, token) + "'"));
+
 			}
-			ITranslatorContext translatorContext = new TranslaterContext(State.TOPIC, SELECTION);
-			translatorContext.setContextOfCurrentNode(result);
-			return translatorContext;
+			newDefinition.addSelection(new Selection(SELECTION, part.getAlias()));
+			return newDefinition;
 		}
 		case Anchor.TYPE_DOT: {
-			return state;
+			return definition;
 		}
 		}
 		throw new TMQLRuntimeException("Unsupported expression type for SQL translator.");

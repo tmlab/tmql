@@ -61,12 +61,10 @@ public class QueryExpressionInterpreter extends ExpressionInterpreterImpl<QueryE
 		if (getGrammarTypeOfExpression() == QueryExpression.TYPE_USE_EXPRESSION) {
 			/*
 			 * run use-expression if result of query are not empty
-			 */
-			if (!matches.isEmpty()) {
-				Context newContext = new Context(context);
-				newContext.setContextBindings(matches);
-				matches = extractArguments(runtime, UseExpression.class, 0, newContext, optionalArguments);
-			}
+			 */			
+			Context newContext = new Context(context);
+			newContext.setContextBindings(matches);
+			matches = extractArguments(runtime, UseExpression.class, 0, newContext, optionalArguments);			
 		}
 		return matches;
 	}

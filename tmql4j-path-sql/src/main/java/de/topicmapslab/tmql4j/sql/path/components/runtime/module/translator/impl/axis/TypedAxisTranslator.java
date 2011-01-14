@@ -8,59 +8,56 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.axis;
 
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext.State;
+import java.text.MessageFormat;
+
+import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
+import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.FromPart;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.Selection;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
 
 /**
  * @author Sven Krosse
  * 
  */
 public class TypedAxisTranslator extends AxisTranslatorImpl {
-	
-	static final String SELECTION_FORWARD = "id";
-	
-	static final String FORWARD = "SELECT id FROM typeables WHERE id_type IN ( {0} )";
+
+	static final String FORWARD_SELECTION = "id";
+	static final String TABLE = "typeables";
+	static final String FORWARD_CONDITION = "{0} = {1}.id_type";
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected String getForward(ITranslatorContext state) {
-		return FORWARD;
+	protected ISqlDefinition forward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
+		ISqlDefinition result = definition.clone();
+		result.clearSelection();
+		/*
+		 * append from clause for characteristics
+		 */
+		IFromPart fromPart = new FromPart(TABLE, result.getAlias(), true);
+		result.addFromPart(fromPart);
+		/*
+		 * append condition as connection to incoming SQL definition
+		 */
+		ISelection selection = definition.getLastSelection();
+		result.add(MessageFormat.format(FORWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));
+		/*
+		 * add new selection
+		 */
+		result.addSelection(new Selection(FORWARD_SELECTION, fromPart.getAlias()));
+		result.setCurrentTable(SqlTables.ANY);
+		return result;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected String getBackward(ITranslatorContext state) {
-		return TypesAxisTranslator.FORWARD_TYPEABLES;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected State getBackwardState() {
-		return ITranslatorContext.State.TOPIC;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected State getForwardState() {
-		return ITranslatorContext.State.ANY;
-	}
-
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	protected String getBackwardSelection(ITranslatorContext state) {
-		return TypesAxisTranslator.SELECTION_FORWARD;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	protected String getForwardSelection(ITranslatorContext state) {
-		return SELECTION_FORWARD;
+	protected ISqlDefinition backward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
+		return new TypesAxisTranslator().forward(runtime, context, optionalType, definition);
 	}
 }

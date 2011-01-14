@@ -16,18 +16,23 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 public class Or extends Token {
 
 	/**
+	 * the token
+	 */
+	public static final String TOKEN = "OR";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean isToken(ITMQLRuntime runtime, String literal) {		
-		return literal.equalsIgnoreCase("OR") || literal.equalsIgnoreCase("|");
+		return literal.equalsIgnoreCase(TOKEN) || literal.equalsIgnoreCase("|");
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "OR";
+		return TOKEN;
 	}
 
 }

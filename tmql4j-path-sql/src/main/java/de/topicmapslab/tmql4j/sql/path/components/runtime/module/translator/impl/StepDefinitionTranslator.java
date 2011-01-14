@@ -14,7 +14,7 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.Step;
 import de.topicmapslab.tmql4j.path.grammar.productions.StepDefinition;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TmqlSqlTranslatorImpl;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslatorRegistry;
 
@@ -27,15 +27,15 @@ public class StepDefinitionTranslator extends TmqlSqlTranslatorImpl<StepDefiniti
 	/**
 	 * {@inheritDoc}
 	 */
-	public ITranslatorContext transform(ITMQLRuntime runtime, IContext context, IExpression expression, ITranslatorContext state) throws TMQLRuntimeException {
+	public ISqlDefinition toSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
 
-		ITranslatorContext stepState = TranslatorRegistry.getTranslator(Step.class).transform(runtime, context, expression.getExpressions().get(0), state);
+		ISqlDefinition newDefinition = TranslatorRegistry.getTranslator(Step.class).toSql(runtime, context, expression.getExpressions().get(0), definition);
 
 		if (expression.getExpressions().size() > 1) {
 			throw new TMQLRuntimeException("Unsupported expression type for SQL translator.");
 		}
 
-		return stepState;
+		return newDefinition;
 	}
 
 }
