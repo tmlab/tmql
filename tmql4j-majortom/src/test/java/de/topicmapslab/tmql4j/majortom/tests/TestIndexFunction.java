@@ -41,7 +41,7 @@ public class TestIndexFunction extends Tmql4JTestCase{
 			topics.add(type);
 		}
 		
-		final String query = "FOR $t IN fn:get-characteristic-types() RETURN $t";
+		final String query = "fn:get-characteristic-types()";
 		IResultSet<?> rs = execute(query);
 		assertEquals(100, rs.size());
 		for ( IResult r : rs){

@@ -233,7 +233,7 @@ public class SqlDefinition implements ISqlDefinition {
 		if (this.selectionParts == null) {
 			this.selectionParts = HashUtil.getList();
 		}
-		this.selectionParts.addAll(definition.selectionParts);		
+		this.selectionParts.addAll(definition.selectionParts);
 		this.fromParts = definition.fromParts;
 		/*
 		 * set alias index
@@ -249,4 +249,17 @@ public class SqlDefinition implements ISqlDefinition {
 		this.criteria = definition.criteria;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public void setInternalAliasIndex(int index) {
+		this.aliasIndex = index;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public int getInternalAliasIndex() {
+		return this.aliasIndex;
+	}
 }

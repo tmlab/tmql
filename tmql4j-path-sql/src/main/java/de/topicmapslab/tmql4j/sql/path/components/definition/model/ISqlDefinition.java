@@ -13,7 +13,7 @@ package de.topicmapslab.tmql4j.sql.path.components.definition.model;
  * 
  */
 public interface ISqlDefinition extends Cloneable {
-	
+
 	/**
 	 * Method calculates a new unique alias for from clause
 	 * 
@@ -44,13 +44,13 @@ public interface ISqlDefinition extends Cloneable {
 	 * @return the generated alias
 	 */
 	public String addFromPart(final String fromPart, final boolean isTable);
-	
+
 	/**
 	 * Method adds a new part to the internal from clause and generates a new
 	 * alias
 	 * 
 	 * @param part
-	 *          part
+	 *            part
 	 */
 	public void addFromPart(IFromPart part);
 
@@ -80,7 +80,7 @@ public interface ISqlDefinition extends Cloneable {
 	 *            the selection part
 	 */
 	public void addSelection(final String selectionPart);
-	
+
 	/**
 	 * Adding a new entry to the selection part
 	 * 
@@ -128,5 +128,20 @@ public interface ISqlDefinition extends Cloneable {
 	 * @return the cloned construct
 	 */
 	public ISqlDefinition clone();
+
+	/**
+	 * Updates the internal index to the given index
+	 * 
+	 * @param index
+	 *            the new index
+	 */
+	public void setInternalAliasIndex(int index);
+
+	/**
+	 * Returns the internal index
+	 * 
+	 * @return the index
+	 */
+	public int getInternalAliasIndex();
 
 }

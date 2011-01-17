@@ -15,10 +15,15 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 public class Intersect extends Token {
 
 	/**
+	 * 
+	 */
+	public static final String TOKEN = "INTERSECT";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "INTERSECT";
+		return TOKEN;
 	}
 
 }

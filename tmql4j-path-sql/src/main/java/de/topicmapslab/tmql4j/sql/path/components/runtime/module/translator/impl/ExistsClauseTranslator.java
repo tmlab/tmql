@@ -12,9 +12,8 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
-import de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix;
-import de.topicmapslab.tmql4j.path.grammar.productions.Step;
-import de.topicmapslab.tmql4j.path.grammar.productions.StepDefinition;
+import de.topicmapslab.tmql4j.path.grammar.productions.Content;
+import de.topicmapslab.tmql4j.path.grammar.productions.ExistsClause;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TmqlSqlTranslatorImpl;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslatorRegistry;
@@ -23,17 +22,17 @@ import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.Tran
  * @author Sven Krosse
  * 
  */
-public class StepDefinitionTranslator extends TmqlSqlTranslatorImpl<StepDefinition> {
+public class ExistsClauseTranslator extends TmqlSqlTranslatorImpl<ExistsClause> {
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public ISqlDefinition toSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
-		ISqlDefinition newDefinition = TranslatorRegistry.getTranslator(Step.class).toSql(runtime, context, expression.getExpressions().get(0), definition);
-		if (expression.getExpressions().size() > 1) {
-			newDefinition = TranslatorRegistry.getTranslator(FilterPostfix.class).toSql(runtime, context, expression.getExpressions().get(1), newDefinition);
+		if (expression.getGrammarType() == ExistsClause.TYPE_NON_CANONICAL_EXPRESSION) {
+			return TranslatorRegistry.getTranslator(Content.class).toSql(runtime, context, expression.getExpressions().get(0), definition);
+		} else {
+			throw new TMQLRuntimeException("Unsupported expression type for SQL translator.");
 		}
-		return newDefinition;
 	}
 
 }

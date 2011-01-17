@@ -70,12 +70,10 @@ public class TmqlResultProcessor implements IResultProcessor {
 	/**
 	 * base constructor to create a new instance
 	 * 
-	 * @param <T>
-	 *            the type of contained result type of the result set
 	 * @param runtime
 	 *            the TMQL4J runtime
 	 */
-	public <T extends IResult> TmqlResultProcessor(final ITMQLRuntime runtime) {
+	public TmqlResultProcessor(final ITMQLRuntime runtime) {
 		this.runtime = runtime;
 	}
 
@@ -181,5 +179,15 @@ public class TmqlResultProcessor implements IResultProcessor {
 	 */
 	public boolean isKnownAlias(String alias) {
 		return aliasIndex != null && aliasIndex.containsKey(alias);
+	}
+
+	/**
+	 * Modify the result set instance
+	 * 
+	 * @param resultSet
+	 *            the resultSet to set
+	 */
+	protected void setResultSet(IResultSet<?> resultSet) {
+		this.resultSet = resultSet;
 	}
 }

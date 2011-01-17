@@ -8,7 +8,6 @@
  */
 package de.topicmapslab.tmql4j.sql.path.tests;
 
-import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,18 +19,13 @@ import de.topicmapslab.tmql4j.components.processor.core.Context;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
-import de.topicmapslab.tmql4j.path.grammar.lexical.AxisIndicators;
 import de.topicmapslab.tmql4j.path.grammar.lexical.MoveBackward;
 import de.topicmapslab.tmql4j.path.grammar.lexical.MoveForward;
 import de.topicmapslab.tmql4j.path.grammar.productions.Step;
 import de.topicmapslab.tmql4j.path.query.TMQLQuery;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.SqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ITranslatorContext.State;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslaterContext;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.axis.AxisTranslatorImpl;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.axis.IndicatorsAxisTranslator;
 
 /**
  * @author Sven Krosse
@@ -49,13 +43,15 @@ public class TestAxisTranslation extends Tmql4JTestCase {
 
 	@Test
 	public void testInstancesAxisTranslator() throws Exception {
-//		String expected = MessageFormat.format(IndicatorsAxisTranslator.FORWARD, "id");
-//		testAxisTranslator(new IndicatorsAxisTranslator(), toExpression(new AxisIndicators(), true), expected);
+		// String expected =
+		// MessageFormat.format(IndicatorsAxisTranslator.FORWARD, "id");
+		// testAxisTranslator(new IndicatorsAxisTranslator(), toExpression(new
+		// AxisIndicators(), true), expected);
 	}
 
 	@Test
 	public void testname() throws Exception {
-		execute("// tm:subject ( . , . >> indicators )");
+		execute("// tm:subject  [ . / tm:name OR . >> indicators ]");
 	}
 
 	public IExpression toExpression(IToken token, boolean forward) {

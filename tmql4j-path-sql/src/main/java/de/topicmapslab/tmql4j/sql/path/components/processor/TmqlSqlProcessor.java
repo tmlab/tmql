@@ -8,12 +8,20 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.processor;
 
+import java.sql.SQLException;
+
+import org.tmapi.core.TopicMap;
+
+import de.topicmapslab.majortom.database.jdbc.model.ISession;
+import de.topicmapslab.majortom.database.store.JdbcTopicMapStore;
+import de.topicmapslab.majortom.model.core.ITopicMap;
 import de.topicmapslab.tmql4j.components.parser.IParserTree;
 import de.topicmapslab.tmql4j.components.processor.core.Context;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
+import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.components.processor.TmqlProcessor2007;
 import de.topicmapslab.tmql4j.query.IQuery;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.SqlDefinition;
@@ -45,8 +53,36 @@ public class TmqlSqlProcessor extends TmqlProcessor2007 {
 			IContext context = new Context(this, query);
 			ISqlDefinition definition = new SqlDefinition();
 			definition = TranslatorRegistry.getTranslator(tree.root().getClass()).toSql(getRuntime(), context, tree.root(), definition);
+
 			System.out.println(definition);
 		}
 		return ResultSet.emptyResultSet();
+	}
+
+	/**
+	 * Sent the transformed query to topic map database and return SQL result
+	 * 
+	 * @param query
+	 *            the TMQL query
+	 * @param defintion
+	 *            the SQL query definition
+	 * @return the JDBC result set
+	 */
+	private IResultSet<?> executeSql(IQuery query, ISqlDefinition defintion) {
+		TopicMap topicMap = query.getTopicMap();
+		JdbcTopicMapStore store = ((JdbcTopicMapStore) ((ITopicMap) topicMap).getStore());
+		ISession session = store.openSession();
+		try {
+			ResultSet session.getConnection().createStatement().executeQuery(defintion.toString());
+		} catch (SQLException e) {
+			throw new TMQLRuntimeException("Database connection is broken!", e);
+		} finally {
+			try {
+				session.close();
+			} catch (SQLException e) {
+				throw new TMQLRuntimeException("Database connection is broken!", e);
+			}
+		}
+
 	}
 }

@@ -16,10 +16,15 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 public class Union extends Token {
 
 	/**
+	 * 
+	 */
+	public static final String TOKEN = "UNION";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "UNION";
+		return TOKEN;
 	}
 
 }

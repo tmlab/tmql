@@ -236,24 +236,30 @@ public class TmqlConstructResolver implements IConstructResolver {
 		String identifier_ = identifier;
 
 		while (!isAbsolute(context, identifier_)) {
-			String prefix = identifier_.substring(0, identifier_.indexOf(":"));
-			/*
-			 * check current context
-			 */
-			String reference = context.getPrefix(prefix);
-			if (reference == null) {
+			if ( identifier_.contains(":")){
+				String prefix = identifier_.substring(0, identifier_.indexOf(":"));
 				/*
-				 * check runtime prefixes
+				 * check current context
 				 */
-				reference = runtime.getLanguageContext().getPrefixHandler().getPrefix(prefix);
+				String reference = context.getPrefix(prefix);
+				if (reference == null) {
+					/*
+					 * check runtime prefixes
+					 */
+					reference = runtime.getLanguageContext().getPrefixHandler().getPrefix(prefix);
+				}
+				/*
+				 * no prefix found
+				 */
+				if (reference == null) {
+					throw new TMQLRuntimeException("Unknown namespace for prefix " + prefix);
+				}
+				identifier_ = reference + identifier_.substring(identifier_.indexOf(":") + 1);
+			}else if ( runtime.getLanguageContext().getPrefixHandler().getDefaultPrefix() != null ){
+				identifier_ = runtime.getLanguageContext().getPrefixHandler().getDefaultPrefix() + identifier_;
+			}else{
+				throw new TMQLRuntimeException("Given IRI is relative but no default prefix was set!");
 			}
-			/*
-			 * no prefix found
-			 */
-			if (reference == null) {
-				throw new TMQLRuntimeException("Unknown namespace for prefix " + prefix);
-			}
-			identifier_ = reference + identifier_.substring(identifier_.indexOf(":") + 1);
 		}
 		return identifier_;
 	}
