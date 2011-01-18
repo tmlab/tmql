@@ -23,6 +23,8 @@ import de.topicmapslab.tmql4j.majortom.grammar.functions.GetNameTypes;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetNullValue;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetOccurrenceTypes;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetRoleTypes;
+import de.topicmapslab.tmql4j.majortom.grammar.functions.GetSubtypes;
+import de.topicmapslab.tmql4j.majortom.grammar.functions.GetSupertypes;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetTopicTypes;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetTopicsByCharacteristicRegExp;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetTopicsByCharacteristicValue;
@@ -78,6 +80,8 @@ public class MajortomFunctions implements ILanguageExtension {
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetNameTypes.GetNameTypes, GetNameTypes.class);
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetOccurrenceTypes.GetOccurrenceTypes, GetOccurrenceTypes.class);
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetNullValue.GetNullValue, GetNullValue.class);
+		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetSupertypes.GetSupertypes, GetSupertypes.class);
+		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetSubtypes.GetSubtypes, GetSubtypes.class);
 
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetTopicsByCharacteristicValue.GetTopicsByCharacteristicValue, GetTopicsByCharacteristicValue.class);
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetTopicsByCharacteristicRegExp.GetTopicsByCharacteristicRegExp, GetTopicsByCharacteristicRegExp.class);

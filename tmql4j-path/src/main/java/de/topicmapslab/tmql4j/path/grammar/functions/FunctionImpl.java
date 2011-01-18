@@ -8,6 +8,8 @@
  */
 package de.topicmapslab.tmql4j.path.grammar.functions;
 
+import java.util.List;
+
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
@@ -35,7 +37,11 @@ public abstract class FunctionImpl implements IFunction {
 	 * @throws TMQLRuntimeException
 	 */
 	public QueryMatches getParameters(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) throws TMQLRuntimeException {
-		return caller.getInterpretersFilteredByEypressionType(runtime, Parameters.class).get(0).interpret(runtime, context);
+		List<IExpressionInterpreter<Parameters>> parameters = caller.getInterpretersFilteredByEypressionType(runtime, Parameters.class);
+		if ( parameters.isEmpty()){
+			return QueryMatches.emptyMatches();
+		}
+		return parameters.get(0).interpret(runtime, context);		
 	}
 
 }
