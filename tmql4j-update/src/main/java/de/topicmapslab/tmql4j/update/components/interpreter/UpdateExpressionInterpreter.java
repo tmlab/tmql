@@ -78,7 +78,7 @@ public class UpdateExpressionInterpreter extends ExpressionInterpreterImpl<Updat
 			QueryMatches matches = interpreter.interpret(runtime, newContext, optionalArguments);
 			List<Object> possibleValuesForVariable = matches.getPossibleValuesForVariable();
 			if (possibleValuesForVariable.isEmpty()) {
-				tuple.put("$" + tuple.size(), 0);
+				return matches;
 			} else {
 				tuple.put("$" + tuple.size(), possibleValuesForVariable.get(0));
 			}

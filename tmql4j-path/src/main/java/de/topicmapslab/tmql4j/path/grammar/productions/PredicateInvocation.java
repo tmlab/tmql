@@ -18,8 +18,10 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.grammar.lexical.Wildcard;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Comma;
 import de.topicmapslab.tmql4j.util.HashUtil;
@@ -63,6 +65,13 @@ public class PredicateInvocation extends ExpressionImpl {
 			final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
 			TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
+		
+		/*
+		 * check if type is a wildcard
+		 */
+		if ( getTmqlTokens().get(0).equals(Wildcard.class)){
+			checkForExtensions(PreparedExpression.class, tmqlTokens.subList(0, 1), tokens.subList(0, 1), runtime);
+		}		
 
 		/*
 		 * call-back instance of parser utility
@@ -83,7 +92,6 @@ public class PredicateInvocation extends ExpressionImpl {
 		 */
 		Set<Class<? extends IToken>> delimers = HashUtil.getHashSet();
 		delimers.add(Comma.class);
-
 		/*
 		 * split expression
 		 */

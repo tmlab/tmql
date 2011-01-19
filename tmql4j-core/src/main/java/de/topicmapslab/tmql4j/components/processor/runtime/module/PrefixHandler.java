@@ -196,7 +196,7 @@ public class PrefixHandler {
 	 * @throws TMQLRuntimeException
 	 *             thrown if the prefix is unknown
 	 */
-	public String toAbsoluteIRI(final String reference)
+	private String toAbsoluteIRI(final String reference)
 			throws TMQLRuntimeException {
 		int index = reference.indexOf(":");
 		if (index != -1) {

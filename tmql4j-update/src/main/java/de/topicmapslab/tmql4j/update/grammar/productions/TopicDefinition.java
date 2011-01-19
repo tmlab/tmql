@@ -16,8 +16,10 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.grammar.lexical.Wildcard;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisIndicators;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisItem;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisLocators;
@@ -61,6 +63,9 @@ public class TopicDefinition extends ExpressionImpl {
 	 */
 	public TopicDefinition(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
+		if (getTmqlTokens().get(0).equals(Wildcard.class)) {
+			checkForExtensions(PreparedExpression.class, tmqlTokens.subList(0, 1), tokens.subList(0, 1), runtime);
+		}
 		if (getTokens().size() == 1) {
 			identifierType = AxisIndicators.class;
 		} else if (getTokens().size() == 2) {
@@ -78,14 +83,15 @@ public class TopicDefinition extends ExpressionImpl {
 	 */
 	public boolean isValid() {
 		if (getTokens().size() == 1) {
-			return getTmqlTokens().get(0).equals(Literal.class);
+			return getTmqlTokens().get(0).equals(Literal.class) || getTmqlTokens().get(0).equals(Wildcard.class);
 		} else if (getTokens().size() == 2) {
 			Class<? extends IToken> token = getTmqlTokens().get(1);
-			return getTmqlTokens().get(0).equals(Literal.class)
+			return (getTmqlTokens().get(0).equals(Literal.class) || getTmqlTokens().get(0).equals(Wildcard.class))
 					&& (token.equals(ShortcutAxisItem.class) || token.equals(ShortcutAxisLocators.class) || token.equals(ShortcutAxisIndicators.class) || getTokens().get(1).equalsIgnoreCase("="));
 		} else if (getTokens().size() == 3) {
 			Class<? extends IToken> token = getTmqlTokens().get(2);
-			return getTmqlTokens().get(0).equals(Literal.class) && (token.equals(AxisItem.class) || token.equals(AxisLocators.class) || token.equals(AxisIndicators.class));
+			return (getTmqlTokens().get(0).equals(Literal.class) || getTmqlTokens().get(0).equals(Wildcard.class))
+					&& (token.equals(AxisItem.class) || token.equals(AxisLocators.class) || token.equals(AxisIndicators.class));
 		}
 		return false;
 	}

@@ -40,14 +40,20 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  */
 public class SqlResultProcessor extends TmqlResultProcessor {
 
-	private static final String QUERY_RESOLVE_IDS = "WITH ids AS ( SELECT unnest(?)) SELECT id, p, pp FROM ("
-			+ "SELECT id, reference AS p, NULL AS pp, 'l' AS type FROM locators WHERE id IN ( SELECT id FROM ids ) " + "UNION "
-			+ "SELECT id, id_parent AS p, NULL AS pp, 't' AS type FROM topics WHERE id IN ( SELECT id FROM ids ) " + "UNION "
-			+ "SELECT id, id_parent AS p, NULL AS pp, 'a' AS type FROM associations WHERE id IN ( SELECT id FROM ids ) " + "UNION "
-			+ "SELECT id, id_parent AS p, NULL AS pp, 'n' AS type FROM names WHERE id IN ( SELECT id FROM ids ) " + "UNION "
-			+ "SELECT id, id_parent AS p, NULL AS pp, 'o' AS type FROM occurrences WHERE id IN ( SELECT id FROM ids ) " + "UNION "
-			+ "SELECT id, id_parent AS p, NULL AS pp, 'r' AS type FROM roles WHERE id IN ( SELECT id FROM ids ) " + "UNION "
-			+ "SELECT v.id, v.id_parent AS p, n.id_parent AS pp, 'v' AS type FROM names AS n, variants AS v WHERE n.id = v.id_parent AND v.id IN ( SELECT id FROM ids ))";
+	/**
+	 * 
+	 */
+	private static final String BIGINT = "bigint";
+	private static final String QUERY_RESOLVE_IDS = "WITH ids AS ( SELECT unnest(?) AS id) SELECT id, p, pp, type FROM ("
+			// +
+			// "SELECT id, reference AS p, NULL AS pp, 'l' AS type FROM locators WHERE id IN ( SELECT id FROM ids ) "
+			// + "UNION "
+			+ "SELECT id, id_parent AS p, -1 AS pp, 't' AS type FROM topics WHERE id IN ( SELECT id FROM ids ) " + "UNION "
+			+ "SELECT id, id_parent AS p, -1 AS pp, 'a' AS type FROM associations WHERE id IN ( SELECT id FROM ids ) " + "UNION "
+			+ "SELECT id, id_parent AS p, -1 AS pp, 'n' AS type FROM names WHERE id IN ( SELECT id FROM ids ) " + "UNION "
+			+ "SELECT id, id_parent AS p, -1 AS pp, 'o' AS type FROM occurrences WHERE id IN ( SELECT id FROM ids ) " + "UNION "
+			+ "SELECT id, id_parent AS p, -1 AS pp, 'r' AS type FROM roles WHERE id IN ( SELECT id FROM ids ) " + "UNION "
+			+ "SELECT v.id, v.id_parent AS p, n.id_parent AS pp, 'v' AS type FROM names AS n, variants AS v WHERE n.id = v.id_parent AND v.id IN ( SELECT id FROM ids )) AS content";
 
 	/**
 	 * constructor
@@ -120,16 +126,18 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 			/*
 			 * sent request to database for resolve id
 			 */
-			PreparedStatement stmt = session.getConnection().prepareStatement(QUERY_RESOLVE_IDS);
-			Array array = session.getConnection().createArrayOf("bigint", ids.toArray());
-			stmt.setArray(0, array);
-			ResultSet r = stmt.executeQuery();
-			while (r.next()) {
-				long id = r.getLong(1);
-				String idP = r.getString(2);
-				long idPP = r.getLong(3);
-				String type = r.getString(4);
-				setResult((ITopicMap) query.getTopicMap(), resultSet, indexes.get(Long.toString(id)), id, idP, idPP, type);
+			if (!ids.isEmpty()) {
+				PreparedStatement stmt = session.getConnection().prepareStatement(QUERY_RESOLVE_IDS);
+				Array array = session.getConnection().createArrayOf(BIGINT, ids.toArray());
+				stmt.setArray(1, array);
+				ResultSet r = stmt.executeQuery();
+				while (r.next()) {
+					long id = r.getLong(1);
+					String idP = r.getString(2);
+					long idPP = r.getLong(3);
+					String type = r.getString(4);
+					setResult((ITopicMap) query.getTopicMap(), resultSet, indexes.get(Long.toString(id)), id, idP, idPP, type);
+				}
 			}
 			/*
 			 * set internal reference
@@ -168,51 +176,51 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 		/*
 		 * is locator
 		 */
-		if (type == "l") {
+		if (type.equalsIgnoreCase("l")) {
 			object = new LocatorImpl(idP, Long.toString(id));
 		}
 		/*
 		 * is topic
 		 */
-		else if (type == "t") {
+		else if (type.equalsIgnoreCase("t")) {
 			object = factory.newTopic(new JdbcIdentity(id), topicMap);
 		}
 		/*
 		 * is association
 		 */
-		else if (type == "a") {
+		else if (type.equalsIgnoreCase("a")) {
 			object = factory.newAssociation(new JdbcIdentity(id), topicMap);
 		}
 		/*
 		 * is role
 		 */
-		else if (type == "r") {
+		else if (type.equalsIgnoreCase("r")) {
 			IAssociation a = factory.newAssociation(new JdbcIdentity(Long.parseLong(idP)), topicMap);
 			object = factory.newAssociationRole(new JdbcIdentity(id), a);
 		}
 		/*
 		 * is occurrence
 		 */
-		else if (type == "o") {
+		else if (type.equalsIgnoreCase("o")) {
 			ITopic t = factory.newTopic(new JdbcIdentity(Long.parseLong(idP)), topicMap);
 			object = factory.newOccurrence(new JdbcIdentity(id), t);
 		}
 		/*
 		 * is name
 		 */
-		else if (type == "n") {
+		else if (type.equalsIgnoreCase("n")) {
 			ITopic t = factory.newTopic(new JdbcIdentity(Long.parseLong(idP)), topicMap);
 			object = factory.newName(new JdbcIdentity(id), t);
 		}
 		/*
 		 * is variant
 		 */
-		else if (type == "v") {
+		else if (type.equalsIgnoreCase("v")) {
 			ITopic t = factory.newTopic(new JdbcIdentity(idPP), topicMap);
 			IName n = factory.newName(new JdbcIdentity(Long.parseLong(idP)), t);
 			object = factory.newVariant(new JdbcIdentity(id), n);
 		} else {
-			throw new TMQLRuntimeException("Invalid type of results!");
+			throw new TMQLRuntimeException("Invalid type '" + type + "' of results!");
 		}
 		/*
 		 * set real value add stored indexes

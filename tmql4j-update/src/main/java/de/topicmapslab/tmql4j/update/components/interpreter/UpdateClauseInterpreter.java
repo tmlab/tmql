@@ -28,8 +28,8 @@ import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.path.grammar.lexical.DatatypedElement;
-import de.topicmapslab.tmql4j.update.exception.UpdateException;
 import de.topicmapslab.tmql4j.update.grammar.productions.PredicateInvocation;
 import de.topicmapslab.tmql4j.update.grammar.productions.TopicDefinition;
 import de.topicmapslab.tmql4j.update.grammar.productions.UpdateClause;
@@ -81,15 +81,15 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		switch (getGrammarTypeOfExpression()) {
-		case UpdateClause.TOPIC_ADD: {
-			return interpretTopicDefinition(runtime, context, optionalArguments);
-		}
-		case UpdateClause.ASSOCIATION_ADD: {
-			return interpretAssocationDefinition(runtime, context, optionalArguments);
-		}
-		default: {
-			return interpretContentModification(runtime, context, optionalArguments);
-		}
+			case UpdateClause.TOPIC_ADD: {
+				return interpretTopicDefinition(runtime, context, optionalArguments);
+			}
+			case UpdateClause.ASSOCIATION_ADD: {
+				return interpretAssocationDefinition(runtime, context, optionalArguments);
+			}
+			default: {
+				return interpretContentModification(runtime, context, optionalArguments);
+			}
 		}
 	}
 
@@ -170,6 +170,8 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 			List<Object> possibleValuesForVariable = matches.getPossibleValuesForVariable();
 			if (!possibleValuesForVariable.isEmpty()) {
 				results.add(possibleValuesForVariable.get(0));
+			} else {
+				results.addAll(matches.getMatches());
 			}
 		}
 		return QueryMatches.asQueryMatchNS(runtime, results.toArray());
@@ -240,16 +242,33 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 			String optionalType_ = ((UpdateClause) getExpression()).getOptionalType();
 			Topic optionalType = null;
 			if (optionalType_ != null) {
-				try {
-					optionalType = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, optionalType_);
-				} catch (Exception e) {
-					try {
+				optionalType = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, optionalType_);
+				if (optionalType == null) {
+					optionalType = context.getQuery().getTopicMap()
+							.createTopicBySubjectIdentifier(context.getQuery().getTopicMap().createLocator(runtime.getConstructResolver().toAbsoluteIRI(context, optionalType_)));
+					count++;
+				}
+			}
+			/*
+			 * is wildcard
+			 */
+			else if (containsExpressionsType(PreparedExpression.class)) {
+				QueryMatches matches = extractArguments(runtime, PreparedExpression.class, 0, context, optionalArguments);
+				if (matches.isEmpty()) {
+					throw new TMQLRuntimeException("Prepared statement has to be bound to a value!");
+				}
+				Object obj = matches.getFirstValue();
+				if (obj instanceof Topic) {
+					optionalType = (Topic) obj;
+				} else if (obj instanceof String) {
+					optionalType = runtime.getConstructResolver().getTopicBySubjectIdentifier(newContext, (String) obj);
+					if (optionalType == null) {
 						optionalType = context.getQuery().getTopicMap()
-								.createTopicBySubjectIdentifier(context.getQuery().getTopicMap().createLocator(runtime.getLanguageContext().getPrefixHandler().toAbsoluteIRI(optionalType_)));
+								.createTopicBySubjectIdentifier(context.getQuery().getTopicMap().createLocator(runtime.getConstructResolver().toAbsoluteIRI(context, (String) obj)));
 						count++;
-					} catch (Exception e2) {
-						throw new UpdateException(e);
 					}
+				} else {
+					throw new TMQLRuntimeException("Invalid result of prepared statement, expects a string literal");
 				}
 			}
 			/*

@@ -12,9 +12,7 @@ import de.topicmapslab.tmql4j.components.lexer.ILexer;
 import de.topicmapslab.tmql4j.components.lexer.TMQLLexer;
 import de.topicmapslab.tmql4j.components.parser.IParser;
 import de.topicmapslab.tmql4j.components.processor.TmqlProcessorImpl;
-import de.topicmapslab.tmql4j.components.processor.results.IResultProcessor;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.results.TmqlResultProcessor;
 import de.topicmapslab.tmql4j.path.components.parser.TMQLParser;
 import de.topicmapslab.tmql4j.query.IQuery;
 
@@ -23,8 +21,6 @@ import de.topicmapslab.tmql4j.query.IQuery;
  * 
  */
 public class TmqlProcessor2007 extends TmqlProcessorImpl {
-
-	private TmqlResultProcessor tmqlResultProcessor;
 
 	/**
 	 * constructor
@@ -49,15 +45,5 @@ public class TmqlProcessor2007 extends TmqlProcessorImpl {
 	 */
 	public IParser getTmqlParser(ILexer lexer) {
 		return new TMQLParser(lexer);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public IResultProcessor getResultProcessor() {
-		if (tmqlResultProcessor == null) {
-			tmqlResultProcessor = new TmqlResultProcessor(getRuntime());
-		}
-		return tmqlResultProcessor;
 	}
 }

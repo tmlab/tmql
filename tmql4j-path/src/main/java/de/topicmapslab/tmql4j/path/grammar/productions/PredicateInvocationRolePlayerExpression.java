@@ -18,8 +18,10 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.grammar.lexical.Wildcard;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Colon;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Ellipsis;
@@ -91,6 +93,8 @@ public class PredicateInvocationRolePlayerExpression extends ExpressionImpl {
 				public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
 					if (tmqlTokens.size() == 1 && tmqlTokens.get(0).equals(de.topicmapslab.tmql4j.path.grammar.lexical.Variable.class)) {
 						checkForExtensions(Variable.class, tmqlTokens, tokens, runtime);
+					} else if (tmqlTokens.size() == 1 && tmqlTokens.get(0).equals(Wildcard.class)) {
+						checkForExtensions(PreparedExpression.class, tmqlTokens.subList(0, 1), tokens.subList(0, 1), runtime);
 					} else {
 						checkForExtensions(ValueExpression.class, tmqlTokens, tokens, runtime);
 					}

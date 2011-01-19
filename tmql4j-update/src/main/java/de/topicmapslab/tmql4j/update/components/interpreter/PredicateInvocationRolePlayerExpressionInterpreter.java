@@ -138,7 +138,7 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends Expressi
 		/*
 		 * extract string-represented reference
 		 */
-		Locator locator = topicMap.createLocator(runtime.getLanguageContext().getPrefixHandler().toAbsoluteIRI(LiteralUtils.asString(interpreter.getTokens().get(0))));
+		Locator locator = topicMap.createLocator(runtime.getConstructResolver().toAbsoluteIRI(context, LiteralUtils.asString(interpreter.getTokens().get(0))));
 		return TopicDefinitionInterpreter.createTopic(topicMap, identifierType, locator);
 	}
 

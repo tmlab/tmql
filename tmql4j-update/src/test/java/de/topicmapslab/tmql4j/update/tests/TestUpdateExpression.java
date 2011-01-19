@@ -13,6 +13,8 @@ import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 
+import java.util.Collection;
+
 import org.junit.Test;
 import org.tmapi.core.Association;
 import org.tmapi.core.Name;
@@ -20,6 +22,7 @@ import org.tmapi.core.Occurrence;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 
+import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.path.query.TMQLQuery;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
@@ -748,8 +751,14 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		int size = topicMap.getAssociations().size();
 		String query = null;
 
-		query = " UPDATE associations ADD http://psi.example.org/association-type ( http://psi.example.org/role-type-1 : http://psi.example.org/player1 , http://psi.example.org/role-type-2 : http://psi.example.org/player2 )";
-		execute(query);
+		query = "%prefix e http://psi.example.org/ UPDATE associations ADD e:association-type ( http://psi.example.org/role-type-1 : http://psi.example.org/player1 , http://psi.example.org/role-type-2 : http://psi.example.org/player2 )";
+		IResultSet<?> rs = execute(query);		
+		assertEquals(1,rs.size());
+		assertEquals(2,rs.first().size());
+		assertTrue(rs.get(0, "associations") instanceof String);
+		assertTrue(rs.get(0, "roles") instanceof Collection);
+		assertEquals(2,((Collection<?>)rs.get(0, "roles")).size());
+		
 		size++;
 
 		Topic associationType = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator("http://psi.example.org/association-type"));

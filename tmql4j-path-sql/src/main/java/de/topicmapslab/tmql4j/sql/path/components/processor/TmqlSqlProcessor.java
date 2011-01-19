@@ -18,6 +18,7 @@ import de.topicmapslab.majortom.model.core.ITopicMap;
 import de.topicmapslab.tmql4j.components.parser.IParserTree;
 import de.topicmapslab.tmql4j.components.processor.core.Context;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.results.IResultProcessor;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
@@ -26,6 +27,7 @@ import de.topicmapslab.tmql4j.path.components.processor.TmqlProcessor2007;
 import de.topicmapslab.tmql4j.query.IQuery;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.SqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
+import de.topicmapslab.tmql4j.sql.path.components.results.SqlResultProcessor;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslatorRegistry;
 
 /**
@@ -53,8 +55,8 @@ public class TmqlSqlProcessor extends TmqlProcessor2007 {
 			IContext context = new Context(this, query);
 			ISqlDefinition definition = new SqlDefinition();
 			definition = TranslatorRegistry.getTranslator(tree.root().getClass()).toSql(getRuntime(), context, tree.root(), definition);
-
 			System.out.println(definition);
+			return executeSql(query, definition);			 
 		}
 		return ResultSet.emptyResultSet();
 	}
@@ -64,16 +66,19 @@ public class TmqlSqlProcessor extends TmqlProcessor2007 {
 	 * 
 	 * @param query
 	 *            the TMQL query
-	 * @param defintion
+	 * @param definition
 	 *            the SQL query definition
 	 * @return the JDBC result set
 	 */
-	private IResultSet<?> executeSql(IQuery query, ISqlDefinition defintion) {
+	private IResultSet<?> executeSql(IQuery query, ISqlDefinition definition) {
 		TopicMap topicMap = query.getTopicMap();
 		JdbcTopicMapStore store = ((JdbcTopicMapStore) ((ITopicMap) topicMap).getStore());
 		ISession session = store.openSession();
 		try {
-			ResultSet session.getConnection().createStatement().executeQuery(defintion.toString());
+			java.sql.ResultSet rs = session.getConnection().createStatement().executeQuery(definition.toString());
+			SqlResultProcessor processor = (SqlResultProcessor)getResultProcessor();
+			processor.proceed(query, session, rs);
+			return processor.getResultSet();
 		} catch (SQLException e) {
 			throw new TMQLRuntimeException("Database connection is broken!", e);
 		} finally {
@@ -85,4 +90,12 @@ public class TmqlSqlProcessor extends TmqlProcessor2007 {
 		}
 
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	protected IResultProcessor createResultProcessor() {
+		return new SqlResultProcessor(getRuntime());
+	}
+	
 }

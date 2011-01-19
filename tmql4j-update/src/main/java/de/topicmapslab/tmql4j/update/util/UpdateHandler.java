@@ -234,11 +234,7 @@ public class UpdateHandler {
 				long count = 1;
 				Construct type = null;
 				if (optionalType == null) {
-					type = topicMap.getConstructByItemIdentifier(topicMap.createLocator("tm:occurrence"));
-					if (type == null) {
-						type = topicMap.createTopicByItemIdentifier(topicMap.createLocator("tm:occurrence"));
-						count++;
-					}
+					throw new UpdateException("Entry type is missing.");
 				} else {
 					type = optionalType;
 				}

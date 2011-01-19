@@ -64,7 +64,7 @@ public class ValueExpressionInterpreter extends ExpressionInterpreterImpl<ValueE
 			/*
 			 * convert to absolute IRI
 			 */
-			String reference = runtime.getLanguageContext().getPrefixHandler().toAbsoluteIRI(getTokens().get(0));
+			String reference = runtime.getConstructResolver().toAbsoluteIRI(context, getTokens().get(0));
 			try {
 				/*
 				 * add topic to result

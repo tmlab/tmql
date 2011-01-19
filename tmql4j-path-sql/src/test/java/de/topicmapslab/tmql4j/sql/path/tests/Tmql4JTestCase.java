@@ -47,7 +47,7 @@ public abstract class Tmql4JTestCase {
 		factory = TopicMapSystemFactory.newInstance();
 		factory.setProperty(TopicMapStoreProperty.TOPICMAPSTORE_CLASS, JdbcTopicMapStore.class.getName());
 		factory.setProperty(JdbcTopicMapStoreProperty.DATABASE_HOST, "localhost");
-		factory.setProperty(JdbcTopicMapStoreProperty.DATABASE_NAME, "majortom");
+		factory.setProperty(JdbcTopicMapStoreProperty.DATABASE_NAME, "tmql4j-sql-test");
 		factory.setProperty(JdbcTopicMapStoreProperty.DATABASE_USER, "postgres");
 		factory.setProperty(JdbcTopicMapStoreProperty.DATABASE_PASSWORD, "postgres");
 		factory.setFeature("http://tmapi.org/features/type-instance-associations", true);
@@ -57,7 +57,11 @@ public abstract class Tmql4JTestCase {
 		runtime = TMQLRuntimeFactory.newFactory().newRuntime(topicMapSystem, TmqlSqlRuntime.TMQL_SQL);
 		runtime.getLanguageContext().getPrefixHandler().setDefaultPrefix(base);
 	}
-
+	
+	@After
+	public void tearDown() throws Exception{
+		topicMap.remove();
+	}
 
 	/**
 	 * Create a locator

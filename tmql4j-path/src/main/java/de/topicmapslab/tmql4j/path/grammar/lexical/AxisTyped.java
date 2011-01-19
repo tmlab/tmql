@@ -15,10 +15,15 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 public class AxisTyped extends Token {
 
 	/**
+	 * 
+	 */
+	public static final String TOKEN = "typed";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "typed";
+		return TOKEN;
 	}
 
 }

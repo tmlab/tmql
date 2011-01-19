@@ -17,8 +17,10 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.grammar.lexical.Wildcard;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Variable;
 import de.topicmapslab.tmql4j.path.grammar.productions.PredicateInvocation;
 import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
@@ -131,7 +133,12 @@ public class UpdateClause extends ExpressionImpl {
 		 * extract optional type parameter
 		 */
 		if (indexOfSetOrAdd - indexOfAnchor == 2) {
-			optionalType = tokens.get(indexOfAnchor + 1);
+			if ( getTmqlTokens().get(indexOfAnchor + 1).equals(Wildcard.class)){
+				checkForExtensions(PreparedExpression.class, tmqlTokens.subList(indexOfAnchor + 1, indexOfAnchor + 2), tokens.subList(indexOfAnchor + 1, indexOfAnchor + 2), runtime);
+				optionalType = null;
+			}else{
+				optionalType = tokens.get(indexOfAnchor + 1);
+			}
 		} else {
 			optionalType = null;
 		}

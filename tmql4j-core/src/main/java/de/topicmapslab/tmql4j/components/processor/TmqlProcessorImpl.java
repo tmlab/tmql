@@ -20,6 +20,7 @@ import de.topicmapslab.tmql4j.components.processor.results.IResultProcessor;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
+import de.topicmapslab.tmql4j.components.results.TmqlResultProcessor;
 import de.topicmapslab.tmql4j.query.IQuery;
 
 /**
@@ -29,6 +30,7 @@ import de.topicmapslab.tmql4j.query.IQuery;
 public abstract class TmqlProcessorImpl implements ITmqlProcessor {
 
 	private final ITMQLRuntime runtime;
+	private IResultProcessor tmqlResultProcessor;
 
 	/**
 	 * constructor
@@ -113,5 +115,24 @@ public abstract class TmqlProcessorImpl implements ITmqlProcessor {
 	 */
 	protected ITMQLRuntime getRuntime() {
 		return runtime;
+	}
+
+	/**
+	 * Creates a new result processor
+	 * 
+	 * @return the new result processor
+	 */
+	protected IResultProcessor createResultProcessor(){
+		return new TmqlResultProcessor(runtime);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IResultProcessor getResultProcessor() {
+		if (tmqlResultProcessor == null) {
+			tmqlResultProcessor = createResultProcessor();
+		}
+		return tmqlResultProcessor;
 	}
 }

@@ -21,6 +21,7 @@ import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisIndicators;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisItem;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisLocators;
@@ -63,10 +64,25 @@ public class TopicDefinitionInterpreter extends ExpressionInterpreterImpl<TopicD
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		TopicMap topicMap = context.getQuery().getTopicMap();
 		Class<? extends IToken> identifierType = getExpression().getIdentifierType();
+		String reference;
+		if (containsExpressionsType(PreparedExpression.class)) {
+			QueryMatches matches = extractArguments(runtime, PreparedExpression.class, 0, context, optionalArguments);
+			if (matches.isEmpty()) {
+				throw new TMQLRuntimeException("Prepared statement has to be bound to a value!");
+			}
+			Object obj = matches.getFirstValue();
+			if (obj instanceof String) {
+				reference = (String) obj;
+			} else {
+				throw new TMQLRuntimeException("Invalid result of prepared statement, expects a string literal");
+			}
+		} else {
+			reference = LiteralUtils.asString(getTokens().get(0));
+		}
 		/*
 		 * extract string-represented reference
 		 */
-		Locator locator = topicMap.createLocator(runtime.getLanguageContext().getPrefixHandler().toAbsoluteIRI(LiteralUtils.asString(getTokens().get(0))));
+		Locator locator = topicMap.createLocator(runtime.getConstructResolver().toAbsoluteIRI(context, reference));
 
 		Topic topic = createTopic(topicMap, identifierType, locator);
 		return QueryMatches.asQueryMatchNS(runtime, topic == null ? 0 : 1);

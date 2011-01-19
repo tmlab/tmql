@@ -26,12 +26,6 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
  */
 public class TypesAxisTranslator extends AxisTranslatorImpl {
 
-	static final String SELECTION_FORWARD = "id_type";
-	static final String SELECTION_BACKWARD = "id_instance";
-	static final String FORWARD_TOPIC = "SELECT id_type FROM rel_instance_of WHERE id_instance IN ( {0} )";
-	static final String FORWARD_TYPEABLES = "SELECT id_type FROM typeables WHERE id IN ( {0} )";
-	static final String BACKWARD = "SELECT id_instance FROM rel_instance_of WHERE id_type IN ( {0} )";
-
 	static final String FORWARD_SELECTION = "id_type";
 	static final String BACKWARD_SELECTION = "id_instance";
 	static final String TABLE = "rel_instance_of";
@@ -55,7 +49,7 @@ public class TypesAxisTranslator extends AxisTranslatorImpl {
 		 * append condition as connection to incoming SQL definition
 		 */
 		ISelection selection = definition.getLastSelection();
-		result.add(MessageFormat.format(definition.getCurrentTable() == SqlTables.TOPIC ? FORWARD_CONDITION : FORWARD_TYPEABLES, selection.getSelection(), fromPart.getAlias()));
+		result.add(MessageFormat.format(definition.getCurrentTable() == SqlTables.TOPIC ? FORWARD_CONDITION : FORWARD_CONDITION_TYPEABLES, selection.getSelection(), fromPart.getAlias()));
 		/*
 		 * add new selection
 		 */

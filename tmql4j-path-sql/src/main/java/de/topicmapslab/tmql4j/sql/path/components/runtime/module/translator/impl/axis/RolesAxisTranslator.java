@@ -19,6 +19,7 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
+import de.topicmapslab.tmql4j.sql.path.utils.TranslatorUtils;
 
 /**
  * @author Sven Krosse
@@ -26,9 +27,12 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
  */
 public class RolesAxisTranslator extends AxisTranslatorImpl {
 
-	static final String FORWARD_SELECTION = "id_type";
-	static final String BACKWARD_SELECTION = "id_parent";
+	static final String TYPE = "id_type";
+	static final String FORWARD_SELECTION = TYPE;
+	static final String BACKWARD_SELECTION = "id";
 	static final String TABLE = "roles";
+	static final String ASSOCIATIONS = "associations";
+	static final String PARENT_CONDITION = "{0}.id = {1}.id_parent";
 	static final String FORWARD_CONDITION = "{0} = {1}.id_parent";
 	static final String BACKWARD_CONDITION = "{0} = {1}.id_type";
 
@@ -67,16 +71,23 @@ public class RolesAxisTranslator extends AxisTranslatorImpl {
 		 */
 		IFromPart fromPart = new FromPart(TABLE, result.getAlias(), true);
 		result.addFromPart(fromPart);
+		IFromPart fromPartAssociation = new FromPart(ASSOCIATIONS, result.getAlias(), true);
+		result.addFromPart(fromPartAssociation);
 		/*
 		 * append condition as connection to incoming SQL definition
 		 */
 		ISelection selection = definition.getLastSelection();
 		result.add(MessageFormat.format(BACKWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));
+		result.add(MessageFormat.format(PARENT_CONDITION, fromPartAssociation.getAlias(), fromPart.getAlias()));
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(BACKWARD_SELECTION, fromPart.getAlias()));
+		result.addSelection(new Selection(BACKWARD_SELECTION, fromPartAssociation.getAlias()));
 		result.setCurrentTable(SqlTables.ANY);
+		/*
+		 * add optional type argument if necessary
+		 */
+		TranslatorUtils.addOptionalTypeArgument(runtime, context, optionalType, definition, TYPE, fromPartAssociation.getAlias());
 		return result;
 	}
 }

@@ -33,6 +33,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.AxisScope;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisSubtypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisSupertypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTraverse;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTyped;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketAngleClose;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketAngleOpen;
@@ -164,6 +165,7 @@ public class TokenRegistry extends TokenRegistryImpl {
 			register(AxisSupertypes.class);
 			register(AxisTraverse.class);
 			register(AxisTypes.class);
+			register(AxisTyped.class);
 			register(BracketAngleClose.class);
 			register(BracketAngleOpen.class);
 			register(BracketRoundClose.class);

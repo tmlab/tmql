@@ -30,6 +30,7 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix;
 import de.topicmapslab.tmql4j.path.grammar.productions.PredicateInvocation;
 import de.topicmapslab.tmql4j.path.grammar.productions.PredicateInvocationRolePlayerExpression;
@@ -76,27 +77,48 @@ public class PredicateInvocationInterpreter extends ExpressionInterpreterImpl<Pr
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		TopicMap topicMap = context.getQuery().getTopicMap();
+		Set<Association> associations = HashUtil.getHashSet();
+		/*
+		 * is wildcard as type
+		 */
+		if (containsExpressionsType(PreparedExpression.class)) {
+			QueryMatches matches = extractArguments(runtime, PreparedExpression.class, 0, context, optionalArguments);
+			if (matches.isEmpty()) {
+				throw new TMQLRuntimeException("Prepared statement has to be bound to a value!");
+			}
+			Object obj = matches.getFirstValue();
+			if (obj instanceof Topic) {
+				TypeInstanceIndex index = topicMap.getIndex(TypeInstanceIndex.class);
+				if (!index.isOpen()) {
+					index.open();
+				}
+				associations.addAll(index.getAssociations((Topic) obj));
+			} else {
+				throw new TMQLRuntimeException("Invalid result of prepared statement, expects a topic");
+			}
+		}
 		/*
 		 * extract all associations of the specified type
 		 */
-		final String anchor = getTokens().get(0);
-		Set<Association> associations = HashUtil.getHashSet();
-		if (anchor.equals(TmdmSubjectIdentifier.TM_SUBJECT)) {
-			associations.addAll(topicMap.getAssociations());
-		} else {
-			Construct c = runtime.getConstructResolver().getConstructByIdentifier(context, anchor);
-			/*
-			 * association type is unknown
-			 */
-			if (c == null) {
-				logger.warn("Cannot read topic type of assocaition '" + anchor);
-				return QueryMatches.emptyMatches();
+		else {
+			final String anchor = getTokens().get(0);
+			if (anchor.equals(TmdmSubjectIdentifier.TM_SUBJECT)) {
+				associations.addAll(topicMap.getAssociations());
+			} else {
+				Construct c = runtime.getConstructResolver().getConstructByIdentifier(context, anchor);
+				/*
+				 * association type is unknown
+				 */
+				if (c == null) {
+					logger.warn("Cannot read topic type of assocaition '" + anchor);
+					return QueryMatches.emptyMatches();
+				}
+				TypeInstanceIndex index = topicMap.getIndex(TypeInstanceIndex.class);
+				if (!index.isOpen()) {
+					index.open();
+				}
+				associations.addAll(index.getAssociations((Topic) c));
 			}
-			TypeInstanceIndex index = topicMap.getIndex(TypeInstanceIndex.class);
-			if (!index.isOpen()) {
-				index.open();
-			}
-			associations.addAll(index.getAssociations((Topic) c));
 		}
 
 		/*

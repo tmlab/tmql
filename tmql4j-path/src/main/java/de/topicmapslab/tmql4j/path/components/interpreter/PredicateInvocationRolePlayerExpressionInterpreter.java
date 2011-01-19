@@ -15,9 +15,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tmapi.core.Construct;
+import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
+import de.topicmapslab.tmql4j.components.interpreter.PreparedExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
@@ -79,7 +81,28 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends Expressi
 				} else {
 					roleType = variable;
 				}
-			} else {
+			}
+			/*
+			 * is wildcard
+			 */
+			else if (interpreter instanceof PreparedExpressionInterpreter) {
+				QueryMatches matches = ((PreparedExpressionInterpreter) interpreter).interpret(runtime, context, optionalArguments);
+				if (matches.isEmpty()) {
+					throw new TMQLRuntimeException("Prepared statement has to be bound to a value!");
+				}
+				Object obj = matches.getFirstValue();
+				if (obj instanceof Topic) {
+					roleType = (Topic) obj;
+				} else if (obj instanceof String) {
+					roleType = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, (String) obj);
+				} else {
+					throw new TMQLRuntimeException("Invalid result of prepared statement, expects a topic");
+				}
+			}
+			/*
+			 * is anything else
+			 */
+			else {
 				/*
 				 * execute value-expression for role-type
 				 */
@@ -110,7 +133,28 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends Expressi
 				} else {
 					player = variable;
 				}
-			} else {
+			}
+			/*
+			 * is wildcard
+			 */
+			else if (interpreter instanceof PreparedExpressionInterpreter) {
+				QueryMatches matches = ((PreparedExpressionInterpreter) interpreter).interpret(runtime, context, optionalArguments);
+				if (matches.isEmpty()) {
+					throw new TMQLRuntimeException("Prepared statement has to be bound to a value!");
+				}
+				Object obj = matches.getFirstValue();
+				if (obj instanceof Topic) {
+					player = (Topic) obj;
+				} else if (obj instanceof String) {
+					player = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, (String) obj);
+				} else {
+					throw new TMQLRuntimeException("Invalid result of prepared statement, expects a topic");
+				}
+			}
+			/*
+			 * is anything else
+			 */
+			else {
 				QueryMatches matches = interpreter.interpret(runtime, context, optionalArguments);
 				if (matches.isEmpty()) {
 					if (TmdmSubjectIdentifier.isTmdmSubject(interpreter.getTokens().get(0))) {

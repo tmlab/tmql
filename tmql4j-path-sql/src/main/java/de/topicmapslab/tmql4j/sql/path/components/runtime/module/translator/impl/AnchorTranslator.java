@@ -20,6 +20,7 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.core.FromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.Selection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TmqlSqlTranslatorImpl;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 
@@ -36,7 +37,7 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 	private static final String TOPICMAP_CONDITION = "{0}.id_topicmap = {1}";
 	private static final String CONDITION_LOCATOR_REL = "{0}.id = {1}.id_locator";
 	private static final String CONDITION_REL_TOPIC = "{0}.id_topic = {1}.id";
-	private static final String CONDITION_REFERENCE = "{0}.reference = {0}";
+	private static final String CONDITION_REFERENCE = "{0}.reference = ''{1}''";
 
 	/**
 	 * {@inheritDoc}
@@ -71,10 +72,11 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 				 */
 				newDefinition.add(MessageFormat.format(CONDITION_LOCATOR_REL, fromPartLocs.getAlias(), fromPartRel.getAlias()));
 				newDefinition.add(MessageFormat.format(CONDITION_REL_TOPIC, fromPartRel.getAlias(), part.getAlias()));
-				newDefinition.add(MessageFormat.format(CONDITION_REFERENCE, fromPartLocs.getAlias(), "'" + runtime.getConstructResolver().toAbsoluteIRI(context, token) + "'"));
+				newDefinition.add(MessageFormat.format(CONDITION_REFERENCE, fromPartLocs.getAlias(), runtime.getConstructResolver().toAbsoluteIRI(context, token)));
 
 			}
 			newDefinition.addSelection(new Selection(SELECTION, part.getAlias()));
+			newDefinition.setCurrentTable(SqlTables.TOPIC);
 			return newDefinition;
 		}
 		case Anchor.TYPE_DOT: {
