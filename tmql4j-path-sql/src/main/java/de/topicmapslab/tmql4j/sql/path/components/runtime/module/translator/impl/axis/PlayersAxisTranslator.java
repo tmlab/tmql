@@ -26,7 +26,8 @@ import de.topicmapslab.tmql4j.sql.path.utils.TranslatorUtils;
  * 
  */
 public class PlayersAxisTranslator extends AxisTranslatorImpl {
-
+	
+	static final String ASSOCIATIONS = "associations";
 	static final String FORWARD_SELECTION = "id_player";
 	static final String BACKWARD_SELECTION = "id_parent";
 	static final String TABLE = "roles";
@@ -55,7 +56,7 @@ public class PlayersAxisTranslator extends AxisTranslatorImpl {
 			/*
 			 * add associations to from part
 			 */
-			IFromPart associationsFromPart = new FromPart("associations", result.getAlias(), true);
+			IFromPart associationsFromPart = new FromPart(ASSOCIATIONS, result.getAlias(), true);
 			result.addFromPart(associationsFromPart);
 			/*
 			 * append condition

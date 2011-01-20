@@ -51,13 +51,6 @@ public class UniqFunction extends FunctionImpl {
 		 */
 		QueryMatches parameters = getParameters(runtime, context, caller);
 
-		/*
-		 * check count of variables
-		 */
-		if (!isExpectedNumberOfParameters(parameters.getOrderedKeys().size())) {
-			throw new TMQLRuntimeException(getItemIdentifier() + "() requieres 1 parameters.");
-		}
-
 		List<Object> unique = HashUtil.getList();
 		for (Object value : parameters.getPossibleValuesForVariable("$0")) {
 			if (!unique.contains(value)) {

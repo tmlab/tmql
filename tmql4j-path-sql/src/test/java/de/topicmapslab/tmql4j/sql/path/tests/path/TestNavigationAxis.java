@@ -605,10 +605,11 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 	public void testTraverseAxisWithoutParameterBW() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
 		Topic type = createTopicBySI("assoType");
+		Topic rtype = createTopicBySI("roleType");
 		Association[] associations = new Association[10];
 		for (int i = 0; i < associations.length; i++) {
 			Association a = createAssociation(type);
-			a.createRole(createTopic(), topic);
+			a.createRole(rtype, topic);
 
 			associations[i] = createAssociation();
 			associations[i].createRole(createTopic(), topic);
@@ -627,6 +628,7 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		}
 
 		for (int i = 0; i < associations.length; i++) {
+			System.out.println(associations[i].getId());
 			assertTrue(result.contains(associations[i]));
 		}
 	}

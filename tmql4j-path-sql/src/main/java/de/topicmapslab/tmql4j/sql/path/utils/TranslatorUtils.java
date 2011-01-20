@@ -104,4 +104,47 @@ public class TranslatorUtils {
 		}
 	}
 
+	private static final String TYPEABLES = "typeables";
+	private static final String COL_TYPE = "id_type";
+	private static final String COL_ID = "id";
+	private static final String TYPE_CONDITION = "{0}.id_type = {1}";
+
+	/**
+	 * Utility method generates a SQL query to get all typed constructs for the
+	 * given topic type as SQL selection
+	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param context
+	 *            the context
+	 * @param typeSelection
+	 *            the type selection
+	 * @param initialIndex
+	 *            the initial index
+	 * @return the SQL definition
+	 */
+	public static final ISqlDefinition generateSqlDefinitionForTypeables(ITMQLRuntime runtime, IContext context, String typeSelection, final int initialIndex) {
+		/*
+		 * create SQL definition
+		 */
+		ISqlDefinition definition = new SqlDefinition();
+		definition.setInternalAliasIndex(initialIndex);
+
+		/*
+		 * create from part
+		 */
+		IFromPart fromPart = new FromPart(TYPEABLES, definition.getAlias(), true);
+		definition.addFromPart(fromPart);
+
+		/*
+		 * create condition
+		 */		
+		definition.add(MessageFormat.format(TYPE_CONDITION, fromPart.getAlias(), typeSelection));
+		/*
+		 * add selection
+		 */
+		definition.addSelection(new Selection(COL_ID, fromPart.getAlias()));
+		return definition;
+	}
+
 }

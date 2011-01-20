@@ -26,13 +26,14 @@ import de.topicmapslab.tmql4j.sql.path.utils.TranslatorUtils;
  * 
  */
 public class RolesAxisTranslator extends AxisTranslatorImpl {
-
+	
 	static final String TYPE = "id_type";
 	static final String FORWARD_SELECTION = TYPE;
 	static final String BACKWARD_SELECTION = "id";
 	static final String TABLE = "roles";
 	static final String ASSOCIATIONS = "associations";
 	static final String PARENT_CONDITION = "{0}.id = {1}.id_parent";
+	static final String FORWARD_CONDITION_TOPIC = "{0} = {1}.id_type";
 	static final String FORWARD_CONDITION = "{0} = {1}.id_parent";
 	static final String BACKWARD_CONDITION = "{0} = {1}.id_type";
 
@@ -47,11 +48,24 @@ public class RolesAxisTranslator extends AxisTranslatorImpl {
 		 */
 		IFromPart fromPart = new FromPart(TABLE, result.getAlias(), true);
 		result.addFromPart(fromPart);
-		/*
-		 * append condition as connection to incoming SQL definition
-		 */
 		ISelection selection = definition.getLastSelection();
-		result.add(MessageFormat.format(FORWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));
+		if (definition.getCurrentTable() == SqlTables.TOPIC) {
+			/*
+			 * add associations to from part
+			 */
+			IFromPart associationsFromPart = new FromPart(ASSOCIATIONS, result.getAlias(), true);
+			result.addFromPart(associationsFromPart);
+			/*
+			 * append condition
+			 */
+			result.add(MessageFormat.format(FORWARD_CONDITION_TOPIC, selection.getSelection(), associationsFromPart.getAlias()));
+			result.add(MessageFormat.format(PARENT_CONDITION, associationsFromPart.getAlias(), fromPart.getAlias()));
+		} else {
+			/*
+			 * append condition as connection to incoming SQL definition
+			 */
+			result.add(MessageFormat.format(FORWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));
+		}
 		/*
 		 * add new selection
 		 */
