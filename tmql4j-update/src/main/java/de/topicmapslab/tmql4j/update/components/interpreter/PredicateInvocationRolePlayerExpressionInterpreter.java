@@ -118,7 +118,7 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends Expressi
 		if (!matches.isEmpty() && matches.getFirstValue() instanceof Topic) {
 			return (Topic) matches.getFirstValue();
 		}
-
+		
 		Class<? extends IToken> identifierType;
 		TopicMap topicMap = context.getQuery().getTopicMap();
 

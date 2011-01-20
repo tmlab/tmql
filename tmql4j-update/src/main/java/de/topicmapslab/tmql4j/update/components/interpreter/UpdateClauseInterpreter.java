@@ -84,8 +84,8 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 			case UpdateClause.TOPIC_ADD: {
 				return interpretTopicDefinition(runtime, context, optionalArguments);
 			}
-			case UpdateClause.ASSOCIATION_ADD: {
-				return interpretAssocationDefinition(runtime, context, optionalArguments);
+			case UpdateClause.ASSOCIATION_ADD: {				
+				return interpretAssocationDefinition(runtime, context, optionalArguments);				
 			}
 			default: {
 				return interpretContentModification(runtime, context, optionalArguments);

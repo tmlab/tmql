@@ -40,7 +40,7 @@ public class TraverseAxisTranslator extends AxisTranslatorImpl {
 	static final String PARENT = "id_parent";
 	static final String PLAYER = "id_player";
 
-	static final String BACKWARD_PARENT_CONDITION = "{1}.id_parent = {0}";
+	static final String BACKWARD_PARENT_CONDITION = "{0}.id_parent = {1}";
 	static final String BACKWARD_CONDITION_DIFFERENT_PLAYER = "{0} != {1}.id_parent";
 	static final String BACKWARD_CONDITION_TRAVERSE = "{0}.id_player IN ( SELECT id_player FROM roles WHERE id_parent = ( {1} ) )";
 
@@ -123,15 +123,15 @@ public class TraverseAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * direct association mapping if current node is an association
 		 */
-		if (result.getCurrentTable() == SqlTables.ASSOCIATION) {
-			inDef.add(MessageFormat.format(BACKWARD_PARENT_CONDITION, inDefFromPart.getAlias(), selection.getSelection()));
+		if (result.getCurrentTable() == SqlTables.TOPIC) {
+			ISqlDefinition associationsOfType = TranslatorUtils.generateSqlDefinitionForTypeables(runtime, context, selection.getSelection(), definition.getInternalAliasIndex());
+			inDef.add(new InCriterion(PARENT,inDefFromPart.getAlias(), associationsOfType));
 		}
 		/*
 		 * indirect association mapping over type is current node is a topic
 		 */
 		else{
-			ISqlDefinition associationsOfType = TranslatorUtils.generateSqlDefinitionForTypeables(runtime, context, selection.getSelection(), definition.getInternalAliasIndex());
-			inDef.add(new InCriterion(PARENT,inDefFromPart.getAlias(), associationsOfType));			
+			inDef.add(MessageFormat.format(BACKWARD_PARENT_CONDITION, inDefFromPart.getAlias(), selection.getSelection()));	
 		}
 		/*
 		 * optional type condition

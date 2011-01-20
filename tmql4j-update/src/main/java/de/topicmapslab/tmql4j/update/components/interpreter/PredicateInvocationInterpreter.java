@@ -28,7 +28,9 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Dot;
 import de.topicmapslab.tmql4j.path.util.Restriction;
 import de.topicmapslab.tmql4j.update.grammar.productions.PredicateInvocation;
 import de.topicmapslab.tmql4j.update.grammar.productions.PredicateInvocationRolePlayerExpression;
@@ -71,7 +73,29 @@ public class PredicateInvocationInterpreter extends ExpressionInterpreterImpl<Pr
 	 */
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		return interpretAsUpdateStream(runtime, context, optionalArguments);
+		QueryMatches results = new QueryMatches(runtime);
+		/*
+		 * context independent
+		 */
+		if (context.getContextBindings() == null) {
+			interpretAsUpdateStream(runtime, context, results, optionalArguments);
+		}
+		/*
+		 * context dependent
+		 */
+		else {
+			for (Object currentNode : context.getContextBindings().getPossibleValuesForVariable()) {
+				Context newContext = new Context(context);
+				newContext.setCurrentNode(currentNode);
+				newContext.setContextBindings(null);
+				interpretAsUpdateStream(runtime, newContext, results, optionalArguments);
+			}
+		}
+
+		if (results.isEmpty()) {
+			return QueryMatches.emptyMatches();
+		}
+		return results;
 	}
 
 	/**
@@ -81,13 +105,14 @@ public class PredicateInvocationInterpreter extends ExpressionInterpreterImpl<Pr
 	 *            the runtime
 	 * @param context
 	 *            the current querying context
+	 * @param results
+	 *            the results
 	 * @param optionalArguments
 	 *            any optional arguments
-	 * @return the query matches
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation failed
 	 */
-	private QueryMatches interpretAsUpdateStream(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+	private void interpretAsUpdateStream(ITMQLRuntime runtime, IContext context, QueryMatches results, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * create the association type
 		 */
@@ -104,12 +129,12 @@ public class PredicateInvocationInterpreter extends ExpressionInterpreterImpl<Pr
 			Object obj = matches.getFirstValue();
 			if (obj instanceof Topic) {
 				associationType = (Topic) obj;
-			} else if ( obj instanceof String ){
-				associationType = (Topic)runtime.getConstructResolver().getConstructByIdentifier(context, (String)obj);
-				if ( associationType == null ){
-					associationType = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(runtime.getConstructResolver().toAbsoluteIRI(context, (String)obj)));
+			} else if (obj instanceof String) {
+				associationType = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, (String) obj);
+				if (associationType == null) {
+					associationType = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(runtime.getConstructResolver().toAbsoluteIRI(context, (String) obj)));
 				}
-			}else{
+			} else {
 				throw new TMQLRuntimeException("Invalid result of prepared statement, expects a topic");
 			}
 		}
@@ -118,24 +143,31 @@ public class PredicateInvocationInterpreter extends ExpressionInterpreterImpl<Pr
 		 */
 		else {
 			final String reference = getTokens().get(0);
-
-			Construct c = runtime.getConstructResolver().getConstructByIdentifier(context, reference);
-			if (c instanceof Topic) {
-				associationType = (Topic) c;
-			} else if (c == null) {
-				associationType = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(runtime.getConstructResolver().toAbsoluteIRI(context, reference)));
+			final Class<? extends IToken> token = getTmqlTokens().get(0);
+			if (token.equals(Dot.class)) {
+				Object currentNode = context.getCurrentNode();
+				if (currentNode instanceof Topic) {
+					associationType = (Topic) currentNode;
+				} else {
+					throw new TMQLRuntimeException("Construct used as association type is not a topic!");
+				}
 			} else {
-				throw new TMQLRuntimeException("Construct used as association type is not a topic!");
+				Construct c = runtime.getConstructResolver().getConstructByIdentifier(context, reference);
+				if (c instanceof Topic) {
+					associationType = (Topic) c;
+				} else if (c == null) {
+					associationType = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(runtime.getConstructResolver().toAbsoluteIRI(context, reference)));
+				} else {
+					throw new TMQLRuntimeException("Construct used as association type is not a topic!");
+				}
 			}
 		}
-
-		QueryMatches matches = new QueryMatches(runtime);
 
 		/*
 		 * no iteration bindings
 		 */
 		if (context.getContextBindings() == null) {
-			createAssociation(runtime, context, matches, topicMap, associationType);
+			createAssociation(runtime, context, results, topicMap, associationType);
 		}
 		/*
 		 * variable binding defined
@@ -148,7 +180,7 @@ public class PredicateInvocationInterpreter extends ExpressionInterpreterImpl<Pr
 				Context newContext = new Context(context);
 				newContext.setContextBindings(null);
 				newContext.setCurrentTuple(tuple);
-				createAssociation(runtime, newContext, matches, topicMap, associationType);
+				createAssociation(runtime, newContext, results, topicMap, associationType);
 			}
 		}
 		/*
@@ -157,10 +189,6 @@ public class PredicateInvocationInterpreter extends ExpressionInterpreterImpl<Pr
 		runtime.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
 		runtime.getTmqlProcessor().getResultProcessor().setColumnAlias(0, "associations");
 		runtime.getTmqlProcessor().getResultProcessor().setColumnAlias(1, "roles");
-		if (matches.isEmpty()) {
-			return QueryMatches.emptyMatches();
-		}
-		return matches;
 	}
 
 	/**

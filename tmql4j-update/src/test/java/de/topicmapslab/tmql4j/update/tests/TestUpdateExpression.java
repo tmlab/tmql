@@ -783,4 +783,18 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals(player2, association.getRoles(roleType2).iterator().next().getPlayer());
 	}
 
+	@Test
+	public void testAddAssociationWithWhere() throws Exception {
+		Topic t = createTopicBySI("myTopic");
+		String query = null;
+
+		query = "UPDATE associations ADD e:association-type ( http://psi.example.org/role-type-1 : . ) WHERE myTopic ";
+		IResultSet<?> rs = execute(query);	
+		assertEquals(1, rs.size());
+		
+		assertEquals(1, topicMap.getAssociations().size());
+		Association a = topicMap.getAssociations().iterator().next();
+		assertEquals(1, a.getRoles().size());
+		assertEquals(t, a.getRoles().iterator().next().getPlayer());
+	}
 }

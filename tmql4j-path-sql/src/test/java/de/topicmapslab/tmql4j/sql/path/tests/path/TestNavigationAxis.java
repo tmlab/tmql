@@ -617,7 +617,7 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		String query = null;
 		IResultSet<?> set = null;
 
-		query = "assoType << traverse";
+		query = "assoType >> typed << traverse";
 		set = execute(query);
 		assertEquals(associations.length, set.size());
 
