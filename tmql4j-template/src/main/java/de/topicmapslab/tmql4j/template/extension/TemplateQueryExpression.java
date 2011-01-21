@@ -22,6 +22,7 @@ import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.template.components.interpreter.QueryExpressionInterpreter;
 import de.topicmapslab.tmql4j.template.components.interpreter.TemplateDefinitionInterpreter;
 import de.topicmapslab.tmql4j.template.components.interpreter.UseExpressionInterpreter;
+import de.topicmapslab.tmql4j.template.grammar.lexical.CTM;
 import de.topicmapslab.tmql4j.template.grammar.lexical.Define;
 import de.topicmapslab.tmql4j.template.grammar.lexical.JTMQR;
 import de.topicmapslab.tmql4j.template.grammar.lexical.Redefine;
@@ -42,6 +43,7 @@ public class TemplateQueryExpression implements ILanguageExtension {
 	 */
 	public void registerExtension(ITMQLRuntime runtime) throws TMQLExtensionRegistryException {
 		ITokenRegistry tokens = runtime.getLanguageContext().getTokenRegistry();
+		tokens.register(CTM.class);
 		tokens.register(Use.class);
 		tokens.register(Template.class);
 		tokens.register(Define.class);

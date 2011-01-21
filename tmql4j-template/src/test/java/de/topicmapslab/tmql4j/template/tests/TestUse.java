@@ -8,7 +8,13 @@
  */
 package de.topicmapslab.tmql4j.template.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
@@ -17,11 +23,11 @@ import org.tmapi.core.Topic;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.results.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.template.grammar.lexical.CTM;
 import de.topicmapslab.tmql4j.template.grammar.lexical.JTMQR;
 import de.topicmapslab.tmql4j.template.grammar.lexical.Template;
 import de.topicmapslab.tmql4j.template.util.json.JTMQRWriter;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
-import static junit.framework.Assert.*;
 /**
  * @author Sven Krosse
  * 
@@ -87,5 +93,26 @@ public class TestUse extends Tmql4JTestCase {
 		assertEquals(String.class, rs.get(0,0).getClass());
 		assertEquals(JTMQR.TOKEN, rs.getResultType());
 		assertEquals(jtmqr, rs.get(0,0));
+	}
+	
+	@Test
+	public void testUseCTM() throws Exception {
+		String FORMAT = "^<{0}>";
+		List<String> results = new ArrayList<String>();
+		for ( int i = 0 ; i < 100; i++){
+			Topic t = createTopic();
+			final String ii = t.getItemIdentifiers().iterator().next().getReference();
+			results.add(MessageFormat.format(FORMAT, ii));
+		}
+		System.out.println(results);
+		final String query 	= "// tm:subject USE CTM";
+		IResultSet<?> rs = execute(query);
+		assertEquals(1, rs.size());
+		assertEquals(String.class, rs.get(0,0).getClass());
+		assertEquals(CTM.TOKEN, rs.getResultType());
+		final String ctm = rs.get(0,0);
+		for ( String result : results ){
+			assertTrue(ctm.contains(result));
+		}
 	}
 }

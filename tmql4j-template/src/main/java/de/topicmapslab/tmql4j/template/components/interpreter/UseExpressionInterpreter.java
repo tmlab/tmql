@@ -8,11 +8,18 @@
  */
 package de.topicmapslab.tmql4j.template.components.interpreter;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.tmapi.core.Association;
+import org.tmapi.core.Construct;
+import org.tmapi.core.Topic;
+
+import de.topicmapslab.ctm.writer.core.CTMTopicMapWriter;
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.processor.core.Context;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
@@ -21,13 +28,16 @@ import de.topicmapslab.tmql4j.components.processor.results.ProjectionUtils;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.template.components.processor.results.CTMResult;
 import de.topicmapslab.tmql4j.template.components.processor.results.JTMQRResult;
 import de.topicmapslab.tmql4j.template.components.processor.results.TemplateResult;
 import de.topicmapslab.tmql4j.template.components.processor.runtime.module.Template;
 import de.topicmapslab.tmql4j.template.components.processor.runtime.module.TemplateManager;
+import de.topicmapslab.tmql4j.template.grammar.lexical.CTM;
 import de.topicmapslab.tmql4j.template.grammar.lexical.JTMQR;
 import de.topicmapslab.tmql4j.template.grammar.productions.UseExpression;
 import de.topicmapslab.tmql4j.template.util.json.JTMQRWriter;
+import de.topicmapslab.tmql4j.util.HashUtil;
 import de.topicmapslab.tmql4j.util.LiteralUtils;
 
 /**
@@ -73,9 +83,55 @@ public class UseExpressionInterpreter extends ExpressionInterpreterImpl<UseExpre
 		else if (JTMQR.class.equals(token)) {
 			return useJTMQR(runtime, context, optionalArguments);
 		}
+		/*
+		 * use CTM
+		 */
+		else if (CTM.class.equals(token)) {
+			return useCTM(runtime, context, optionalArguments);
+		}
+		throw new TMQLRuntimeException(MessageFormat.format(THE_USE_PART_IS_UNKNOWN, getTokens().get(1)));
 
-		throw new TMQLRuntimeException(THE_USE_PART_IS_UNKNOWN);
+	}
 
+	/**
+	 * The method extracts the values from context and create a CTM for the
+	 * whole sequence
+	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param context
+	 *            the context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches containing the JTMQR
+	 */
+	private QueryMatches useCTM(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		runtime.getTmqlProcessor().getResultProcessor().setResultType(CTMResult.class);
+		/*
+		 * extract values
+		 */
+		if (context.getContextBindings() != null) {
+			List<Construct> results = HashUtil.getList();
+			for (Map<String, Object> tuple : context.getContextBindings()) {
+				for (Object obj : tuple.values()) {
+					if (obj instanceof Topic || obj instanceof Association) {
+						if (!results.contains(obj)) {
+							results.add((Construct) obj);
+						}
+					} else {
+						throw new TMQLRuntimeException("The results cannot be convert to CTM because of invalid types. Only topics and associations are supported!");
+					}
+				}
+			}
+			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			try {
+				new CTMTopicMapWriter(os, context.getQuery().getTopicMap().getLocator().getReference()).write(results);
+			} catch (IOException e) {
+				throw new TMQLRuntimeException("Transformation to CTM failed!", e);
+			}
+			return QueryMatches.asQueryMatchNS(runtime, os.toString());
+		}
+		return QueryMatches.emptyMatches();
 	}
 
 	/**
@@ -95,7 +151,7 @@ public class UseExpressionInterpreter extends ExpressionInterpreterImpl<UseExpre
 		/*
 		 * fill template
 		 */
-		if (context.getContextBindings() != null) {			
+		if (context.getContextBindings() != null) {
 			String json = JTMQRWriter.write(context.getContextBindings());
 			return QueryMatches.asQueryMatchNS(runtime, json);
 		}
