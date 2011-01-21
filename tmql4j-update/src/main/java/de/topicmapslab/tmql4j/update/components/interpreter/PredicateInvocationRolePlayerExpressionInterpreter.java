@@ -113,14 +113,20 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends Expressi
 	 *             not set
 	 */
 	private final Topic getOrCreateTopic(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> interpreter) throws TMQLRuntimeException {
-
+		TopicMap topicMap = context.getQuery().getTopicMap();
 		QueryMatches matches = interpreter.interpret(runtime, context);
-		if (!matches.isEmpty() && matches.getFirstValue() instanceof Topic) {
-			return (Topic) matches.getFirstValue();
+		if (!matches.isEmpty()){
+			Object val = matches.getFirstValue();
+			if ( val instanceof Topic ){
+				return (Topic) matches.getFirstValue();
+			}else if ( val instanceof String ){
+				String ref = runtime.getConstructResolver().toAbsoluteIRI(context, (String)val);
+				Locator locator = topicMap.createLocator(ref);
+				return TopicDefinitionInterpreter.createTopic(topicMap, AxisIndicators.class, locator);
+			}
 		}
 		
-		Class<? extends IToken> identifierType;
-		TopicMap topicMap = context.getQuery().getTopicMap();
+		Class<? extends IToken> identifierType;		
 
 		/*
 		 * look for topic creation

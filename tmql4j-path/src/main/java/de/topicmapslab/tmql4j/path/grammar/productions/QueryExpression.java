@@ -22,6 +22,8 @@ import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
+import de.topicmapslab.tmql4j.path.grammar.lexical.BracketAngleClose;
+import de.topicmapslab.tmql4j.path.grammar.lexical.BracketAngleOpen;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Prefix;
 
 /**
@@ -127,6 +129,22 @@ public class QueryExpression extends ExpressionImpl {
 		 */
 		if (index < tmqlTokens.size()) {
 			int size = tmqlTokens.size();
+			/*
+			 * check for encapsulating brackets
+			 */
+			if (getTmqlTokens().get(index).equals(BracketAngleOpen.class)) {
+				int iClosingBracket = ParserUtils.indexOfTokens(tmqlTokens.subList(index+1, size), BracketAngleClose.class);
+				/*
+				 * check if closing angle Bracket is
+				 */
+				if (iClosingBracket == ( size - (index + 2 ))) {
+					checkForExtensions(QueryExpression.class, tmqlTokens.subList(index + 1, size - 1), tokens.subList(index + 1, size - 1), runtime);
+					return;
+				}
+			}
+			/*
+			 * is simple path expression
+			 */
 			checkForExtensions(PathExpression.class, tmqlTokens.subList(index, size), tokens.subList(index, size), runtime);
 		}
 	}

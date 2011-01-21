@@ -52,6 +52,7 @@ public class QueryExpressionInterpreter extends ExpressionInterpreterImpl<QueryE
 	 */
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		int index = 0;
 		/*
 		 * check if environment-clause contained
 		 */
@@ -59,12 +60,13 @@ public class QueryExpressionInterpreter extends ExpressionInterpreterImpl<QueryE
 			/*
 			 * call environment-clause
 			 */
-			getInterpretersFilteredByEypressionType(runtime, EnvironmentClause.class).get(0).interpret(runtime, context, optionalArguments);
+			getInterpretersFilteredByEypressionType(runtime, EnvironmentClause.class).get(index).interpret(runtime, context, optionalArguments);
+			index++;
 		}
 		/*
 		 * redirect to subexpression
 		 */
-		IExpressionInterpreter<PathExpression> ex = getInterpretersFilteredByEypressionType(runtime, PathExpression.class).get(0);
+		IExpressionInterpreter<?> ex = getInterpreters(runtime).get(index);
 		return ex.interpret(runtime, context, optionalArguments);
 	}
 

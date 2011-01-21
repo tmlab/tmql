@@ -187,10 +187,13 @@ public class ParserUtils {
 		Class<? extends IToken> last = null;
 		for (int index = 0; index < tmqlTokens.size(); index++) {
 			Class<? extends IToken> token = tmqlTokens.get(index);
-			if (protectionStarts.contains(token)) {
+			if (protectionStarts.contains(token) && !tokensToFound.contains(token)) {
 				protectionCount++;
 			} else if (protectionEnds.contains(token)) {
-				protectionCount--;
+				if ( protectionCount == 0 && tokensToFound.contains(token)){
+					return index;
+				}
+				protectionCount--;				
 			} else if (protectionCount == 0 && tokensToFound.contains(token)
 					&& (last == null || !tokensToFound.contains(last))) {
 				return index;

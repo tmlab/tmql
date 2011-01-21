@@ -148,7 +148,6 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 	public QueryMatches(ITMQLRuntime runtime, List<Map<String, Object>> matches) throws TMQLRuntimeException {
 		this.runtime = runtime;
 		this.matches = HashUtil.getList();
-		;
 		multiple = false;
 		add(matches);
 	}
@@ -176,7 +175,6 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 	public QueryMatches(ITMQLRuntime runtime, Collection<QueryMatches> queryMatches) throws TMQLRuntimeException {
 		this.runtime = runtime;
 		this.matches = HashUtil.getList();
-		;
 		this.origins = HashUtil.getHashMap();
 		multiple = false;
 		addAll(queryMatches);
@@ -538,7 +536,7 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 				sequence.add(tuple.get(variable));
 			} else if (getOrigin(variable) != null) {
 				sequence.add(tuple.get(origins.get(variable)));
-			}
+			} 
 		}
 		return sequence;
 	}

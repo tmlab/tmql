@@ -189,7 +189,9 @@ public class TupleExpressionInterpreter extends ExpressionInterpreterImpl<TupleE
 				if (result == null && tasks.size() == 1) {
 					return QueryMatches.emptyMatches();
 				} else if (tasks.size() == 1 && result instanceof Collection<?>) {
-					return QueryMatches.asQueryMatch(runtime, "$0", result);
+					QueryMatches matches = QueryMatches.asQueryMatch(runtime, "$0", result);
+					matches.addOrigin(QueryMatches.getNonScopedVariable(), "$0");
+					return matches;
 				} else if (result instanceof QueryMatches) {
 					return (QueryMatches) result;
 				}

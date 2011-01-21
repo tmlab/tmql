@@ -28,4 +28,9 @@ public interface IFromPart {
 	 */
 	public String getTableOrContent();
 
+	/**
+	 * The from part represent a table and not an inner selection
+	 * @return <code>true</code> if the from part represents a table, <code>false</code> otherwise
+	 */
+	public boolean isTable();
 }

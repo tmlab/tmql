@@ -50,7 +50,11 @@ public class Selection implements ISelection {
 	public Selection(final String column, final String alias) {
 		this.alias = alias;
 		this.column = column;
-		this.selection = alias + Dot.TOKEN + column;
+		if (alias != null) {
+			this.selection = alias + Dot.TOKEN + column;
+		} else {
+			this.selection = column;
+		}
 	}
 
 	/**

@@ -58,6 +58,30 @@ public class TestContent extends Tmql4JTestCase {
 			assertEquals(1, r.size());
 			assertTrue(topics.contains(r.first()));
 		}
+		
+		query = " { // other INTERSECT // myType }";
+		set = execute(query);
+		assertEquals(topics.size(), set.size());
+		for (IResult r : set) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+		
+		query = " // other INTERSECT { // myType }";
+		set = execute(query);
+		assertEquals(topics.size(), set.size());
+		for (IResult r : set) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+		
+		query = " { // other } INTERSECT { // myType }";
+		set = execute(query);
+		assertEquals(topics.size(), set.size());
+		for (IResult r : set) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
 	}
 
 	@Test
@@ -298,6 +322,18 @@ public class TestContent extends Tmql4JTestCase {
 			assertEquals(1, r.size());
 			assertTrue(topics.contains(r.first()));
 		}		
+		
+		/*
+		 * second part will be interpret first 
+		 * ( // other UNION // myType )
+		 */
+		query = " // another MINUS { // other UNION // myType }";
+		set = execute(query);
+		assertEquals(topics.size(), set.size());
+		for (IResult r : set) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}	
 	}
 	
 	@Test

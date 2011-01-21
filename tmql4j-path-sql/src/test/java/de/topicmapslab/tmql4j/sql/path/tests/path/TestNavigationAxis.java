@@ -801,7 +801,7 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 
 		query = "myTopic >> characteristics << characteristics";
 		set = execute(query);
-		assertEquals(200, set.size());
+		assertEquals(20, set.size());
 		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertEquals(topic, r.first());
@@ -823,7 +823,7 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 
 		query = "myTopic >> characteristics << characteristics theType";
 		set = execute(query);
-		assertEquals(200, set.size());
+		assertEquals(20, set.size());
 		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertEquals(topic, r.first());

@@ -74,4 +74,10 @@ public class FromPart implements IFromPart {
 		return builder.toString();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isTable() {
+		return isTable;
+	}
 }

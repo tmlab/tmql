@@ -45,6 +45,10 @@ public enum SqlTables {
 	/**
 	 * current nodes are strings
 	 */
-	STRING,
+	STRING,	
+	/**
+	 * current nodes are locators
+	 */
+	LOCATOR,
 	
 }

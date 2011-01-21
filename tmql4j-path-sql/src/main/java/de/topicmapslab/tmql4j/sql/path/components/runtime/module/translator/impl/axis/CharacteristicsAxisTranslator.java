@@ -19,6 +19,8 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
+import de.topicmapslab.tmql4j.sql.path.utils.TranslatorUtils;
+import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 
 /**
  * @author Sven Krosse
@@ -27,8 +29,13 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
 public class CharacteristicsAxisTranslator extends AxisTranslatorImpl {
 
 	static final String FORWARD_SELECTION = "id";
+	static final String COL_TYPE = "id_type";
+	static final String COL_PARENT = "id_parent";
 	static final String BACKWARD_SELECTION = "id_parent";
-	static final String TABLE = "constructs";
+	static final String CONSTRUCTS = "constructs";
+	static final String CHARACTERISTICS = "SELECT id_parent, id, value, id_type FROM names UNION SELECT id_parent, id, value, id_type FROM occurrences";
+	static final String NAMES = "names";
+	static final String OCCURRENCES = "occurrences";
 	static final String FORWARD_CONDITION = "{0} = {1}.id_parent";
 	static final String BACKWARD_CONDITION = "{0} = {1}.id";
 
@@ -41,7 +48,21 @@ public class CharacteristicsAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * append from clause for characteristics
 		 */
-		IFromPart fromPart = new FromPart(TABLE, result.getAlias(), true);
+		IFromPart fromPart;
+		/*
+		 * check for tm:name and tm:occurrence
+		 */
+		if (TmdmSubjectIdentifier.isTmdmName(optionalType)){
+			fromPart = new FromPart(NAMES, result.getAlias(), true);
+			result.setCurrentTable(SqlTables.NAME);	
+		}else if (TmdmSubjectIdentifier.isTmdmOccurrence(optionalType)){
+			fromPart = new FromPart(OCCURRENCES, result.getAlias(), true);
+			result.setCurrentTable(SqlTables.OCCURRENCE);	
+		}else{
+			fromPart = new FromPart(CHARACTERISTICS, result.getAlias(), false);
+			result.setCurrentTable(SqlTables.CHARACTERISTICS);	
+		}
+		
 		result.addFromPart(fromPart);
 		/*
 		 * append condition as connection to incoming SQL definition
@@ -51,8 +72,13 @@ public class CharacteristicsAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(FORWARD_SELECTION, fromPart.getAlias()));
-		result.setCurrentTable(SqlTables.CHARACTERISTICS);
+		result.addSelection(new Selection(FORWARD_SELECTION, fromPart.getAlias()));	
+		/*
+		 * check for optional type
+		 */
+		if ( !fromPart.isTable()){
+			TranslatorUtils.addOptionalTypeArgument(runtime, context, optionalType, definition, COL_TYPE, fromPart.getAlias());
+		}
 		return result;
 	}
 
@@ -65,7 +91,7 @@ public class CharacteristicsAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * append from clause for characteristics
 		 */
-		IFromPart fromPart = new FromPart(TABLE, result.getAlias(), true);
+		IFromPart fromPart = new FromPart(CONSTRUCTS, result.getAlias(), true);
 		result.addFromPart(fromPart);
 		/*
 		 * append condition as connection to incoming SQL definition
@@ -77,6 +103,7 @@ public class CharacteristicsAxisTranslator extends AxisTranslatorImpl {
 		 */
 		result.addSelection(new Selection(BACKWARD_SELECTION, fromPart.getAlias()));
 		result.setCurrentTable(SqlTables.TOPIC);
+		TranslatorUtils.addOptionalTopicTypeArgument(runtime, context, optionalType, definition, COL_PARENT, fromPart.getAlias());
 		return result;
 	}
 

@@ -8,86 +8,27 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.axis;
 
-import java.text.MessageFormat;
-
-import de.topicmapslab.tmql4j.components.processor.core.IContext;
-import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.sql.path.components.definition.core.FromPart;
-import de.topicmapslab.tmql4j.sql.path.components.definition.core.Selection;
-import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
-import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
-import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
-import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
-
 /**
  * @author Sven Krosse
  * 
  */
-public class LocatorsAxisTranslator extends AxisTranslatorImpl {
+public class LocatorsAxisTranslator extends IdentityAxisTranslator {
 
-	static final String LOCATORS = "locators";
-	static final String REL_SUBJECT_IDENTIFIERS = "rel_subject_locators";
-
-	static final String FORWARD_SELECTION = "reference";
-	static final String BACKWARD_SELECTION = "id_topic";
-
-	static final String CONDITION = "{0}.id = {1}.id_locator";
-	static final String FORWARD_CONDITION = "{0} = {1}.id_topic";
-	static final String BACKWARD_CONDITION = "{0} = {1}.reference";
+	static final String COLUMN = "id_topic";
+	static final String RELATION = "rel_subject_locators";
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected ISqlDefinition forward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
-		ISqlDefinition result = definition.clone();
-		result.clearSelection();
-		/*
-		 * append from clauses
-		 */
-		IFromPart fromPartRel = new FromPart(REL_SUBJECT_IDENTIFIERS, result.getAlias(), true);
-		result.addFromPart(fromPartRel);
-		IFromPart fromPart = new FromPart(LOCATORS, result.getAlias(), true);
-		result.addFromPart(fromPart);
-		/*
-		 * append condition as connection to incoming SQL definition
-		 */
-		ISelection selection = definition.getLastSelection();
-		result.add(MessageFormat.format(FORWARD_CONDITION, selection.getSelection(), fromPartRel.getAlias()));
-		result.add(MessageFormat.format(CONDITION, fromPart.getAlias(), fromPartRel.getAlias()));
-		/*
-		 * add new selection
-		 */
-		result.addSelection(new Selection(FORWARD_SELECTION, fromPart.getAlias()));
-		result.setCurrentTable(SqlTables.STRING);
-		return result;
+	protected String getRelationColumn() {
+		return COLUMN;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	protected ISqlDefinition backward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
-		ISqlDefinition result = definition.clone();
-		result.clearSelection();
-		/*
-		 * append from clauses
-		 */
-		IFromPart fromPartRel = new FromPart(REL_SUBJECT_IDENTIFIERS, result.getAlias(), true);
-		result.addFromPart(fromPartRel);
-		IFromPart fromPart = new FromPart(LOCATORS, result.getAlias(), true);
-		result.addFromPart(fromPart);
-		/*
-		 * append condition as connection to incoming SQL definition
-		 */
-		ISelection selection = definition.getLastSelection();
-		result.add(MessageFormat.format(BACKWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));
-		result.add(MessageFormat.format(CONDITION, fromPart.getAlias(), fromPartRel.getAlias()));
-		/*
-		 * add new selection
-		 */
-		result.addSelection(new Selection(BACKWARD_SELECTION, fromPartRel.getAlias()));
-		result.setCurrentTable(SqlTables.TOPIC);
-		return result;
+	protected String getRelationTable() {
+		return RELATION;
 	}
 
 }

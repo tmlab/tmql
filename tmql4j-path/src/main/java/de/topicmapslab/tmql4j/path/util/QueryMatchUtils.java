@@ -55,9 +55,7 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if operation fails or arguments are invalid
 	 */
-	public static QueryMatches operation(final ITMQLRuntime runtime,
-			final Class<? extends IToken> operator,
-			final QueryMatches... arguments) throws TMQLRuntimeException {
+	public static QueryMatches operation(final ITMQLRuntime runtime, final Class<? extends IToken> operator, final QueryMatches... arguments) throws TMQLRuntimeException {
 		/*
 		 * is summation
 		 */
@@ -132,18 +130,17 @@ public class QueryMatchUtils {
 		/*
 		 * is equality
 		 */
-		else if ( operator.equals(Equality.class)){
+		else if (operator.equals(Equality.class)) {
 			return equals(runtime, arguments[0], arguments[1]);
 		}
 		/*
 		 * is not same
 		 */
-		else if ( operator.equals(Unequals.class)){
+		else if (operator.equals(Unequals.class)) {
 			return unequals(runtime, arguments[0], arguments[1]);
 		}
 
-		throw new TMQLRuntimeException("The operator '"
-				+ operator.getSimpleName() + "' is unknown.");
+		throw new TMQLRuntimeException("The operator '" + operator.getSimpleName() + "' is unknown.");
 	}
 
 	/**
@@ -159,9 +156,7 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	public static QueryMatches union(final ITMQLRuntime runtime,
-			final QueryMatches leftHand, final QueryMatches rightHand)
-			throws TMQLRuntimeException {
+	public static QueryMatches union(final ITMQLRuntime runtime, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
 		QueryMatches result = new QueryMatches(runtime);
 		result.add(leftHand);
 		result.add(rightHand);
@@ -181,15 +176,18 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	public static QueryMatches minus(final ITMQLRuntime runtime,
-			final QueryMatches leftHand, final QueryMatches rightHand)
-			throws TMQLRuntimeException {
+	public static QueryMatches minus(final ITMQLRuntime runtime, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
 		QueryMatches result = new QueryMatches(runtime);
 
 		for (Map<String, Object> tuple : leftHand) {
 			boolean add = true;
 			for (Map<String, Object> tupleB : rightHand) {
-				if (tupleB.entrySet().containsAll(tuple.entrySet())) {
+				/*
+				 * compare values and keys with origins
+				 */
+				if (tupleB.values().containsAll(tuple.values())
+						&& (tupleB.keySet().containsAll(tuple.keySet()) || rightHand.getOrigins().keySet().containsAll(tuple.keySet())
+								|| rightHand.getOrigins().keySet().containsAll(leftHand.getOrigins().keySet()) || tupleB.keySet().containsAll(leftHand.getOrigins().keySet()))) {
 					add = false;
 					break;
 				}
@@ -215,14 +213,17 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	public static QueryMatches intersect(final ITMQLRuntime runtime,
-			final QueryMatches leftHand, final QueryMatches rightHand)
-			throws TMQLRuntimeException {
+	public static QueryMatches intersect(final ITMQLRuntime runtime, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
 		QueryMatches result = new QueryMatches(runtime);
 		for (Map<String, Object> tuple : leftHand) {
 			boolean add = false;
 			for (Map<String, Object> tupleB : rightHand) {
-				if (tupleB.entrySet().containsAll(tuple.entrySet())) {
+				/*
+				 * compare values and keys with origins
+				 */
+				if (tupleB.values().containsAll(tuple.values())
+						&& (tupleB.keySet().containsAll(tuple.keySet()) || rightHand.getOrigins().keySet().containsAll(tuple.keySet())
+								|| rightHand.getOrigins().keySet().containsAll(leftHand.getOrigins().keySet()) || tupleB.keySet().containsAll(leftHand.getOrigins().keySet()))) {
 					add = true;
 					break;
 				}
@@ -247,30 +248,29 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	public static QueryMatches equality(final ITMQLRuntime runtime,
-			final QueryMatches leftHand, final QueryMatches rightHand)
-			throws TMQLRuntimeException {
+	public static QueryMatches equality(final ITMQLRuntime runtime, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
 		Collection<Object> values = rightHand.getPossibleValuesForVariable();
-		if ( values.isEmpty()){
+		if (values.isEmpty()) {
 			values = rightHand.getPossibleValuesForVariable("$0");
 		}
 		QueryMatches result = new QueryMatches(runtime);
-		for (Map<String, Object> tuple : leftHand) {			
+		for (Map<String, Object> tuple : leftHand) {
 			if (tuple.containsKey(QueryMatches.getNonScopedVariable())) {
-				if ( values.contains(tuple.get(QueryMatches.getNonScopedVariable()))){
+				if (values.contains(tuple.get(QueryMatches.getNonScopedVariable()))) {
 					result.add(tuple);
 				}
-			} else if (tuple.containsKey("$0")  ){
-				if ( values.contains(tuple.get("$0"))){
+			} else if (tuple.containsKey("$0")) {
+				if (values.contains(tuple.get("$0"))) {
 					result.add(tuple);
 				}
-			}else {
+			} else {
 				boolean add = false;
 				for (Map<String, Object> tupleB : rightHand) {
 					/*
-					 * both tuples are of the same size and the right hand part contains only the key $$$$
+					 * both tuples are of the same size and the right hand part
+					 * contains only the key $$$$
 					 */
-					if ( tuple.size() == 1 && tupleB.size() == 1 && tupleB.containsKey(QueryMatches.getNonScopedVariable())){
+					if (tuple.size() == 1 && tupleB.size() == 1 && tupleB.containsKey(QueryMatches.getNonScopedVariable())) {
 						add = tuple.values().containsAll(tupleB.values());
 					}
 					/*
@@ -302,9 +302,7 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	public static QueryMatches contains(final ITMQLRuntime runtime,
-			final QueryMatches leftHand, final QueryMatches rightHand)
-			throws TMQLRuntimeException {
+	public static QueryMatches contains(final ITMQLRuntime runtime, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
 		QueryMatches result = new QueryMatches(runtime);
 
 		for (Map<String, Object> tuple : leftHand) {
@@ -335,15 +333,13 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	public static QueryMatches equals(final ITMQLRuntime runtime,
-			final QueryMatches leftHand, final QueryMatches rightHand)
-			throws TMQLRuntimeException {
+	public static QueryMatches equals(final ITMQLRuntime runtime, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
 		QueryMatches result = new QueryMatches(runtime);
 
 		for (Map<String, Object> tuple : leftHand) {
 			for (Map<String, Object> tupleB : rightHand) {
 				if (tuple.entrySet().containsAll(tupleB.entrySet())) {
-					result.add(tuple);	
+					result.add(tuple);
 				}
 				break;
 			}
@@ -365,9 +361,7 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	public static QueryMatches unequals(final ITMQLRuntime runtime,
-			final QueryMatches leftHand, final QueryMatches rightHand)
-			throws TMQLRuntimeException {
+	public static QueryMatches unequals(final ITMQLRuntime runtime, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
 		QueryMatches result = new QueryMatches(runtime);
 
 		for (Map<String, Object> tuple : leftHand) {
@@ -396,9 +390,7 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	public static QueryMatches lowerThan(final ITMQLRuntime runtime,
-			final QueryMatches leftHand, final QueryMatches rightHand)
-			throws TMQLRuntimeException {
+	public static QueryMatches lowerThan(final ITMQLRuntime runtime, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
 		return comparision(runtime, "isLowerThan", leftHand, rightHand);
 	}
 
@@ -415,9 +407,7 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	public static QueryMatches lowerOrEquals(final ITMQLRuntime runtime,
-			final QueryMatches leftHand, final QueryMatches rightHand)
-			throws TMQLRuntimeException {
+	public static QueryMatches lowerOrEquals(final ITMQLRuntime runtime, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
 		return comparision(runtime, "isLowerOrEquals", leftHand, rightHand);
 	}
 
@@ -434,9 +424,7 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	public static QueryMatches greaterThan(final ITMQLRuntime runtime,
-			final QueryMatches leftHand, final QueryMatches rightHand)
-			throws TMQLRuntimeException {
+	public static QueryMatches greaterThan(final ITMQLRuntime runtime, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
 		return comparision(runtime, "isGreaterThan", leftHand, rightHand);
 
 	}
@@ -454,9 +442,7 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	public static QueryMatches greaterOrEquals(final ITMQLRuntime runtime,
-			final QueryMatches leftHand, final QueryMatches rightHand)
-			throws TMQLRuntimeException {
+	public static QueryMatches greaterOrEquals(final ITMQLRuntime runtime, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
 		return comparision(runtime, "isGreaterOrEquals", leftHand, rightHand);
 	}
 
@@ -473,9 +459,7 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	public static QueryMatches matchesRegExp(final ITMQLRuntime runtime,
-			final QueryMatches leftHand, final QueryMatches rightHand)
-			throws TMQLRuntimeException {
+	public static QueryMatches matchesRegExp(final ITMQLRuntime runtime, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
 		return comparision(runtime, "matchesRegExp", leftHand, rightHand);
 	}
 
@@ -494,32 +478,26 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	private static QueryMatches comparision(final ITMQLRuntime runtime,
-			final String method, final QueryMatches leftHand,
-			final QueryMatches rightHand) throws TMQLRuntimeException {
+	private static QueryMatches comparision(final ITMQLRuntime runtime, final String method, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
 		QueryMatches result = new QueryMatches(runtime);
 
-		if (!rightHand.isEmpty()
-				&& rightHand.getOrderedKeys().contains(
-						QueryMatches.getNonScopedVariable())) {
+		if (!rightHand.isEmpty() && rightHand.getOrderedKeys().contains(QueryMatches.getNonScopedVariable())) {
 			Object obj = rightHand.getPossibleValuesForVariable().get(0);
 			for (Map<String, Object> other : leftHand) {
 				Iterator<String> variables = other.keySet().iterator();
 				try {
 					if (other.containsKey(QueryMatches.getNonScopedVariable())) {
-						if (ComparisonUtils.compare(method, other
-								.get(QueryMatches.getNonScopedVariable()), obj)) {
+						if (ComparisonUtils.compare(method, other.get(QueryMatches.getNonScopedVariable()), obj)) {
 							Map<String, Object> tuple = HashUtil.getHashMap();
-															
-							if ( other.size() > 1 ){
+
+							if (other.size() > 1) {
 								String variable = variables.next();
-								while ( variable.equalsIgnoreCase(QueryMatches.getNonScopedVariable())){
+								while (variable.equalsIgnoreCase(QueryMatches.getNonScopedVariable())) {
 									variable = variables.next();
 								}
-								tuple.put(QueryMatches.getNonScopedVariable(), other.get(variable));								
-							}else{
-								tuple.put(QueryMatches.getNonScopedVariable(),
-										Boolean.valueOf(true));		
+								tuple.put(QueryMatches.getNonScopedVariable(), other.get(variable));
+							} else {
+								tuple.put(QueryMatches.getNonScopedVariable(), Boolean.valueOf(true));
 							}
 							result.add(tuple);
 						}
@@ -544,8 +522,7 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	public static QueryMatches sign(final ITMQLRuntime runtime,
-			final QueryMatches leftHand) throws TMQLRuntimeException {
+	public static QueryMatches sign(final ITMQLRuntime runtime, final QueryMatches leftHand) throws TMQLRuntimeException {
 		return mathematicalOperation(runtime, "sign", leftHand);
 	}
 
@@ -562,9 +539,7 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	public static QueryMatches summation(final ITMQLRuntime runtime,
-			final QueryMatches leftHand, final QueryMatches rightHand)
-			throws TMQLRuntimeException {
+	public static QueryMatches summation(final ITMQLRuntime runtime, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
 		return mathematicalOperation(runtime, "summation", leftHand, rightHand);
 	}
 
@@ -581,11 +556,8 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	public static QueryMatches subtraction(final ITMQLRuntime runtime,
-			final QueryMatches leftHand, final QueryMatches rightHand)
-			throws TMQLRuntimeException {
-		return mathematicalOperation(runtime, "subtraction", leftHand,
-				rightHand);
+	public static QueryMatches subtraction(final ITMQLRuntime runtime, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
+		return mathematicalOperation(runtime, "subtraction", leftHand, rightHand);
 	}
 
 	/**
@@ -601,11 +573,8 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	public static QueryMatches multiplication(final ITMQLRuntime runtime,
-			final QueryMatches leftHand, final QueryMatches rightHand)
-			throws TMQLRuntimeException {
-		return mathematicalOperation(runtime, "multiplication", leftHand,
-				rightHand);
+	public static QueryMatches multiplication(final ITMQLRuntime runtime, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
+		return mathematicalOperation(runtime, "multiplication", leftHand, rightHand);
 	}
 
 	/**
@@ -621,9 +590,7 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	public static QueryMatches division(final ITMQLRuntime runtime,
-			final QueryMatches leftHand, final QueryMatches rightHand)
-			throws TMQLRuntimeException {
+	public static QueryMatches division(final ITMQLRuntime runtime, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
 		return mathematicalOperation(runtime, "division", leftHand, rightHand);
 	}
 
@@ -641,9 +608,7 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	public static QueryMatches modulo(final ITMQLRuntime runtime,
-			final QueryMatches leftHand, final QueryMatches rightHand)
-			throws TMQLRuntimeException {
+	public static QueryMatches modulo(final ITMQLRuntime runtime, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
 		return mathematicalOperation(runtime, "modulo", leftHand, rightHand);
 	}
 
@@ -661,9 +626,7 @@ public class QueryMatchUtils {
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
-	private static QueryMatches mathematicalOperation(
-			final ITMQLRuntime runtime, final String method,
-			final QueryMatches... arguments) throws TMQLRuntimeException {
+	private static QueryMatches mathematicalOperation(final ITMQLRuntime runtime, final String method, final QueryMatches... arguments) throws TMQLRuntimeException {
 		QueryMatches result = new QueryMatches(runtime);
 
 		/*
@@ -682,8 +645,7 @@ public class QueryMatchUtils {
 						/*
 						 * calculate result
 						 */
-						Object r = MathematicUtils.calculate(method, arg
-								.get(QueryMatches.getNonScopedVariable()));
+						Object r = MathematicUtils.calculate(method, arg.get(QueryMatches.getNonScopedVariable()));
 						/*
 						 * check if result is available
 						 */
@@ -714,25 +676,17 @@ public class QueryMatchUtils {
 						/*
 						 * check if variables are bound
 						 */
-						if (arg
-								.containsKey(QueryMatches
-										.getNonScopedVariable())
-								&& arg2.containsKey(QueryMatches
-										.getNonScopedVariable())) {
+						if (arg.containsKey(QueryMatches.getNonScopedVariable()) && arg2.containsKey(QueryMatches.getNonScopedVariable())) {
 							/*
 							 * calculate result
 							 */
-							Object r = MathematicUtils.calculate(method, arg
-									.get(QueryMatches.getNonScopedVariable()),
-									arg2.get(QueryMatches
-											.getNonScopedVariable()));
+							Object r = MathematicUtils.calculate(method, arg.get(QueryMatches.getNonScopedVariable()), arg2.get(QueryMatches.getNonScopedVariable()));
 							/*
 							 * check if result is available
 							 */
 							if (r != null) {
 								Map<String, Object> tuple = HashUtil.getHashMap();
-								tuple.put(QueryMatches.getNonScopedVariable(),
-										r);
+								tuple.put(QueryMatches.getNonScopedVariable(), r);
 								result.add(tuple);
 							}
 						}

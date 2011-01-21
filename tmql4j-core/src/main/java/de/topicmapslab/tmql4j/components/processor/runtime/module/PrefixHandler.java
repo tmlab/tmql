@@ -39,40 +39,25 @@ public class PrefixHandler {
 	/**
 	 * store of all known IRI shortcuts of the TMDM
 	 */
-	private static Map<String, String> knownSystemIdentifiers = HashUtil
-			.getHashMap();
+	private static Map<String, String> knownSystemIdentifiers = HashUtil.getHashMap();
 	/**
 	 * insert all known IRI shortcuts of the TMDM
 	 */
 	static {
-		knownSystemIdentifiers.put("tm:subject",
-				TmdmSubjectIdentifier.TM_SUBJECT);
-		knownSystemIdentifiers.put("tm:name",
-				TmdmSubjectIdentifier.TMDM_NAME_TYPE);
-		knownSystemIdentifiers.put("tm:occurrence",
-				TmdmSubjectIdentifier.TMDM_OCCURRENCE_TYPE);
-		knownSystemIdentifiers.put("tm:type",
-				TmdmSubjectIdentifier.TMDM_TOPIC_TYPE);
-		knownSystemIdentifiers.put("tm:instance",
-				TmdmSubjectIdentifier.TMDM_INSTANCE_ROLE_TYPE);
-		knownSystemIdentifiers.put("tm:subtype",
-				TmdmSubjectIdentifier.TMDM_SUBTYPE_ROLE_TYPE);
-		knownSystemIdentifiers.put("tm:subclass",
-				TmdmSubjectIdentifier.TMDM_SUBTYPE_ROLE_TYPE);
-		knownSystemIdentifiers.put("tm:superclass",
-				TmdmSubjectIdentifier.TMDM_SUPERTYPE_ROLE_TYPE);
-		knownSystemIdentifiers.put("tm:supertype",
-				TmdmSubjectIdentifier.TMDM_SUPERTYPE_ROLE_TYPE);
-		knownSystemIdentifiers.put("tm:type-instance",
-				TmdmSubjectIdentifier.TMDM_TYPE_INSTANCE_ASSOCIATION_TYPE);
-		knownSystemIdentifiers.put("tm:supertype-subtype",
-				TmdmSubjectIdentifier.TMDM_SUPERTYPE_SUBTYPE_ASSOCIATION);
-		knownSystemIdentifiers.put("tm:subclass-of",
-				TmdmSubjectIdentifier.TMDM_SUPERTYPE_SUBTYPE_ASSOCIATION);
-		knownSystemIdentifiers.put("tm:association",
-				TmdmSubjectIdentifier.TMDM_ASSOCIATION_TYPE);
-		knownSystemIdentifiers.put("tm:association-role",
-				TmdmSubjectIdentifier.TMDM_ASSOCIATION_ROLE_TYPE);
+		knownSystemIdentifiers.put("tm:subject", TmdmSubjectIdentifier.TM_SUBJECT);
+		knownSystemIdentifiers.put("tm:name", TmdmSubjectIdentifier.TMDM_NAME_TYPE);
+		knownSystemIdentifiers.put("tm:occurrence", TmdmSubjectIdentifier.TMDM_OCCURRENCE_TYPE);
+		knownSystemIdentifiers.put("tm:type", TmdmSubjectIdentifier.TMDM_TOPIC_TYPE);
+		knownSystemIdentifiers.put("tm:instance", TmdmSubjectIdentifier.TMDM_INSTANCE_ROLE_TYPE);
+		knownSystemIdentifiers.put("tm:subtype", TmdmSubjectIdentifier.TMDM_SUBTYPE_ROLE_TYPE);
+		knownSystemIdentifiers.put("tm:subclass", TmdmSubjectIdentifier.TMDM_SUBTYPE_ROLE_TYPE);
+		knownSystemIdentifiers.put("tm:superclass", TmdmSubjectIdentifier.TMDM_SUPERTYPE_ROLE_TYPE);
+		knownSystemIdentifiers.put("tm:supertype", TmdmSubjectIdentifier.TMDM_SUPERTYPE_ROLE_TYPE);
+		knownSystemIdentifiers.put("tm:type-instance", TmdmSubjectIdentifier.TMDM_TYPE_INSTANCE_ASSOCIATION_TYPE);
+		knownSystemIdentifiers.put("tm:supertype-subtype", TmdmSubjectIdentifier.TMDM_SUPERTYPE_SUBTYPE_ASSOCIATION);
+		knownSystemIdentifiers.put("tm:subclass-of", TmdmSubjectIdentifier.TMDM_SUPERTYPE_SUBTYPE_ASSOCIATION);
+		knownSystemIdentifiers.put("tm:association", TmdmSubjectIdentifier.TMDM_ASSOCIATION_TYPE);
+		knownSystemIdentifiers.put("tm:association-role", TmdmSubjectIdentifier.TMDM_ASSOCIATION_ROLE_TYPE);
 	}
 
 	public PrefixHandler() throws TMQLInitializationException {
@@ -81,14 +66,12 @@ public class PrefixHandler {
 		 */
 		try {
 			Properties prefixProperties = new Properties();
-			prefixProperties.load(getClass().getResourceAsStream(
-					"prefix.properties"));
+			prefixProperties.load(getClass().getResourceAsStream("prefix.properties"));
 			/*
 			 * add all prefixes to map
 			 */
 			for (Map.Entry<Object, Object> prefix : prefixProperties.entrySet()) {
-				prefixes.put(prefix.getKey().toString(), prefix.getValue()
-						.toString());
+				prefixes.put(prefix.getKey().toString(), prefix.getValue().toString());
 			}
 		} catch (Exception ex) {
 			// IGNORE
@@ -196,14 +179,11 @@ public class PrefixHandler {
 	 * @throws TMQLRuntimeException
 	 *             thrown if the prefix is unknown
 	 */
-	private String toAbsoluteIRI(final String reference)
-			throws TMQLRuntimeException {
+	private String toAbsoluteIRI(final String reference) throws TMQLRuntimeException {
 		int index = reference.indexOf(":");
 		if (index != -1) {
 			String id = reference.substring(0, index);
-			if (id.equalsIgnoreCase("http") || id.equalsIgnoreCase("file")
-					|| id.equalsIgnoreCase("ftp")
-					|| id.equalsIgnoreCase("https")) {
+			if (id.equalsIgnoreCase("http") || id.equalsIgnoreCase("file") || id.equalsIgnoreCase("ftp") || id.equalsIgnoreCase("https")) {
 				return reference;
 			}
 			if (prefixes.containsKey(id)) {
@@ -215,10 +195,7 @@ public class PrefixHandler {
 			}
 			throw new TMQLRuntimeException("Unknown prefix '" + id + "'!");
 		} else if (reference.indexOf("://") == -1) {
-			return defaultPrefix
-					+ (defaultPrefix.endsWith("/")
-							|| defaultPrefix.endsWith("#") ? "" : "/")
-					+ reference;
+			return defaultPrefix + (defaultPrefix.endsWith("/") || defaultPrefix.endsWith("#") ? "" : "/") + reference;
 		}
 		return reference;
 	}
