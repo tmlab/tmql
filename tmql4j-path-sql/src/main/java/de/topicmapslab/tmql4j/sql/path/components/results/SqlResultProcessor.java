@@ -44,16 +44,14 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 	 * 
 	 */
 	private static final String BIGINT = "bigint";
-	private static final String QUERY_RESOLVE_IDS = "WITH ids AS ( SELECT unnest(?) AS id) SELECT id, p, pp, type FROM ("
-			// +
-			// "SELECT id, reference AS p, NULL AS pp, 'l' AS type FROM locators WHERE id IN ( SELECT id FROM ids ) "
-			// + "UNION "
-			+ "SELECT id, id_parent AS p, -1 AS pp, 't' AS type FROM topics WHERE id IN ( SELECT id FROM ids ) " + "UNION "
-			+ "SELECT id, id_parent AS p, -1 AS pp, 'a' AS type FROM associations WHERE id IN ( SELECT id FROM ids ) " + "UNION "
-			+ "SELECT id, id_parent AS p, -1 AS pp, 'n' AS type FROM names WHERE id IN ( SELECT id FROM ids ) " + "UNION "
-			+ "SELECT id, id_parent AS p, -1 AS pp, 'o' AS type FROM occurrences WHERE id IN ( SELECT id FROM ids ) " + "UNION "
-			+ "SELECT id, id_parent AS p, -1 AS pp, 'r' AS type FROM roles WHERE id IN ( SELECT id FROM ids ) " + "UNION "
-			+ "SELECT v.id, v.id_parent AS p, n.id_parent AS pp, 'v' AS type FROM names AS n, variants AS v WHERE n.id = v.id_parent AND v.id IN ( SELECT id FROM ids )) AS content";
+	private static final String QUERY_RESOLVE_IDS = "WITH ids AS ( SELECT unnest(?) AS id) SELECT id, p, pp, type, reference FROM ("
+			+ "SELECT id, -1 AS p, NULL AS pp, 'l' AS type, reference FROM locators WHERE id IN ( SELECT id FROM ids ) " + "UNION "
+			+ "SELECT id, id_parent AS p, -1 AS pp, 't' AS type, NULL AS reference FROM topics WHERE id IN ( SELECT id FROM ids ) " + "UNION "
+			+ "SELECT id, id_parent AS p, -1 AS pp, 'a' AS type, NULL AS reference  FROM associations WHERE id IN ( SELECT id FROM ids ) " + "UNION "
+			+ "SELECT id, id_parent AS p, -1 AS pp, 'n' AS type, NULL AS reference FROM names WHERE id IN ( SELECT id FROM ids ) " + "UNION "
+			+ "SELECT id, id_parent AS p, -1 AS pp, 'o' AS type, NULL AS reference FROM occurrences WHERE id IN ( SELECT id FROM ids ) " + "UNION "
+			+ "SELECT id, id_parent AS p, -1 AS pp, 'r' AS type, NULL AS reference FROM roles WHERE id IN ( SELECT id FROM ids ) " + "UNION "
+			+ "SELECT v.id, v.id_parent AS p, n.id_parent AS pp, 'v' AS type, NULL AS reference FROM names AS n, variants AS v WHERE n.id = v.id_parent AND v.id IN ( SELECT id FROM ids )) AS content";
 
 	/**
 	 * constructor
@@ -133,10 +131,11 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 				ResultSet r = stmt.executeQuery();
 				while (r.next()) {
 					long id = r.getLong(1);
-					String idP = r.getString(2);
+					long idP = r.getLong(2);
 					long idPP = r.getLong(3);
 					String type = r.getString(4);
-					setResult((ITopicMap) query.getTopicMap(), resultSet, indexes.get(Long.toString(id)), id, idP, idPP, type);
+					String reference = r.getString(5);
+					setResult((ITopicMap) query.getTopicMap(), resultSet, indexes.get(Long.toString(id)), id, idP, idPP, type, reference);
 				}
 			}
 			/*
@@ -161,13 +160,15 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 	 * @param id
 	 *            the construct id
 	 * @param idP
-	 *            the id of the parent or the reference of the locator
+	 *            the id of the parent
 	 * @param idPP
 	 *            the id of the parent of the parent
 	 * @param type
 	 *            the type of construct
+	 * @param reference
+	 *            the reference
 	 */
-	private void setResult(ITopicMap topicMap, SqlResultSet resultSet, List<Index> indexes, long id, String idP, long idPP, String type) {
+	private void setResult(ITopicMap topicMap, SqlResultSet resultSet, List<Index> indexes, long id, long idP, long idPP, String type, String reference) {
 		final IConstructFactory factory = topicMap.getStore().getConstructFactory();
 		/*
 		 * create real object instead of IDs
@@ -177,7 +178,7 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 		 * is locator
 		 */
 		if (type.equalsIgnoreCase("l")) {
-			object = new LocatorImpl(idP, Long.toString(id));
+			object = new LocatorImpl(reference, Long.toString(id));
 		}
 		/*
 		 * is topic
@@ -195,21 +196,21 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 		 * is role
 		 */
 		else if (type.equalsIgnoreCase("r")) {
-			IAssociation a = factory.newAssociation(new JdbcIdentity(Long.parseLong(idP)), topicMap);
+			IAssociation a = factory.newAssociation(new JdbcIdentity(idP), topicMap);
 			object = factory.newAssociationRole(new JdbcIdentity(id), a);
 		}
 		/*
 		 * is occurrence
 		 */
 		else if (type.equalsIgnoreCase("o")) {
-			ITopic t = factory.newTopic(new JdbcIdentity(Long.parseLong(idP)), topicMap);
+			ITopic t = factory.newTopic(new JdbcIdentity(idP), topicMap);
 			object = factory.newOccurrence(new JdbcIdentity(id), t);
 		}
 		/*
 		 * is name
 		 */
 		else if (type.equalsIgnoreCase("n")) {
-			ITopic t = factory.newTopic(new JdbcIdentity(Long.parseLong(idP)), topicMap);
+			ITopic t = factory.newTopic(new JdbcIdentity(idP), topicMap);
 			object = factory.newName(new JdbcIdentity(id), t);
 		}
 		/*
@@ -217,7 +218,7 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 		 */
 		else if (type.equalsIgnoreCase("v")) {
 			ITopic t = factory.newTopic(new JdbcIdentity(idPP), topicMap);
-			IName n = factory.newName(new JdbcIdentity(Long.parseLong(idP)), t);
+			IName n = factory.newName(new JdbcIdentity(idP), t);
 			object = factory.newVariant(new JdbcIdentity(id), n);
 		} else {
 			throw new TMQLRuntimeException("Invalid type '" + type + "' of results!");

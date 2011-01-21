@@ -28,7 +28,7 @@ public abstract class IdentityAxisTranslator extends AxisTranslatorImpl {
 
 	static final String LOCATORS = "locators";
 
-	static final String FORWARD_SELECTION = "id";
+	static final String LOCATOR_ID = "id_locator";
 
 	static final String CONDITION = "{0}.id = {1}.id_locator";
 	static final String CONDITION_WITHOUT_ALIAS = "{0} = {1}.{2}";
@@ -54,7 +54,7 @@ public abstract class IdentityAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(FORWARD_SELECTION, fromPartRel.getAlias()));
+		result.addSelection(new Selection(LOCATOR_ID, fromPartRel.getAlias()));
 		result.setCurrentTable(SqlTables.LOCATOR);
 		return result;
 	}

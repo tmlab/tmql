@@ -86,7 +86,7 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 			}
 			case Anchor.TYPE_LITERAL: {
 				ISqlDefinition def = new SqlDefinition();
-				def.addSelection(new Selection(expression.getTokens().get(0), null));
+				def.addSelection(new Selection("'" + LiteralUtils.asString(expression.getTokens().get(0)) + "'", null));
 				return def;
 			}
 		}
