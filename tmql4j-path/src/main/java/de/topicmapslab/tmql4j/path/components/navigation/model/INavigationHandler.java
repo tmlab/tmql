@@ -12,7 +12,7 @@ import java.util.Collection;
 
 import org.tmapi.core.Construct;
 
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
+import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
 import de.topicmapslab.tmql4j.path.exception.UnsupportedNavigationTypeException;
 
@@ -60,12 +60,25 @@ public interface INavigationHandler {
 	 * throws an exception if the type is unknown or unregistered. It can never
 	 * return <code>null</code>.
 	 * 
-	 * @param type
-	 *            the given type of navigation axis
+	 * @param token
+	 *            the token
 	 * @return the instance of the navigation axis
 	 * @throws UnsupportedNavigationTypeException
 	 *             unknown or unregistered type.
 	 */
-	INavigationAxis lookup(final NavigationAxis type) throws UnsupportedNavigationTypeException;
+	INavigationAxis lookup(final Class<? extends IToken> token) throws UnsupportedNavigationTypeException;
+
+	/**
+	 * Retrieve the navigation axis instance for the given type. Method can
+	 * throws an exception if the type is unknown or unregistered. It can never
+	 * return <code>null</code>.
+	 * 
+	 * @param token
+	 *            the token
+	 * @return the instance of the navigation axis
+	 * @throws UnsupportedNavigationTypeException
+	 *             unknown or unregistered type.
+	 */
+	INavigationAxis lookup(IToken token) throws UnsupportedNavigationTypeException;
 
 }

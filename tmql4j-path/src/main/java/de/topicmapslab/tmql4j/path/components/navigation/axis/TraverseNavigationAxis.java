@@ -21,9 +21,9 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.index.TypeInstanceIndex;
 
 import de.topicmapslab.tmql4j.path.components.navigation.BaseNavigationAxisImpl;
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
 import de.topicmapslab.tmql4j.path.exception.InvalidValueException;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTraverse;
 
 /**
  * Class definition representing the traverse axis.
@@ -54,30 +54,27 @@ public class TraverseNavigationAxis extends BaseNavigationAxisImpl {
 	 * base constructor to create an new instance
 	 */
 	public TraverseNavigationAxis() {
-		super(NavigationAxis.traverse);
+		super(AxisTraverse.class);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Construct> getBackwardNavigationResultClass(
-			Object construct) throws NavigationException {
+	public Class<? extends Construct> getBackwardNavigationResultClass(Object construct) throws NavigationException {
 		return Association.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Construct> getForwardNavigationResultClass(
-			Object construct) throws NavigationException {
+	public Class<? extends Construct> getForwardNavigationResultClass(Object construct) throws NavigationException {
 		return Topic.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateBackward(Object construct, Object optional)
-			throws NavigationException {
+	public Collection<?> navigateBackward(Object construct, Object optional) throws NavigationException {
 
 		Set<Association> associations = new HashSet<Association>();
 		/*
@@ -91,8 +88,7 @@ public class TraverseNavigationAxis extends BaseNavigationAxisImpl {
 		 */
 		else if (construct instanceof Topic) {
 			try {
-				TypeInstanceIndex index = getTopicMap().getIndex(
-						TypeInstanceIndex.class);
+				TypeInstanceIndex index = getTopicMap().getIndex(TypeInstanceIndex.class);
 				if (!index.isOpen()) {
 					index.open();
 				}
@@ -137,8 +133,7 @@ public class TraverseNavigationAxis extends BaseNavigationAxisImpl {
 		}
 
 		Set<Association> temp_ = new HashSet<Association>();
-		for (Association association : ((Construct) construct).getTopicMap()
-				.getAssociations()) {
+		for (Association association : ((Construct) construct).getTopicMap().getAssociations()) {
 			if (!associations.contains(association)) {
 				temp_.add(association);
 			}
@@ -176,8 +171,7 @@ public class TraverseNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateForward(Object construct, Object optional)
-			throws NavigationException {
+	public Collection<?> navigateForward(Object construct, Object optional) throws NavigationException {
 		/*
 		 * check if construct is a topic
 		 */
@@ -201,8 +195,7 @@ public class TraverseNavigationAxis extends BaseNavigationAxisImpl {
 				 */
 				else if (optional instanceof Topic) {
 					Topic type = (Topic) optional;
-					TypeInstanceIndex index = type.getTopicMap().getIndex(
-							TypeInstanceIndex.class);
+					TypeInstanceIndex index = type.getTopicMap().getIndex(TypeInstanceIndex.class);
 					if (!index.isOpen()) {
 						index.open();
 					}
@@ -247,10 +240,8 @@ public class TraverseNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean supportsBackwardNavigation(Object construct,
-			Construct optional) throws NavigationException {
-		if (construct instanceof Association && optional != null
-				&& optional instanceof Topic) {
+	public boolean supportsBackwardNavigation(Object construct, Construct optional) throws NavigationException {
+		if (construct instanceof Association && optional != null && optional instanceof Topic) {
 			return true;
 		}
 		return false;
@@ -259,8 +250,7 @@ public class TraverseNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean supportsForwardNavigation(Object construct, Object optional)
-			throws NavigationException {
+	public boolean supportsForwardNavigation(Object construct, Object optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			return true;
 		}

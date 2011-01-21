@@ -22,10 +22,10 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationHandler;
+import de.topicmapslab.tmql4j.path.components.navigation.NavigationRegistry;
 import de.topicmapslab.tmql4j.path.components.navigation.model.INavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.model.ITypeHierarchyNavigationAxis;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.MoveForward;
 import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisInstances;
 import de.topicmapslab.tmql4j.path.grammar.productions.Step;
@@ -97,7 +97,7 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 				/*
 				 * set types axis
 				 */
-				axis = NavigationHandler.buildHandler().lookup(NavigationAxis.types);
+				axis = NavigationRegistry.buildHandler().lookup(AxisTypes.class);
 				/*
 				 * set direction
 				 */
@@ -131,7 +131,7 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 				/*
 				 * set axis
 				 */
-				axis = NavigationHandler.buildHandler().lookup(NavigationAxis.valueOf(getTokens().get(1)));
+				axis = NavigationRegistry.buildHandler().lookup(getTmqlTokens().get(1));
 				/*
 				 * set optional if exists
 				 */

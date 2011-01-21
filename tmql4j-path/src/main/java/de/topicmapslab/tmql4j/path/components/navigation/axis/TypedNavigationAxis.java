@@ -16,8 +16,8 @@ import org.tmapi.core.Typed;
 import org.tmapi.index.TypeInstanceIndex;
 
 import de.topicmapslab.tmql4j.path.components.navigation.BaseNavigationAxisImpl;
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTyped;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -40,42 +40,37 @@ public class TypedNavigationAxis extends BaseNavigationAxisImpl {
 	 * base constructor to create an new instance
 	 */
 	public TypedNavigationAxis() {
-		super(NavigationAxis.typed);
+		super(AxisTyped.class);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Construct> getBackwardNavigationResultClass(
-			Object construct) throws NavigationException {
+	public Class<? extends Construct> getBackwardNavigationResultClass(Object construct) throws NavigationException {
 		return Topic.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Construct> getForwardNavigationResultClass(
-			Object construct) throws NavigationException {
+	public Class<? extends Construct> getForwardNavigationResultClass(Object construct) throws NavigationException {
 		return Typed.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateBackward(Object construct, Object optional)
-			throws NavigationException {
+	public Collection<?> navigateBackward(Object construct, Object optional) throws NavigationException {
 		return new TypesNavigationAxis().navigateForward(construct, optional);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateForward(Object construct, Object optional)
-			throws NavigationException {
+	public Collection<?> navigateForward(Object construct, Object optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			Topic topic = (Topic) construct;
-			TypeInstanceIndex index = getTopicMap().getIndex(
-					TypeInstanceIndex.class);
+			TypeInstanceIndex index = getTopicMap().getIndex(TypeInstanceIndex.class);
 			if (!index.isOpen()) {
 				index.open();
 			}
@@ -89,16 +84,13 @@ public class TypedNavigationAxis extends BaseNavigationAxisImpl {
 			list.addAll(index.getOccurrences(topic));
 			return list;
 		}
-		throw new NavigationException("Anchor type '"
-				+ construct.getClass().getSimpleName()
-				+ "' not supported by the typed axis.");
+		throw new NavigationException("Anchor type '" + construct.getClass().getSimpleName() + "' not supported by the typed axis.");
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean supportsBackwardNavigation(Object construct,
-			Construct optional) throws NavigationException {
+	public boolean supportsBackwardNavigation(Object construct, Construct optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			return true;
 		}
@@ -108,8 +100,7 @@ public class TypedNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean supportsForwardNavigation(Object construct, Object optional)
-			throws NavigationException {
+	public boolean supportsForwardNavigation(Object construct, Object optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			return true;
 		}

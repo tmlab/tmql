@@ -17,9 +17,9 @@ import org.tmapi.core.Occurrence;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.path.components.navigation.BaseNavigationAxisImpl;
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
 import de.topicmapslab.tmql4j.path.exception.InvalidValueException;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisCharacteristics;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 
 /**
@@ -46,7 +46,7 @@ public class CharacteristicsNavigationAxis extends BaseNavigationAxisImpl {
 	 * base constructor to create an new instance
 	 */
 	public CharacteristicsNavigationAxis() {
-		super(NavigationAxis.characteristics);
+		super(AxisCharacteristics.class);
 	}
 
 	/**

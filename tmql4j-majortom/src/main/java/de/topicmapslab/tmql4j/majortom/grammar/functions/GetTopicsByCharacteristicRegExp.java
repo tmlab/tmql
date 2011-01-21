@@ -52,19 +52,26 @@ public class GetTopicsByCharacteristicRegExp extends FunctionImpl {
 		 * iterate over parameters
 		 */
 		for (Map<String, Object> tuple : parameters) {
-			Object o1 = tuple.get("$0");
-			if (!(o1 instanceof Topic)) {
-				throw new TMQLRuntimeException("First argument should be a topic.");
-			}
-			Object o2 = tuple.get("$1");
+			Object o2 = tuple.get("$0");
 			/*
 			 * get parent of characteristics
 			 */
 			for (ICharacteristics c : index.getCharacteristicsMatches(o2.toString())) {
-				topics.add((Topic) c.getParent());
+				if (getFilterType().isAssignableFrom(c.getClass())) {
+					topics.add((Topic) c.getParent());
+				}
 			}
 		}
 		return QueryMatches.asQueryMatchNS(runtime, topics);
+	}
+
+	/**
+	 * Returns the class the characteristics will be filtered by
+	 * 
+	 * @return the class
+	 */
+	public Class<?> getFilterType() {
+		return ICharacteristics.class;
 	}
 
 	/**
@@ -78,7 +85,7 @@ public class GetTopicsByCharacteristicRegExp extends FunctionImpl {
 	 * {@inheritDoc}
 	 */
 	public boolean isExpectedNumberOfParameters(long numberOfParameters) {
-		return numberOfParameters == 2;
+		return numberOfParameters == 1;
 	}
 
 }

@@ -22,10 +22,10 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationHandler;
+import de.topicmapslab.tmql4j.path.components.navigation.NavigationRegistry;
 import de.topicmapslab.tmql4j.path.components.navigation.model.INavigationAxis;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisInstances;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Variable;
 import de.topicmapslab.tmql4j.path.grammar.productions.ISAExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.SimpleContent;
@@ -101,7 +101,7 @@ public class ISAExpressionInterpreter extends ExpressionInterpreterImpl<ISAExpre
 		 * simple-content-1 is variable
 		 */
 		try {
-			INavigationAxis axis = NavigationHandler.buildHandler().lookup(NavigationAxis.instances);
+			INavigationAxis axis = NavigationRegistry.buildHandler().lookup(AxisInstances.class);
 			axis.setTopicMap(topicMap);
 			/*
 			 * create query-matches containing the results

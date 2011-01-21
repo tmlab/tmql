@@ -84,8 +84,8 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 			case UpdateClause.TOPIC_ADD: {
 				return interpretTopicDefinition(runtime, context, optionalArguments);
 			}
-			case UpdateClause.ASSOCIATION_ADD: {				
-				return interpretAssocationDefinition(runtime, context, optionalArguments);				
+			case UpdateClause.ASSOCIATION_ADD: {
+				return interpretAssocationDefinition(runtime, context, optionalArguments);
 			}
 			default: {
 				return interpretContentModification(runtime, context, optionalArguments);
@@ -275,18 +275,35 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 			 * iterate over all values to set or add
 			 */
 			for (Map<String, Object> vTuple : values) {
+				Object value = vTuple.get(QueryMatches.getNonScopedVariable());
 				/*
 				 * missing value
 				 */
-				if (!vTuple.containsKey(QueryMatches.getNonScopedVariable())) {
+				if (value == null) {
 					continue;
 				}
 				Locator optionalDatatype = vTuple.containsKey(DATATYPE) ? (Locator) vTuple.get(DATATYPE) : null;
 				/*
+				 * check if string contains datatype
+				 */
+				if (optionalDatatype == null && value.toString().contains("^^")) {
+					/*
+					 * split string into value and datatype
+					 */
+					int i = value.toString().indexOf("^^");
+					String ref = value.toString().substring(i + 2);
+					ref = XmlSchemeDatatypes.toExternalForm(ref);
+					value = value.toString().substring(0, i);
+					try {
+						optionalDatatype = context.getQuery().getTopicMap().createLocator(ref);
+					} catch (Exception e) {
+						throw new TMQLRuntimeException("Cannot generate the datatype reference for " + ref + ".");
+					}
+				}
+				/*
 				 * perform update
 				 */
-				count += new UpdateHandler(runtime, context).update(node, vTuple.get(QueryMatches.getNonScopedVariable()), anchor, optionalType, getGrammarTypeOfExpression() == UpdateClause.TYPE_SET,
-						optionalDatatype);
+				count += new UpdateHandler(runtime, context).update(node, value, anchor, optionalType, getGrammarTypeOfExpression() == UpdateClause.TYPE_SET, optionalDatatype);
 			}
 		}
 		return QueryMatches.asQueryMatchNS(runtime, count);

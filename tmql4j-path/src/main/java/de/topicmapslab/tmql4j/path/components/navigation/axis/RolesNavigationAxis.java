@@ -21,9 +21,9 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.index.TypeInstanceIndex;
 
 import de.topicmapslab.tmql4j.path.components.navigation.BaseNavigationAxisImpl;
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
 import de.topicmapslab.tmql4j.path.exception.InvalidValueException;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisRoles;
 
 /**
  * Class definition representing the roles axis.
@@ -49,30 +49,27 @@ public class RolesNavigationAxis extends BaseNavigationAxisImpl {
 	 * base constructor to create an new instance
 	 */
 	public RolesNavigationAxis() {
-		super(NavigationAxis.roles);
+		super(AxisRoles.class);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Construct> getBackwardNavigationResultClass(
-			Object construct) throws NavigationException {
+	public Class<? extends Construct> getBackwardNavigationResultClass(Object construct) throws NavigationException {
 		return Association.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Construct> getForwardNavigationResultClass(
-			Object construct) throws NavigationException {
+	public Class<? extends Construct> getForwardNavigationResultClass(Object construct) throws NavigationException {
 		return Role.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateBackward(Object construct, Object optional)
-			throws NavigationException {
+	public Collection<?> navigateBackward(Object construct, Object optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			Topic topic = (Topic) construct;
 			TopicMap map = topic.getTopicMap();
@@ -113,8 +110,7 @@ public class RolesNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateForward(Object construct, Object optional)
-			throws NavigationException {
+	public Collection<?> navigateForward(Object construct, Object optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			Topic topic = (Topic) construct;
 			TopicMap map = topic.getTopicMap();
@@ -154,8 +150,7 @@ public class RolesNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean supportsBackwardNavigation(Object construct,
-			Construct optional) throws NavigationException {
+	public boolean supportsBackwardNavigation(Object construct, Construct optional) throws NavigationException {
 		if (construct instanceof Association) {
 			return true;
 		}
@@ -165,8 +160,7 @@ public class RolesNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean supportsForwardNavigation(Object construct, Object optional)
-			throws NavigationException {
+	public boolean supportsForwardNavigation(Object construct, Object optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			return true;
 		}

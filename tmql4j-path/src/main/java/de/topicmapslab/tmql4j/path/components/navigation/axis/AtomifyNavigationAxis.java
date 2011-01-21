@@ -19,9 +19,9 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.index.LiteralIndex;
 
 import de.topicmapslab.tmql4j.path.components.navigation.BaseNavigationAxisImpl;
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
 import de.topicmapslab.tmql4j.path.exception.InvalidValueException;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisAtomify;
 
 /**
  * Class definition representing the atomify axis.
@@ -48,7 +48,7 @@ public class AtomifyNavigationAxis extends BaseNavigationAxisImpl {
 	 * base constructor to create an new instance
 	 */
 	public AtomifyNavigationAxis() {
-		super(NavigationAxis.atomify);
+		super(AxisAtomify.class);
 	}
 
 	/**

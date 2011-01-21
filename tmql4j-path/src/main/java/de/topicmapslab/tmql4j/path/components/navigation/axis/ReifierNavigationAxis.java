@@ -16,9 +16,9 @@ import org.tmapi.core.Reifiable;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.path.components.navigation.BaseNavigationAxisImpl;
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
 import de.topicmapslab.tmql4j.path.exception.InvalidValueException;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisReifier;
 
 /**
  * Class definition representing the reifier axis.
@@ -44,30 +44,27 @@ public class ReifierNavigationAxis extends BaseNavigationAxisImpl {
 	 * base constructor to create an new instance
 	 */
 	public ReifierNavigationAxis() {
-		super(NavigationAxis.reifier);
+		super(AxisReifier.class);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Construct> getBackwardNavigationResultClass(
-			Object construct) throws NavigationException {
+	public Class<? extends Construct> getBackwardNavigationResultClass(Object construct) throws NavigationException {
 		return Topic.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Construct> getForwardNavigationResultClass(
-			Object construct) throws NavigationException {
+	public Class<? extends Construct> getForwardNavigationResultClass(Object construct) throws NavigationException {
 		return Reifiable.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateBackward(Object construct, Object optional)
-			throws NavigationException {
+	public Collection<?> navigateBackward(Object construct, Object optional) throws NavigationException {
 		if (construct instanceof Reifiable) {
 			/*
 			 * create new instance of tuple-sequence
@@ -88,8 +85,7 @@ public class ReifierNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateForward(Object construct, Object optional)
-			throws NavigationException {
+	public Collection<?> navigateForward(Object construct, Object optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			Topic reifier = (Topic) construct;
 			/*
@@ -114,8 +110,7 @@ public class ReifierNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean supportsBackwardNavigation(Object construct,
-			Construct optional) throws NavigationException {
+	public boolean supportsBackwardNavigation(Object construct, Construct optional) throws NavigationException {
 		if (construct instanceof Reifiable) {
 			return true;
 		}
@@ -125,8 +120,7 @@ public class ReifierNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean supportsForwardNavigation(Object construct, Object optional)
-			throws NavigationException {
+	public boolean supportsForwardNavigation(Object construct, Object optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			return true;
 		}

@@ -12,10 +12,13 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 
 import org.junit.Test;
+import org.tmapi.core.Occurrence;
 import org.tmapi.core.Topic;
 
+import de.topicmapslab.majortom.model.core.IOccurrence;
 import de.topicmapslab.tmql4j.components.processor.prepared.IPreparedStatement;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.util.XmlSchemeDatatypes;
 
 /**
  * @author Sven Krosse
@@ -230,5 +233,27 @@ public class TestPreparedStatements extends Tmql4JTestCase {
 		assertEquals("Name", topic.getOccurrences().iterator().next().getValue());
 		assertEquals(topicMap.getTopicBySubjectIdentifier(createLocator("myType3")), topic.getOccurrences().iterator().next().getType());
 
+	}
+	
+	@Test()
+	public void testAddOccurrence() throws Exception {
+
+		Topic t = createTopicBySI("myTopic");
+		Topic ty = createTopicBySI("myType");
+
+		assertEquals(0, t.getOccurrences().size());
+		
+		final String value = "2011-01-31^^xsd:dateTime";
+
+		IPreparedStatement stmt = runtime.preparedStatement(" UPDATE occurrences myType ADD ? WHERE myTopic");
+		stmt.setTopicMap(topicMap);
+		stmt.run(value);
+
+		assertEquals(1, t.getOccurrences().size());
+		Occurrence o = t.getOccurrences().iterator().next();
+		assertEquals("2011-01-31", o.getValue());
+
+		assertEquals(ty, o.getType());
+		assertEquals(XmlSchemeDatatypes.XSD_DATETIME, o.getDatatype().getReference());
 	}
 }

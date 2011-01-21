@@ -104,7 +104,6 @@ public class TestUse extends Tmql4JTestCase {
 			final String ii = t.getItemIdentifiers().iterator().next().getReference();
 			results.add(MessageFormat.format(FORMAT, ii));
 		}
-		System.out.println(results);
 		final String query 	= "// tm:subject USE CTM";
 		IResultSet<?> rs = execute(query);
 		assertEquals(1, rs.size());

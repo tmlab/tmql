@@ -37,10 +37,10 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationHandler;
+import de.topicmapslab.tmql4j.path.components.navigation.NavigationRegistry;
 import de.topicmapslab.tmql4j.path.components.navigation.model.INavigationAxis;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTypes;
 import de.topicmapslab.tmql4j.path.grammar.productions.BooleanExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix;
 import de.topicmapslab.tmql4j.util.HashUtil;
@@ -95,40 +95,40 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		switch (getGrammarTypeOfExpression()) {
-		/*
-		 * is boolean-expression
-		 */
-		case TYPE_BOOLEAN_EXPRESSION: {
-			return interpretBooleanExpression(runtime, context, optionalArguments);
-		}
 			/*
-			 * is @ anchor or [ @ anchor]
+			 * is boolean-expression
 			 */
-		case TYPE_SHORTCUT_SCOPE_FILTER:
-		case TYPE_SCOPE_FILTER: {
-			return interpreScopeFilter(runtime, context, optionalArguments);
-		}
-			/*
-			 * is // anchor or [ ^ anchor]
-			 */
-		case TYPE_SHORTCUT_TYPE_FILTER:
-		case TYPE_TYPE_FILTER: {
-			return interpretTypesAnchor(runtime, context, optionalArguments);
-		}
-			/*
-			 * is [integer] or [$# == #integer]
-			 */
-		case TYPE_SHORTCUT_INDEX_FILTER:
-		case TYPE_INDEX_FILTER: {
-			return interpretIntegerIndex(runtime, context, optionalArguments);
-		}
-			/*
-			 * is [integer .. integer] or [#integer <= $# & $# < #integer]
-			 */
-		case TYPE_BOUNDS_FILTER:
-		case TYPE_SHORTCUT_BOUNDS_FILTER: {
-			return interpretIntegerBounds(runtime, context, optionalArguments);
-		}
+			case TYPE_BOOLEAN_EXPRESSION: {
+				return interpretBooleanExpression(runtime, context, optionalArguments);
+			}
+				/*
+				 * is @ anchor or [ @ anchor]
+				 */
+			case TYPE_SHORTCUT_SCOPE_FILTER:
+			case TYPE_SCOPE_FILTER: {
+				return interpreScopeFilter(runtime, context, optionalArguments);
+			}
+				/*
+				 * is // anchor or [ ^ anchor]
+				 */
+			case TYPE_SHORTCUT_TYPE_FILTER:
+			case TYPE_TYPE_FILTER: {
+				return interpretTypesAnchor(runtime, context, optionalArguments);
+			}
+				/*
+				 * is [integer] or [$# == #integer]
+				 */
+			case TYPE_SHORTCUT_INDEX_FILTER:
+			case TYPE_INDEX_FILTER: {
+				return interpretIntegerIndex(runtime, context, optionalArguments);
+			}
+				/*
+				 * is [integer .. integer] or [#integer <= $# & $# < #integer]
+				 */
+			case TYPE_BOUNDS_FILTER:
+			case TYPE_SHORTCUT_BOUNDS_FILTER: {
+				return interpretIntegerBounds(runtime, context, optionalArguments);
+			}
 		}
 		return QueryMatches.emptyMatches();
 	}
@@ -179,7 +179,7 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 				Object object = storedMatches.getMatches().get(index).get(variable);
 				List<Object> results = HashUtil.getList();
 				Context newContext = new Context(context);
-				newContext.setCurrentIndexInSequence(index);			
+				newContext.setCurrentIndexInSequence(index);
 				newContext.setContextBindings(null);
 				/*
 				 * check if value is a sequence
@@ -283,7 +283,7 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 		 */
 		if (context.getContextBindings() != null) {
 			try {
-				INavigationAxis axis = NavigationHandler.buildHandler().lookup(NavigationAxis.types);
+				INavigationAxis axis = NavigationRegistry.buildHandler().lookup(AxisTypes.class);
 				List<Object> values = HashUtil.getList();
 				/*
 				 * iterate over all values of non-scoped variable

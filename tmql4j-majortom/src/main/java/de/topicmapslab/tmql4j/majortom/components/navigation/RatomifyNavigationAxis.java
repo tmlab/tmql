@@ -6,41 +6,49 @@
  * @email krosse@informatik.uni-leipzig.de
  *
  */
-package de.topicmapslab.tmql4j.path.components.navigation.axis;
+package de.topicmapslab.tmql4j.majortom.components.navigation;
 
 import java.util.Collection;
 import java.util.LinkedList;
 
 import org.tmapi.core.Construct;
+import org.tmapi.core.DatatypeAware;
+import org.tmapi.core.Name;
 import org.tmapi.core.TopicMap;
 
+import de.topicmapslab.majortom.model.index.ILiteralIndex;
+import de.topicmapslab.tmql4j.majortom.grammar.literals.AxisRatomify;
 import de.topicmapslab.tmql4j.path.components.navigation.BaseNavigationAxisImpl;
+import de.topicmapslab.tmql4j.path.components.navigation.axis.AtomifyNavigationAxis;
 import de.topicmapslab.tmql4j.path.exception.InvalidValueException;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
-import de.topicmapslab.tmql4j.path.grammar.lexical.AxisId;
 
 /**
- * Class definition representing the id axis.
+ * Class definition representing the atomify axis.
  * <p>
- * If the value is a construct in forward direction this step returns the
- * internal id of the construct. The optional item has no relevance.
+ * If the value is a name or occurrence item, in forward direction this step
+ * schedules the item for atomification, i.e. marks the item to be converted to
+ * the atomic value (integer, string, etc.) within the item. The item is
+ * eventually converted into an atom according to the atomification rules. The
+ * optional item has no relevance.
  * </p>
  * <p>
- * If the value is a string, in backward direction this step returns the
- * construct with the id.
+ * If the value is an atom, in backward direction this step de-atomifies
+ * immediately the atom and returns all names and occurrences where this atom is
+ * used as data value. Also here the optional item has no relevance.
  * </p>
  * 
  * @author Sven Krosse
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class IdNavigationAxis extends BaseNavigationAxisImpl {
+public class RatomifyNavigationAxis extends BaseNavigationAxisImpl {
 
 	/**
 	 * base constructor to create an new instance
 	 */
-	public IdNavigationAxis() {
-		super(AxisId.class);
+	public RatomifyNavigationAxis() {
+		super(AxisRatomify.class);
 	}
 
 	/**
@@ -61,28 +69,33 @@ public class IdNavigationAxis extends BaseNavigationAxisImpl {
 	 * {@inheritDoc}
 	 */
 	public Collection<?> navigateBackward(Object construct, Object optional) throws NavigationException {
-		Collection<Object> set = new LinkedList<Object>();
-		Construct c = getTopicMap().getConstructById(construct.toString());
-		if (c != null) {
-			set.add(c);
+		if (construct instanceof Object) {
+			TopicMap map = getTopicMap();
+			/*
+			 * create new instance of tuple-sequence
+			 */
+			Collection<Object> set = new LinkedList<Object>();
+			/*
+			 * get literal index
+			 */
+			ILiteralIndex index = map.getIndex(ILiteralIndex.class);
+			if (!index.isOpen()) {
+				index.open();
+			}
+			/*
+			 * check if occurrence with literal exists
+			 */
+			set.addAll(index.getCharacteristicsMatches(construct.toString()));
+			return set;
 		}
-		return set;
+		throw new InvalidValueException();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public Collection<?> navigateForward(Object construct, Object optional) throws NavigationException {
-
-		/*
-		 * check if anchor is a construct
-		 */
-		if (construct instanceof Construct) {
-			Collection<Object> col = new LinkedList<Object>();
-			col.add(((Construct) construct).getId());
-			return col;
-		}
-		throw new InvalidValueException();
+		return new AtomifyNavigationAxis().navigateForward(construct, optional);
 	}
 
 	/**
@@ -99,7 +112,7 @@ public class IdNavigationAxis extends BaseNavigationAxisImpl {
 	 * {@inheritDoc}
 	 */
 	public boolean supportsForwardNavigation(Object construct, Object optional) throws NavigationException {
-		if (construct instanceof Construct) {
+		if (construct instanceof Name || construct instanceof DatatypeAware) {
 			return true;
 		}
 		return false;

@@ -20,10 +20,10 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.index.TypeInstanceIndex;
 
 import de.topicmapslab.tmql4j.path.components.navigation.BaseNavigationAxisImpl;
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.model.ITypeHierarchyNavigationAxis;
 import de.topicmapslab.tmql4j.path.exception.InvalidValueException;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisSupertypes;
 
 /**
  * Class definition representing the supertypes axis.
@@ -43,8 +43,7 @@ import de.topicmapslab.tmql4j.path.exception.NavigationException;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class SupertypesNavigationAxis extends BaseNavigationAxisImpl implements
-		ITypeHierarchyNavigationAxis {
+public class SupertypesNavigationAxis extends BaseNavigationAxisImpl implements ITypeHierarchyNavigationAxis {
 
 	private boolean transitivity;
 
@@ -52,30 +51,27 @@ public class SupertypesNavigationAxis extends BaseNavigationAxisImpl implements
 	 * base constructor to create an new instance
 	 */
 	public SupertypesNavigationAxis() {
-		super(NavigationAxis.supertypes);
+		super(AxisSupertypes.class);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Construct> getBackwardNavigationResultClass(
-			Object construct) throws NavigationException {
+	public Class<? extends Construct> getBackwardNavigationResultClass(Object construct) throws NavigationException {
 		return Topic.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Construct> getForwardNavigationResultClass(
-			Object construct) throws NavigationException {
+	public Class<? extends Construct> getForwardNavigationResultClass(Object construct) throws NavigationException {
 		return Topic.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateBackward(Object construct, Object optional)
-			throws NavigationException {
+	public Collection<?> navigateBackward(Object construct, Object optional) throws NavigationException {
 		/*
 		 * check if construct is a topic
 		 */
@@ -83,8 +79,7 @@ public class SupertypesNavigationAxis extends BaseNavigationAxisImpl implements
 			/*
 			 * extract all sub-types
 			 */
-			return lookup(((Topic) construct).getTopicMap(), (Topic) construct,
-					false);
+			return lookup(((Topic) construct).getTopicMap(), (Topic) construct, false);
 		}
 		/*
 		 * check if topic is a role
@@ -93,8 +88,7 @@ public class SupertypesNavigationAxis extends BaseNavigationAxisImpl implements
 			/*
 			 * extract all sub-types of the role-type
 			 */
-			return lookup(((Role) construct).getTopicMap(), ((Role) construct)
-					.getType(), false);
+			return lookup(((Role) construct).getTopicMap(), ((Role) construct).getType(), false);
 		}
 		throw new InvalidValueException();
 	}
@@ -102,8 +96,7 @@ public class SupertypesNavigationAxis extends BaseNavigationAxisImpl implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateForward(Object construct, Object optional)
-			throws NavigationException {
+	public Collection<?> navigateForward(Object construct, Object optional) throws NavigationException {
 		/*
 		 * check if construct is a topic
 		 */
@@ -111,8 +104,7 @@ public class SupertypesNavigationAxis extends BaseNavigationAxisImpl implements
 			/*
 			 * extract all super-types
 			 */
-			return lookup(((Topic) construct).getTopicMap(), (Topic) construct,
-					true);
+			return lookup(((Topic) construct).getTopicMap(), (Topic) construct, true);
 		}
 		/*
 		 * check if topic is a role
@@ -121,8 +113,7 @@ public class SupertypesNavigationAxis extends BaseNavigationAxisImpl implements
 			/*
 			 * extract all super-types of the role-type
 			 */
-			return lookup(((Role) construct).getTopicMap(), ((Role) construct)
-					.getType(), true);
+			return lookup(((Role) construct).getTopicMap(), ((Role) construct).getType(), true);
 		}
 		throw new InvalidValueException();
 	}
@@ -130,8 +121,7 @@ public class SupertypesNavigationAxis extends BaseNavigationAxisImpl implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean supportsBackwardNavigation(Object construct,
-			Construct optional) throws NavigationException {
+	public boolean supportsBackwardNavigation(Object construct, Construct optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			return true;
 		}
@@ -141,8 +131,7 @@ public class SupertypesNavigationAxis extends BaseNavigationAxisImpl implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean supportsForwardNavigation(Object construct, Object optional)
-			throws NavigationException {
+	public boolean supportsForwardNavigation(Object construct, Object optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			return true;
 		}
@@ -162,8 +151,7 @@ public class SupertypesNavigationAxis extends BaseNavigationAxisImpl implements
 	 *            extracted, <code>false</code> if sub-types are expected.
 	 * @return a tuple sequence containing the topic types
 	 */
-	private Collection<?> lookup(TopicMap map, Topic topic,
-			boolean extractSupertypes) {
+	private Collection<?> lookup(TopicMap map, Topic topic, boolean extractSupertypes) {
 		/*
 		 * create new instance of tuple-sequence
 		 */
@@ -175,22 +163,16 @@ public class SupertypesNavigationAxis extends BaseNavigationAxisImpl implements
 		/*
 		 * get association type
 		 */
-		Topic type = map
-				.getTopicBySubjectIdentifier(map
-						.createLocator("http://psi.topicmaps.org/iso13250/model/supertype-subtype"));
+		Topic type = map.getTopicBySubjectIdentifier(map.createLocator("http://psi.topicmaps.org/iso13250/model/supertype-subtype"));
 		/*
 		 * get super-type role-type
 		 */
-		Topic supertype = map
-				.getTopicBySubjectIdentifier(map
-						.createLocator("http://psi.topicmaps.org/iso13250/model/supertype"));
+		Topic supertype = map.getTopicBySubjectIdentifier(map.createLocator("http://psi.topicmaps.org/iso13250/model/supertype"));
 
 		/*
 		 * get sub-type role-type
 		 */
-		Topic subtype = map
-				.getTopicBySubjectIdentifier(map
-						.createLocator("http://psi.topicmaps.org/iso13250/model/subtype"));
+		Topic subtype = map.getTopicBySubjectIdentifier(map.createLocator("http://psi.topicmaps.org/iso13250/model/subtype"));
 		/*
 		 * check if topics defined
 		 */
@@ -199,8 +181,7 @@ public class SupertypesNavigationAxis extends BaseNavigationAxisImpl implements
 			/*
 			 * get association items
 			 */
-			TypeInstanceIndex index = (TypeInstanceIndex) map
-					.getIndex(TypeInstanceIndex.class);
+			TypeInstanceIndex index = (TypeInstanceIndex) map.getIndex(TypeInstanceIndex.class);
 			if (!index.isOpen()) {
 				index.open();
 			}
@@ -223,8 +204,7 @@ public class SupertypesNavigationAxis extends BaseNavigationAxisImpl implements
 						for (Role r : roles) {
 							if (r.getPlayer().equals(t)) {
 								if (extractSupertypes) {
-									for (Role _r : association
-											.getRoles(supertype)) {
+									for (Role _r : association.getRoles(supertype)) {
 										Topic t_ = _r.getPlayer();
 										if (!set.contains(t_)) {
 											cache.add(_r.getPlayer());
@@ -232,8 +212,7 @@ public class SupertypesNavigationAxis extends BaseNavigationAxisImpl implements
 										}
 									}
 								} else {
-									for (Role _r : association
-											.getRoles(subtype)) {
+									for (Role _r : association.getRoles(subtype)) {
 										Topic t_ = _r.getPlayer();
 										if (!set.contains(t_)) {
 											cache.add(_r.getPlayer());

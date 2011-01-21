@@ -16,9 +16,9 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 
 import de.topicmapslab.tmql4j.path.components.navigation.BaseNavigationAxisImpl;
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.model.ITypeHierarchyNavigationAxis;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisSubtypes;
 
 /**
  * Class definition representing the subtypes axis.
@@ -38,8 +38,8 @@ import de.topicmapslab.tmql4j.path.exception.NavigationException;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class SubtypesNavigationAxis extends BaseNavigationAxisImpl  implements ITypeHierarchyNavigationAxis{
-	
+public class SubtypesNavigationAxis extends BaseNavigationAxisImpl implements ITypeHierarchyNavigationAxis {
+
 	/**
 	 * instance of redirected axis
 	 */
@@ -49,30 +49,27 @@ public class SubtypesNavigationAxis extends BaseNavigationAxisImpl  implements I
 	 * base constructor to create an new instance
 	 */
 	public SubtypesNavigationAxis() {
-		super(NavigationAxis.subtypes);
+		super(AxisSubtypes.class);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Construct> getBackwardNavigationResultClass(
-			Object construct) throws NavigationException {
+	public Class<? extends Construct> getBackwardNavigationResultClass(Object construct) throws NavigationException {
 		return Topic.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Construct> getForwardNavigationResultClass(
-			Object construct) throws NavigationException {
+	public Class<? extends Construct> getForwardNavigationResultClass(Object construct) throws NavigationException {
 		return Topic.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateBackward(Object construct, Object optional)
-			throws NavigationException {
+	public Collection<?> navigateBackward(Object construct, Object optional) throws NavigationException {
 		if (optional == null || optional instanceof Construct) {
 			return axis.navigateForward(construct, (Construct) optional);
 		} else {
@@ -83,8 +80,7 @@ public class SubtypesNavigationAxis extends BaseNavigationAxisImpl  implements I
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateForward(Object construct, Object optional)
-			throws NavigationException {
+	public Collection<?> navigateForward(Object construct, Object optional) throws NavigationException {
 		if (optional == null || optional instanceof Construct) {
 			return axis.navigateBackward(construct, (Construct) optional);
 		} else {
@@ -95,11 +91,9 @@ public class SubtypesNavigationAxis extends BaseNavigationAxisImpl  implements I
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean supportsBackwardNavigation(Object construct,
-			Construct optional) throws NavigationException {
+	public boolean supportsBackwardNavigation(Object construct, Construct optional) throws NavigationException {
 		if (optional == null || optional instanceof Construct) {
-			return axis.supportsForwardNavigation(construct,
-					(Construct) optional);
+			return axis.supportsForwardNavigation(construct, (Construct) optional);
 		} else {
 			return false;
 		}
@@ -108,27 +102,25 @@ public class SubtypesNavigationAxis extends BaseNavigationAxisImpl  implements I
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean supportsForwardNavigation(Object construct, Object optional)
-			throws NavigationException {
+	public boolean supportsForwardNavigation(Object construct, Object optional) throws NavigationException {
 		if (optional == null || optional instanceof Construct) {
-			return axis.supportsBackwardNavigation(construct,
-					(Construct) optional);
+			return axis.supportsBackwardNavigation(construct, (Construct) optional);
 		} else {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setTransitivity(boolean transitivity) {
 		this.axis.setTransitivity(transitivity);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setTopicMap(TopicMap topicMap) {		
+	public void setTopicMap(TopicMap topicMap) {
 		super.setTopicMap(topicMap);
 		axis.setTopicMap(topicMap);
 	}

@@ -174,7 +174,7 @@ public class TestIndexFunction extends Tmql4JTestCase {
 			assertEquals(1, r.size());
 			assertTrue(supertypes.contains(r.first()));
 		}
-		
+
 		query = "fn:get-supertypes( myOtherTopic )";
 		rs = execute(query);
 		assertEquals(50, rs.size());
@@ -182,7 +182,7 @@ public class TestIndexFunction extends Tmql4JTestCase {
 			assertEquals(1, r.size());
 			assertTrue(supertypes.contains(r.first()));
 		}
-		
+
 		query = "fn:get-supertypes( fn:get-subtypes() )";
 		rs = execute(query);
 		assertEquals(100, rs.size());
@@ -222,7 +222,7 @@ public class TestIndexFunction extends Tmql4JTestCase {
 			assertEquals(1, r.size());
 			assertTrue(subtypes.contains(r.first()));
 		}
-		
+
 		query = "fn:get-subtypes( myOtherTopic )";
 		rs = execute(query);
 		assertEquals(50, rs.size());
@@ -230,13 +230,186 @@ public class TestIndexFunction extends Tmql4JTestCase {
 			assertEquals(1, r.size());
 			assertTrue(subtypes.contains(r.first()));
 		}
-		
+
 		query = "fn:get-subtypes( fn:get-supertypes() )";
 		rs = execute(query);
 		assertEquals(100, rs.size());
 		for (IResult r : rs) {
 			assertEquals(1, r.size());
 			assertTrue(subtypes.contains(r.first()));
+		}
+	}
+
+	@Test
+	public void testTopicByNames() throws Exception {
+		Set<Topic> topics = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic t = createTopic();
+			if (i % 2 == 0) {
+				t.createName("Name");
+				topics.add(t);
+			} else {
+				t.createName("Value");
+			}
+
+		}
+
+		final String query = "FOR $t IN fn:get-topics-by-name-value( \"Name\" ) RETURN $t";
+		IResultSet<?> rs = execute(query);
+		assertEquals(topics.size(), rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+	}
+	
+	@Test
+	public void testTopicByNameRegExp() throws Exception {
+		Set<Topic> topics = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic t = createTopic();
+			if (i % 2 == 0) {
+				t.createName("Name" + i);
+				topics.add(t);
+			} else {
+				t.createName("Value");
+			}
+
+		}
+
+		final String query = "FOR $t IN fn:get-topics-by-name-regular-expression( \"Name.*\" ) RETURN $t";
+		IResultSet<?> rs = execute(query);
+		assertEquals(topics.size(), rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+	}
+	
+	@Test
+	public void testTopicByOccurrences() throws Exception {
+		Set<Topic> topics = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic t = createTopic();
+			if (i % 2 == 0) {
+				t.createOccurrence(createTopic(),"Name");
+				topics.add(t);
+			} else {
+				t.createOccurrence(createTopic(),"Value");
+			}
+
+		}
+
+		final String query = "FOR $t IN fn:get-topics-by-occurrence-value( \"Name\" ) RETURN $t";
+		IResultSet<?> rs = execute(query);
+		assertEquals(topics.size(), rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+	}
+	
+	@Test
+	public void testTopicByOccurrenceRegExp() throws Exception {
+		Set<Topic> topics = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic t = createTopic();
+			if (i % 2 == 0) {
+				t.createOccurrence(createTopic(),"Name" + i);
+				topics.add(t);
+			} else {
+				t.createOccurrence(createTopic(),"Value");
+			}
+
+		}
+
+		final String query = "FOR $t IN fn:get-topics-by-occurrence-regular-expression( \"Name.*\" ) RETURN $t";
+		IResultSet<?> rs = execute(query);
+		assertEquals(topics.size(), rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+	}
+	
+	@Test
+	public void testTopicByCharacteristics() throws Exception {
+		Set<Topic> topics = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic t = createTopic();
+			if (i % 2 == 0) {
+				if ( i % 4 == 0 ){
+					t.createOccurrence(createTopic(),"Name");
+				}else{
+					t.createName(createTopic(),"Name");
+				}
+				topics.add(t);
+			} else {
+				t.createOccurrence(createTopic(),"Value");
+			}
+
+		}
+
+		final String query = "FOR $t IN fn:get-topics-by-characteristic-value( \"Name\" ) RETURN $t";
+		IResultSet<?> rs = execute(query);
+		assertEquals(topics.size(), rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+	}
+	
+	@Test
+	public void testTopicByCharacteristicsRegExp() throws Exception {
+		Set<Topic> topics = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic t = createTopic();
+			if (i % 2 == 0) {
+				if ( i % 4 == 0 ){
+					t.createOccurrence(createTopic(),"Name" + i);
+				}else{
+					t.createName(createTopic(),"Name" + i);
+				}
+				topics.add(t);
+			} else {
+				t.createOccurrence(createTopic(),"Value");
+			}
+
+		}
+
+		final String query = "FOR $t IN fn:get-topics-by-characteristic-regular-expression( \"Name.*\" ) RETURN $t";
+		IResultSet<?> rs = execute(query);
+		assertEquals(topics.size(), rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+	}
+	
+	@Test
+	public void testRatomify() throws Exception {
+		Set<Topic> topics = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic t = createTopic();
+			if (i % 2 == 0) {
+				if ( i % 4 == 0 ){
+					t.createOccurrence(createTopic(),"Name" + i);
+				}else{
+					t.createName(createTopic(),"Name" + i);
+				}
+				topics.add(t);
+			} else {
+				t.createOccurrence(createTopic(),"Value");
+			}
+
+		}
+
+		final String query = "\"Name.*\" << ratomify << characteristics";
+		IResultSet<?> rs = execute(query);
+		assertEquals(topics.size(), rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
 		}
 	}
 

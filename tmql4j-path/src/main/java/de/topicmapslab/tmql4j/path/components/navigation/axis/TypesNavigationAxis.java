@@ -19,10 +19,10 @@ import org.tmapi.core.Typed;
 import org.tmapi.index.TypeInstanceIndex;
 
 import de.topicmapslab.tmql4j.path.components.navigation.BaseNavigationAxisImpl;
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.model.ITypeHierarchyNavigationAxis;
 import de.topicmapslab.tmql4j.path.exception.InvalidValueException;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTypes;
 
 /**
  * Class definition representing the types axis.
@@ -42,8 +42,7 @@ import de.topicmapslab.tmql4j.path.exception.NavigationException;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class TypesNavigationAxis extends BaseNavigationAxisImpl implements
-		ITypeHierarchyNavigationAxis {
+public class TypesNavigationAxis extends BaseNavigationAxisImpl implements ITypeHierarchyNavigationAxis {
 
 	private boolean transitivity;
 
@@ -51,22 +50,20 @@ public class TypesNavigationAxis extends BaseNavigationAxisImpl implements
 	 * base constructor to create an new instance
 	 */
 	public TypesNavigationAxis() {
-		super(NavigationAxis.types);
+		super(AxisTypes.class);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Construct> getBackwardNavigationResultClass(
-			Object construct) throws NavigationException {
+	public Class<? extends Construct> getBackwardNavigationResultClass(Object construct) throws NavigationException {
 		return Topic.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<? extends Construct> getForwardNavigationResultClass(
-			Object construct) throws NavigationException {
+	public Class<? extends Construct> getForwardNavigationResultClass(Object construct) throws NavigationException {
 		return Topic.class;
 	}
 
@@ -74,8 +71,7 @@ public class TypesNavigationAxis extends BaseNavigationAxisImpl implements
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public Collection<?> navigateBackward(Object construct, Object optional)
-			throws NavigationException {
+	public Collection<?> navigateBackward(Object construct, Object optional) throws NavigationException {
 		/*
 		 * create new instance of tuple-sequence
 		 */
@@ -97,8 +93,7 @@ public class TypesNavigationAxis extends BaseNavigationAxisImpl implements
 		/*
 		 * check if it is special string tm:subject
 		 */
-		else if ("tmdm:subject".equalsIgnoreCase(construct.toString())
-				|| "tm:subject".equalsIgnoreCase(construct.toString())) {
+		else if ("tmdm:subject".equalsIgnoreCase(construct.toString()) || "tm:subject".equalsIgnoreCase(construct.toString())) {
 			set.addAll(getTopicMap().getTopics());
 			return set;
 		} else {
@@ -111,8 +106,7 @@ public class TypesNavigationAxis extends BaseNavigationAxisImpl implements
 		 * check if topic is tmdm:subject
 		 */
 		for (Locator locator : topic.getSubjectIdentifiers()) {
-			if (locator.getReference().equalsIgnoreCase(
-					"http://psi.topicmaps.org/iso13250/glossary/topic-type")) {
+			if (locator.getReference().equalsIgnoreCase("http://psi.topicmaps.org/iso13250/glossary/topic-type")) {
 				tmdmSubject = true;
 				break;
 			}
@@ -129,8 +123,7 @@ public class TypesNavigationAxis extends BaseNavigationAxisImpl implements
 		 */
 		else {
 
-			TypeInstanceIndex index = getTopicMap().getIndex(
-					TypeInstanceIndex.class);
+			TypeInstanceIndex index = getTopicMap().getIndex(TypeInstanceIndex.class);
 			if (!index.isOpen()) {
 				index.open();
 			}
@@ -140,8 +133,7 @@ public class TypesNavigationAxis extends BaseNavigationAxisImpl implements
 				SupertypesNavigationAxis axis = new SupertypesNavigationAxis();
 				axis.setTopicMap(getTopicMap());
 				axis.setTransitivity(transitivity);
-				Collection<Topic> subtypes = (Collection<Topic>) axis
-						.navigateBackward(topic);
+				Collection<Topic> subtypes = (Collection<Topic>) axis.navigateBackward(topic);
 				for (Topic subtype : subtypes) {
 					set.addAll(index.getTopics(subtype));
 				}
@@ -154,8 +146,7 @@ public class TypesNavigationAxis extends BaseNavigationAxisImpl implements
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public Collection<?> navigateForward(Object construct, Object optional)
-			throws NavigationException {
+	public Collection<?> navigateForward(Object construct, Object optional) throws NavigationException {
 		/*
 		 * create new instance of tuple-sequence
 		 */
@@ -202,8 +193,7 @@ public class TypesNavigationAxis extends BaseNavigationAxisImpl implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean supportsBackwardNavigation(Object construct,
-			Construct optional) throws NavigationException {
+	public boolean supportsBackwardNavigation(Object construct, Construct optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			return true;
 		}
@@ -213,8 +203,7 @@ public class TypesNavigationAxis extends BaseNavigationAxisImpl implements
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean supportsForwardNavigation(Object construct, Object optional)
-			throws NavigationException {
+	public boolean supportsForwardNavigation(Object construct, Object optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			return true;
 		}

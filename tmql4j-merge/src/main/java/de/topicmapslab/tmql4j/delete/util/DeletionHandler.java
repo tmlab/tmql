@@ -23,9 +23,13 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.delete.exception.DeletionException;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationHandler;
+import de.topicmapslab.tmql4j.path.components.navigation.NavigationRegistry;
 import de.topicmapslab.tmql4j.path.components.navigation.model.INavigationAxis;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisPlayers;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisRoles;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisScope;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisSupertypes;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTypes;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -224,9 +228,9 @@ public class DeletionHandler {
 					ids.addAll(deleteOccurrence(topicMap, occurrence, cascade));
 				}
 
-				NavigationHandler handler = NavigationHandler.buildHandler();
+				NavigationRegistry handler = NavigationRegistry.buildHandler();
 
-				INavigationAxis axis = handler.lookup(NavigationAxis.players);
+				INavigationAxis axis = handler.lookup(AxisPlayers.class);
 				axis.setTopicMap(topicMap);
 				/*
 				 * delete all associations played by the topic
@@ -234,7 +238,7 @@ public class DeletionHandler {
 				for (Object obj : axis.navigateBackward(topic)) {
 					ids.addAll(deleteAssociation(topicMap, (Association) obj, cascade));
 				}
-				axis = handler.lookup(NavigationAxis.types);
+				axis = handler.lookup(AxisTypes.class);
 				axis.setTopicMap(topicMap);
 				/*
 				 * delete all instances of the topic as type
@@ -242,7 +246,7 @@ public class DeletionHandler {
 				for (Object obj : axis.navigateBackward(topic)) {
 					ids.addAll(deleteTopic(topicMap, (Topic) obj, cascade));
 				}
-				axis = handler.lookup(NavigationAxis.supertypes);
+				axis = handler.lookup(AxisSupertypes.class);
 				axis.setTopicMap(topicMap);
 				/*
 				 * delete all sub-types of the topic as type
@@ -251,7 +255,7 @@ public class DeletionHandler {
 					ids.addAll(deleteTopic(topicMap, (Topic) obj, cascade));
 				}
 
-				axis = handler.lookup(NavigationAxis.roles);
+				axis = handler.lookup(AxisRoles.class);
 				axis.setTopicMap(topicMap);
 				/*
 				 * delete all associations which used the topic as role-type
@@ -271,7 +275,7 @@ public class DeletionHandler {
 				/*
 				 * remove from scope where topic is used as theme
 				 */
-				axis = handler.lookup(NavigationAxis.scope);
+				axis = handler.lookup(AxisScope.class);
 				axis.setTopicMap(topicMap);
 				for (Object obj : axis.navigateBackward(topic)) {
 					ids.addAll(deleteScoped(topicMap, (Scoped) obj, cascade));

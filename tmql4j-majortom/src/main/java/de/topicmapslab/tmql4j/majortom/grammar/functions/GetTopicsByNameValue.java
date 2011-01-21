@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.tmapi.core.Name;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.majortom.model.core.ICharacteristics;
 import de.topicmapslab.majortom.model.index.ILiteralIndex;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
@@ -28,9 +28,9 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  * @author Sven Krosse
  * 
  */
-public class GetTopicsByCharacteristicValue extends FunctionImpl {
+public class GetTopicsByNameValue extends FunctionImpl {
 
-	public static final String GetTopicsByCharacteristicValue = "fn:get-topics-by-characteristic-value";
+	public static final String GetTopicsByNameValue = "fn:get-topics-by-name-value";
 
 	/**
 	 * {@inheritDoc}
@@ -44,7 +44,7 @@ public class GetTopicsByCharacteristicValue extends FunctionImpl {
 		QueryMatches parameters = getParameters(runtime, context, caller);
 		List<String> orderedKeys = parameters.getOrderedKeys();
 		if (!isExpectedNumberOfParameters(orderedKeys.size()))
-			throw new TMQLRuntimeException("Illegal Number Of Arguments for " + GetTopicsByCharacteristicValue);
+			throw new TMQLRuntimeException("Illegal Number Of Arguments for " + GetTopicsByNameValue);
 
 		Set<Topic> topics = HashUtil.getHashSet();
 
@@ -55,12 +55,12 @@ public class GetTopicsByCharacteristicValue extends FunctionImpl {
 			/*
 			 * iterate over value strings
 			 */
-			for (String orderedKey : orderedKeys) {
+			for (String orderedKey : orderedKeys) {				
 				/*
-				 * get parent of characteristics
+				 * get parent of names
 				 */
-				for (ICharacteristics c : index.getCharacteristics(tuple.get(orderedKey).toString())) {
-					topics.add((Topic) c.getParent());
+				for (Name n : index.getNames(tuple.get(orderedKey).toString())) {
+					topics.add((Topic) n.getParent());
 				}
 			}
 		}
@@ -71,7 +71,7 @@ public class GetTopicsByCharacteristicValue extends FunctionImpl {
 	 * {@inheritDoc}
 	 */
 	public String getItemIdentifier() {
-		return GetTopicsByCharacteristicValue;
+		return GetTopicsByNameValue;
 	}
 
 	/**

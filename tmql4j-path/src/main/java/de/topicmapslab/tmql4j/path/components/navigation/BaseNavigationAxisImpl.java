@@ -12,6 +12,7 @@ import java.util.Collection;
 
 import org.tmapi.core.TopicMap;
 
+import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.path.components.navigation.model.INavigationAxis;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
 
@@ -28,24 +29,27 @@ public abstract class BaseNavigationAxisImpl implements INavigationAxis {
 	/**
 	 * the internal enumeration value representing the axis type
 	 */
-	private final NavigationAxis axis;
+	private final Class<? extends IToken> axisToken;
 	/**
 	 * the internal topic map instance
 	 */
 	private TopicMap topicMap;
 
 	/**
-	 * {@inheritDoc}
+	 * constructor
+	 * 
+	 * @param axisToken
+	 *            the axis token
 	 */
-	protected BaseNavigationAxisImpl(final NavigationAxis axis) {
-		this.axis = axis;
+	protected BaseNavigationAxisImpl(final Class<? extends IToken> axisToken) {
+		this.axisToken = axisToken;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public NavigationAxis getNavigationType() {
-		return axis;
+	public Class<? extends IToken> getNavigationType() {
+		return axisToken;
 	}
 
 	/**

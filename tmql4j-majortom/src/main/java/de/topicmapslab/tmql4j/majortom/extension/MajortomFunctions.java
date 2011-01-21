@@ -6,9 +6,11 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLExtensionRegistryException;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
+import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.extension.ILanguageExtension;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.majortom.components.navigation.RatomifyNavigationAxis;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetAssociationTypes;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetBestIdentifier;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetBestLabel;
@@ -28,6 +30,13 @@ import de.topicmapslab.tmql4j.majortom.grammar.functions.GetSupertypes;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetTopicTypes;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetTopicsByCharacteristicRegExp;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetTopicsByCharacteristicValue;
+import de.topicmapslab.tmql4j.majortom.grammar.functions.GetTopicsByNameRegExp;
+import de.topicmapslab.tmql4j.majortom.grammar.functions.GetTopicsByNameValue;
+import de.topicmapslab.tmql4j.majortom.grammar.functions.GetTopicsByOccurrenceRegExp;
+import de.topicmapslab.tmql4j.majortom.grammar.functions.GetTopicsByOccurrenceValue;
+import de.topicmapslab.tmql4j.majortom.grammar.literals.AxisRatomify;
+import de.topicmapslab.tmql4j.path.components.navigation.NavigationRegistry;
+import de.topicmapslab.tmql4j.path.exception.NavigationException;
 import de.topicmapslab.tmql4j.path.grammar.productions.FunctionInvocation;
 
 public class MajortomFunctions implements ILanguageExtension {
@@ -85,6 +94,20 @@ public class MajortomFunctions implements ILanguageExtension {
 
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetTopicsByCharacteristicValue.GetTopicsByCharacteristicValue, GetTopicsByCharacteristicValue.class);
 		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetTopicsByCharacteristicRegExp.GetTopicsByCharacteristicRegExp, GetTopicsByCharacteristicRegExp.class);
+		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetTopicsByNameValue.GetTopicsByNameValue, GetTopicsByNameValue.class);
+		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetTopicsByNameRegExp.GetTopicsByNameRegExp, GetTopicsByNameRegExp.class);
+		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetTopicsByOccurrenceValue.GetTopicsByOccurrenceValue, GetTopicsByOccurrenceValue.class);
+		runtime.getLanguageContext().getFunctionRegistry().registerFunction(GetTopicsByOccurrenceRegExp.GetTopicsByOccurrenceRegExp, GetTopicsByOccurrenceRegExp.class);
+		/*
+		 * register axes
+		 */
+		runtime.getLanguageContext().getTokenRegistry().register(AxisRatomify.class);
+
+		try {
+			NavigationRegistry.buildHandler().registryAxis(AxisRatomify.class, RatomifyNavigationAxis.class);
+		} catch (NavigationException e) {
+			throw new TMQLRuntimeException("Cannot register extension", e);
+		}
 	}
 
 	/**

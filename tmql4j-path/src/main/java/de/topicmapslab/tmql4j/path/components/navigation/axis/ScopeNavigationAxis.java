@@ -17,9 +17,9 @@ import org.tmapi.core.Topic;
 import org.tmapi.index.ScopedIndex;
 
 import de.topicmapslab.tmql4j.path.components.navigation.BaseNavigationAxisImpl;
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
 import de.topicmapslab.tmql4j.path.exception.InvalidValueException;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisScope;
 
 /**
  * Class definition representing the scope axis.
@@ -42,30 +42,27 @@ public class ScopeNavigationAxis extends BaseNavigationAxisImpl {
 	 * base constructor to create an new instance
 	 */
 	public ScopeNavigationAxis() {
-		super(NavigationAxis.scope);
+		super(AxisScope.class);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<?> getBackwardNavigationResultClass(Object construct)
-			throws NavigationException {
+	public Class<?> getBackwardNavigationResultClass(Object construct) throws NavigationException {
 		return Scoped.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Class<?> getForwardNavigationResultClass(Object construct)
-			throws NavigationException {
+	public Class<?> getForwardNavigationResultClass(Object construct) throws NavigationException {
 		return Topic.class;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateBackward(Object construct, Object optional)
-			throws NavigationException {
+	public Collection<?> navigateBackward(Object construct, Object optional) throws NavigationException {
 		/*
 		 * check if construct is a topic
 		 */
@@ -105,8 +102,7 @@ public class ScopeNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Collection<?> navigateForward(Object construct, Object optional)
-			throws NavigationException {
+	public Collection<?> navigateForward(Object construct, Object optional) throws NavigationException {
 		/*
 		 * check if construct is scoped
 		 */
@@ -127,8 +123,7 @@ public class ScopeNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean supportsBackwardNavigation(Object construct,
-			Construct optional) throws NavigationException {
+	public boolean supportsBackwardNavigation(Object construct, Construct optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			return true;
 		}
@@ -138,8 +133,7 @@ public class ScopeNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean supportsForwardNavigation(Object construct, Object optional)
-			throws NavigationException {
+	public boolean supportsForwardNavigation(Object construct, Object optional) throws NavigationException {
 		if (construct instanceof Scoped) {
 			return true;
 		}

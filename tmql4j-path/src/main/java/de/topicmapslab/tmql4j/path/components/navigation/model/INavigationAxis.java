@@ -13,7 +13,7 @@ import java.util.Collection;
 import org.tmapi.core.Construct;
 import org.tmapi.core.TopicMap;
 
-import de.topicmapslab.tmql4j.path.components.navigation.NavigationAxis;
+import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
 
 /**
@@ -59,12 +59,11 @@ public interface INavigationAxis {
 	void setTopicMap(TopicMap topicMap);
 
 	/**
-	 * Method returns a enumeration value representing the type of the TMQL
-	 * axis. The enumeration values are defined by the current TMQL draft.
+	 * Method returns a token representing the type of the TMQL axis.
 	 * 
-	 * @return a value of the enumeration {@link NavigationAxis}
+	 * @return a token represents this axis
 	 */
-	NavigationAxis getNavigationType();
+	Class<? extends IToken> getNavigationType();
 
 	/**
 	 * Method checks if this instance of a TMQL navigation axis supports the
