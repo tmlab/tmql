@@ -10,15 +10,25 @@
  */
 package de.topicmapslab.tmql4j.path.grammar.lexical;
 
+import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 public class Datatype extends Token {
 
+	public static final String TOKEN = "^^";
+	
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "^^";
+		return TOKEN;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isToken(ITMQLRuntime runtime, String literal) {
+		return literal.startsWith(TOKEN);
 	}
 
 }

@@ -220,6 +220,13 @@ public class TmqlQueryTransformer {
 				&& token.contains("^^")) {
 			return token;
 		}
+		
+		/*
+		 * check protected data-type
+		 */
+		if (token.length() > 2 && token.contains("^^")) {
+			return token;
+		}
 
 		/*
 		 * save time and dateTime
@@ -378,6 +385,14 @@ public class TmqlQueryTransformer {
 		 * check protected strings with data-type
 		 */
 		if (token.length() > 2 && token.startsWith("\"")
+				&& token.contains("^^")) {
+			return token;
+		}
+		
+		/*
+		 * check protected data-type
+		 */
+		if (token.length() > 2 
 				&& token.contains("^^")) {
 			return token;
 		}

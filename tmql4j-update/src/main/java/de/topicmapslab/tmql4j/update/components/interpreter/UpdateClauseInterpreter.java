@@ -29,6 +29,8 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
+import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Datatype;
 import de.topicmapslab.tmql4j.path.grammar.lexical.DatatypedElement;
 import de.topicmapslab.tmql4j.update.grammar.productions.PredicateInvocation;
 import de.topicmapslab.tmql4j.update.grammar.productions.TopicDefinition;
@@ -331,6 +333,7 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
+	@SuppressWarnings("unchecked")
 	private QueryMatches interpretValueExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 
 		/*
@@ -342,11 +345,30 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 		 * interpret
 		 */
 		QueryMatches matches = value.interpret(runtime, context, optionalArguments);
+		/*
+		 * check for datatype as part of a datatyped-element
+		 */
 		if (value.getTmqlTokens().get(0).equals(DatatypedElement.class) && value.getTmqlTokens().size() == 1) {
 			StringTokenizer tokenizer = new StringTokenizer(value.getTokens().get(0), "^^");
 			tokenizer.nextToken();
 			try {
 				Locator loc = context.getQuery().getTopicMap().createLocator(XmlSchemeDatatypes.toExternalForm(tokenizer.nextToken()));
+				for (Map<String, Object> tuple : matches) {
+					tuple.put(DATATYPE, loc);
+				}
+			} catch (MalformedIRIException e) {
+				logger.warn("The given datatype is invalid: " + e.getLocalizedMessage());
+				return QueryMatches.emptyMatches();
+			}
+		}
+		/*
+		 * datatype is provided as separate symbol
+		 */
+		else if ( ParserUtils.containsTokens(value.getTmqlTokens(), Datatype.class) ){
+			int index = ParserUtils.indexOfTokens(value.getTmqlTokens(), Datatype.class);
+			String token = value.getTokens().get(index).substring(2);
+			try {
+				Locator loc = context.getQuery().getTopicMap().createLocator(XmlSchemeDatatypes.toExternalForm(token));
 				for (Map<String, Object> tuple : matches) {
 					tuple.put(DATATYPE, loc);
 				}
