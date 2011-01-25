@@ -318,7 +318,7 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 		 * Cache to store all possible bindings of contained variables
 		 */
 		QueryMatches[] bindings = extractArguments(runtime, ForClause.class, context, optionalArguments);
-		return new QueryMatches(runtime, bindings);
+		return new QueryMatches(runtime, bindings);		
 	}
 
 	/**

@@ -89,6 +89,22 @@ public class VariableAssignmentInterpreter extends ExpressionInterpreterImpl<Var
 		for (String key : content.getOrderedKeys()) {
 			extract(values, content.getPossibleValuesForVariable(key));
 		}
+		/*
+		 * check if current tuple is given
+		 */
+		if ( context.getCurrentTuple() != null){
+			QueryMatches matches = new QueryMatches(runtime);
+			for ( Object value : values){
+				Map<String, Object> tuple = HashUtil.getHashMap();				
+				tuple.putAll(context.getCurrentTuple());
+				tuple.put(variable, value);
+				matches.add(tuple);
+			}
+			return matches;
+		}
+		/*
+		 * no current tuple defined
+		 */
 		return QueryMatches.asQueryMatch(runtime, variable, values.toArray());
 	}
 

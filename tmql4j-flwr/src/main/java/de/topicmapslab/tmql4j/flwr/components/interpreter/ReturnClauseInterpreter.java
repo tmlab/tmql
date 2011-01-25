@@ -123,7 +123,7 @@ public class ReturnClauseInterpreter extends ExpressionInterpreterImpl<ReturnCla
 				try {
 					QueryMatches matches = future.get();
 					if (matches.isEmpty()) {
-						throw new TMQLRuntimeException("Invalid state of internal task!");
+						continue;
 					}
 					results.add(matches);
 				} catch (InterruptedException e) {

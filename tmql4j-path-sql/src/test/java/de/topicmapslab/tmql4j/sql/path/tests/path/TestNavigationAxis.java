@@ -941,7 +941,7 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		String query = null;
 		IResultSet<?> set = null;
 
-		query = "myTopic >> indicators";
+		query = "\"" + base + "myTopic\" << locators >> indicators";
 		set = execute(query);
 		assertEquals(locators.length, set.size());
 
@@ -980,7 +980,7 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		String query = null;
 		IResultSet<?> set = null;
 
-		query = "myTopic >> item";
+		query = "\"" + base + "myTopic\" << locators >> item";
 		set = execute(query);
 		assertEquals(locators.length, set.size());
 
