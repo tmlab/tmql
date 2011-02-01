@@ -1,16 +1,28 @@
-Bundle-SymbolicName: de.topicmapslab.tmql4j.majortom;singleton=true
-Bundle-Version: 3.0.0
-Bundle-Name: TMQL4J MaJorToM Extension
-Provide-Package: de.topicmapslab.tmql4j.majortom.extension,
- de.topicmapslab.tmql4j.majortom.grammar.functions,
- de.topicmapslab.tmql4j.majortom.utils
-Import-Package: org.osgi.framework,
- org.slf4j;specification-version="1.6.1"
+Manifest-Version: 1.0
+Export-Package: de.topicmapslab.tmql4j.majortom.extension;uses:="de.to
+ picmapslab.tmql4j.majortom.components.navigation,de.topicmapslab.tmql
+ 4j.majortom.grammar.functions,de.topicmapslab.tmql4j.majortom.grammar
+ .literals",de.topicmapslab.tmql4j.majortom.components.navigation;uses
+ :="de.topicmapslab.tmql4j.majortom.grammar.literals",de.topicmapslab.
+ tmql4j.majortom.grammar.functions;uses:="de.topicmapslab.tmql4j.major
+ tom.utils",de.topicmapslab.tmql4j.majortom.grammar.literals,de.topicm
+ apslab.tmql4j.majortom.utils
 Service-Component: OSGI-INF/tmql4j-majortom.xml
 Bundle-ActivationPolicy: lazy
-Require-Bundle: org.tmapi;bundle-version="2.0.3",
- de.topicmapslab.tmql4j;bundle-version="3.0.0",
- de.topicmapslab.tmql4j.path;bundle-version="3.0.0",
- de.topicmapslab.majortom.core;bundle-version="1.1.4",
- de.topicmapslab.majortom.model;bundle-version="1.1.4",
- de.topicmapslab.geotype;bundle-version="1.1.4"
+Tool: Bnd-1.15.0
+Bundle-Name: TMQL4J MaJorToM Extension
+Created-By: 1.6.0_22 (Sun Microsystems Inc.)
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.tmapi;bundle-version="2.0.3",de.topicmapslab.tmql4
+ j;bundle-version="3.0.0",de.topicmapslab.tmql4j.path;bundle-version="
+ 3.0.0",de.topicmapslab.majortom.core;bundle-version="1.1.4",de.topicm
+ apslab.majortom.model;bundle-version="1.1.4",de.topicmapslab.geotype;
+ bundle-version="1.1.4"
+Bundle-Version: 3.0.0.201102011903
+Bnd-LastModified: 1296583386944
+Bundle-ManifestVersion: 2
+Import-Package: org.osgi.framework;version="[1.4,2)",org.slf4j;version
+ ="1.6.1",org.tmapix.io;resolution:=optional
+Bundle-SymbolicName: de.topicmapslab.tmql4j.majortom
+Originally-Created-By: 1.6.0_22 (Sun Microsystems Inc.)
+
