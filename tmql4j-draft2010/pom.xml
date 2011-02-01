@@ -44,6 +44,49 @@
 					</archive>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<version>2.2.0</version>
+				<!-- configure plugin to generate MANIFEST.MF -->
+				<executions>
+					<execution>
+						<id>bundle-manifest</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>manifest</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- configure plugin to support jar packaging -->
+					<supportedProjectTypes>
+						<supportedProjectType>jar</supportedProjectType>
+					</supportedProjectTypes>
+					<manifestLocation>META-INF</manifestLocation>
+					<instructions>
+						<Bundle-Version>${osgi.version}</Bundle-Version>
+						<Export-Package>de.topicmapslab.tmql4j.draft2010.*
+						</Export-Package>
+						<Require-Bundle>
+							de.topicmapslab.tmql4j;bundle-version="3.0.0",
+							org.tmapi;bundle-version="2.0.3",
+							de.topicmapslab.majortom.core;bundle-version="1.2.0";resolution:=optional
+							</Require-Bundle>
+						<Import-Package>
+							org.osgi.framework,
+							org.slf4j
+ 							</Import-Package>
+						<Bundle-SymbolicName>de.topicmapslab.tmql4j.draft2010</Bundle-SymbolicName>
+						<Bundle-Name>TMQL Draft 2010 Query Engine</Bundle-Name>
+						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+						<Bundle-RequiredExecutionEnvironment>JavaSE-1.6</Bundle-RequiredExecutionEnvironment>
+						<Service-Component>OSGI-INF/tmql2010-queryprocessor.xml,
+							OSGI-INF/tmql2010-runtime.xml</Service-Component>
+					</instructions>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 	<repositories>

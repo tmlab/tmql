@@ -11,19 +11,20 @@
 	<name>TMQL Ontopia PlugIn</name>
 	<version>${project.parent.version}</version>
 	<description>TMQL Ontopia</description>
-	<build><resources>
-  			<resource>
-  				<directory>META-INF</directory>
-  				 <targetPath>${project.build.directory}/classes/META-INF</targetPath>
-  			</resource>
-  			<resource>
-  				<directory>OSGI-INF</directory>
-  				<targetPath>${project.build.directory}/classes/OSGI-INF</targetPath>
-  			</resource>
-  			<resource>
-  				<directory>src/main/resources</directory>
-  			</resource>
-  		</resources>
+	<build>
+		<resources>
+			<resource>
+				<directory>META-INF</directory>
+				<targetPath>${project.build.directory}/classes/META-INF</targetPath>
+			</resource>
+			<resource>
+				<directory>OSGI-INF</directory>
+				<targetPath>${project.build.directory}/classes/OSGI-INF</targetPath>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -40,6 +41,53 @@
 					<archive>
 						<manifestFile>META-INF/MANIFEST.MF</manifestFile>
 					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<version>2.2.0</version>
+				<!-- configure plugin to generate MANIFEST.MF -->
+				<executions>
+					<execution>
+						<id>bundle-manifest</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>manifest</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- configure plugin to support jar packaging -->
+					<supportedProjectTypes>
+						<supportedProjectType>jar</supportedProjectType>
+					</supportedProjectTypes>
+					<manifestLocation>META-INF</manifestLocation>
+					<instructions>
+						<Bundle-Version>${osgi.version}</Bundle-Version>
+						<Export-Package>
+							net.ontopia.topicmaps.impl.tmapi2,
+							net.ontopia.topicmaps.query.tmql.impl.basic,
+							net.ontopia.topicmaps.query.tmql.impl.tmql4jextension,
+							net.ontopia.topicmaps.query.tmql.impl.util
+						</Export-Package>
+						<Require-Bundle>
+							de.topicmapslab.tmql4j;bundle-version="3.0.0",
+							org.tmapi;bundle-version="2.0.3",
+							de.topicmapslab.tmql4j.draft2010;bundle-version="3.0.0"
+						</Require-Bundle>
+						<Import-Package>
+							de.topicmapslab.majortom.util;resolution:=optional,
+							org.osgi.framework,
+							org.slf4j;specification-version="1.6.1",*
+ 						</Import-Package>
+						<Bundle-SymbolicName>de.topicmapslab.tmql4j.ontopia;singleton=true</Bundle-SymbolicName>
+						<Bundle-Name>TMQL Ontopia Extension</Bundle-Name>
+						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+						<Bundle-RequiredExecutionEnvironment>JavaSE-1.6</Bundle-RequiredExecutionEnvironment>
+						<Service-Component>OSGI-INF/draft2010extensionpoint.xml</Service-Component>
+					</instructions>
 				</configuration>
 			</plugin>
 		</plugins>

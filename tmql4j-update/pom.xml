@@ -42,16 +42,59 @@
 					</archive>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<version>2.2.0</version>
+				<!-- configure plugin to generate MANIFEST.MF -->
+				<executions>
+					<execution>
+						<id>bundle-manifest</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>manifest</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- configure plugin to support jar packaging -->
+					<supportedProjectTypes>
+						<supportedProjectType>jar</supportedProjectType>
+					</supportedProjectTypes>
+					<manifestLocation>META-INF</manifestLocation>
+					<instructions>
+						<Bundle-Version>${osgi.version}</Bundle-Version>
+						<Export-Package>
+							de.topicmapslab.tmql4j.update.* 
+						</Export-Package>
+						<Require-Bundle>
+							org.tmapi;bundle-version="2.0.3",
+							de.topicmapslab.tmql4j;bundle-version="3.0.0",
+							de.topicmapslab.tmql4j.path;bundle-version="3.0.0"
+						</Require-Bundle>
+						<Import-Package>
+							org.osgi.framework,
+							org.slf4j;version="1.6.1"
+ 						</Import-Package>
+						<Bundle-SymbolicName>de.topicmapslab.tmql4j.update</Bundle-SymbolicName>
+						<Bundle-Name>TMQL Update Style</Bundle-Name>
+						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+						<Bundle-RequiredExecutionEnvironment>JavaSE-1.6</Bundle-RequiredExecutionEnvironment>
+						<Service-Component>OSGI-INF/tmql4j-update.xml</Service-Component>
+					</instructions>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-  <dependencies>
-  	<dependency>
-  		<groupId>de.topicmapslab.tmql4j</groupId>
-  		<artifactId>tmql4j-path</artifactId>
-  		<version>${project.version}</version>
-  		<type>jar</type>
-  		<scope>compile</scope>
-  	</dependency>
+	<dependencies>
+		<dependency>
+			<groupId>de.topicmapslab.tmql4j</groupId>
+			<artifactId>tmql4j-path</artifactId>
+			<version>${project.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -64,5 +107,5 @@
 			<version>1.2.0-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
-  </dependencies>
+	</dependencies>
 </project>
