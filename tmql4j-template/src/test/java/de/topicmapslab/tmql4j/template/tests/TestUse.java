@@ -11,6 +11,7 @@ package de.topicmapslab.tmql4j.template.tests;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -23,6 +24,7 @@ import org.tmapi.core.Topic;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.results.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.template.grammar.lexical.CTM;
 import de.topicmapslab.tmql4j.template.grammar.lexical.JTMQR;
 import de.topicmapslab.tmql4j.template.grammar.lexical.Template;
@@ -93,6 +95,22 @@ public class TestUse extends Tmql4JTestCase {
 		assertEquals(String.class, rs.get(0,0).getClass());
 		assertEquals(JTMQR.TOKEN, rs.getResultType());
 		assertEquals(jtmqr, rs.get(0,0));
+	}
+	
+	@Test(expected=TMQLRuntimeException.class)
+	public void testJTMQROSIllegal() throws Exception {
+		final String query 	= "// tm:subject USE JTMQROS";
+		execute(query);
+	}
+	
+	@Test
+	public void testJTMQROS() throws Exception {
+		final String jtmqr = JTMQRWriter.write(QueryMatches.emptyMatches());
+		final String query 	= "// tm:subject USE JTMQROS";
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		runtime.run(topicMap,query, os);
+		os.flush();
+		assertEquals(jtmqr, os.toString());
 	}
 	
 	@Test

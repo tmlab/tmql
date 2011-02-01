@@ -1091,7 +1091,7 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		Topic[] topics = new Topic[10];
 		for (int i = 0; i < topics.length; i++) {
 			topics[i] = createTopic();
-			topic.createName("Value", new Topic[0]).setReifier(topics[i]);
+			topic.createName("Value" + i).setReifier(topics[i]);
 		}
 		String query = null;
 		IResultSet<?> set = null;
@@ -1132,7 +1132,7 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		String query = null;
 		IResultSet<?> set = null;
 
-		query = "myTopic >> indicators >> atomify";
+		query = "\"" + base + "myTopic\" << locators >> indicators >> atomify";
 		set = execute(query);
 		assertEquals(locators.length, set.size());
 

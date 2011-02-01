@@ -17,14 +17,14 @@ import de.topicmapslab.tmql4j.util.CollectionsUtility;
  * Serializing a map
  * 
  * @author Sven Krosse
- *
+ * 
  */
 public class MapSerializer extends JsonSerializer<Map<?, ?>> {
 	/**
 	 * Abstract class for calling JSON generator
 	 * 
 	 * @author Sven Krosse
-	 *
+	 * 
 	 */
 	@JsonSerialize(using = MapSerializer.class)
 	public abstract class MapMixIn {
@@ -51,6 +51,16 @@ public class MapSerializer extends JsonSerializer<Map<?, ?>> {
 					jgen.writeStringField("s", value.toString());
 				} else if (value instanceof Construct) {
 					writeConstruct(jgen, (Construct) value);
+				} else if (value instanceof Long) {
+					jgen.writeNumberField("n", (Long) value);
+				} else if (value instanceof Integer) {
+					jgen.writeNumberField("n", (Integer) value);
+				} else if (value instanceof Double) {
+					jgen.writeNumberField("n", (Double) value);
+				} else if (value instanceof Float) {
+					jgen.writeNumberField("n", (Float) value);
+				} else {
+					jgen.writeStringField("s", value.toString());
 				}
 				jgen.writeEndObject();
 			}
@@ -61,8 +71,11 @@ public class MapSerializer extends JsonSerializer<Map<?, ?>> {
 
 	/**
 	 * Utility method to write the construct to JSON
-	 * @param jgen the JSON generator
-	 * @param construct the construct
+	 * 
+	 * @param jgen
+	 *            the JSON generator
+	 * @param construct
+	 *            the construct
 	 * @throws IOException
 	 */
 	private void writeConstruct(JsonGenerator jgen, Construct construct) throws IOException {

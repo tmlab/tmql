@@ -36,5 +36,11 @@ public interface ISelection {
 	 * @return the selection
 	 */
 	public String getSelection();
+	
+	/**
+	 * Adds a cast definition for this selection. Only one cast is allowed for each selection, past casts will be overwritten.
+	 * @param type the type to cast to
+	 */
+	public void cast(String type);
 
 }

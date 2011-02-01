@@ -9,6 +9,7 @@
 package de.topicmapslab.tmql4j.sql.path.components.definition.core;
 
 import de.topicmapslab.tmql4j.path.grammar.lexical.And;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ICriterion;
 
 /**
  * @author Sven Krosse
@@ -21,6 +22,21 @@ public class Conjunction extends Criteria {
 	 */
 	protected String getBooleanOperator() {
 		return And.TOKEN;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void add(ICriterion criterion) {
+		if (criterion instanceof Conjunction) {
+			for ( ICriterion c : ((Conjunction) criterion).getCriterions()){
+				if ( !getCriterions().contains(c)){
+					add(c);
+				}
+			}
+		} else {
+			super.add(criterion);
+		}
 	}
 
 }

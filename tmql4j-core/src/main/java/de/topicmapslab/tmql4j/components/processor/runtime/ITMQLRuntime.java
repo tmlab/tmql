@@ -10,6 +10,8 @@
  */
 package de.topicmapslab.tmql4j.components.processor.runtime;
 
+import java.io.OutputStream;
+
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 
@@ -65,7 +67,7 @@ public interface ITMQLRuntime {
 	 *            the topicMap
 	 * @param query
 	 *            the query to execute
-	 *@param parameters
+	 * @param parameters
 	 *            optional parameters, if the query string contains question
 	 *            marks
 	 * @return the create query
@@ -73,6 +75,50 @@ public interface ITMQLRuntime {
 	 *             thrown if execution fails
 	 */
 	public IQuery run(TopicMap topicMap, String query, Object... parameters) throws TMQLRuntimeException;
+
+	/**
+	 * Execution method of the TMQL runtime. <br />
+	 * <br />
+	 * Method starts the execution of the given query.
+	 * 
+	 * @param query
+	 *            the query to execute
+	 * @param stream
+	 *            the stream can be <code>null</code>
+	 * @param parameters
+	 *            optional parameters, if the query string contains question
+	 *            marks
+	 * @throws TMQLRuntimeException
+	 *             thrown if execution fails
+	 */
+	public void run(IQuery query, OutputStream stream, Object... parameters) throws TMQLRuntimeException;
+
+	/**
+	 * Execution method of the TMQL runtime. <br />
+	 * <br />
+	 * Method starts the execution of the encapsulated processing chain and
+	 * store the total execution time.
+	 * 
+	 * <p>
+	 * The runtime will be create a {@link IQuery} representation by calling
+	 * {@link QueryFactory#buildQuery(String)} and transform the given query to
+	 * a TMQL query.
+	 * </p>
+	 * 
+	 * @param topicMap
+	 *            the topicMap
+	 * @param query
+	 *            the query to execute
+	 * @param stream
+	 *            the stream can be <code>null</code>
+	 * @param parameters
+	 *            optional parameters, if the query string contains question
+	 *            marks
+	 * @return the create query
+	 * @throws TMQLRuntimeException
+	 *             thrown if execution fails
+	 */
+	public IQuery run(TopicMap topicMap, String query, OutputStream stream, Object... parameters) throws TMQLRuntimeException;
 
 	/**
 	 * Method return the internal instance of the language context containing

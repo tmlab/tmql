@@ -170,7 +170,7 @@ public class TestTupleExpression extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = " myTopic ( .  , theType , myTopic >> characteristics theType , . / nonExists )";
+		query = " myTopic ( .  , theType , . >> characteristics theType , . / nonExists )";
 		set = execute(query);
 		assertEquals(100, set.size());
 		for (IResult r : set) {

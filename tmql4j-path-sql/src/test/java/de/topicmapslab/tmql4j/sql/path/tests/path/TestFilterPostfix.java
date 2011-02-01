@@ -472,7 +472,7 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 			}
 		}
 
-		final String query = " myTopic >> characteristics [ . >> types ==  \"" + type.getId() + "\" << id ] >> atomify ";
+		final String query = " myTopic >> characteristics [ ^ type ] >> atomify ";
 		IResultSet<?> rs = execute(query);
 		assertEquals(results.size(), rs.size());
 		for (IResult r : rs) {

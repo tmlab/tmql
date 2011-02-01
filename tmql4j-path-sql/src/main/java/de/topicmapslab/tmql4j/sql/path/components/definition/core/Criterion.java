@@ -34,5 +34,22 @@ public class Criterion implements ICriterion {
 	public String toString() {
 		return criterion;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean equals(Object obj) {
+		if ( obj instanceof Criterion){
+			return this.criterion.equalsIgnoreCase(((Criterion) obj).criterion);
+		}
+		return false;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public int hashCode() {
+		return this.criterion.hashCode();
+	}
 
 }

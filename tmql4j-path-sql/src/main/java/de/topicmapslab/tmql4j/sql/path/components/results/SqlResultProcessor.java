@@ -103,20 +103,33 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 					 */
 					if (metaData.getColumnType(col) == Types.BIGINT) {
 						/*
-						 * store id value
+						 * is topic map
 						 */
-						ids.add(value);
-						/*
-						 * store index of id in result set
-						 */
-						List<Index> list = indexes.get(value);
-						if (list == null) {
-							list = HashUtil.getList();
-							indexes.put(value, list);
+						if (query.getTopicMap().getId().equalsIgnoreCase(value.toString())) {
+							result.add(query.getTopicMap());
 						}
-						list.add(new Index(row, col - 1));
+						/*
+						 * is any construct or locator except the topic map
+						 */
+						else {
+							/*
+							 * store id value
+							 */
+							ids.add(value);
+							/*
+							 * store index of id in result set
+							 */
+							List<Index> list = indexes.get(value);
+							if (list == null) {
+								list = HashUtil.getList();
+								indexes.put(value, list);
+							}
+							list.add(new Index(row, col - 1));
+							result.add(value);
+						}
+					}else{
+						result.add(value);
 					}
-					result.add(value);
 				}
 				resultSet.addResult(result);
 				row++;

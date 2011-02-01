@@ -48,5 +48,32 @@ public class InCriterion extends Criterion {
 		}
 		return MessageFormat.format(ALIAS_STRING, alias, column, definition.toString());
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean equals(Object obj) {
+		if ( obj == this){
+			return true;
+		}
+		if ( obj instanceof InCriterion ){
+			InCriterion c = ((InCriterion) obj);
+			boolean r = c.definition ==definition;
+			r &= c.column.equalsIgnoreCase(column);
+			r &= c.alias == null ? alias == null : c.alias.equalsIgnoreCase(alias);
+			return r;
+		}
+		return false;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public int hashCode() {
+		int hash = definition.hashCode();
+		hash |= column.hashCode();
+		hash |= alias == null ? 0 : alias.hashCode();
+		return hash;
+	}
 
 }

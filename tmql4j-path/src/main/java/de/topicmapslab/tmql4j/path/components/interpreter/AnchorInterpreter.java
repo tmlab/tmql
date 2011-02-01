@@ -51,7 +51,7 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 	/**
 	 * 
 	 */
-	private static final String VARIABLE_TOPIC_MAP = "%_";
+	public static final String VARIABLE_TOPIC_MAP = "%_";
 	/**
 	 * the Logger
 	 */

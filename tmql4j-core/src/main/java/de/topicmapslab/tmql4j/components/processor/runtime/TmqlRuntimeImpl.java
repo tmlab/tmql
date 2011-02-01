@@ -10,6 +10,7 @@
  */
 package de.topicmapslab.tmql4j.components.processor.runtime;
 
+import java.io.OutputStream;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -155,14 +156,12 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 		/*
 		 * redirect to real implementation
 		 */
-		doRun(query);
+		doRun(query, null);
 		/*
 		 * after-execution call to query
 		 */
 		query.afterQuery(this);
 	}
-
-	protected abstract void doRun(IQuery query) throws TMQLRuntimeException;
 
 	/**
 	 * {@inheritDoc}
@@ -191,6 +190,75 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 		run(q, parameters);
 		return q;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void run(IQuery query, OutputStream stream, Object... parameters) throws TMQLRuntimeException {
+		/*
+		 * is prepared statement
+		 */
+		if (parameters.length > 0) {
+			if (query instanceof IPreparedStatement) {
+				IPreparedStatement stmt = (IPreparedStatement) query;
+				for (int i = 0; i < parameters.length; i++) {
+					stmt.set(i, parameters[i]);
+				}
+				stmt.run();
+				return;
+			}
+			/*
+			 * no prepared statement
+			 */
+			throw new TMQLRuntimeException("Parameters only allowed for prepared statements");
+		}
+		/*
+		 * add restrictions
+		 */
+		addRestrictions(query);
+		/*
+		 * before-execution call to query
+		 */
+		query.beforeQuery(this);
+		/*
+		 * redirect to real implementation
+		 */
+		doRun(query, stream);
+		/*
+		 * after-execution call to query
+		 */
+		query.afterQuery(this);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public IQuery run(TopicMap topicMap, String query, OutputStream stream, Object... parameters) throws TMQLRuntimeException {
+		IQuery q = null;
+		/*
+		 * is prepared statement
+		 */
+		if (parameters.length > 0) {
+			q = preparedStatement(query);
+			q.setTopicMap(topicMap);
+		}
+		/*
+		 * is simple query without wildcards
+		 */
+		else {
+			q = toQuery(topicMap, query);
+			if (q == null) {
+				q = QueryFactory.getFactory().getTmqlQuery(topicMap, query);
+			}
+		}
+		if (q == null) {
+			throw new TMQLRuntimeException(GIVEN_QUERY_IS_NOT_A_TMQL_QUERY_OR_CANNOT_TRANSFORM_TO_TMQL);
+		}
+		run(q, stream, parameters);
+		return q;
+	}
+
+	protected abstract void doRun(IQuery query, OutputStream stream) throws TMQLRuntimeException;
 
 	/**
 	 * Transforms the given query to

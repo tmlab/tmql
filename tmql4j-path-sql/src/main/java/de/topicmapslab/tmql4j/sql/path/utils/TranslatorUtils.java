@@ -188,4 +188,20 @@ public class TranslatorUtils {
 		return definition;
 	}
 
+	private static final String SUPERTYPE_SUBTYPE = "SELECT id_supertype, id_subtype FROM rel_kind_of UNION SELECT ( SELECT id_player FROM roles AS r, rel_subject_identifiers AS rl, locators AS l WHERE id_locator = l.id AND reference = ''http://psi.topicmaps.org/iso13250/model/supertype'' AND r.id_type = id_topic AND r.id_parent = a.id ) AS id_supertype, ( SELECT id_player FROM roles AS r, rel_subject_identifiers AS rl, locators AS l WHERE id_locator = l.id AND reference = ''http://psi.topicmaps.org/iso13250/model/subtype'' AND r.id_type = id_topic AND r.id_parent = a.id ) AS id_subtype FROM associations AS a, rel_subject_identifiers AS rl, locators AS l WHERE id_locator = l.id AND reference = ''http://psi.topicmaps.org/iso13250/model/supertype-subtype'' AND a.id_type = id_topic AND a.id_topicmap = {0} ";
+
+	/**
+	 * Generates the query to extract all supertype-subtype parts as association
+	 * and relation
+	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param context
+	 *            the context
+	 * @return the generated query
+	 */
+	public static final String generateSupertypeSubtypeSet(ITMQLRuntime runtime, IContext context) {
+		return MessageFormat.format(SUPERTYPE_SUBTYPE, context.getQuery().getTopicMap().getId());
+	}
+
 }

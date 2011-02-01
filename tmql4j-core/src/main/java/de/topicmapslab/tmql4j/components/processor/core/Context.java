@@ -8,6 +8,7 @@
  */
 package de.topicmapslab.tmql4j.components.processor.core;
 
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ public class Context implements IContext {
 	private boolean transitive;
 	private Map<String, String> prefixes;
 	private final ITmqlProcessor processor;
+	private final OutputStream stream;
 
 	/**
 	 * constructor
@@ -40,8 +42,23 @@ public class Context implements IContext {
 	 *            the handled query
 	 */
 	public Context(ITmqlProcessor processor, IQuery query) {
+		this(processor, query, null);
+	}
+	
+	/**
+	 * constructor
+	 * 
+	 * @param processor
+	 *            the TMQL processor
+	 * @param query
+	 *            the handled query
+	 * @param stream
+	 *            the stream
+	 */
+	public Context(ITmqlProcessor processor, IQuery query, OutputStream stream) {
 		this.processor = processor;
 		this.query = query;
+		this.stream = stream;
 	}
 
 	/**
@@ -60,6 +77,7 @@ public class Context implements IContext {
 		this.currentNode = clone.getCurrentNode();
 		this.transitive = clone.isTransitive();
 		this.prefixes = clone.getPrefixes();
+		this.stream = clone.getOutputStream();
 	}
 
 	/**
@@ -100,14 +118,14 @@ public class Context implements IContext {
 	public void setCurrentIndexInSequence(int currentIndex) {
 		this.currentIndexInSequence = currentIndex;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public int getCurrentIndexInTuple() {
 		return currentIndexInTuple;
 	}
-	
+
 	/**
 	 * @param currentIndex
 	 *            the current index
@@ -200,5 +218,12 @@ public class Context implements IContext {
 	public ITmqlProcessor getTmqlProcessor() {
 		return processor;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public OutputStream getOutputStream() {
+		return stream;
+	}
+
 }

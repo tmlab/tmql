@@ -29,6 +29,7 @@ public class AtomifyAxisTranslator extends AxisTranslatorImpl {
 	static final String FORWARD_SELECTION = "value";
 	static final String BACKWARD_SELECTION = "id";
 	static final String CHARACTERISTICS = "SELECT id_parent, id, value FROM names UNION SELECT id_parent, id, value FROM occurrences";
+	static final String CHARACTERISTICS_AND_LOCATORS = "SELECT id_parent, id, value FROM names UNION SELECT id_parent, id, value FROM occurrences UNION SELECT NULL AS id_parent, id, reference AS value FROM locators";
 	static final String FORWARD_CONDITION = "{0} = {1}.id";
 	static final String BACKWARD_CONDITION = "{0} = {1}.value";
 
@@ -41,7 +42,7 @@ public class AtomifyAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * append from clause for characteristics
 		 */
-		IFromPart fromPart = new FromPart(CHARACTERISTICS, result.getAlias(), false);
+		IFromPart fromPart = new FromPart(CHARACTERISTICS_AND_LOCATORS, result.getAlias(), false);
 		result.addFromPart(fromPart);
 		/*
 		 * append condition as connection to incoming SQL definition
@@ -65,7 +66,7 @@ public class AtomifyAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * append from clause for characteristics
 		 */
-		IFromPart fromPart = new FromPart(CHARACTERISTICS, result.getAlias(), false);
+		IFromPart fromPart = new FromPart(CHARACTERISTICS_AND_LOCATORS, result.getAlias(), false);
 		result.addFromPart(fromPart);
 		/*
 		 * append condition as connection to incoming SQL definition

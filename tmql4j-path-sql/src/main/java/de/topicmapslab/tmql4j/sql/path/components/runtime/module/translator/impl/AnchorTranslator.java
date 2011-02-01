@@ -14,6 +14,7 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.path.components.interpreter.AnchorInterpreter;
 import de.topicmapslab.tmql4j.path.grammar.productions.Anchor;
 import de.topicmapslab.tmql4j.path.grammar.productions.SimpleContent;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.FromPart;
@@ -82,12 +83,25 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 				return newDefinition;
 			}
 			case Anchor.TYPE_DOT: {
-				return definition;
+				ISqlDefinition def = new SqlDefinition();
+				def.setCurrentTable(definition.getCurrentTable());
+				def.setInternalAliasIndex(definition.getInternalAliasIndex());
+				def.addSelection(definition.getLastSelection());
+				return def;
 			}
 			case Anchor.TYPE_LITERAL: {
 				ISqlDefinition def = new SqlDefinition();
 				def.addSelection(new Selection("'" + LiteralUtils.asString(expression.getTokens().get(0)) + "'", null));
+				def.setCurrentTable(SqlTables.STRING);
 				return def;
+			} case Anchor.TYPE_VARIABLE:{
+				final String variable = expression.getTokens().get(0);
+				if ( AnchorInterpreter.VARIABLE_TOPIC_MAP.equalsIgnoreCase(variable)){
+					ISqlDefinition def = new SqlDefinition();
+					def.addSelection(new Selection(context.getQuery().getTopicMap().getId(), null));
+					def.setCurrentTable(SqlTables.STRING);
+					return def;
+				}
 			}
 		}
 		throw new TMQLRuntimeException("Unsupported expression type for SQL translator.");

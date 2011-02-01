@@ -9,6 +9,7 @@
 package de.topicmapslab.tmql4j.sql.path.components.definition.core;
 
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.List;
 
 import de.topicmapslab.tmql4j.path.grammar.lexical.Comma;
@@ -27,7 +28,8 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  */
 public class SqlDefinition implements ISqlDefinition {
 
-	private static final String QUERY = "SELECT {0} FROM {1} {2}";
+	private static final String QUERY_WITHOUT_FROM = "SELECT {0}";
+	private static final String QUERY_WITH_FROM = "SELECT {0} FROM {1} {2}";
 	public static final String WS = " ";
 	public static final String ALIAS = "alias";
 
@@ -59,6 +61,30 @@ public class SqlDefinition implements ISqlDefinition {
 		this.aliasIndex = clone.aliasIndex;
 		this.criteria = clone.criteria;
 		this.sqlTable = clone.sqlTable;
+	}
+
+	/**
+	 * Returns all from parts
+	 * 
+	 * @return the from parts
+	 */
+	protected List<IFromPart> getFromParts() {
+		if (fromParts == null) {
+			return Collections.emptyList();
+		}
+		return fromParts;
+	}
+
+	/**
+	 * Returns all selections
+	 * 
+	 * @return the selections
+	 */
+	protected List<ISelection> getSelectionParts() {
+		if (selectionParts == null) {
+			return Collections.emptyList();
+		}
+		return selectionParts;
 	}
 
 	/**
@@ -195,10 +221,16 @@ public class SqlDefinition implements ISqlDefinition {
 			selection.append(sel.toString());
 		}
 		/*
+		 * ignore missing from is inner selection
+		 */
+		if ( fromParts == null ){
+			return MessageFormat.format(QUERY_WITHOUT_FROM, selection.toString());
+		}
+		/*
 		 * generate from part
 		 */
 		StringBuilder from = new StringBuilder();
-		for (IFromPart fromPart : fromParts) {
+		for (IFromPart fromPart : getFromParts()) {
 			if (!from.toString().isEmpty()) {
 				from.append(Comma.TOKEN);
 				from.append(WS);
@@ -217,7 +249,7 @@ public class SqlDefinition implements ISqlDefinition {
 		/*
 		 * generate query
 		 */
-		return MessageFormat.format(QUERY, selection.toString(), from.toString(), where.toString());
+		return MessageFormat.format(QUERY_WITH_FROM, selection.toString(), from.toString(), where.toString());
 	}
 
 	/**
@@ -233,8 +265,11 @@ public class SqlDefinition implements ISqlDefinition {
 		if (this.selectionParts == null) {
 			this.selectionParts = HashUtil.getList();
 		}
-		this.selectionParts.addAll(definition.selectionParts);
-		this.fromParts = definition.fromParts;
+		this.selectionParts.addAll(definition.getSelectionParts());
+		if (this.fromParts == null) {
+			this.fromParts = HashUtil.getList();
+		}
+		this.fromParts.addAll(definition.getFromParts());
 		/*
 		 * set alias index
 		 */
@@ -243,10 +278,17 @@ public class SqlDefinition implements ISqlDefinition {
 		 * set state
 		 */
 		this.sqlTable = SqlTables.ANY;
+
 		/*
 		 * add criteria
 		 */
-		this.criteria = definition.criteria;
+		if (definition.criteria != null) {
+			if (this.criteria == null) {
+				this.criteria = definition.criteria;
+			} else {
+				this.criteria.add(definition.criteria);
+			}
+		}
 	}
 
 	/**

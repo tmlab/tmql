@@ -35,6 +35,7 @@ import de.topicmapslab.tmql4j.template.components.processor.runtime.module.Templ
 import de.topicmapslab.tmql4j.template.components.processor.runtime.module.TemplateManager;
 import de.topicmapslab.tmql4j.template.grammar.lexical.CTM;
 import de.topicmapslab.tmql4j.template.grammar.lexical.JTMQR;
+import de.topicmapslab.tmql4j.template.grammar.lexical.JTMQROS;
 import de.topicmapslab.tmql4j.template.grammar.productions.UseExpression;
 import de.topicmapslab.tmql4j.template.util.json.JTMQRWriter;
 import de.topicmapslab.tmql4j.util.HashUtil;
@@ -84,6 +85,12 @@ public class UseExpressionInterpreter extends ExpressionInterpreterImpl<UseExpre
 			return useJTMQR(runtime, context, optionalArguments);
 		}
 		/*
+		 * use JTMQROS
+		 */
+		else if (JTMQROS.class.equals(token)) {
+			return useJTMQROS(runtime, context, optionalArguments);
+		}
+		/*
 		 * use CTM
 		 */
 		else if (CTM.class.equals(token)) {
@@ -130,6 +137,33 @@ public class UseExpressionInterpreter extends ExpressionInterpreterImpl<UseExpre
 				throw new TMQLRuntimeException("Transformation to CTM failed!", e);
 			}
 			return QueryMatches.asQueryMatchNS(runtime, os.toString());
+		}
+		return QueryMatches.emptyMatches();
+	}
+
+	/**
+	 * The method extracts the values from context and create a JTMQROS for the
+	 * whole sequence
+	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param context
+	 *            the context
+	 * @param optionalArguments
+	 *            optional arguments
+	 * @return the query matches containing the JTMQR
+	 */
+	private QueryMatches useJTMQROS(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+		if (context.getOutputStream() == null) {
+			throw new TMQLRuntimeException("Missing outputstream to use JTMQROS");
+		}
+		/*
+		 * fill result
+		 */
+		if (context.getContextBindings() != null) {
+			JTMQRWriter.write(context.getOutputStream(), context.getContextBindings());
+		} else {
+			JTMQRWriter.write(context.getOutputStream(), QueryMatches.emptyMatches());
 		}
 		return QueryMatches.emptyMatches();
 	}

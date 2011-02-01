@@ -19,6 +19,7 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
+import de.topicmapslab.tmql4j.sql.path.utils.TranslatorUtils;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 
 /**
@@ -37,7 +38,7 @@ public class SupertypesAxisTranslator extends AxisTranslatorImpl {
 
 	static final String FORWARD_SELECTION = "id_supertype";
 	static final String BACKWARD_SELECTION = "id_subtype";
-	static final String TABLE = "rel_kind_of";
+//	static final String TABLE = "rel_kind_of";
 	static final String TABLE_LOCATORS = "locators";
 	static final String TABLE_REL_SI = "rel_subject_identifiers";
 	static final String TABLE_ASSOCIATIONS = "associations";
@@ -55,60 +56,13 @@ public class SupertypesAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * append from clauses
 		 */
-		IFromPart fromPart = new FromPart(TABLE, result.getAlias(), true);
-		result.addFromPart(fromPart);
-		// /*
-		// * for association
-		// */
-		// IFromPart associationFromPart = new FromPart(TABLE_ASSOCIATIONS,
-		// result.getAlias(), true);
-		// result.addFromPart(associationFromPart);
-		// IFromPart aLocatorsiFromPart = new FromPart(TABLE_LOCATORS,
-		// result.getAlias(), true);
-		// result.addFromPart(aLocatorsiFromPart);
-		// IFromPart aRelSiFromPart = new FromPart(TABLE_REL_SI,
-		// result.getAlias(), true);
-		// result.addFromPart(aRelSiFromPart);
-		// /*
-		// * for roles
-		// */
-		// IFromPart rolesPart = new FromPart(TABLE_ROLES, result.getAlias(),
-		// true);
-		// result.addFromPart(rolesPart);
-		// IFromPart rLocatorsiFromPart = new FromPart(TABLE_LOCATORS,
-		// result.getAlias(), true);
-		// result.addFromPart(rLocatorsiFromPart);
-		// IFromPart rRelSiFromPart = new FromPart(TABLE_REL_SI,
-		// result.getAlias(), true);
-		// result.addFromPart(rRelSiFromPart);
+		IFromPart fromPart = new FromPart(TranslatorUtils.generateSupertypeSubtypeSet(runtime, context), result.getAlias(), false);
+		result.addFromPart(fromPart);	
 		/*
 		 * append condition as connection to incoming SQL definition
 		 */
 		ISelection selection = definition.getLastSelection();
-		result.add(MessageFormat.format(FORWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));
-		// /*
-		// * create disjunction to handle relation and associations
-		// */
-		// Disjunction disjunction = new Disjunction();
-		// disjunction.add(MessageFormat.format(FORWARD_CONDITION,
-		// selection.getSelection(), fromPart.getAlias()));
-		// /*
-		// * create criteria for association played
-		// */
-		// Conjunction conjunction = new Conjunction();
-		// conjunction.add(MessageFormat.format(CONDITION_ASSOCTYPE_REF,
-		// aLocatorsiFromPart.getAlias()));
-		// conjunction.add(MessageFormat.format(CONDITION_REL_LOCATOR,
-		// aLocatorsiFromPart.getAlias(), aRelSiFromPart.getAlias()));
-		// conjunction.add(MessageFormat.format(CONDITION_TYPE,
-		// associationFromPart.getAlias(), aRelSiFromPart.getAlias()));
-		//
-		// conjunction.add(MessageFormat.format(CONDITION__REF,
-		// aLocatorsiFromPart.getAlias()));
-		// conjunction.add(MessageFormat.format(CONDITION_REL_LOCATOR,
-		// aLocatorsiFromPart.getAlias(), aRelSiFromPart.getAlias()));
-		// conjunction.add(MessageFormat.format(CONDITION_TYPE,
-		// associationFromPart.getAlias(), aRelSiFromPart.getAlias()));
+		result.add(MessageFormat.format(FORWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));	
 		/*
 		 * add new selection
 		 */
@@ -126,7 +80,7 @@ public class SupertypesAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * append from clause for characteristics
 		 */
-		IFromPart fromPart = new FromPart(TABLE, result.getAlias(), true);
+		IFromPart fromPart = new FromPart(TranslatorUtils.generateSupertypeSubtypeSet(runtime, context), result.getAlias(), false);
 		result.addFromPart(fromPart);
 		/*
 		 * append condition as connection to incoming SQL definition

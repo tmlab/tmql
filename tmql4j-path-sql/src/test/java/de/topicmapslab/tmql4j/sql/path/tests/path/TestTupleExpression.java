@@ -169,8 +169,11 @@ public class TestTupleExpression extends Tmql4JTestCase {
 		}
 		String query = null;
 		IResultSet<?> set = null;
+		
+		query = " myTopic ( .  , . / nonExists )";
+		set = execute(query);
 
-		query = " myTopic ( .  , theType , myTopic >> characteristics theType , . / nonExists )";
+		query = " myTopic ( .  , theType , . >> characteristics theType , . / nonExists )";
 		set = execute(query);
 		assertEquals(10, set.size());
 		for (IResult r : set) {

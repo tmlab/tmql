@@ -8,6 +8,7 @@
  */
 package de.topicmapslab.tmql4j.components.processor.core;
 
+import java.io.OutputStream;
 import java.util.Map;
 
 import de.topicmapslab.tmql4j.components.processor.ITmqlProcessor;
@@ -108,5 +109,11 @@ public interface IContext {
 	 * @return the query processor
 	 */
 	public ITmqlProcessor getTmqlProcessor();
+	
+	/**
+	 * Returns the output stream or <code>null</code>
+	 * @return the stream
+	 */
+	public OutputStream getOutputStream();
 
 }

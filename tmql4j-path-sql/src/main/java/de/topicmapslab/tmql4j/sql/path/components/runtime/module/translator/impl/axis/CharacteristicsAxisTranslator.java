@@ -77,7 +77,7 @@ public class CharacteristicsAxisTranslator extends AxisTranslatorImpl {
 		 * check for optional type
 		 */
 		if ( !fromPart.isTable()){
-			TranslatorUtils.addOptionalTypeArgument(runtime, context, optionalType, definition, COL_TYPE, fromPart.getAlias());
+			TranslatorUtils.addOptionalTypeArgument(runtime, context, optionalType, result, COL_TYPE, fromPart.getAlias());
 		}
 		return result;
 	}

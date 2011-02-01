@@ -8,6 +8,8 @@
  */
 package de.topicmapslab.tmql4j.components.processor;
 
+import java.io.OutputStream;
+
 import de.topicmapslab.tmql4j.components.lexer.ILexer;
 import de.topicmapslab.tmql4j.components.parser.IParser;
 import de.topicmapslab.tmql4j.components.parser.IParserTree;
@@ -40,6 +42,24 @@ public abstract class TmqlProcessorImpl implements ITmqlProcessor {
 	 */
 	public TmqlProcessorImpl(ITMQLRuntime runtime) {
 		this.runtime = runtime;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public IResultSet<?> query(IQuery query, OutputStream stream) {
+		IParserTree tree = parse(query);
+		if (tree != null) {
+			IContext context = new Context(this, query, stream);
+
+			QueryMatches results = tree.root().interpret(runtime, context);
+
+			IResultProcessor resultProcessor = getResultProcessor();
+			resultProcessor.proceed(results);
+
+			return resultProcessor.getResultSet();
+		}
+		return ResultSet.emptyResultSet();
 	}
 
 	/**

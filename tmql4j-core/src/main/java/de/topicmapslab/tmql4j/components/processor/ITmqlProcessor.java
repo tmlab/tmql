@@ -8,6 +8,8 @@
  */
 package de.topicmapslab.tmql4j.components.processor;
 
+import java.io.OutputStream;
+
 import de.topicmapslab.tmql4j.components.lexer.ILexer;
 import de.topicmapslab.tmql4j.components.parser.IParser;
 import de.topicmapslab.tmql4j.components.parser.IParserTree;
@@ -30,6 +32,17 @@ public interface ITmqlProcessor {
 	 * @return the results of querying process
 	 */
 	public IResultSet<?> query(IQuery query);
+
+	/**
+	 * Executes the querying process for the given query object
+	 * 
+	 * @param query
+	 *            the query
+	 * @param stream
+	 *            the stream
+	 * @return the results of querying process
+	 */
+	public IResultSet<?> query(IQuery query, OutputStream stream);
 
 	/**
 	 * Executes the querying process for the given statement object

@@ -8,6 +8,8 @@
  */
 package de.topicmapslab.tmql4j.draft2010.components.processor.runtime;
 
+import java.io.OutputStream;
+
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 
@@ -89,13 +91,13 @@ public class TmqlRuntime extends TmqlRuntimeImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void doRun(IQuery query) throws TMQLRuntimeException {
+	protected void doRun(IQuery query, OutputStream stream) throws TMQLRuntimeException {
 		if (query.getTopicMap() == null) {
 			throw new TMQLRuntimeException("Topic map not set to query instance!");
 		}
 		if (!query.getQueryString().isEmpty()) {
 			ITmqlProcessor processor = getTmqlProcessor();
-			IResultSet<?> results = processor.query(query);
+			IResultSet<?> results = processor.query(query, stream);
 			query.setResults(results);
 		} else {
 			query.setResults(ResultSet.emptyResultSet());
