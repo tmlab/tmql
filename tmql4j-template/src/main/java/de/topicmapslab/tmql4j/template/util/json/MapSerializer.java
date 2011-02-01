@@ -2,6 +2,8 @@ package de.topicmapslab.tmql4j.template.util.json;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Map;
 
 import org.codehaus.jackson.JsonGenerator;
@@ -59,7 +61,11 @@ public class MapSerializer extends JsonSerializer<Map<?, ?>> {
 					jgen.writeNumberField("n", (Double) value);
 				} else if (value instanceof Float) {
 					jgen.writeNumberField("n", (Float) value);
-				} else {
+				} else if (value instanceof BigInteger) {
+					jgen.writeNumberField("n", ((BigInteger) value).longValue());
+				}else if (value instanceof BigDecimal) {
+					jgen.writeNumberField("n", ((BigDecimal) value).doubleValue());
+				}else {
 					jgen.writeStringField("s", value.toString());
 				}
 				jgen.writeEndObject();
