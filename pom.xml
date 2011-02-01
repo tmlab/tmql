@@ -8,6 +8,12 @@
 	<version>3.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>TMQL4J Parent Project</name>
+	
+	<properties>
+        <osgi.version>3.0.0.${maven.build.timestamp}</osgi.version>
+        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
+    </properties>
+	
 	<build>
 		<extensions>
 			<extension>
