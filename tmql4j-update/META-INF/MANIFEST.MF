@@ -13,13 +13,13 @@ Service-Component: OSGI-INF/tmql4j-update.xml
 Bundle-ActivationPolicy: lazy
 Tool: Bnd-1.15.0
 Bundle-Name: TMQL Update Style
-Created-By: 1.6.0_22 (Sun Microsystems Inc.)
+Created-By: 1.6.0_20 (Sun Microsystems Inc.)
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.tmapi;bundle-version="2.0.3",de.topicmapslab.tmql4
  j;bundle-version="3.0.0",de.topicmapslab.tmql4j.path;bundle-version="
  3.0.0"
-Bundle-Version: 3.0.0.201102011903
-Bnd-LastModified: 1296583388409
+Bundle-Version: 3.0.0.201102040725
+Bnd-LastModified: 1296800758609
 Bundle-ManifestVersion: 2
 Import-Package: org.osgi.framework;version="[1.4,2)",org.slf4j;version
  ="1.6.1"

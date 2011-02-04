@@ -51,6 +51,49 @@ public class TestIndexFunction extends Tmql4JTestCase {
 	}
 
 	@Test
+	public void testCharacteristicTypesWithType() throws Exception {
+		Topic tt = createTopicByII("myTT");
+		Topic t = createTopic();
+		t.addType(tt);
+		Set<Topic> topics = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic type = createTopic();
+			if (i % 2 == 0) {
+				t.createName(type, "Name" + i);
+				t.createName(type, "Name" + i + "-" + i);
+			} else {
+				t.createOccurrence(type, "Value" + i);
+				t.createOccurrence(type, "Value" + i + "-" + i);
+			}
+			topics.add(type);
+		}
+
+		String query = "fn:get-characteristic-types( myTT )";
+		IResultSet<?> rs = execute(query);
+		assertEquals(100, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+
+		query = "fn:get-characteristic-types( myTT , \"false\" )";
+		rs = execute(query);
+		assertEquals(100, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+
+		query = "fn:get-characteristic-types( myTT  , \"true\" )";
+		rs = execute(query);
+		assertEquals(200, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+	}
+
+	@Test
 	public void testNameTypes() throws Exception {
 		Topic t = createTopic();
 		Set<Topic> topics = HashUtil.getHashSet();
@@ -70,6 +113,44 @@ public class TestIndexFunction extends Tmql4JTestCase {
 	}
 
 	@Test
+	public void testNameTypesWithType() throws Exception {
+		Topic tt = createTopicByII("myTT");
+		Topic t = createTopic();
+		t.addType(tt);
+		Set<Topic> topics = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic type = createTopic();
+			t.createName(type, "Name" + i);
+			t.createName(type, "Name" + i + "-" + i);
+			topics.add(type);
+		}
+
+		String query = "FOR $t IN fn:get-name-types( myTT ) RETURN $t";
+		IResultSet<?> rs = execute(query);
+		assertEquals(100, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+
+		query = "FOR $t IN fn:get-name-types( myTT , \"false\" ) RETURN $t";
+		rs = execute(query);
+		assertEquals(100, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+
+		query = "FOR $t IN fn:get-name-types( myTT , \"true\" ) RETURN $t";
+		rs = execute(query);
+		assertEquals(200, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+	}
+
+	@Test
 	public void testOccurrenceTypes() throws Exception {
 		Topic t = createTopic();
 		Set<Topic> topics = HashUtil.getHashSet();
@@ -82,6 +163,44 @@ public class TestIndexFunction extends Tmql4JTestCase {
 		final String query = "FOR $t IN fn:get-occurrence-types() RETURN $t";
 		IResultSet<?> rs = execute(query);
 		assertEquals(100, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+	}
+
+	@Test
+	public void testOccurrenceTypesWithType() throws Exception {
+		Topic tt = createTopicByII("myTT");
+		Topic t = createTopic();
+		t.addType(tt);
+		Set<Topic> topics = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic type = createTopic();
+			t.createOccurrence(type, "Value" + i);
+			t.createOccurrence(type, "Value" + i + "-" + i);
+			topics.add(type);
+		}
+
+		String query = "FOR $t IN fn:get-occurrence-types( myTT ) RETURN $t";
+		IResultSet<?> rs = execute(query);
+		assertEquals(100, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+
+		query = "FOR $t IN fn:get-occurrence-types( myTT , \"false\" ) RETURN $t";
+		rs = execute(query);
+		assertEquals(100, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+
+		query = "FOR $t IN fn:get-occurrence-types( myTT , \"true\" ) RETURN $t";
+		rs = execute(query);
+		assertEquals(200, rs.size());
 		for (IResult r : rs) {
 			assertEquals(1, r.size());
 			assertTrue(topics.contains(r.first()));
@@ -138,6 +257,44 @@ public class TestIndexFunction extends Tmql4JTestCase {
 		final String query = "FOR $t IN fn:get-role-types() RETURN $t";
 		IResultSet<?> rs = execute(query);
 		assertEquals(100, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+	}
+
+	@Test
+	public void testRoleTypesWithType() throws Exception {
+		Topic assocType = createTopicBySI("assocType");
+		Association a = createAssociation(assocType);
+		Set<Topic> topics = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic type = createTopic();
+			a.createRole(type, createTopic());
+			topics.add(type);
+			a.createRole(type, createTopic());
+			topics.add(type);
+		}
+
+		String query = "FOR $t IN fn:get-role-types(assocType) RETURN $t";
+		IResultSet<?> rs = execute(query);
+		assertEquals(100, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+
+		query = "FOR $t IN fn:get-role-types(assocType, \"false\") RETURN $t";
+		rs = execute(query);
+		assertEquals(100, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+
+		query = "FOR $t IN fn:get-role-types(assocType, \"true\") RETURN $t";
+		rs = execute(query);
+		assertEquals(200, rs.size());
 		for (IResult r : rs) {
 			assertEquals(1, r.size());
 			assertTrue(topics.contains(r.first()));
@@ -262,7 +419,7 @@ public class TestIndexFunction extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 	}
-	
+
 	@Test
 	public void testTopicByNameRegExp() throws Exception {
 		Set<Topic> topics = HashUtil.getHashSet();
@@ -285,17 +442,17 @@ public class TestIndexFunction extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 	}
-	
+
 	@Test
 	public void testTopicByOccurrences() throws Exception {
 		Set<Topic> topics = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
 			Topic t = createTopic();
 			if (i % 2 == 0) {
-				t.createOccurrence(createTopic(),"Name");
+				t.createOccurrence(createTopic(), "Name");
 				topics.add(t);
 			} else {
-				t.createOccurrence(createTopic(),"Value");
+				t.createOccurrence(createTopic(), "Value");
 			}
 
 		}
@@ -308,17 +465,17 @@ public class TestIndexFunction extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 	}
-	
+
 	@Test
 	public void testTopicByOccurrenceRegExp() throws Exception {
 		Set<Topic> topics = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
 			Topic t = createTopic();
 			if (i % 2 == 0) {
-				t.createOccurrence(createTopic(),"Name" + i);
+				t.createOccurrence(createTopic(), "Name" + i);
 				topics.add(t);
 			} else {
-				t.createOccurrence(createTopic(),"Value");
+				t.createOccurrence(createTopic(), "Value");
 			}
 
 		}
@@ -331,21 +488,21 @@ public class TestIndexFunction extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 	}
-	
+
 	@Test
 	public void testTopicByCharacteristics() throws Exception {
 		Set<Topic> topics = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
 			Topic t = createTopic();
 			if (i % 2 == 0) {
-				if ( i % 4 == 0 ){
-					t.createOccurrence(createTopic(),"Name");
-				}else{
-					t.createName(createTopic(),"Name");
+				if (i % 4 == 0) {
+					t.createOccurrence(createTopic(), "Name");
+				} else {
+					t.createName(createTopic(), "Name");
 				}
 				topics.add(t);
 			} else {
-				t.createOccurrence(createTopic(),"Value");
+				t.createOccurrence(createTopic(), "Value");
 			}
 
 		}
@@ -358,21 +515,21 @@ public class TestIndexFunction extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 	}
-	
+
 	@Test
 	public void testTopicByCharacteristicsRegExp() throws Exception {
 		Set<Topic> topics = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
 			Topic t = createTopic();
 			if (i % 2 == 0) {
-				if ( i % 4 == 0 ){
-					t.createOccurrence(createTopic(),"Name" + i);
-				}else{
-					t.createName(createTopic(),"Name" + i);
+				if (i % 4 == 0) {
+					t.createOccurrence(createTopic(), "Name" + i);
+				} else {
+					t.createName(createTopic(), "Name" + i);
 				}
 				topics.add(t);
 			} else {
-				t.createOccurrence(createTopic(),"Value");
+				t.createOccurrence(createTopic(), "Value");
 			}
 
 		}
@@ -385,21 +542,21 @@ public class TestIndexFunction extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 	}
-	
+
 	@Test
 	public void testRatomify() throws Exception {
 		Set<Topic> topics = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
 			Topic t = createTopic();
 			if (i % 2 == 0) {
-				if ( i % 4 == 0 ){
-					t.createOccurrence(createTopic(),"Name" + i);
-				}else{
-					t.createName(createTopic(),"Name" + i);
+				if (i % 4 == 0) {
+					t.createOccurrence(createTopic(), "Name" + i);
+				} else {
+					t.createName(createTopic(), "Name" + i);
 				}
 				topics.add(t);
 			} else {
-				t.createOccurrence(createTopic(),"Value");
+				t.createOccurrence(createTopic(), "Value");
 			}
 
 		}

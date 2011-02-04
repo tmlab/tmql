@@ -64,7 +64,7 @@ public class TMQLRuntimeFactory {
 			}
 		} catch (Throwable t) {
 			// we do nothing, cause we are not in an OSGi environment
-			logger.warn("No Osgi Bundle found", t);
+			logger.warn("No Osgi Bundle found");
 		}
 		
 		ServiceLoader<ITMQLRuntime> loader = ServiceLoader.load(ITMQLRuntime.class, TMQLRuntimeFactory.class.getClassLoader());
@@ -112,7 +112,7 @@ public class TMQLRuntimeFactory {
 			}
 		} catch (Throwable t) {
 			// we do nothing, cause we are not in an OSGi environment
-			logger.warn("No Osgi Bundle found", t);
+			logger.warn("No Osgi Bundle found");
 		}
 		
 		ServiceLoader<ITMQLRuntime> loader = ServiceLoader.load(ITMQLRuntime.class, TMQLRuntimeFactory.class.getClassLoader());

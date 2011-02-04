@@ -86,11 +86,11 @@ Export-Package: de.topicmapslab.tmql4j.grammar.productions;uses:="de.t
 Bundle-ActivationPolicy: lazy
 Tool: Bnd-1.15.0
 Bundle-Name: TMQL Query Engine
-Created-By: 1.6.0_22 (Sun Microsystems Inc.)
+Created-By: 1.6.0_20 (Sun Microsystems Inc.)
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.tmapi;bundle-version="2.0.3"
-Bundle-Version: 3.0.0.201102011903
-Bnd-LastModified: 1296583382494
+Bundle-Version: 3.0.0.201102040734
+Bnd-LastModified: 1296801241234
 Bundle-ManifestVersion: 2
 Bundle-Activator: de.topicmapslab.tmql4j.osgi.TMQLActivator
 Import-Package: org.osgi.framework;version="[1.4,2)",org.slf4j;version

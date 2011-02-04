@@ -54,13 +54,13 @@ Export-Package: de.topicmapslab.tmql4j.draft2010.components.navigation
 Bundle-ActivationPolicy: lazy
 Tool: Bnd-1.15.0
 Bundle-Name: TMQL Draft 2010 Query Engine
-Created-By: 1.6.0_22 (Sun Microsystems Inc.)
+Created-By: 1.6.0_20 (Sun Microsystems Inc.)
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: de.topicmapslab.tmql4j;bundle-version="3.0.0",org.tmap
  i;bundle-version="2.0.3",de.topicmapslab.majortom.core;bundle-version
  ="1.2.0";resolution:=optional
-Bundle-Version: 3.0.0.201102011903
-Bnd-LastModified: 1296583385708
+Bundle-Version: 3.0.0.201102040726
+Bnd-LastModified: 1296800806421
 Bundle-ManifestVersion: 2
 Import-Package: org.osgi.framework;version="[1.4,2)",org.slf4j;version
  ="[1.6,2)"

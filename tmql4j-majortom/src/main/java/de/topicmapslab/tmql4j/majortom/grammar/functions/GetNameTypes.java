@@ -8,12 +8,23 @@
  */
 package de.topicmapslab.tmql4j.majortom.grammar.functions;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.tmapi.core.Name;
+import org.tmapi.core.Topic;
+
+import de.topicmapslab.majortom.model.core.ITopic;
 import de.topicmapslab.majortom.model.index.ITypeInstanceIndex;
+import de.topicmapslab.majortom.util.HashUtil;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.path.grammar.functions.FunctionImpl;
+import de.topicmapslab.tmql4j.path.grammar.productions.Parameters;
 
 /**
  * @author Sven Krosse
@@ -26,16 +37,60 @@ public class GetNameTypes extends FunctionImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public QueryMatches interpret(ITMQLRuntime runtime, IContext context,
-			IExpressionInterpreter<?> caller) {
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
 
-		ITypeInstanceIndex index = context.getQuery().getTopicMap().getIndex(
-				ITypeInstanceIndex.class);
+		ITypeInstanceIndex index = context.getQuery().getTopicMap().getIndex(ITypeInstanceIndex.class);
 		if (!index.isOpen()) {
 			index.open();
 		}
-		return QueryMatches.asQueryMatchNS(runtime, index
-				.getNameTypes());
+		/*
+		 * has arguments ?
+		 */
+		if (caller.containsExpressionsType(Parameters.class)) {
+			QueryMatches results = new QueryMatches(runtime);
+			QueryMatches parameters = getParameters(runtime, context, caller);
+			/*
+			 * iterate over parameters
+			 */
+			for (Map<String, Object> tuple : parameters) {
+				Object topicType = tuple.get("$0");
+				Object duplicates = tuple.get("$1");
+				if (topicType instanceof ITopic) {
+					ITopic type = (ITopic) topicType;
+					Set<List<Topic>> nameTypes = HashUtil.getHashSet();
+					/*
+					 * get instances
+					 */
+					for (Topic t : index.getTopics(type)) {
+						List<Topic> list = new ArrayList<Topic>();
+						/*
+						 * get name types
+						 */
+						for (Name n : t.getNames()) {
+							Topic ty = n.getType();
+							if (duplicates != null && Boolean.parseBoolean(duplicates.toString())) {
+								list.add(ty);
+							} else if (!list.contains(ty)) {
+								list.add(ty);
+							}
+						}
+						if (!nameTypes.contains(list)) {
+							nameTypes.add(list);
+						}
+					}
+					/*
+					 * set results
+					 */
+					for (List<Topic> rt : nameTypes) {
+						Map<String, Object> t = HashUtil.getHashMap();
+						t.put("$0", rt);
+						results.add(t);
+					}
+				}
+			}
+			return results;
+		}
+		return QueryMatches.asQueryMatchNS(runtime, index.getNameTypes());
 
 	}
 
@@ -50,7 +105,7 @@ public class GetNameTypes extends FunctionImpl {
 	 * {@inheritDoc}
 	 */
 	public boolean isExpectedNumberOfParameters(long numberOfParameters) {
-		return numberOfParameters == 0;
+		return numberOfParameters == 0 || numberOfParameters == 1 || numberOfParameters == 2;
 	}
 
 }
