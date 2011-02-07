@@ -14,6 +14,10 @@ import java.util.List;
 
 import de.topicmapslab.tmql4j.path.grammar.lexical.Comma;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Where;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.from.FromPart;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.selection.Selection;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.where.Conjunction;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.where.Criterion;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ICriteria;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ICriterion;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
@@ -51,7 +55,7 @@ public class SqlDefinition implements ISqlDefinition {
 	 * @param clone
 	 *            the clone
 	 */
-	SqlDefinition(SqlDefinition clone) {
+	public SqlDefinition(SqlDefinition clone) {
 		if (clone.selectionParts != null) {
 			this.selectionParts = HashUtil.getList(clone.selectionParts);
 		}

@@ -14,8 +14,9 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.AliasValueExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.TupleExpression;
-import de.topicmapslab.tmql4j.sql.path.components.definition.core.CaseSelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.SqlDefinition;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.selection.CaseSelection;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.selection.NullSelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ISqlTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TmqlSqlTranslatorImpl;
@@ -26,8 +27,6 @@ import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.Tran
  * 
  */
 public class TupleExpressionTranslator extends TmqlSqlTranslatorImpl<TupleExpression> {
-	
-	
 
 	/**
 	 * {@inheritDoc}
@@ -36,28 +35,27 @@ public class TupleExpressionTranslator extends TmqlSqlTranslatorImpl<TupleExpres
 		ISqlDefinition def = new SqlDefinition();
 		def.setCurrentTable(definition.getCurrentTable());
 		def.setInternalAliasIndex(definition.getInternalAliasIndex());
-		def.addSelection(definition.getLastSelection());	
-		
-		SqlDefinition result = (SqlDefinition)definition.clone();
+		def.addSelection(definition.getLastSelection());
+
+		SqlDefinition result = (SqlDefinition) definition.clone();
 		result.clearSelection();
-		
-		ISqlTranslator<?> translator = TranslatorRegistry.getTranslator(AliasValueExpression.class);
-		for (IExpression ex : expression.getExpressions()) {
-			ISqlDefinition valueDefinition = translator.toSql(runtime, context, ex, def);
-			result.addSelection(new CaseSelection(valueDefinition, result.getAlias()));
+
+		/*
+		 * is empty tuple-sequence
+		 */
+		if (expression.getExpressions().isEmpty()) {
+			result.addSelection(NullSelection.getNullSelection());
+		}
+		/*
+		 * is projection or anything else
+		 */
+		else {
+			ISqlTranslator<?> translator = TranslatorRegistry.getTranslator(AliasValueExpression.class);
+			for (IExpression ex : expression.getExpressions()) {
+				ISqlDefinition valueDefinition = translator.toSql(runtime, context, ex, def);
+				result.addSelection(new CaseSelection(valueDefinition, result.getAlias()));
+			}
 		}
 		return result;
-				
-//		SqlDefinition definition_ = (SqlDefinition)definition.clone();
-//		definition_.clearSelection();
-//		ISqlTranslator<?> translator = TranslatorRegistry.getTranslator(AliasValueExpression.class);
-//		for (IExpression ex : expression.getExpressions()) {
-//			ISqlDefinition valueDefinition = translator.toSql(runtime, context, ex, def);
-//			definition_.mergeIn((SqlDefinition) valueDefinition);
-//			def.setInternalAliasIndex(definition_.getInternalAliasIndex());
-//		}
-//		return definition_;
-		
-		
 	}
 }

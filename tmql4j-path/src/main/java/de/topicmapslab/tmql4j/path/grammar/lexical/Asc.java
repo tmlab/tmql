@@ -15,10 +15,15 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 public class Asc extends Token {
 
 	/**
+	 * 
+	 */
+	public static final String TOKEN = "ASC";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "ASC";
+		return TOKEN;
 	}
 
 }

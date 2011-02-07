@@ -6,13 +6,14 @@
  * @email krosse@informatik.uni-leipzig.de
  *
  */
-package de.topicmapslab.tmql4j.sql.path.components.definition.core;
+package de.topicmapslab.tmql4j.sql.path.components.definition.core.where;
 
 import java.util.Collections;
 import java.util.List;
 
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundClose;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundOpen;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.SqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ICriteria;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ICriterion;
 import de.topicmapslab.tmql4j.util.HashUtil;

@@ -6,7 +6,7 @@
  * @email krosse@informatik.uni-leipzig.de
  *
  */
-package de.topicmapslab.tmql4j.sql.path.components.definition.core;
+package de.topicmapslab.tmql4j.sql.path.components.definition.core.where;
 
 import de.topicmapslab.tmql4j.path.grammar.lexical.And;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ICriterion;

@@ -6,7 +6,7 @@
  * @email krosse@informatik.uni-leipzig.de
  *
  */
-package de.topicmapslab.tmql4j.sql.path.components.definition.core;
+package de.topicmapslab.tmql4j.sql.path.components.definition.core.selection;
 
 import java.text.MessageFormat;
 

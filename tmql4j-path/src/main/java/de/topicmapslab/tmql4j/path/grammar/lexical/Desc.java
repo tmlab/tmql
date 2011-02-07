@@ -15,10 +15,15 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 public class Desc extends Token {
 
 	/**
+	 * 
+	 */
+	public static final String TOKEN = "DESC";
+
+	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "DESC";
+		return TOKEN;
 	}
 
 }

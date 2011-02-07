@@ -32,7 +32,7 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.results.TmqlResultProcessor;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.query.IQuery;
-import de.topicmapslab.tmql4j.sql.path.components.definition.core.CaseSelection;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.selection.CaseSelection;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**

@@ -260,9 +260,10 @@ public class TestTupleExpression extends Tmql4JTestCase {
 		try {
 			set = execute(query);
 		} catch (TMQLRuntimeException e) {
+			e.printStackTrace();
 			fail("Interpretation of empty tuple fails!");
 		}
-		assertEquals(0, set.size());
+		assertEquals(0, set.size(),1.0);
 
 		query = " NULL ";
 		try {
