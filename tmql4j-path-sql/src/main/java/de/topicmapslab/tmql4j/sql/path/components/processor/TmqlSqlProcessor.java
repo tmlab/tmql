@@ -8,6 +8,7 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.processor;
 
+import java.io.OutputStream;
 import java.sql.SQLException;
 
 import org.tmapi.core.TopicMap;
@@ -49,7 +50,7 @@ public class TmqlSqlProcessor extends TmqlProcessor2007 {
 	/**
 	 * {@inheritDoc}
 	 */
-	public IResultSet<?> query(IQuery query) {
+	public IResultSet<?> query(IQuery query, OutputStream os) {
 		IParserTree tree = parse(query);
 		if (tree != null) {
 			IContext context = new Context(this, query);

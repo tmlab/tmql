@@ -32,6 +32,7 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.results.TmqlResultProcessor;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.query.IQuery;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.CaseSelection;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -97,11 +98,14 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 			while (rs.next()) {
 				IResult result = resultSet.createResult();
 				for (int col = 1; col < metaData.getColumnCount() + 1; col++) {
-					final String value = rs.getString(col);
+					String value = rs.getString(col);
+					if ( CaseSelection.IS_NULL_VALUE_IN_SQL.equalsIgnoreCase(value)){
+						value = null;
+					}
 					/*
 					 * store value if value is an id
 					 */
-					if (metaData.getColumnType(col) == Types.BIGINT) {
+					if (value != null && metaData.getColumnType(col) == Types.BIGINT) {
 						/*
 						 * is topic map
 						 */
