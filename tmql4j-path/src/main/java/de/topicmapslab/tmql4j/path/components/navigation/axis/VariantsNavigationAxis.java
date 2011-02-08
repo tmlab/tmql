@@ -16,7 +16,6 @@ import org.tmapi.core.Name;
 import org.tmapi.core.Topic;
 import org.tmapi.core.Variant;
 
-import de.topicmapslab.majortom.model.core.IVariant;
 import de.topicmapslab.tmql4j.path.components.navigation.BaseNavigationAxisImpl;
 import de.topicmapslab.tmql4j.path.exception.InvalidValueException;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
@@ -76,7 +75,7 @@ public class VariantsNavigationAxis extends BaseNavigationAxisImpl {
 		 * check if construct is a variant
 		 */
 		if (construct instanceof Variant) {
-			IVariant v = (IVariant) construct;
+			Variant v = (Variant) construct;
 			if (optional != null && optional instanceof Topic) {
 				if (v.getParent().getType().equals(((Topic) optional))) {
 					set.add(v.getParent());

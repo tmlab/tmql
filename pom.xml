@@ -57,6 +57,11 @@
 			<url>http://www.tmapi.org/maven-repository/</url>
 		</repository>
 		<repository>
+			<id>tmapi-snap</id>
+			<name>http://www.tmapi.org/maven-repository/snapshots/</name>
+			<url>http://www.tmapi.org/maven-repository/snapshots/</url>
+		</repository>
+		<repository>
 			<id>ontopia</id>
 			<url>http://ontopia.googlecode.com/svn/maven-repository/</url>
 		</repository>
@@ -69,7 +74,7 @@
 		<repository>
 			<id>topicmapslab-public</id>
 			<name>Topic Maps Lab Repositiory</name>
-			<url>scpexe://atlantis.tm.informatik.uni-leipzig.de/home/maven/webdir/maven.topicmapslab.de/public/public</url>
+			<url>scp://atlantis.tm.informatik.uni-leipzig.de/disk/localhome/maven/webdir/maven.topicmapslab.de/public/public</url>
 		</repository>
 	</distributionManagement>
 	<modules>
