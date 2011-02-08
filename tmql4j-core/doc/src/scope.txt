@@ -1,0 +1,13 @@
+== Scope of this document ==
+
+
+The Topic Maps Query Language is the name of a language specified for querying topic maps in a easy and consistent way independent of the underlying topic maps engine implementation. The query language is inspired by different languages which are established in different sectors of the technology infrastructures and models, like SQL or the topic maps query language TOLOG. Currently there is no final standard specification for TMQL but we decided to implement a topic maps query engine based on the draft of 15th of august 2008 except of any extension developed by the topic maps lab.
+
+The document is divided in three semantic sections. 
+
+The first section describing the language specified in the underlying draft and the extensions. The section tries to give the user an overview about the query language itself and give the possibility to use the engine by creating the queries to extract the informations the user is interested in. The language part starts with the grammar description and continues with the base navigation and graph concept of TMQL, finishing with the complex high-level query languages.
+
+The second section describing the engine itself and give the user an short overview about the architecture and the plugin available for tmql4j. We describe how to use the engine, and how the user can extend or adapt the engine to realize the business use cases in the most comfortable way by using our core engine.
+
+The last section contains some tutorials to combine the knowledge gain in the both other sections of this document by realizing some base use cases, starting by a simple one and finishing in a complex use case.
+

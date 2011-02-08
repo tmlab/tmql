@@ -1,0 +1,145 @@
+=== Flwr expressions ===
+
+The current draft of the topic maps query language supports three different types of query-expressions. Each of theme will be inspired by other query languages of other industrial standards. One of them is the flwr expression style inspired by programming languages or flwor of XML documents.
+
+The flwr style represented by the production called 'flwr expression'. A flwr expression contains a number of optional sub expression smilar to a for loop of modern programming languages.
+
+--------------------------------------------
+1:	flwr-expression	::=	[  FOR   variable-assignment ]
+2:						[  WHERE   boolean-expression ]
+3:						[  ORDER BY  < value-expression > ]
+4:						RETURN   content
+--------------------------------------------
+	 
+Only the 'return clause' represented by the keyword 'RETURN' is mandatory.
+
+==== Processing model ====
+
+At first the variable associations inside the 'for clauses' will be evaluated in lexical order. Each 'for clause' creates a sequences of variable bindings for a specific variable used as evaluation context for the variable in the context of the where clause. The overall result of all for clauses will be an unordered sequence of variable bindings.
+
+By adding the 'order-by clause' the variables bindings can be ordered in the defined way. The order-by clause contains a set of value expressions defining the values used to order the variable bindings in the given context. The result will be a sequence of ordered variable bindings.
+
+All variable bindings will be evaluated by the boolean expression contained by the 'where clause'. If the clause is missing all variables of the for clauses are interpreted as valid.
+
+After all the return clause is used iterative to extract the values by using the variables bindings. The return clause creates a tuple sequence by using the defined 'content' expression and the variable binding set.
+
+The overall result can be a sequence of tuples containing topic map construct, CTM fragments or XML fragments.
+
+==== For clause ====
+
+The 'for clause' can be used to define a variable binding set of one specific variable. A flwr expression can contain any numbers of 'for clauses' to create a set of variable bindings of a set of variables used in the context of the where clause.
+
+A 'for clause' symbolized by the keywod 'FOR' followed by a variable assignment for a specific variable. For more information using variables and variables bindings please take a look at the previous chapter.
+
+==== Where clause ====
+
+The 'where clause' define a boolean condition to evalutate the variable bindings. The clause can contain every boolean expression which was discussed in the previous chapters. A where clause returns a set of satisfying variable bindings. 
+
+The retrun expression can only use variable bound in the context of the where clause or for clause. If both are missing the usage of any variable is invalid.
+
+==== Order-by clause ====
+
+The 'order-by clause' is optional if it is missing the sequence of variable evalutations of the where clause keep unordered. The clause can be used to order them by using a comma-separated list of value expressions normally containing only simple navigations to get literals of internal characteristics of the bound items. 
+
+The keywords 'ASC' and 'DESC' can be used after every value expression to define the order direction. If the keyword is missing 'ASC' is used as default.
+
+==== Return clause ====
+	 
+The 'return clause' is the only mandatory expression contained by the flwr style. The clause is used to transform the variable binding set evaluated by the where clause and for clauses to a sequence of tuples. Normally the return clause is used in an iterative way to transform each combination of valid variable bindings to a tuple sequence. All tuple sequences will be combined by using the combination operator '++'.
+
+The result of the 'return clause' can be a sequence of different tuple types. Normally the tuple contain a set of topic map constructs represented as simple objects but the flwr style is the only expression style to return XML or CTM fragments too. By using special 'content' expressions called 'tm-conent' and 'xml-content' the return clause will be create simple CTM or XML fragments.
+
+===== Return XML fragments =====
+
+By using an 'xml-content' expression inside the return clause the flwr expression will be return a sequence of XML fragments representing the result of the query.
+
+An 'xml-content' simply represented by using XML-tags in the context of the return clause for example like the following one.
+
+------------------------------
+1:	RETURN <xml> Text </xml>
+------------------------------
+
+The interpretation of the XML content contained by the return clause depends on their type. XML-Tags and simple text will keep uninterpreted and will be add to the final XML fragment. All whitespace characters will be add in the same way.
+
+By using embeded queries the XML fragment can use the bounded variables of the 'for clauses' and 'where clause' or embed an independent sub-query. An embeded query expression symbolized by the enclosing angle brackets '{' and '}'. The content of this query expression can be represented by every expression type described by the whole draft like an other flwr expression or a path expression. At first the sub-query will be interpreted in the normal way except the dependency of inherit variable bindings by the enclosing expression, which means that the embeded query can use all variables bound by the enclosing expression, too. 
+
+[NOTE]
+The embeded query may not overwrite the inherit variables of the enclosing flwr expression.
+
+The result of the embed query will be interpreted and added to the XML fragment. If the embed query returns any topic map construct it will be transformed to valid XML content using the XTM syntax. If the query returns literal values they will keep unmodified an will be added to the XML fragment as simple text content.
+
+Embed queries can be used at every position, like as a topic node ...
+
+------------------------
+1:	# create a sequence of XML fragments containing one XTM topic node for each person topic
+2:	FOR $p IN // person
+3:	RETURN <xml> { $p } </xml> 
+------------------------
+
+or as association node ...
+
+------------------------
+1:	# create a sequence of XML fragments containing one XTM association node for each played association of each person topic
+2:	FOR $p IN // person
+3:	RETURN <xml> { $p << players } </xml> 
+------------------------
+
+or simple as text content ...
+
+------------------------
+1:	# create a sequence of XML fragments containing one XML node for each person topic containing the first name as text content
+2:	FOR $p IN // person
+3:	RETURN <xml> { $p / tm:name [0] } </xml> 
+------------------------
+
+or as attribute value.
+
+------------------------
+1:	# create a sequence of XML fragments containing one XML node using the first indicator of each person topic as value
+2:	FOR $p IN // person
+3:	RETURN <person ref="{ $p >> indicators >> atomify [0] }" />
+------------------------
+
+===== Return CTM fragments =====
+
+By using an tm-content' expression inside the return clause the flwr expression will be return a sequence of CTM fragments representing the result of the query.
+
+The 'tm-content' simply defined by the enclosing triple quotes symbolizing the CTM stream creating by the return clause.
+
+------------------------------
+1:	RETURN ''' Text '''
+------------------------------
+
+The interpretation of the CTM content contained by the return clause depends on their type. Whitespaces and simple text will keep uninterpreted and will be add to the final CTM stream.
+
+By using embeded queries the CTM fragment can use the bounded variables of the 'for clauses' and 'where clause' or embed an independent sub-query. An embeded query expression symbolized by the enclosing angle brackets '{' and '}'. The content of this query expression can be represented by every expression type described by the whole draft like an other flwr expression or a path expression. At first the sub-query will be interpreted in the normal way except the dependency of inherit variable bindings by the enclosing expression, which means that the embeded query can use all variables bound by the enclosing expression, too. 
+
+[NOTE]
+The embeded query may not overwrite the inherit variables of the enclosing flwr expression.
+
+The result of the embed query will be interpreted and added to the final CTM stream. If the embed query returns any topic map construct it will be transformed to valid CTM content using the CTM syntax. If the query returns literal values they will keep unmodified an will be added to the CTM stream as simple text content.
+
+Embed queries can be used at every position which expected topic map content, like as a topic ...
+
+------------------------
+1:	# create a sequence of CTM fragments containing one topic block for each person topic
+2:	FOR $p IN // person
+3:	RETURN ''' { $p } ''' 
+------------------------
+
+or as association items ...
+
+------------------------
+1:	# create a sequence of CTM fragments containing one association for each played association
+2:	FOR $p IN // person
+3:	RETURN ''' { $p << players } '''
+------------------------
+
+or simple as a subject-identifier.
+
+------------------------
+1:	# create a sequence of CTM fragments containing one association definition using the indicator of each person topic
+2:	FOR $p IN // person
+3:	RETURN ''' life-in ( city : leipzig , person : { $p >> indicators >> atomify [0] } '''
+------------------------
+

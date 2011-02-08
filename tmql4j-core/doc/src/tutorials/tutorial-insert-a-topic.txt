@@ -1,0 +1,75 @@
+=== Section: Insert expressions ===
+
+An insert expression can be used to add new content to the queried topic map. The insert expression isn't currently a part of the TMQL draft and is an extension designed by the topic maps lab with request to get a part of the final standard of TMQL. 
+
+Please note that the extension will only supported by the engine by using the modification extension plugin. If the extension is located in the java class path, the engine would be able to use them.
+
+==== Tutorial: Insert a new topic ====
+
+===== Use Case =====
+
+Similar to the rule - 'keep it simple' - we start with the simple use case to add a new topic with the subject identifier 'http://tmql4j.topicmapslab.de/types/engine/tmql4j' representing the engine itselfs as a topic item.
+
+===== Solution =====
+
+The insert expression contains two parts an insert-clause and a where-clause. The where-clause can be used to specify a variable binding using as a part of the insert-expression. In our case the where-clause is not necessary. The insert-clause contains a CTM fragment defining the content to add. Currently we don't want to explain how to write CTM fragment, please take a look at the current CTM draft to get more information.
+
+------------------------------
+1:	INSERT """ http://tmql4j.topicmapslab.de/types/engine/tmql4j . """
+------------------------------
+
+==============================
+The insert-expression allways starts with the keyword 'INSERT' followed by the insert-clause defining a CTM fragment encapsulated by the triple quotes '""""'. The syntax of the CTM fragment is based on the current CTM draft. In our case we define a topic block using the identifier 'http://tmql4j.topicmapslab.de/types/engine/tmql4j' as a subject-identifier. The dot'.' symbolize the end of the topic definition.
+==============================
+
+===== Summary =====
+
+The insert-expression allways starts with the keyword 'INSERT' followed by the insert-clause defining a CTM fragment encapsulated by the triple quotes '""""'. The syntax of the CTM fragment is based on the current CTM draft. As optional part a insert-expression can contain a where-clause defining conditions used to bind variables. Variables can be used in the context of the insert-clause, which we will see in a later example.
+
+==== Tutorial: Using variables as part of the insert-clause ====
+
+===== Use Case =====
+
+In this case we try to add a new association 'can-queried' played by each composer instance and the topic representing the tmql4j engine, we added in the last tutorial.
+
+===== Solution =====
+
+We know, that the insert-expression can contain a where-clause to bind variables to specific values. A variable can be used in the context of a CTM fragment contained by the insert-clause to expand the informations of a topic map item which is already contained by the current topic map. Of course we can realize the example whitout using a where-clause if we know all composer instances and their identifier, but this will be more complex than using variables.
+
+At first we have to create a where condition binding a variable '$composer' to each instance of 'http://psi.ontopedia.net/Composer'.
+
+-----------------------------
+1:	$composer ISA http://psi.ontopedia.net/Composer
+-----------------------------
+
+Or we use a prefix definition
+
+-----------------------------
+1:	%prefix psi http://psi.ontopedia.net/ $composer ISA psi:Composer
+-----------------------------
+
+Next we will design a CTM fragment creating a new association item with the type 'can-queried' with two roles. The first role will be of the type 'topic-content' and played by the composer instance. The other role will be played by the tmql4j engine. The role type should be 'engine'.
+
+-----------------------------
+1:	can-queried ( topic-content : $composer , engine : http://tmql4j.topicmapslab.de/types/engine/tmql4j )
+-----------------------------
+
+To add not the whole topic item as CTM to our CTM fragment we only need to extract one identifier of the topic $composer.
+
+-----------------------------
+1:	can-queried ( topic-content : { $composer >> indicators >> atomify [0] } , engine : http://tmql4j.topicmapslab.de/types/engine/tmql4j )
+-----------------------------
+
+The last step will be the combination of both elements in our insert-expression.
+
+---------------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	INSERT """ can-queried ( topic-content : { $composer >> indicators >> atomify [0] } , engine : http://tmql4j.topicmapslab.de/types/engine/tmql4j ) """
+3:		WHERE $composer ISA psi:Composer
+---------------------------------
+
+The engine will create a temporary topic map containing the association item defined by the current insert-expression. All temporary engines will be merged into the origin one to realize the inclusion.
+
+===== Summary =====
+
+The where-clause of an insert-expression can be used to add new content to the topic map dependent of some content already contained by the topic map. By binding variables using the where-clause the insert-clause can be used content of the current topic map.

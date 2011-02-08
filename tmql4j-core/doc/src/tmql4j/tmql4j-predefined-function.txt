@@ -1,0 +1,368 @@
+===== string concat =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*| http://psi.topicmaps.org/tmql/1.0/functions/string-concat
+|*symbolic pattern*| +
+|*profile*| fn:string-concat (a : string, b : string) return string
+|*precedence*| 2
+|================
+
+The function 'string-concat' combines a set of strings. The function expects exactly two arguments given by the following tuple-expression. The type of the argument can be simple strings or sets of strings and the result will be a set of strings or a simple string. The behaviour of the function is dependent from the given argument type. If the first argument 'a' is a string and the second argument 'b' two, the method will return the string combination of 'a' and 'b'. If one of the arguments 'a' or 'b' is a set of strings the method will return a set of strings containing each combination of the atomic string and each string of the given set. If both arguments are sets the method will return each combination of each string of the first set and the second set.
+
+-------------------------------------
+1:	fn:string-concat ( a => [ "foo" ] , b => [ "bar" ] )
+2:	=> "foobar"
+3:	
+4:	fn:string-concat ( a => [ "foo" , "main" ] , b => [ "bar" ] )
+5:	=> [ "foobar" , "mainbar" ]
+6:
+7:	fn:string-concat ( a => [ "foo" , "main" ] , b => [ "bar" , "menu" ] )
+8:	=> [ "foobar" , "mainbar" , "foomenu" , "mainmenu" ]
+-------------------------------------
+
+===== string-length =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*| http://psi.topicmaps.org/tmql/1.0/functions/string-length
+|*profile*| fn:length (s : string) return integer
+|================
+
+The function 'length' returns the internal size of a string literal by counting the contained characters. The function expect exactly one argument which can be a simple string or a sequence of strings. The behaviour of the function is dependent from the given argument type. If the argument is a simple string the function return a single integer value. If the argument is a set of strings it will return a sequence of integer values.
+
+-------------------------------------
+1:	fn:length ( s => [ "foo" ]  )
+2:	=> 3
+3:
+4:	fn:length ( s => [ "foo" , "main" ] )
+5:	=> [ 3 , 4 ]
+-------------------------------------
+
+===== string-less-than =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/string-less-than
+|*symbolic pattern*| <
+|*profile*|fn:string-lt (a : string, b : string) return tuple-sequence
+|*precedence*| 5
+|================
+
+The function 'string-lt' compare the two string literals and only return the string literal given by the first argument if the literal is lexicographically lower than the second string. The function expected two arguments which has be of the type string. The first argument also can be a sequence of strings. The behaviour of the function is dependent from the given argument type. If the first argument is a set of strings the function returns a set containing the lexicographically lower string in relation to the second string argument. If the first argument is a string it return the given string if it is lexicographically lower than the second one, otherwise it return an empty set. If the second argument is a set of strings the first one will be used. 
+
+-------------------------------------
+1:	fn:string-lt ( a => [ "a" ] , b => [ "aaa" ] )
+2:	=> "a"
+3:
+4:	fn:string-lt ( a => [ "a" , "b" ] , b => [ "aaa" ] )
+5:	=> "a"
+6:
+7:	fn:string-lt ( a => [ "a" , "b" ] , b => [ "aaa" , "bbb" ] )
+8:	=> "a"
+-------------------------------------
+
+===== string-less-equal-than =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|  http://psi.topicmaps.org/tmql/1.0/functions/string-less-equal-than
+|*symbolic pattern*|< =
+|*profile*| fn:string-leq (a : string, b : string) return tuple-sequence
+|*precedence*| 5
+|================
+
+The function 'string-leq' compare the two string literals and only return the string literal given by the first argument if the literal is lexicographically lower or equal than the second string. The function expected two arguments which has be of the type string. The first argument also can be a sequence of strings. The behaviour of the function is dependent from the given argument type. If the first argument is a set of strings the function returns a set containing the lexicographically lower string in relation to the second string argument. If the first argument is a string it return the given string if it is lexicographically lower or equal than the second one, otherwise it return an empty set. If the second argument is a set of strings the first one will be used. 
+
+-------------------------------------
+1:	fn:string-leq ( a => [ "a" ] , b => [ "aaa" ] )
+2:	=> "a"
+3:
+4:	fn:string-leq ( a => [ "a" , "b" ] , b => [ "aaa" ] )
+5:	=> "a"
+6:
+7:	fn:string-leq ( a => [ "a" , "b" ] , b => [ "aaa" , "bbb" ] )
+8:	=> "a"
+-------------------------------------
+
+===== string-greater-equal-than =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/string-greater-equal-than
+|*symbolic pattern*|>=
+|*profile*| fn:string-geq (a : string, b : string) return tuple-sequence
+|*precedence*| 5
+|================
+
+The function 'string-geq' compare the two string literals and only return the string literal given by the first argument if the literal is lexicographically greater or equal than the second string. The function expected two arguments which has be of the type string. The first argument also can be a sequence of strings. The behaviour of the function is dependent from the given argument type. If the first argument is a set of strings the function returns a set containing the lexicographically greater string in relation to the second string argument. If the first argument is a string it return the given string if it is lexicographically greater or equal than the second one, otherwise it return an empty set. If the second argument is a set of strings the first one will be used. 
+
+-------------------------------------
+1:	fn:string-geq ( a => [ "a" ] , b => [ "aaa" ] )
+2:	=> [ ]
+3:
+4:	fn:string-geq ( a => [ "a" , "b" ] , b => [ "aaa" ] )
+5:	=> "b"
+6:
+7:	fn:string-geq ( a => [ "a" , "b" ] , b => [ "aaa" , "bbb" ] )
+8:	=> "b"
+-------------------------------------
+
+===== string-greater-than =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|   http://psi.topicmaps.org/tmql/1.0/functions/string-greater-than
+|*symbolic pattern*| >
+|*profile*| fn:string-gt (a : string, b : string) return tuple-sequence
+|*precedence*| 5
+|================
+
+The function 'string-gt' compare the two string literals and only return the string literal given by the first argument if the literal is lexicographically greater than the second string. The function expected two arguments which has be of the type string. The first argument also can be a sequence of strings. The behaviour of the function is dependent from the given argument type. If the first argument is a set of strings the function returns a set containing the lexicographically greater string in relation to the second string argument. If the first argument is a string it return the given string if it is lexicographically greater than the second one, otherwise it return an empty set. If the second argument is a set of strings the first one will be used. 
+
+-------------------------------------
+1:	fn:string-gt ( a => [ "a" ] , b => [ "aaa" ] )
+2:	=> [ ] 
+3:
+4:	fn:string-gt ( a => [ "a" , "b" ] , b => [ "aaa" ] )
+5:	=> "b"
+6:
+7:	fn:string-gt ( a => [ "a" , "b" ] , b => [ "aaa" , "bbb" ] )
+8:	=> "b"
+-------------------------------------
+
+===== string-regexp-match =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|   http://psi.topicmaps.org/tmql/1.0/functions/string-regexp-match
+|*symbolic pattern*| =~
+|*profile*| fn:regexp (s : string, re : string) return tuple-sequence
+|*precedence*| 5
+|================
+
+The function 'regexp' checks if the given string argument matches to the regular expression. The method expected exactly two arguments, which can be an instance of string or a simple sequence or strings. The behaviour of the function is dependent from the given argument type. If the first argument is a simple string, the result will be an empty sequence if the string does not match or the string if it matches. If the first argument is a set of strings the function will return a set of all matching strings. If the second argument is a set of strings only the first one will be used.
+
+-------------------------------------
+1:	fn:regexp ( a => [ "aaa" ] , b => [ "[a]+" ] )
+2:	=> "aaa" 
+3:
+4:	fn:regexp ( a => [ "aaa" , "bbb" ] , b => [ "[a]+" ] )
+5:	=> "aaa"
+6:
+7:	fn:regexp ( a => [ "aaa" , "bbb" ] , b => [ "[a]+" , "[b]+" ] )
+8:	=> "aaa"
+-------------------------------------
+
+
+===== substring =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|   http://psi.topicmaps.org/tmql/1.0/functions/substring
+|*profile*| fn:substring (s : string, f : interger , t : interger ) return string
+|*precedence*| 5
+|================
+
+The function 'substring' will be return an substring of the given string argument addressed by the given indexes. The function expects exactly three arguments of type string and integer. As first argument a string sequence is supported two. The behaviour of the function is dependent from the given arguments. If the first argument is a string it will return a single string representing the substring of the first argument. If the first argument is a sequence it will return a sequence of substrings. If any of the indexes is out of bounds the function will clear this indexes to the possible values which are encapsulate by the given range. The string indexes will be zero-based and the upper index will be excluded.
+
+-------------------------------------
+1:	fn:substring ( s => [ "Java-based engine" ] , f => 1 , t => 5 )
+2:	=> "ava-" 
+3:
+4:	fn:substring ( s => [ "Java-based engine" , "foo" ] , f => 1 , t => 5 )
+5:	=> [ "ava-" , "oo" ]
+6:
+7:	fn:substring ( s => [ "Java-based engine" , "foo" ] , f => -1 , t => 50 )
+8:	=>  [ "Java-based engine" , "foo" ] 
+9:
+10:	fn:substring ( s => [ "Java-based engine" , "foo" ] , f => "1" , t => "5" )
+11:	=>  [ "ava-" , "oo" ]
+12:
+13:	fn:substring ( s => [ "Java-based engine" , "foo" ] , f => "a" , t => "5" )
+14:	=>  raises an error
+-------------------------------------
+
+===== has-datatype =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|   http://psi.topicmaps.org/tmql/1.0/functions/has-datatype
+|*profile*| fn:has-datatype (s: tuple-sequence) return tuple-sequence
+|================
+
+The function 'has-datatype' retrieves the data type for each tuple element in each tuple. The function expects exactly one argument which has to be a tuple or a tuple sequence. The behaviour of the functions is dependent from the given arguments. If the the contained element is a name item the data type will be 'string', for occurrence item  it will be the internal data type and for each atom it will be the data type of the atom itself. Any other item results in the data type 'any'. Each data type is a IRI.
+
+-------------------------------------
+1:	fn:has-datatype ( s => [ "http://tmql4j.topicmapslab.de"^^xsd:anyURI , "aaa" , 5 ] )
+2:	=>  [ "xsd:anyURI" , "xsd:string" , "xsd:interger" ] 
+-------------------------------------
+
+===== has-variant =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|   http://psi.topicmaps.org/tmql/1.0/functions/has-variant
+|*profile*| fn:has-variant (s: tuple-sequence, s: item-reference) return tuple-sequence
+|================
+
+The function has-variant only supported for topic name items. The function expected exactly two argument which has to be a tuple sequence and a topic reference. It retrieves the variant items for each tuple element in each tuple the variant name for the given scope. For name items this is the variant value, if such exists. Otherwise it is undef. For all other things the function will return ever undef.
+
+===== slice =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*| http://psi.topicmaps.org/tmql/1.0/functions/slice
+|*profile*| fn:slice (s : tuple-sequence, low : integer, high : integer) return tuple-sequence
+|================
+
+The function 'slice' is a function supports tuple-sequences. The method returns the selected tuples of the sequence with an index between the given arguments. The indexes are zero-based and the upper index will be excluded. If the indexes given as strings, it will be transformed to interger values automatically. The function will be used by the select expression to realize the keywords 'LIMIT' and 'OFFSET'. If the interger values are negative or invalid an error will be raised. If the indexes are out of bounds the function will return the tuples with an index in range of the tuple-sequence and the given arguments.
+
+-------------------------------------
+1:	fn:slice  ( s => [ "a" , "b" , "c" , "d" ] , low => 1 , high => 2 )
+2:	=> [ "a" ]
+3:
+4:	fn:slice  ( s => [ "a" , "b" , "c" , "d" ] , low => 3 , high => 10 )
+5:	=> [ "c" , "d" ]
+6:
+7:	fn:slice  ( s => [ "a" , "b" , "c" , "d" ] , low => "a" , high => "-1" )
+8:	=>  raises an error
+-------------------------------------
+
+===== count =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*| http://psi.topicmaps.org/tmql/1.0/functions/count
+|*profile*| fn:count (s : tuple-sequence) return integer
+|================
+
+The function 'count' returns the number of tuples of the tuple sequence. The function expected one argument which should be a tuple sequence or an atom. The behaviour of the function is dependent from given arguments. If an atom is given the method will return 1 every time. If it is an tuple sequence it will return the number of contained items.
+
+-------------------------------------
+1:	fn:count  ( s => [ "a" , "b" , "c" , "d" ]  )
+2:	=> 4
+3:
+4:	fn:count  ( s => "b" )
+5:	=> 1
+6:
+7:	fn:count  ( s => [ ] )
+8:	=>  0
+-------------------------------------
+
+===== uniq =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|  http://psi.topicmaps.org/tmql/1.0/functions/uniq
+|*profile*| fn:uniq (s : tuple-sequence) return tuple-sequence
+|================
+
+The function 'uniq' unifies the given tuple sequence. As an interpretation of the current draft each tuple sequence can contain each tuple multiple times. The function removes all multiple references of the same tuple in the given sequence. As arguments the function expects exactly one tuple sequences. The functions is used by the select expression to realize the keyword 'UNIQUE'. The indexes of the tuples in the tuple sequence will be changed.
+
+-------------------------------------
+1:	fn:uniq  ( s => [ "a" , "b" , "a" , "b" ]  )
+2:	=> [ "a" , "b" ]
+-------------------------------------
+
+===== concat =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|   http://psi.topicmaps.org/tmql/1.0/functions/concat
+|*symbolic pattern*| ++
+|*profile*| fn:concat (s : tuple-sequence, t : tuple-sequence) return tuple-sequence
+|*precedence*| 1
+|================
+
+The function 'concat' combine two tuple sequence to a new one. The functions adds all tuples of the second sequence to the first sequence. If one of the arguments is an atom instead of a sequence, a new sequence will be created and the atoms will be added. While the combination any ordering is honored.
+
+-------------------------------------
+1:	fn:concat  ( s => [ "a" , "b" , "a" , "b" ]  , t => "a" )
+2:	=> [ "a" , "b" , "a" , "b" , "a" ]
+3:
+4:	fn:concat  ( s => "a"  , t => "b" )
+5:	=> [ "a" , "b" ]
+6:
+7:	fn:concat  ( s => [ "a" , "b" , "a" , "b" ]  , t =>  [ "a"  , "c" ] )
+8:	=> [ "a" , "b" , "a" , "b" , "a" , "c" ]
+-------------------------------------
+
+===== except =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/except
+|*symbolic pattern*| --
+|*profile*| fn:except (s : tuple-sequence, t : tuple-sequence) return tuple-sequence
+|*precedence*| 1
+|================
+
+The function 'except' produces a tuple sequence where all tuple which appear in t are removed from s. If one of the arguments is an atom instead of a sequence, a new sequence will be created an the atoms will be added. There is no effect for the ordering. If the first tuple sequence contains an element of the second one multiple times, all references of this element will be removed.
+
+-------------------------------------
+1:	fn:except  ( s => [ "a" , "b" , "a" , "b" ]  , t => "a" )
+2:	=> [ "b" , "b" ]
+3:
+4:	fn:except  ( s => "a"  , t => "b" )
+5:	=> [ "a" ]
+6:
+7:	fn:except  ( s => [ "a" , "b" , "a" , "b" ]  , t =>  [ "a"  , "c" ] )
+8:	=> [ "b" , "b" ]
+-------------------------------------
+
+===== compare =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/compare
+|*symbolic pattern*|==
+|*profile*|fn:compare (s : tuple-sequence, t : tuple-sequence) return tuple-sequence
+|*precedence*|1
+|================
+
+The function 'compare' produces a tuple sequence of all tuples which appear in s and t. Any tuple of the sequence s which is not contained by t will be removed from s. If one of the arguments is an atom instead of a sequence, a new sequence will be created an the atoms will be added. There is no effect for the ordering. The number of references of a tuple element will not be considered.
+
+-------------------------------------
+1:	fn:compare  ( s => [ "a" , "b" , "a" , "b" ]  , t => "a" )
+2:	=> [ "a" , "a" ]
+3:
+4:	fn:compare  ( s => "a"  , t => "b" )
+5:	=> [ ]
+6:
+7:	fn:compare  ( s => [ "a" , "b" , "a" , "b" ]  , t =>  [ "a"  , "c" ] )
+8:	=> [ "a" , "a" ]
+-------------------------------------
+
+===== zigzag =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/zigzag
+|*profile*|fn:zigzag (s : tuple-sequence) return tuple-sequence
+|================
+
+The function 'zigzag' is the reverse function of 'zagzig' and returns a single tuple filled with all values from all tuples. The function can be used to speed up the application because indexes of tuples run faster than indexes within the tuple sequence.
+
+-------------------------------------
+1:	fn:zigzag  ( s => [ [ "a" , "b" ] , [ "a" , "b" ] )
+2:	=> [ "a" , "b" , "a" , "b" ]
+3:
+4:	fn:zigzag  ( s => [ "a" , [ "a" , "b" ] )
+5:	=> [ "a" , "a" , "b" ]
+-------------------------------------
+
+===== zagzig =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*| http://psi.topicmaps.org/tmql/1.0/functions/zagzig
+|*profile*| fn:zagzig (s : tuple-sequence) return tuple-sequence
+|================
+
+The function 'zagzig' is the reverse function of 'zigzag' and returns a tuple sequence filled by singleton tuples containing an element of the origin tuple. The index of the singleton tuple in context of the sequence will be the same than the index of the item contained by the new singleton tuple in context of the origin tuple.
+
+-------------------------------------
+1:	fn:zagzig  ( s =>  [ "a" , "b" , "a" , "b" ] )
+2:	=> [ [ "a" ] , [ "a" ] , [ "a" ] , [ "a" ] )
+-------------------------------------

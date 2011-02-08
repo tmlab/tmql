@@ -1,0 +1,70 @@
+=== Update expressions ===
+
+The part II of the topic maps query language specification contains the modification expressions of the language. The modification part supports four different expression types representing the four operation types modifying a topic map. Update operation is one them and enables the modification of existing topic map items. Update operations are represented by 'update expressions'.
+
+-------------------------
+1:	update-expression 	::= UPDATE < update-clause > ( WHERE boolean-expression )
+2:
+3:	update-clause 		::= topic-def | predicate-invocation | anchor { topic-ref } ( SET | ADD ) value-expression
+-------------------------
+
+An update-expression has to contain at least two sub-expressions, a where-clause and an update-clause. The number of update-clauses is not restricted but has to be greater than one.  The where-clause of an update-expression is used to define the context of changes done by the update-clauses. All update-clauses has to act in the same context and effect changes at the same topic map graph node. An update-clause can change a child-node of topic map item or add a new child-node to an existing topic map node.
+
+==== Processing model ====
+
+The processing model of an update expression is quite simple. If there is an where clause it will be interpreted in the same way like as a part of a select expression or flwr expression. The where clause is used to evaluate a sub set of possible variables bindings which should be used in the content of the delete clause. The result of the evaluation will be a set of variables bindings.
+
+The update clause will be interpreted in the context defined by the where-clause. It contains exactly one atomic update statement for a topic map item which will be add a new child node or change the value of the child node.
+
+The overall result of the query will be a singleton sequence of a singleton tuple containing the number of changed and created items.
+
+==== Update clause ====
+
+An update clause consists of an anchor identifier representing the type of child information which should be changed by the current expression. The following topic reference is optional and can be used for a specific number of anchors to define the type of the new child information. The keyword indicates the type of change as the creation of new child informations or the change of them. The value-expression at the end indicates the value which shall be set to the created or modified child node. The possible keywords are dependent from the given anchor and will be represented by the following matrix.
+
+[width="100%", cols="1,1,1,1,1,5"]
+|================
+|*anchor*|*supported keyword*|*optional parameter*|*value-type*|*current node type*|*description*
+|locators|ADD|not supported|any iri|a topic|adding a new subject-locator to given topic
+|indicators|ADD|not supported|any iri|a topic|adding a new subject-identifier to given topic
+|item|ADD|not supported|any iri|any item|adding a new item-identifier to given item
+|names|ADD|the name type|any string|a topic|adding a new name to given topic. If the name-type is empty, then "default-name-type":http://www.isotopicmaps.org/sam/sam-model/#d0e2429 of TMDM is used
+||SET|not supported|any string|a name|setting the value of the given name
+|occurrences|ADD|the occurrence type|any object|a topic|adding a new occurrences to given topic. If the occurrence-type is empty, then occurrence-type of TMDM is used (http://psi.topicmaps.org/iso13250/glossary/occurrence-type)
+||SET|not supported|any object|an occurrence|setting the value of the given occurrence
+|scope|ADD|not supported|a topic|an association, a name or an occurrence|adding a new theme to the scope of the given item
+|types|ADD|not supported|a topic or an iri|a topic|adding a new type to the given topic, if type does not exists and value is an iri, the type will be created
+||SET|not supported|a topic or an iri|an association, a name or an occurrence|setting the type to the given topic, if type does not exists and value is an iri, the type will be created
+|instances|ADD|not supported|a topic or an iri|a topic|adding a new instance to the given type, if instance does not exists and value is an iri, the instance will be created
+|supertypes|ADD|not supported|a topic or an iri|a topic|adding a new supertype to the given topic, if supertype does not exists and value is an iri, the supertype will be created
+|subtypes|ADD|not supported|a topic or an iri|a topic|adding a new subtype to the given topic, if subtype does not exists and value is an iri, the subtype will be created
+|players|SET|the role type|a topic or an iri| a topic|setting the player of all or the given role, if player does not exists and value is an iri, the player will be created
+|roles|ADD|the player|a topic or an iri| an association|adding a new role-player combination to the given association, if role-type does not exists and value is an iri, the role-type  will be created. If player is empty the tm:subject is used
+|reifier|SET|not supported|a topic, an association, a name or an occurrence|a topic, an association, a name or an occurrence|Setting a new reification. *Hint:* Restrictions of TMDM are checked
+|================
+
+===== Topic Definition =====
+
+A topic definition can be used to define a new topic item by one of its identities. A topic can be created by using a string literal as item-identifier, subject-identifier or subject-locator. The type of identity is specified by the navigation pattern behind the string reference. If there is no navigation pattern, the default is subject-identifier. The identity type can also be defined by the non-canonical shortcut of the corresponding navigation axis.
+
+-------------------------
+1:	topic-def	::=	string ( '<<' 'indicators' | '~' )? # by subject-identifier
+2:
+3:	topic-def	::=	string ( '<<' 'item' | '!' ) # by item-identifier
+4:
+5:	topic-def	::=	string ( '<<' 'locators' | '=') ) # by subject-locator
+-------------------------
+
+===== Association Definition =====
+
+An association definition is similar to a predicate invocation and can be used to create a new association in the context of the current topic map. The syntax is similar to predicate-invocation except the usage of ellipsis is not allowed.
+
+==== Where clause ====
+
+The 'where clause' define a boolean condition to evaluate the variable bindings. The clause can contain every boolean expression which was discussed in the previous chapters. A where clause returns a set of satisfying variable bindings. 
+
+The update expression can only use variable bound in the context of the where clause. If it is missing the usage of any variable is invalid.
+
+
+
+
