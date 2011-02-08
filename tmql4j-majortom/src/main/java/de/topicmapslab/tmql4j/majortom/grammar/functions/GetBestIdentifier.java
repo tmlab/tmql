@@ -32,7 +32,9 @@ public class GetBestIdentifier extends FunctionImpl {
 	 */
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
 		QueryMatches parameters = getParameters(runtime, context, caller);
-
+		if ( parameters.isEmpty()){
+			return QueryMatches.emptyMatches();
+		}
 		if (!isExpectedNumberOfParameters(parameters.getOrderedKeys().size()))
 			throw new TMQLRuntimeException("Illegal Number Of Arguments for " + IDENTIFIER);
 		QueryMatches results = new QueryMatches(runtime);
