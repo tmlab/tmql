@@ -8,23 +8,32 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.definition.core.orderBy;
 
+import de.topicmapslab.tmql4j.path.grammar.lexical.Asc;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Desc;
+
 /**
  * @author Sven Krosse
- *
+ * 
  */
 public class OrderBy {
 
 	private final String content;
 	private boolean asc;
-	
-	public OrderBy(final String content){
+
+	public OrderBy(final String content) {
 		this(content, true);
 	}
-	
-	public OrderBy(final String content, boolean asc){
+
+	public OrderBy(final String content, boolean asc) {
 		this.content = content;
 		this.asc = asc;
 	}
-	
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public String toString() {
+		return content + " " + (asc ? Asc.TOKEN : Desc.TOKEN);
+	}
+
 }

@@ -8,6 +8,8 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.definition.model;
 
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.orderBy.OrderBy;
+
 /**
  * @author Sven Krosse
  * 
@@ -32,7 +34,7 @@ public interface ISqlDefinition extends Cloneable {
 	 *            flag indicates if content of from part is a table
 	 */
 	public void addFromPart(final String fromPart, final String alias, final boolean isTable);
-
+	
 	/**
 	 * Method adds a new part to the internal from clause and generates a new
 	 * alias
@@ -53,7 +55,7 @@ public interface ISqlDefinition extends Cloneable {
 	 *            part
 	 */
 	public void addFromPart(IFromPart part);
-
+	
 	/**
 	 * Returns the last entry of from clause
 	 * 
@@ -143,5 +145,16 @@ public interface ISqlDefinition extends Cloneable {
 	 * @return the index
 	 */
 	public int getInternalAliasIndex();
+	
+	/**
+	 * Adds a new order by part to the SQL selection
+	 * @param orderBy the order by part
+	 */
+	public void addOrderByPart(OrderBy orderBy);
+	
+	/**
+	 * Removes all order by parts
+	 */
+	public void clearOrderBy();
 
 }

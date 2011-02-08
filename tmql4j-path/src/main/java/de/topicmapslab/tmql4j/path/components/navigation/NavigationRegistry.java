@@ -36,6 +36,7 @@ import de.topicmapslab.tmql4j.path.components.navigation.axis.SupertypesNavigati
 import de.topicmapslab.tmql4j.path.components.navigation.axis.TraverseNavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.axis.TypedNavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.axis.TypesNavigationAxis;
+import de.topicmapslab.tmql4j.path.components.navigation.axis.VariantsNavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.model.INavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.model.INavigationHandler;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
@@ -56,6 +57,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.AxisSupertypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTraverse;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTyped;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTypes;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisVariants;
 
 /**
  * Base implementation of the {@link INavigationHandler} to manage the axis
@@ -98,6 +100,7 @@ public class NavigationRegistry implements INavigationHandler {
 		axis.put(AxisAtomify.class, AtomifyNavigationAxis.class);
 		axis.put(AxisTyped.class, TypedNavigationAxis.class);
 		axis.put(AxisId.class, IdNavigationAxis.class);
+		axis.put(AxisVariants.class, VariantsNavigationAxis.class);
 	}
 
 	/**

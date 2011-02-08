@@ -17,7 +17,7 @@ import org.tmapi.core.Topic;
 import de.topicmapslab.geotype.wgs84.Wgs84Coordinate;
 import de.topicmapslab.geotype.wgs84.Wgs84Degree;
 import de.topicmapslab.majortom.model.core.IOccurrence;
-import de.topicmapslab.majortom.util.XmlSchemeDatatypes;
+import de.topicmapslab.majortom.model.namespace.Namespaces;
 import de.topicmapslab.tmql4j.components.processor.results.IResult;
 import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetCoordinatesInDistance;
@@ -41,8 +41,8 @@ public class TestGeographicalFunctions extends Tmql4JTestCase {
 		// Berlin Brandenburger Tor
 		Wgs84Coordinate other = new Wgs84Coordinate(lat, lng);
 
-		IOccurrence occurrence = (IOccurrence) createTopic().createOccurrence(createTopic(), coordinate.toString(), topicMap.createLocator(XmlSchemeDatatypes.WGS84_COORDINATE));
-		IOccurrence otherOccurrence = (IOccurrence) createTopic().createOccurrence(createTopic(), other.toString(), topicMap.createLocator(XmlSchemeDatatypes.WGS84_COORDINATE));
+		IOccurrence occurrence = (IOccurrence) createTopic().createOccurrence(createTopic(), coordinate.toString(), topicMap.createLocator(Namespaces.XSD.WGS84_COORDINATE));
+		IOccurrence otherOccurrence = (IOccurrence) createTopic().createOccurrence(createTopic(), other.toString(), topicMap.createLocator(Namespaces.XSD.WGS84_COORDINATE));
 
 		String query;
 		SimpleResultSet set = null;
@@ -81,9 +81,9 @@ public class TestGeographicalFunctions extends Tmql4JTestCase {
 		Wgs84Coordinate other = new Wgs84Coordinate(lat, lng);
 
 		Topic topic = createTopic();
-		IOccurrence occurrence = (IOccurrence) topic.createOccurrence(createTopic(), coordinate.toString(), topicMap.createLocator(XmlSchemeDatatypes.WGS84_COORDINATE));
+		IOccurrence occurrence = (IOccurrence) topic.createOccurrence(createTopic(), coordinate.toString(), topicMap.createLocator(Namespaces.XSD.WGS84_COORDINATE));
 		Topic otherTopic = createTopic();
-		IOccurrence otherOccurrence = (IOccurrence) otherTopic.createOccurrence(createTopic(), other.toString(), topicMap.createLocator(XmlSchemeDatatypes.WGS84_COORDINATE));
+		IOccurrence otherOccurrence = (IOccurrence) otherTopic.createOccurrence(createTopic(), other.toString(), topicMap.createLocator(Namespaces.XSD.WGS84_COORDINATE));
 
 		String query;
 		SimpleResultSet set = null;
@@ -122,9 +122,9 @@ public class TestGeographicalFunctions extends Tmql4JTestCase {
 		Wgs84Coordinate other = new Wgs84Coordinate(lat, lng);
 
 		Topic topic = createTopic();
-		topic.createOccurrence(createTopic(), coordinate.toString(), topicMap.createLocator(XmlSchemeDatatypes.WGS84_COORDINATE));
+		topic.createOccurrence(createTopic(), coordinate.toString(), topicMap.createLocator(Namespaces.XSD.WGS84_COORDINATE));
 		Topic otherTopic = createTopic();
-		otherTopic.createOccurrence(createTopic(), other.toString(), topicMap.createLocator(XmlSchemeDatatypes.WGS84_COORDINATE));
+		otherTopic.createOccurrence(createTopic(), other.toString(), topicMap.createLocator(Namespaces.XSD.WGS84_COORDINATE));
 
 		String query;
 		SimpleResultSet set = null;
@@ -133,7 +133,7 @@ public class TestGeographicalFunctions extends Tmql4JTestCase {
 				+ " ) RETURN $c << characteristics";
 		set = execute(query);
 		assertEquals(2, set.size());
-		for (IResult r : set) {		
+		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertTrue(r.first().equals(topic) || r.first().equals(otherTopic));
 		}
@@ -161,14 +161,13 @@ public class TestGeographicalFunctions extends Tmql4JTestCase {
 		// Berlin Brandenburger Tor
 		Wgs84Coordinate other = new Wgs84Coordinate(lat, lng);
 
-		createTopic().createOccurrence(createTopic(), coordinate.toString(), topicMap.createLocator(XmlSchemeDatatypes.WGS84_COORDINATE));
-		createTopic().createOccurrence(createTopic(), other.toString(), topicMap.createLocator(XmlSchemeDatatypes.WGS84_COORDINATE));
+		createTopic().createOccurrence(createTopic(), coordinate.toString(), topicMap.createLocator(Namespaces.XSD.WGS84_COORDINATE));
+		createTopic().createOccurrence(createTopic(), other.toString(), topicMap.createLocator(Namespaces.XSD.WGS84_COORDINATE));
 
 		String query;
 		SimpleResultSet set = null;
 
-		query = GetDistance.GetDistanceIdentifier + " ( " + coordinate.getLatitude() + " , " + coordinate.getLongitude() + " , " + coordinate.getLatitude() + " , "
-				+ coordinate.getLongitude() + " )";
+		query = GetDistance.GetDistanceIdentifier + " ( " + coordinate.getLatitude() + " , " + coordinate.getLongitude() + " , " + coordinate.getLatitude() + " , " + coordinate.getLongitude() + " )";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
@@ -206,8 +205,8 @@ public class TestGeographicalFunctions extends Tmql4JTestCase {
 		// Berlin Brandenburger Tor
 		Wgs84Coordinate other = new Wgs84Coordinate(lat, lng);
 
-		createTopic().createOccurrence(createTopic(), coordinate.toString(), topicMap.createLocator(XmlSchemeDatatypes.WGS84_COORDINATE));
-		createTopic().createOccurrence(createTopic(), other.toString(), topicMap.createLocator(XmlSchemeDatatypes.WGS84_COORDINATE));
+		createTopic().createOccurrence(createTopic(), coordinate.toString(), topicMap.createLocator(Namespaces.XSD.WGS84_COORDINATE));
+		createTopic().createOccurrence(createTopic(), other.toString(), topicMap.createLocator(Namespaces.XSD.WGS84_COORDINATE));
 
 		String query;
 		SimpleResultSet set = null;

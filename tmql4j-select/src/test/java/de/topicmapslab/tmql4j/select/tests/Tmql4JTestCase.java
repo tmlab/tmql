@@ -18,12 +18,12 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
 
-import de.topicmapslab.majortom.util.TmdmSubjectIdentifier;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.runtime.TMQLRuntimeFactory;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.query.IQuery;
+import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 
 /**
  * Abstract base test class for TMQL4J test suite

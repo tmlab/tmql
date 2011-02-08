@@ -15,6 +15,7 @@ import java.util.List;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Comma;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Where;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.from.FromPart;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.orderBy.OrderBy;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.selection.Selection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.where.Conjunction;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.where.Criterion;
@@ -32,13 +33,12 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  */
 public class SqlDefinition implements ISqlDefinition {
 
-	private static final String QUERY_WITHOUT_FROM = "SELECT {0}";
-	private static final String QUERY_WITH_FROM = "SELECT {0} FROM {1} {2}";
 	public static final String WS = " ";
 	public static final String ALIAS = "alias";
 
 	private List<ISelection> selectionParts;
 	private List<IFromPart> fromParts;
+	private List<OrderBy> orderByParts;
 	private int aliasIndex;
 	private ICriteria criteria;
 	private SqlTables sqlTable;
@@ -61,6 +61,9 @@ public class SqlDefinition implements ISqlDefinition {
 		}
 		if (clone.fromParts != null) {
 			this.fromParts = HashUtil.getList(clone.fromParts);
+		}
+		if (clone.orderByParts != null) {
+			this.orderByParts = HashUtil.getList(clone.orderByParts);
 		}
 		this.aliasIndex = clone.aliasIndex;
 		this.criteria = clone.criteria;
@@ -213,6 +216,7 @@ public class SqlDefinition implements ISqlDefinition {
 	 * {@inheritDoc}
 	 */
 	public String toString() {
+		StringBuilder builder = new StringBuilder();
 		/*
 		 * generate selection part
 		 */
@@ -224,11 +228,13 @@ public class SqlDefinition implements ISqlDefinition {
 			}
 			selection.append(sel.toString());
 		}
+		builder.append("SELECT ");
+		builder.append(selection.toString());
 		/*
 		 * ignore missing from is inner selection
 		 */
 		if ( fromParts == null ){
-			return MessageFormat.format(QUERY_WITHOUT_FROM, selection.toString());
+			return builder.toString();
 		}
 		/*
 		 * generate from part
@@ -241,6 +247,8 @@ public class SqlDefinition implements ISqlDefinition {
 			}
 			from.append(fromPart.toString());
 		}
+		builder.append(" FROM ");
+		builder.append(from.toString());
 		/*
 		 * generate where part
 		 */
@@ -250,10 +258,23 @@ public class SqlDefinition implements ISqlDefinition {
 			where.append(WS);
 			where.append(criteria.toString());
 		}
+		builder.append(where.toString());
+		if ( !getOrderByParts().isEmpty()){
+			StringBuilder orderBys = new StringBuilder();
+			for (OrderBy orderBy : getOrderByParts()) {
+				if (!orderBys.toString().isEmpty()) {
+					orderBys.append(Comma.TOKEN);
+					orderBys.append(WS);
+				}
+				orderBys.append(orderBy.toString());
+			}
+			builder.append(" ORDER BY ");
+			builder.append(orderBys.toString());
+		}
 		/*
 		 * generate query
 		 */
-		return MessageFormat.format(QUERY_WITH_FROM, selection.toString(), from.toString(), where.toString());
+		return builder.toString();
 	}
 
 	/**
@@ -293,6 +314,15 @@ public class SqlDefinition implements ISqlDefinition {
 				this.criteria.add(definition.criteria);
 			}
 		}
+		/*
+		 * order by parts
+		 */
+		if ( !definition.getOrderByParts().isEmpty()){
+			if (this.orderByParts == null) {
+				this.orderByParts = HashUtil.getList();		
+			}
+			this.orderByParts.addAll(definition.getOrderByParts());
+		}
 	}
 
 	/**
@@ -307,5 +337,36 @@ public class SqlDefinition implements ISqlDefinition {
 	 */
 	public int getInternalAliasIndex() {
 		return this.aliasIndex;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void clearOrderBy() {
+		if ( orderByParts != null ){
+			orderByParts.clear();
+			orderByParts = null;
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public void addOrderByPart(OrderBy orderBy) {
+		if ( orderByParts == null ){
+			orderByParts = HashUtil.getList();
+		}
+		orderByParts.add(orderBy);
+	}
+	
+	/**
+	 * Internal method to retrieve all order by parts or an empty list but never <code>null</code>
+	 * @return the orderByParts
+	 */
+	protected List<OrderBy> getOrderByParts() {
+		if ( orderByParts == null ){
+			return Collections.emptyList();
+		}
+		return orderByParts;
 	}
 }
