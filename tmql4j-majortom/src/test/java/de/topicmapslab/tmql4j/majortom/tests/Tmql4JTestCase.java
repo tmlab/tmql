@@ -20,6 +20,7 @@ import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
 import org.tmapix.io.XTMTopicMapReader;
 
+import de.topicmapslab.majortom.util.FeatureStrings;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.runtime.TMQLRuntimeFactory;
@@ -44,6 +45,7 @@ public abstract class Tmql4JTestCase {
 	public void setUp() throws Exception {
 		factory = TopicMapSystemFactory.newInstance();
 		factory.setFeature("http://tmapi.org/features/type-instance-associations", true);
+		factory.setFeature("http://tmapi.org/features/supertype-subtype-associations", true);
 		topicMapSystem = factory.newTopicMapSystem();
 		topicMap = topicMapSystem.createTopicMap(base);
 		runtime = TMQLRuntimeFactory.newFactory().newRuntime(topicMapSystem);

@@ -35,7 +35,7 @@ public class IdAxisTranslator extends AxisTranslatorImpl {
 	 * {@inheritDoc}
 	 */
 	protected ISqlDefinition forward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
-		definition.setCurrentTable(SqlTables.STRING);
+		definition.getLastSelection().setCurrentTable(SqlTables.STRING);
 		definition.getLastSelection().cast(VARCHAR);
 		return definition;
 	}
@@ -44,7 +44,7 @@ public class IdAxisTranslator extends AxisTranslatorImpl {
 	 * {@inheritDoc}
 	 */
 	protected ISqlDefinition backward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
-		if (definition.getCurrentTable() != SqlTables.STRING) {
+		if (definition.getLastSelection().getCurrentTable() != SqlTables.STRING) {
 			return definition;
 		}
 		/*
@@ -65,8 +65,9 @@ public class IdAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add selection part
 		 */
-		newDefinition.addSelection(new Selection(COLUMN, from.getAlias()));
-		newDefinition.setCurrentTable(SqlTables.ANY);
+		ISelection sel = new Selection(COLUMN, from.getAlias());
+		newDefinition.addSelection(sel);
+		sel.setCurrentTable(SqlTables.ANY);
 		return newDefinition;
 	}
 

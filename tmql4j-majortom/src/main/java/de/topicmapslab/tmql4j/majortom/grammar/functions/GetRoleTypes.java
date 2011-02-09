@@ -16,8 +16,10 @@ import java.util.Set;
 import org.tmapi.core.Association;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
+import org.tmapi.core.TopicMap;
 
 import de.topicmapslab.majortom.model.core.ITopic;
+import de.topicmapslab.majortom.model.index.ITransitiveTypeInstanceIndex;
 import de.topicmapslab.majortom.model.index.ITypeInstanceIndex;
 import de.topicmapslab.majortom.util.HashUtil;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
@@ -56,10 +58,10 @@ public class GetRoleTypes extends FunctionImpl {
 			 * iterate over parameters
 			 */
 			for (Map<String, Object> tuple : parameters) {
-				Object assocType = tuple.get("$0");
+				Object param0 = tuple.get("$0");
 				Object duplicates = tuple.get("$1");
-				if ( assocType instanceof ITopic ){
-					ITopic type = (ITopic) assocType;
+				if ( param0 instanceof ITopic ){
+					ITopic type = (ITopic) param0;
 					Set<List<Topic>> roleTypes = HashUtil.getHashSet();
 					/*
 					 * get instances
@@ -93,6 +95,13 @@ public class GetRoleTypes extends FunctionImpl {
 						results.add(t);
 					}
 				}
+				/*
+				 * second argument is boolean argument
+				 */
+				else if ( param0 != null && Boolean.parseBoolean(param0.toString())){
+					return QueryMatches.asQueryMatchNS(runtime, getTransitiveIndex(context.getQuery().getTopicMap())
+							.getRoleTypes());
+				}
 			}
 			return results;
 		}
@@ -100,6 +109,21 @@ public class GetRoleTypes extends FunctionImpl {
 				.getRoleTypes());
 
 	}
+	
+	/**
+	 * Internal method to get the transitive index
+	 * @param topicMap the topic map
+	 * @return the transitive index
+	 */
+	private ITransitiveTypeInstanceIndex getTransitiveIndex(TopicMap topicMap){
+		ITransitiveTypeInstanceIndex index = topicMap.getIndex(
+				ITransitiveTypeInstanceIndex.class);
+		if (!index.isOpen()) {
+			index.open();
+		}
+		return index;
+	}
+	
 
 	/**
 	 * {@inheritDoc}

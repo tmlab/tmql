@@ -66,8 +66,9 @@ public class SupertypesAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(FORWARD_SELECTION, fromPart.getAlias()));
-		result.setCurrentTable(SqlTables.TOPIC);
+		ISelection sel = new Selection(FORWARD_SELECTION, fromPart.getAlias());
+		result.addSelection(sel);
+		sel.setCurrentTable(SqlTables.TOPIC);
 		return result;
 	}
 
@@ -90,8 +91,9 @@ public class SupertypesAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(BACKWARD_SELECTION, fromPart.getAlias()));
-		result.setCurrentTable(SqlTables.TOPIC);
+		ISelection sel = new Selection(BACKWARD_SELECTION, fromPart.getAlias());
+		result.addSelection(sel);
+		sel.setCurrentTable(SqlTables.TOPIC);
 		return result;
 	}
 

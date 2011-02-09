@@ -73,8 +73,7 @@ public class BooleanExpressionTranslator extends TmqlSqlTranslatorImpl<BooleanEx
 		 */
 		ISqlDefinition def = new SqlDefinition();
 		def.addSelection(selection);
-		def.setInternalAliasIndex(definition.getInternalAliasIndex());
-		def.setCurrentTable(definition.getCurrentTable());
+		def.setInternalAliasIndex(definition.getInternalAliasIndex());		
 		/*
 		 * create new SQL intersect
 		 */
@@ -118,7 +117,6 @@ public class BooleanExpressionTranslator extends TmqlSqlTranslatorImpl<BooleanEx
 		ISqlDefinition def = new SqlDefinition();
 		def.addSelection(selection);
 		def.setInternalAliasIndex(definition.getInternalAliasIndex());
-		def.setCurrentTable(definition.getCurrentTable());
 		/*
 		 * create new SQL intersect
 		 */

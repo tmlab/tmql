@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.tmapi.core.Association;
 import org.tmapi.core.Topic;
 
+import de.topicmapslab.majortom.model.namespace.Namespaces;
 import de.topicmapslab.tmql4j.components.processor.results.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.util.HashUtil;
@@ -47,6 +48,41 @@ public class TestIndexFunction extends Tmql4JTestCase {
 		for (IResult r : rs) {
 			assertEquals(1, r.size());
 			assertTrue(topics.contains(r.first()));
+		}
+	}
+
+	@Test
+	public void testCharacteristicTypesTransitive() throws Exception {
+		Topic t = createTopic();
+		Set<Topic> topics = HashUtil.getHashSet();
+		Set<Topic> supertypes = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic type = createTopic();
+			if (i % 2 == 0) {
+				t.createName(type, "Name" + i);
+			} else {
+				t.createOccurrence(type, "Value" + i);
+			}
+			Topic st = createTopic();
+			addSupertype(type, st);
+			supertypes.add(st);
+			topics.add(type);
+		}
+
+		String query = "fn:get-characteristic-types()";
+		IResultSet<?> rs = execute(query);
+		assertEquals(100, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+
+		query = "fn:get-characteristic-types( \"true\" )";
+		rs = execute(query);
+		assertEquals(200, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()) || supertypes.contains(r.first()));
 		}
 	}
 
@@ -113,6 +149,37 @@ public class TestIndexFunction extends Tmql4JTestCase {
 	}
 
 	@Test
+	public void testNameTypesTransitive() throws Exception {
+		Topic t = createTopic();
+		Set<Topic> topics = HashUtil.getHashSet();
+		Set<Topic> supertypes = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic type = createTopic();
+			t.createName(type, "Name" + i);
+			topics.add(type);
+			Topic st = createTopic();
+			addSupertype(type, st);
+			supertypes.add(st);
+		}
+
+		String query = "FOR $t IN fn:get-name-types() RETURN $t";
+		IResultSet<?> rs = execute(query);
+		assertEquals(100, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+		
+		query = "FOR $t IN fn:get-name-types( \"true\" ) RETURN $t";
+		rs = execute(query);
+		assertEquals(200, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()) || supertypes.contains(r.first()));
+		}
+	}
+
+	@Test
 	public void testNameTypesWithType() throws Exception {
 		Topic tt = createTopicByII("myTT");
 		Topic t = createTopic();
@@ -166,6 +233,37 @@ public class TestIndexFunction extends Tmql4JTestCase {
 		for (IResult r : rs) {
 			assertEquals(1, r.size());
 			assertTrue(topics.contains(r.first()));
+		}
+	}
+	
+	@Test
+	public void testOccurrenceTypesTransitive() throws Exception {
+		Topic t = createTopic();
+		Set<Topic> topics = HashUtil.getHashSet();
+		Set<Topic> supertypes = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic type = createTopic();
+			t.createOccurrence(type, "Value" + i);
+			topics.add(type);
+			Topic st = createTopic();
+			addSupertype(type, st);
+			supertypes.add(st);
+		}
+
+		String query = "FOR $t IN fn:get-occurrence-types() RETURN $t";
+		IResultSet<?> rs = execute(query);
+		assertEquals(100, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+		
+		query = "FOR $t IN fn:get-occurrence-types(\"true\") RETURN $t";
+		rs = execute(query);
+		assertEquals(200, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()) || supertypes.contains(r.first()));
 		}
 	}
 
@@ -225,6 +323,37 @@ public class TestIndexFunction extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 	}
+	@Test
+	public void testTopicTypesTransitive() throws Exception {
+		Topic t = createTopic();
+		Set<Topic> topics = HashUtil.getHashSet();
+		Set<Topic> supertypes = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic type = createTopic();
+			t.addType(type);
+			topics.add(type);
+
+			Topic st = createTopic();
+			addSupertype(type, st);
+			supertypes.add(st);
+		}
+
+		String query = "FOR $t IN fn:get-topic-types() RETURN $t";
+		IResultSet<?> rs = execute(query);
+		assertEquals(100, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+		
+		query = "FOR $t IN fn:get-topic-types( \"true\" ) RETURN $t";
+		rs = execute(query);
+		assertEquals(200, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()) || supertypes.contains(r.first()));
+		}
+	}
 
 	@Test
 	public void testAssociationTypes() throws Exception {
@@ -235,12 +364,44 @@ public class TestIndexFunction extends Tmql4JTestCase {
 			topics.add(type);
 		}
 
-		final String query = "FOR $t IN fn:get-association-types() RETURN $t";
+		String query = "FOR $t IN fn:get-association-types() RETURN $t";
 		IResultSet<?> rs = execute(query);
 		assertEquals(100, rs.size());
 		for (IResult r : rs) {
 			assertEquals(1, r.size());
 			assertTrue(topics.contains(r.first()));
+		}
+	}
+
+	@Test
+	public void testAssociationTypesTransitive() throws Exception {
+		Set<Topic> topics = HashUtil.getHashSet();
+		Set<Topic> supertypes = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic type = createTopic();
+			createAssociation(type);
+			topics.add(type);
+			Topic st = createTopic();
+			addSupertype(type, st);
+			supertypes.add(st);
+		}
+		
+		Topic ako = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(Namespaces.TMDM.SUPERTYPE_SUBTYPE));
+
+		String query = "FOR $t IN fn:get-association-types() RETURN $t";
+		IResultSet<?> rs = execute(query);
+		assertEquals(101, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()) || r.first().equals(ako));
+		}
+		
+		query = "FOR $t IN fn:get-association-types( \"true\" ) RETURN $t";
+		rs = execute(query);
+		assertEquals(201, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()) || supertypes.contains(r.first()) || r.first().equals(ako));
 		}
 	}
 
@@ -260,6 +421,41 @@ public class TestIndexFunction extends Tmql4JTestCase {
 		for (IResult r : rs) {
 			assertEquals(1, r.size());
 			assertTrue(topics.contains(r.first()));
+		}
+	}
+	
+	@Test
+	public void testRoleTypesTransitive() throws Exception {
+		Association a = createAssociation();
+		Set<Topic> topics = HashUtil.getHashSet();
+		Set<Topic> supertypes = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic type = createTopic();
+			a.createRole(type, createTopic());
+			topics.add(type);
+			Topic st = createTopic();
+			addSupertype(type, st);
+			supertypes.add(st);
+		}
+		Topic sup = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(Namespaces.TMDM.SUPERTYPE));
+		Topic sub = topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(Namespaces.TMDM.SUBTYPE));
+		topics.add(sup);
+		topics.add(sub);
+
+		String query = "FOR $t IN fn:get-role-types() RETURN $t";
+		IResultSet<?> rs = execute(query);
+		assertEquals(102, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+		
+		query = "FOR $t IN fn:get-role-types( \"true\" ) RETURN $t";
+		rs = execute(query);
+		assertEquals(202, rs.size());
+		for (IResult r : rs) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first())|| supertypes.contains(r.first()));
 		}
 	}
 

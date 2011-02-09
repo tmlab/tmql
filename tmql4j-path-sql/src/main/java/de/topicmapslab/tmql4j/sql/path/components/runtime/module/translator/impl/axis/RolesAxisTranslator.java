@@ -49,7 +49,7 @@ public class RolesAxisTranslator extends AxisTranslatorImpl {
 		IFromPart fromPart = new FromPart(TABLE, result.getAlias(), true);
 		result.addFromPart(fromPart);
 		ISelection selection = definition.getLastSelection();
-		if (definition.getCurrentTable() == SqlTables.TOPIC) {
+		if (selection.getCurrentTable() == SqlTables.TOPIC) {
 			/*
 			 * add associations to from part
 			 */
@@ -69,8 +69,9 @@ public class RolesAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(FORWARD_SELECTION, fromPart.getAlias()));
-		result.setCurrentTable(SqlTables.TOPIC);
+		ISelection sel = new Selection(FORWARD_SELECTION, fromPart.getAlias());
+		result.addSelection(sel);
+		sel.setCurrentTable(SqlTables.TOPIC);
 		return result;
 	}
 
@@ -96,8 +97,9 @@ public class RolesAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(BACKWARD_SELECTION, fromPartAssociation.getAlias()));
-		result.setCurrentTable(SqlTables.ANY);
+		ISelection sel = new Selection(BACKWARD_SELECTION, fromPartAssociation.getAlias());
+		result.addSelection(sel);
+		sel.setCurrentTable(SqlTables.ANY);
 		/*
 		 * add optional type argument if necessary
 		 */

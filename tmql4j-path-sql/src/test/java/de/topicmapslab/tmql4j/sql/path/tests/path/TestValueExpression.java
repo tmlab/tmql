@@ -222,7 +222,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 			Assert.fail();
 		}
 
-		query = prefix + " - 20 * 20 ";
+		query = prefix + " -20 * 20 ";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -255,7 +255,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		String query = null;
 		IResultSet<?> set = null;
 
-		query = prefix + " 1 % 2 ";
+		query = prefix + " 1.0 % 2.0 ";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();
@@ -268,7 +268,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 			Assert.fail();
 		}
 
-		query = prefix + " 20 % 20 ";
+		query = prefix + " 20.0 % 20.0 ";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -281,7 +281,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 			Assert.fail();
 		}
 
-		query = prefix + " - 20 % 20 ";
+		query = prefix + " -20.0 % 20.0 ";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -319,7 +319,9 @@ public class TestValueExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();
-		if (o instanceof BigDecimal) {
+		if (o instanceof BigInteger) {
+			Assert.assertEquals(1, ((BigInteger) o).longValue());
+		} else if (o instanceof BigDecimal) {
 			Assert.assertEquals(1, ((BigDecimal) o).longValue());
 		} else if (o instanceof Collection<?>) {
 			Assert.assertEquals(1, ((BigDecimal) ((Collection<?>) o).iterator()
@@ -332,7 +334,9 @@ public class TestValueExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
-		if (o instanceof BigDecimal) {
+		if (o instanceof BigInteger) {
+			Assert.assertEquals(0, ((BigInteger) o).longValue());
+		}else if (o instanceof BigDecimal) {
 			Assert.assertEquals(0, ((BigDecimal) o).doubleValue(), 0);
 		} else if (o instanceof Collection<?>) {
 			Assert.assertEquals(0, ((BigDecimal) ((Collection<?>) o).iterator()

@@ -45,6 +45,7 @@ public abstract class Tmql4JTestCase {
 		factory = TopicMapSystemFactory.newInstance();
 		factory.setFeature(
 				"http://tmapi.org/features/type-instance-associations", true);
+		factory.setFeature("http://tmapi.org/features/supertype-subtype-associations", true);
 		topicMapSystem = factory.newTopicMapSystem();
 		topicMap = topicMapSystem.createTopicMap(base);
 		runtime = TMQLRuntimeFactory.newFactory().newRuntime(topicMapSystem);

@@ -78,7 +78,7 @@ public class TmqlSqlProcessor extends TmqlProcessor2007 {
 		try {
 			java.sql.ResultSet rs = session.getConnection().createStatement().executeQuery(definition.toString());
 			SqlResultProcessor processor = (SqlResultProcessor)getResultProcessor();
-			processor.proceed(query, session, rs);
+			processor.proceed(definition, query, session, rs);
 			return processor.getResultSet();
 		} catch (SQLException e) {
 			throw new TMQLRuntimeException("Database connection is broken!", e);

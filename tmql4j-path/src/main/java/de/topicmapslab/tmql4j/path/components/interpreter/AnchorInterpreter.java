@@ -72,10 +72,10 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 	 */
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		if ( Anchor.TYPE_PREPARED == getGrammarTypeOfExpression()){
+		if (Anchor.TYPE_PREPARED == getGrammarTypeOfExpression()) {
 			return getInterpreters(runtime).get(0).interpret(runtime, context, optionalArguments);
 		}
-		
+
 		/*
 		 * get first token
 		 */
@@ -88,39 +88,9 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 		if (anchor.equals(Element.class)) {
 			try {
 				/*
-				 * handle as date?
-				 */
-				if (LiteralUtils.isDate(anchor_)) {
-					return QueryMatches.asQueryMatchNS(runtime, LiteralUtils.asDate(anchor_));
-				}
-				/*
-				 * handle as time?
-				 */
-				else if (LiteralUtils.isTime(anchor_)) {
-					return QueryMatches.asQueryMatchNS(runtime, LiteralUtils.asTime(anchor_));
-				}
-				/*
-				 * handle as dateTime?
-				 */
-				else if (LiteralUtils.isDateTime(anchor_)) {
-					return QueryMatches.asQueryMatchNS(runtime, LiteralUtils.asDateTime(anchor_));
-				}
-				/*
-				 * handle as decimal?
-				 */
-				else if (LiteralUtils.isDecimal(anchor_)) {
-					return QueryMatches.asQueryMatchNS(runtime, LiteralUtils.asDecimal(anchor_));
-				}
-				/*
-				 * handle as integer?
-				 */
-				else if (LiteralUtils.isInteger(anchor_)) {
-					return QueryMatches.asQueryMatchNS(runtime, LiteralUtils.asInteger(anchor_));
-				}
-				/*
 				 * handle special topic undef
 				 */
-				else if ("undef".equalsIgnoreCase(anchor_)) {
+				if ("undef".equalsIgnoreCase(anchor_)) {
 					throw new UnsupportedOperationException("Undef is unknown!");
 				}
 				Construct constructByIdentifier = runtime.getConstructResolver().getConstructByIdentifier(context, anchor_);
@@ -157,12 +127,12 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 			/*
 			 * is current index variable
 			 */
-			if ( "$#".equalsIgnoreCase(variable)){
-				if ( context.getCurrentIndexInSequence() > 0 ){
+			if ("$#".equalsIgnoreCase(variable)) {
+				if (context.getCurrentIndexInSequence() > 0) {
 					return QueryMatches.asQueryMatchNS(runtime, context.getCurrentIndexInSequence());
 				}
 				return QueryMatches.emptyMatches();
-			}else if (context.getContextBindings() != null) {
+			} else if (context.getContextBindings() != null) {
 				/*
 				 * save binding as tuple
 				 */
@@ -180,8 +150,7 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 						return QueryMatches.asQueryMatchNS(runtime, possibleValuesForVariable.toArray());
 					}
 				}
-			}
-			else if ( context.getCurrentTuple() != null && context.getCurrentTuple().containsKey(variable)){
+			} else if (context.getCurrentTuple() != null && context.getCurrentTuple().containsKey(variable)) {
 				return QueryMatches.asQueryMatchNS(runtime, context.getCurrentTuple().get(variable));
 			}
 			Object value = getSystemReference(runtime, context, variable);
@@ -193,7 +162,41 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 		 * anchor is a string
 		 */
 		else if (anchor.equals(Literal.class)) {
-			return QueryMatches.asQueryMatch(runtime, QueryMatches.getNonScopedVariable(), LiteralUtils.asString(anchor_));
+			try {
+				/*
+				 * handle as date?
+				 */
+				if (LiteralUtils.isDate(anchor_)) {
+					return QueryMatches.asQueryMatchNS(runtime, LiteralUtils.asDate(anchor_));
+				}
+				/*
+				 * handle as time?
+				 */
+				else if (LiteralUtils.isTime(anchor_)) {
+					return QueryMatches.asQueryMatchNS(runtime, LiteralUtils.asTime(anchor_));
+				}
+				/*
+				 * handle as dateTime?
+				 */
+				else if (LiteralUtils.isDateTime(anchor_)) {
+					return QueryMatches.asQueryMatchNS(runtime, LiteralUtils.asDateTime(anchor_));
+				}
+				/*
+				 * handle as decimal?
+				 */
+				else if (LiteralUtils.isDecimal(anchor_)) {
+					return QueryMatches.asQueryMatchNS(runtime, LiteralUtils.asDecimal(anchor_));
+				}
+				/*
+				 * handle as integer?
+				 */
+				else if (LiteralUtils.isInteger(anchor_)) {
+					return QueryMatches.asQueryMatchNS(runtime, LiteralUtils.asInteger(anchor_));
+				}
+				return QueryMatches.asQueryMatch(runtime, QueryMatches.getNonScopedVariable(), LiteralUtils.asString(anchor_));
+			} catch (Exception ex) {
+				logger.warn("Cannot found element for given reference '" + anchor_ + "'!");
+			}
 		}
 		/*
 		 * anchor is a data-typed element

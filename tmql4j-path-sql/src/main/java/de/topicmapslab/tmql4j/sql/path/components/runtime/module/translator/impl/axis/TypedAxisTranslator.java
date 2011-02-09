@@ -49,8 +49,9 @@ public class TypedAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(FORWARD_SELECTION, fromPart.getAlias()));
-		result.setCurrentTable(SqlTables.ANY);
+		ISelection sel = new Selection(FORWARD_SELECTION, fromPart.getAlias());
+		result.addSelection(sel);
+		sel.setCurrentTable(SqlTables.ANY);
 		return result;
 	}
 

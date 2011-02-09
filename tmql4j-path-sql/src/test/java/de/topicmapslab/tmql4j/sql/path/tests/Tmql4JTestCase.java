@@ -51,6 +51,7 @@ public abstract class Tmql4JTestCase {
 		factory.setProperty(JdbcTopicMapStoreProperty.DATABASE_USER, "postgres");
 		factory.setProperty(JdbcTopicMapStoreProperty.DATABASE_PASSWORD, "postgres");
 		factory.setFeature("http://tmapi.org/features/type-instance-associations", true);
+		factory.setFeature("http://tmapi.org/features/supertype-subtype-associations", true);
 		factory.setProperty(JdbcTopicMapStoreProperty.SQL_DIALECT, SqlDialect.POSTGRESQL.name());
 		topicMapSystem = factory.newTopicMapSystem();
 		topicMap = topicMapSystem.createTopicMap(base);

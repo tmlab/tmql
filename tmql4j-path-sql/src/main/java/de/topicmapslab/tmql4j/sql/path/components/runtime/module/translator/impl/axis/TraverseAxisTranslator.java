@@ -90,8 +90,9 @@ public class TraverseAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(FORWARD_SELECTION, fromPart.getAlias()));
-		result.setCurrentTable(SqlTables.TOPIC);
+		ISelection sel =new Selection(FORWARD_SELECTION, fromPart.getAlias());
+		result.addSelection(sel);
+		sel.setCurrentTable(SqlTables.TOPIC);
 		return result;
 	}
 
@@ -123,7 +124,7 @@ public class TraverseAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * direct association mapping if current node is an association
 		 */
-		if (result.getCurrentTable() == SqlTables.TOPIC) {
+		if (selection.getCurrentTable() == SqlTables.TOPIC) {
 			ISqlDefinition associationsOfType = TranslatorUtils.generateSqlDefinitionForTypeables(runtime, context, selection.getSelection(), definition.getInternalAliasIndex());
 			inDef.add(new InCriterion(PARENT,inDefFromPart.getAlias(), associationsOfType));
 		}
@@ -153,8 +154,9 @@ public class TraverseAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(BACKWARD_SELECTION, fromPart.getAlias()));
-		result.setCurrentTable(SqlTables.ASSOCIATION);
+		ISelection sel = new Selection(BACKWARD_SELECTION, fromPart.getAlias());
+		result.addSelection(sel);
+		sel.setCurrentTable(SqlTables.ASSOCIATION);
 		return result;
 	}
 }

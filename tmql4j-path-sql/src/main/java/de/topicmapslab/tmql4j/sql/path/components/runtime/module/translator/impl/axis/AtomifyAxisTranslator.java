@@ -52,8 +52,9 @@ public class AtomifyAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(FORWARD_SELECTION, fromPart.getAlias()));
-		result.setCurrentTable(SqlTables.STRING);
+		ISelection sel = new Selection(FORWARD_SELECTION, fromPart.getAlias());
+		sel.setCurrentTable(SqlTables.STRING);
+		result.addSelection(sel);		
 		return result;
 	}
 
@@ -76,8 +77,9 @@ public class AtomifyAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(BACKWARD_SELECTION, fromPart.getAlias()));
-		result.setCurrentTable(SqlTables.CHARACTERISTICS);
+		ISelection sel = new Selection(BACKWARD_SELECTION, fromPart.getAlias());
+		sel.setCurrentTable(SqlTables.CHARACTERISTICS);
+		result.addSelection(sel);		
 		return result;
 	}
 

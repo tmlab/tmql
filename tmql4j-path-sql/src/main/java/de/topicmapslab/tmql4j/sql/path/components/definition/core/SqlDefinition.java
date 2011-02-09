@@ -8,7 +8,6 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.definition.core;
 
-import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.List;
 
@@ -24,7 +23,6 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.ICriterion;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
-import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -41,7 +39,6 @@ public class SqlDefinition implements ISqlDefinition {
 	private List<OrderBy> orderByParts;
 	private int aliasIndex;
 	private ICriteria criteria;
-	private SqlTables sqlTable;
 
 	/**
 	 * constructor
@@ -67,7 +64,6 @@ public class SqlDefinition implements ISqlDefinition {
 		}
 		this.aliasIndex = clone.aliasIndex;
 		this.criteria = clone.criteria;
-		this.sqlTable = clone.sqlTable;
 	}
 
 	/**
@@ -87,7 +83,7 @@ public class SqlDefinition implements ISqlDefinition {
 	 * 
 	 * @return the selections
 	 */
-	protected List<ISelection> getSelectionParts() {
+	public List<ISelection> getSelectionParts() {
 		if (selectionParts == null) {
 			return Collections.emptyList();
 		}
@@ -201,20 +197,6 @@ public class SqlDefinition implements ISqlDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
-	public SqlTables getCurrentTable() {
-		return sqlTable;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setCurrentTable(SqlTables table) {
-		this.sqlTable = table;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		/*
@@ -233,7 +215,7 @@ public class SqlDefinition implements ISqlDefinition {
 		/*
 		 * ignore missing from is inner selection
 		 */
-		if ( fromParts == null ){
+		if (fromParts == null) {
 			return builder.toString();
 		}
 		/*
@@ -259,7 +241,7 @@ public class SqlDefinition implements ISqlDefinition {
 			where.append(criteria.toString());
 		}
 		builder.append(where.toString());
-		if ( !getOrderByParts().isEmpty()){
+		if (!getOrderByParts().isEmpty()) {
 			StringBuilder orderBys = new StringBuilder();
 			for (OrderBy orderBy : getOrderByParts()) {
 				if (!orderBys.toString().isEmpty()) {
@@ -299,10 +281,6 @@ public class SqlDefinition implements ISqlDefinition {
 		 * set alias index
 		 */
 		this.aliasIndex = definition.aliasIndex;
-		/*
-		 * set state
-		 */
-		this.sqlTable = SqlTables.ANY;
 
 		/*
 		 * add criteria
@@ -317,9 +295,9 @@ public class SqlDefinition implements ISqlDefinition {
 		/*
 		 * order by parts
 		 */
-		if ( !definition.getOrderByParts().isEmpty()){
+		if (!definition.getOrderByParts().isEmpty()) {
 			if (this.orderByParts == null) {
-				this.orderByParts = HashUtil.getList();		
+				this.orderByParts = HashUtil.getList();
 			}
 			this.orderByParts.addAll(definition.getOrderByParts());
 		}
@@ -338,33 +316,35 @@ public class SqlDefinition implements ISqlDefinition {
 	public int getInternalAliasIndex() {
 		return this.aliasIndex;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public void clearOrderBy() {
-		if ( orderByParts != null ){
+		if (orderByParts != null) {
 			orderByParts.clear();
 			orderByParts = null;
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public void addOrderByPart(OrderBy orderBy) {
-		if ( orderByParts == null ){
+		if (orderByParts == null) {
 			orderByParts = HashUtil.getList();
 		}
 		orderByParts.add(orderBy);
 	}
-	
+
 	/**
-	 * Internal method to retrieve all order by parts or an empty list but never <code>null</code>
+	 * Internal method to retrieve all order by parts or an empty list but never
+	 * <code>null</code>
+	 * 
 	 * @return the orderByParts
 	 */
 	protected List<OrderBy> getOrderByParts() {
-		if ( orderByParts == null ){
+		if (orderByParts == null) {
 			return Collections.emptyList();
 		}
 		return orderByParts;
