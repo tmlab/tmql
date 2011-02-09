@@ -10,6 +10,7 @@
  */
 package de.topicmapslab.tmql4j.components.results;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
@@ -189,5 +190,17 @@ public class TmqlResultProcessor implements IResultProcessor {
 	 */
 	protected void setResultSet(IResultSet<?> resultSet) {
 		this.resultSet = resultSet;
+	}
+
+	/**
+	 * Method to access internal alias map
+	 * 
+	 * @return the aliasIndex the alias map
+	 */
+	protected Map<String, Integer> getAliasIndex() {
+		if (aliasIndex == null) {
+			return Collections.emptyMap();
+		}
+		return aliasIndex;
 	}
 }

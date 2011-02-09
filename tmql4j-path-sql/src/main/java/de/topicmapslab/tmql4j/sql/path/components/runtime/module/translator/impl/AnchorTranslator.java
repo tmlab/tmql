@@ -21,6 +21,7 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.core.SqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.from.FromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.selection.Selection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TmqlSqlTranslatorImpl;
@@ -50,18 +51,19 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 			case Anchor.TYPE_TOPICREF: {
 				final String token = expression.getTokens().get(0);
 				ISqlDefinition newDefinition = definition.clone();
-				newDefinition.clearSelection();
+				newDefinition.clearSelection();				
 				/*
 				 * create from part for topics table
 				 */
 				IFromPart part = new FromPart(TOPICS, newDefinition.getAlias(), true);
 				newDefinition.addFromPart(part);
+				SqlTables table;
 				/*
 				 * create condition
 				 */
 				newDefinition.add(MessageFormat.format(TOPICMAP_CONDITION, part.getAlias(), context.getQuery().getTopicMap().getId()));
 				if (TmdmSubjectIdentifier.isTmdmSubject(token)) {
-					// NOTHING TO DO ANYMORE
+					table = SqlTables.TMSUBJECT;
 				} else {
 					/*
 					 * add additional tables
@@ -76,30 +78,48 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 					newDefinition.add(MessageFormat.format(CONDITION_LOCATOR_REL, fromPartLocs.getAlias(), fromPartRel.getAlias()));
 					newDefinition.add(MessageFormat.format(CONDITION_REL_TOPIC, fromPartRel.getAlias(), part.getAlias()));
 					newDefinition.add(MessageFormat.format(CONDITION_REFERENCE, fromPartLocs.getAlias(), runtime.getConstructResolver().toAbsoluteIRI(context, token)));
-
+					table = SqlTables.TOPIC;
 				}
-				newDefinition.addSelection(new Selection(SELECTION, part.getAlias()));
-				newDefinition.setCurrentTable(SqlTables.TOPIC);
+				ISelection sel = new Selection(SELECTION, part.getAlias());
+				newDefinition.addSelection(sel);
+				sel.setCurrentTable(table);
 				return newDefinition;
 			}
 			case Anchor.TYPE_DOT: {
 				ISqlDefinition def = new SqlDefinition();
-				def.setCurrentTable(definition.getCurrentTable());
 				def.setInternalAliasIndex(definition.getInternalAliasIndex());
-				def.addSelection(definition.getLastSelection());
+				def.addSelection(definition.getLastSelection());				
 				return def;
 			}
 			case Anchor.TYPE_LITERAL: {
 				ISqlDefinition def = new SqlDefinition();
-				def.addSelection(new Selection("'" + LiteralUtils.asString(expression.getTokens().get(0)) + "'", null));
-				def.setCurrentTable(SqlTables.STRING);
+				String token = expression.getTokens().get(0);
+				SqlTables table = SqlTables.ANY;
+				try{
+					if ( LiteralUtils.isString(token)){
+						token = "'" + LiteralUtils.asString(token) + "'";
+						table = SqlTables.STRING;
+					}else if ( LiteralUtils.isInteger(token)){
+						table = SqlTables.INTEGER;
+					}else if ( LiteralUtils.isDecimal(token)){
+						table = SqlTables.DECIMAL;
+					}else if ( LiteralUtils.isDate(token) || LiteralUtils.isTime(token) || LiteralUtils.isDateTime(token)){
+						table = SqlTables.DATETIME;
+					}					
+				} catch (Exception ex) {
+					throw new TMQLRuntimeException("Cannot found element for given reference '" + token + "'!");
+				}
+				ISelection sel = new Selection(token, null);
+				def.addSelection(sel);
+				sel.setCurrentTable(table);
 				return def;
 			} case Anchor.TYPE_VARIABLE:{
 				final String variable = expression.getTokens().get(0);
 				if ( AnchorInterpreter.VARIABLE_TOPIC_MAP.equalsIgnoreCase(variable)){
 					ISqlDefinition def = new SqlDefinition();
-					def.addSelection(new Selection(context.getQuery().getTopicMap().getId(), null));
-					def.setCurrentTable(SqlTables.STRING);
+					ISelection sel = new Selection(context.getQuery().getTopicMap().getId(), null);
+					def.addSelection(sel);
+					sel.setCurrentTable(SqlTables.STRING);
 					return def;
 				}
 			}

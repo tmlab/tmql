@@ -8,12 +8,15 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.results;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +36,9 @@ import de.topicmapslab.tmql4j.components.results.TmqlResultProcessor;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.query.IQuery;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.selection.CaseSelection;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -73,6 +79,8 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 	/**
 	 * proceed the JDBC result set
 	 * 
+	 * @param definition
+	 *            the SQL definition
 	 * @param query
 	 *            the query
 	 * @param session
@@ -82,15 +90,21 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 	 * @throws TMQLRuntimeException
 	 *             thrown if anything fails
 	 */
-	public void proceed(IQuery query, ISession session, ResultSet rs) throws TMQLRuntimeException {
+	public void proceed(ISqlDefinition definition, IQuery query, ISession session, ResultSet rs) throws TMQLRuntimeException {
 		try {
 			/*
 			 * create new instance of result set
 			 */
 			SqlResultSet resultSet = new SqlResultSet();
+			resultSet.setAlias(getAliasIndex());
 			Map<String, List<Index>> indexes = HashUtil.getHashMap();
 			Set<String> ids = HashUtil.getHashSet();
 			ResultSetMetaData metaData = rs.getMetaData();
+			List<SqlTables> tables = new ArrayList<SqlTables>();
+			for (ISelection sel : definition.getSelectionParts()) {
+				SqlTables t = sel.getCurrentTable();
+				tables.add(t == null ? SqlTables.ANY : t);
+			}
 			int row = 0;
 			/*
 			 * iterate over JDBC result set
@@ -98,40 +112,53 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 			while (rs.next()) {
 				IResult result = resultSet.createResult();
 				for (int col = 1; col < metaData.getColumnCount() + 1; col++) {
+					SqlTables selectionType = tables.get(col-1);
+					int columnType = metaData.getColumnType(col);
 					String value = rs.getString(col);
-					if ( CaseSelection.IS_NULL_VALUE_IN_SQL.equalsIgnoreCase(value)){
+					if (CaseSelection.IS_NULL_VALUE_IN_SQL.equalsIgnoreCase(value)) {
 						value = null;
 					}
 					/*
 					 * store value if value is an id
 					 */
-					if (value != null && metaData.getColumnType(col) == Types.BIGINT) {
-						/*
-						 * is topic map
-						 */
-						if (query.getTopicMap().getId().equalsIgnoreCase(value.toString())) {
-							result.add(query.getTopicMap());
-						}
-						/*
-						 * is any construct or locator except the topic map
-						 */
-						else {
-							/*
-							 * store id value
-							 */
-							ids.add(value);
-							/*
-							 * store index of id in result set
-							 */
-							List<Index> list = indexes.get(value);
-							if (list == null) {
-								list = HashUtil.getList();
-								indexes.put(value, list);
-							}
-							list.add(new Index(row, col - 1));
+					if (value != null) {
+						if ( selectionType == SqlTables.INTEGER ){
+							result.add(BigInteger.valueOf(rs.getLong(col)));
+						}else if ( selectionType == SqlTables.STRING){
 							result.add(value);
+						}else if ( selectionType == SqlTables.DECIMAL){
+							result.add(BigDecimal.valueOf(rs.getDouble(col)));
+						}else if ( selectionType == SqlTables.BOOLEAN){
+							result.add(rs.getBoolean(col));
+						}else if ( columnType== Types.BIGINT) {
+
+							/*
+							 * is topic map
+							 */
+							if (query.getTopicMap().getId().equalsIgnoreCase(value.toString())) {
+								result.add(query.getTopicMap());
+							}
+							/*
+							 * is any construct or locator except the topic map
+							 */
+							else {
+								/*
+								 * store id value
+								 */
+								ids.add(value);
+								/*
+								 * store index of id in result set
+								 */
+								List<Index> list = indexes.get(value);
+								if (list == null) {
+									list = HashUtil.getList();
+									indexes.put(value, list);
+								}
+								list.add(new Index(row, col - 1));
+								result.add(value);
+							}
 						}
-					}else{
+					} else {
 						result.add(value);
 					}
 				}

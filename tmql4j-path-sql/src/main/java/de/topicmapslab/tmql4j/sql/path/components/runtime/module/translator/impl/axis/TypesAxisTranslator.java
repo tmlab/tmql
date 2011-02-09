@@ -43,18 +43,20 @@ public class TypesAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * append from clause for characteristics
 		 */
-		IFromPart fromPart = new FromPart(definition.getCurrentTable() == SqlTables.TOPIC ? TABLE : TYPEABLES, result.getAlias(), true);
+		IFromPart fromPart = new FromPart(definition.getLastSelection().getCurrentTable() == SqlTables.TOPIC ? TABLE : TYPEABLES, result.getAlias(), true);
 		result.addFromPart(fromPart);
 		/*
 		 * append condition as connection to incoming SQL definition
 		 */
 		ISelection selection = definition.getLastSelection();
-		result.add(MessageFormat.format(definition.getCurrentTable() == SqlTables.TOPIC ? FORWARD_CONDITION : FORWARD_CONDITION_TYPEABLES, selection.getSelection(), fromPart.getAlias()));
+		result.add(MessageFormat.format(definition.getLastSelection().getCurrentTable() == SqlTables.TOPIC ? FORWARD_CONDITION : FORWARD_CONDITION_TYPEABLES, selection.getSelection(),
+				fromPart.getAlias()));
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(FORWARD_SELECTION, fromPart.getAlias()));
-		result.setCurrentTable(SqlTables.TOPIC);
+		ISelection sel = new Selection(FORWARD_SELECTION, fromPart.getAlias());
+		result.addSelection(sel);
+		sel.setCurrentTable(SqlTables.TOPIC);
 		return result;
 	}
 
@@ -62,6 +64,13 @@ public class TypesAxisTranslator extends AxisTranslatorImpl {
 	 * {@inheritDoc}
 	 */
 	public ISqlDefinition backward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
+		/*
+		 * special handling for tm:subject >> instances and tm:subject << types
+		 */
+		if (definition.getLastSelection().getCurrentTable() == SqlTables.TMSUBJECT) {
+			definition.getLastSelection().setCurrentTable(SqlTables.TOPIC);
+			return definition;
+		}
 		ISqlDefinition result = definition.clone();
 		result.clearSelection();
 		/*
@@ -77,8 +86,9 @@ public class TypesAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(BACKWARD_SELECTION, fromPart.getAlias()));
-		result.setCurrentTable(SqlTables.TOPIC);
+		ISelection sel = new Selection(BACKWARD_SELECTION, fromPart.getAlias());
+		result.addSelection(sel);
+		sel.setCurrentTable(SqlTables.TOPIC);
 		return result;
 	}
 }

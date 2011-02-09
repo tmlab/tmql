@@ -318,5 +318,12 @@ public abstract class ExpressionImpl implements IExpression {
 		IExpressionInterpreter<?> interpreter = runtime.getLanguageContext().getInterpreterRegistry().interpreterInstance(this);
 		return interpreter.interpret(runtime, context, optionalArguments);
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean contains(Class<? extends IExpression> type) throws TMQLRuntimeException {
+		return !getExpressionFilteredByType(type).isEmpty();
+	}
 
 }

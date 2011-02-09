@@ -43,4 +43,20 @@ public interface ISelection {
 	 */
 	public void cast(String type);
 
+	/**
+	 * Sets the given table as current navigation point for this SQL definition.
+	 * 
+	 * @param table
+	 *            the table
+	 */
+	public void setCurrentTable(SqlTables table);
+
+	/**
+	 * Returns the table which represents the current navigation point of this
+	 * SQL definition
+	 * 
+	 * @return the table
+	 */
+	public SqlTables getCurrentTable();
+
 }

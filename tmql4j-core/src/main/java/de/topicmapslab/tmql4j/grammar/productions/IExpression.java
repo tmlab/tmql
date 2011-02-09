@@ -188,4 +188,21 @@ public interface IExpression {
 	 *         specified type, <code>false</code> otherwise.
 	 */
 	public boolean isChildOf(Class<? extends IExpression> clazz);
+	
+	/**
+	 * Method checks if the internal expression has at least one child-node of
+	 * the given expression type.
+	 * <p>
+	 * The method is useful because of the fact that some sub-expression are
+	 * optional like a where-clause of a select-expression.
+	 * </p>
+	 * 
+	 * @param type
+	 *            the type to look for
+	 * @return <code>true</code> if the expression has at least one child-node
+	 *         of the given type, <code>false</code> otherwise.
+	 * @throws TMQLRuntimeException
+	 *             thrown if operation fails.
+	 */
+	public boolean contains(Class<? extends IExpression> type) throws TMQLRuntimeException;
 }

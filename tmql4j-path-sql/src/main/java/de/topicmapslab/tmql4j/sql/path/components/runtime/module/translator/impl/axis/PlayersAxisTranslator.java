@@ -52,7 +52,7 @@ public class PlayersAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * current node is topic -> all associations with this type
 		 */
-		if (definition.getCurrentTable() == SqlTables.TOPIC) {
+		if (selection.getCurrentTable() == SqlTables.TOPIC) {
 			/*
 			 * add associations to from part
 			 */
@@ -76,8 +76,9 @@ public class PlayersAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(FORWARD_SELECTION, fromPart.getAlias()));
-		result.setCurrentTable(SqlTables.TOPIC);
+		ISelection sel = new Selection(FORWARD_SELECTION, fromPart.getAlias());
+		result.addSelection(sel);
+		sel.setCurrentTable(SqlTables.TOPIC);
 		/*
 		 * add optional type argument if necessary
 		 */
@@ -104,8 +105,9 @@ public class PlayersAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(BACKWARD_SELECTION, fromPart.getAlias()));
-		result.setCurrentTable(SqlTables.ASSOCIATION);
+		ISelection sel = new Selection(BACKWARD_SELECTION, fromPart.getAlias());
+		result.addSelection(sel);
+		sel.setCurrentTable(SqlTables.ASSOCIATION);
 		/*
 		 * add optional type argument if necessary
 		 */

@@ -12,6 +12,7 @@ package de.topicmapslab.tmql4j.path.grammar.lexical;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.grammar.lexical.Token;
+import de.topicmapslab.tmql4j.util.LiteralUtils;
 
 public class Literal extends Token {
 
@@ -20,7 +21,9 @@ public class Literal extends Token {
 	 */
 	@Override
 	public boolean isToken(final ITMQLRuntime runtime, final String literal) {
-		return literal.matches("\".*\"") || literal.matches("\"\"\".*\"\"\"");
+		return LiteralUtils.isString(literal) || LiteralUtils.isDecimal(literal) || LiteralUtils.isInteger(literal) || LiteralUtils.isDateTime(literal) || LiteralUtils.isTime(literal)
+				|| LiteralUtils.isDate(literal);
+		// literal.matches("\".*\"") || literal.matches("\"\"\".*\"\"\"");
 	}
 
 	/**
@@ -29,5 +32,5 @@ public class Literal extends Token {
 	public String getLiteral() {
 		return "\"..\"";
 	}
-	
+
 }

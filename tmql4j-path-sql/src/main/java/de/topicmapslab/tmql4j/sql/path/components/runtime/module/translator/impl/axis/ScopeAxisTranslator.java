@@ -58,8 +58,9 @@ public class ScopeAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(FORWARD_SELECTION, fromPartRel.getAlias()));
-		result.setCurrentTable(SqlTables.TOPIC);
+		ISelection sel = new Selection(FORWARD_SELECTION, fromPartRel.getAlias());
+		result.addSelection(sel);
+		sel.setCurrentTable(SqlTables.TOPIC);
 		return result;
 	}
 
@@ -85,8 +86,9 @@ public class ScopeAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(BACKWARD_SELECTION, fromPart.getAlias()));
-		result.setCurrentTable(SqlTables.ANY);
+		ISelection sel = new Selection(BACKWARD_SELECTION, fromPart.getAlias());
+		result.addSelection(sel);
+		sel.setCurrentTable(SqlTables.ANY);
 		return result;
 	}
 }

@@ -15,6 +15,10 @@ package de.topicmapslab.tmql4j.sql.path.components.definition.model;
 public enum SqlTables {
 
 	/**
+	 * additional state that current node is tm:subject
+	 */
+	TMSUBJECT,
+	/**
 	 * current nodes are topics
 	 */
 	TOPIC,
@@ -39,6 +43,10 @@ public enum SqlTables {
 	 */
 	CHARACTERISTICS,
 	/**
+	 * current nodes are variants
+	 */
+	VARIANT,
+	/**
 	 * current node is anything else
 	 */
 	ANY,
@@ -50,5 +58,20 @@ public enum SqlTables {
 	 * current nodes are locators
 	 */
 	LOCATOR,
-	
+	/**
+	 * is integer value
+	 */
+	INTEGER,
+	/**
+	 * is decimal value
+	 */
+	DECIMAL,
+	/**
+	 * is date-time
+	 */
+	DATETIME,
+	/**
+	 * a boolean
+	 */
+	BOOLEAN
 }

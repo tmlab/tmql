@@ -31,6 +31,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.AxisSupertypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTraverse;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTyped;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTypes;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisVariants;
 import de.topicmapslab.tmql4j.path.grammar.lexical.MoveForward;
 import de.topicmapslab.tmql4j.path.grammar.productions.Step;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
@@ -118,6 +119,7 @@ public abstract class AxisTranslatorImpl extends TmqlSqlTranslatorImpl<Step> {
 		translators.put(AxisTraverse.class, new TraverseAxisTranslator());
 		translators.put(AxisTyped.class, new TypedAxisTranslator());
 		translators.put(AxisTypes.class, new TypesAxisTranslator());
+		translators.put(AxisVariants.class, new VariantsAxisTranslator());
 	}
 
 	/**

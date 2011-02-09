@@ -8,6 +8,8 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.definition.model;
 
+import java.util.List;
+
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.orderBy.OrderBy;
 
 /**
@@ -109,27 +111,18 @@ public interface ISqlDefinition extends Cloneable {
 	public void add(final String criterion);
 
 	/**
-	 * Sets the given table as current navigation point for this SQL definition.
-	 * 
-	 * @param table
-	 *            the table
-	 */
-	public void setCurrentTable(SqlTables table);
-
-	/**
-	 * Returns the table which represents the current navigation point of this
-	 * SQL definition
-	 * 
-	 * @return the table
-	 */
-	public SqlTables getCurrentTable();
-
-	/**
 	 * Overwrites the Object#clone() method
 	 * 
 	 * @return the cloned construct
 	 */
 	public ISqlDefinition clone();
+	
+	/**
+	 * Returns all selections
+	 * 
+	 * @return the selections
+	 */
+	public List<ISelection> getSelectionParts();
 
 	/**
 	 * Updates the internal index to the given index

@@ -54,8 +54,10 @@ public abstract class IdentityAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(LOCATOR_ID, fromPartRel.getAlias()));
-		result.setCurrentTable(SqlTables.LOCATOR);
+		
+		ISelection sel= new Selection(LOCATOR_ID, fromPartRel.getAlias());
+		sel.setCurrentTable(SqlTables.LOCATOR);
+		result.addSelection(sel);		
 		return result;
 	}
 
@@ -77,7 +79,7 @@ public abstract class IdentityAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * current nodes are strings
 		 */
-		if (definition.getCurrentTable() == SqlTables.STRING) {
+		if (selection.getCurrentTable() == SqlTables.STRING) {
 			IFromPart fromPart = new FromPart(LOCATORS, result.getAlias(), true);
 			result.addFromPart(fromPart);
 			result.add(MessageFormat.format(BACKWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));
@@ -92,8 +94,9 @@ public abstract class IdentityAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		result.addSelection(new Selection(getRelationColumn(), fromPartRel.getAlias()));
-		result.setCurrentTable(SqlTables.TOPIC);
+		ISelection sel = new Selection(getRelationColumn(), fromPartRel.getAlias());
+		sel.setCurrentTable(SqlTables.TOPIC);
+		result.addSelection(sel);
 		return result;
 	}
 

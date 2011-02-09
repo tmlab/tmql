@@ -26,8 +26,10 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.core.Typed;
 import org.tmapi.core.Variant;
 
+import de.topicmapslab.majortom.model.core.IVariant;
 import de.topicmapslab.tmql4j.components.processor.results.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.sql.path.tests.Tmql4JTestCase;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
@@ -1353,4 +1355,51 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		assertEquals(id, set.first().first());
 	}
 
+	@Test
+	public void testVariantsAxis() throws Exception {
+		Topic topic = createTopicBySI("myTopic");
+		Name name = topic.createName("name");
+		String query = null;
+		SimpleResultSet set = null;
+
+		query = "\"" + name.getId() + "\" << id >> variants";
+		set = execute(query);
+		assertEquals(0, set.size());
+		
+		Set<Variant> variants = HashUtil.getHashSet();
+		for ( int i = 0 ; i < 10 ; i ++){
+			variants.add(name.createVariant("Var" + i, createTopic()));
+		}
+		query = "\"" + name.getId() + "\" << id >> variants";
+		set = execute(query);
+		assertEquals(variants.size(), set.size());
+		for ( IResult r : set ){
+			assertEquals(1, r.size());
+			assertTrue(r.get(0) instanceof IVariant);
+			assertTrue(variants.contains(r.first()));
+		}
+		
+		for (Variant v : variants){
+			query = "\"" + v.getId() + "\" << id << variants";
+			set = execute(query);
+			assertEquals(1, set.size());
+			assertEquals(1, set.first().size());
+			assertEquals(name, set.first().first());
+		}
+		
+		createTopicBySI("otherNameType");
+		Topic nt = createTopicBySI("nameType");
+		name.setType(nt);
+		for (Variant v : variants){
+			query = "\"" + v.getId() + "\" << id << variants otherNameType";
+			set = execute(query);
+			assertEquals(0, set.size());
+			
+			query = "\"" + v.getId() + "\" << id << variants nameType";
+			set = execute(query);
+			assertEquals(1, set.size());
+			assertEquals(1, set.first().size());
+			assertEquals(name, set.first().first());
+		}
+	}
 }
