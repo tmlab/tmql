@@ -19,6 +19,7 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.grammar.productions.IFunction;
 import de.topicmapslab.tmql4j.path.grammar.functions.string.RegExpFunction;
+import de.topicmapslab.tmql4j.path.grammar.functions.string.SubStringFunction;
 import de.topicmapslab.tmql4j.path.grammar.productions.AliasValueExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.FunctionInvocation;
 import de.topicmapslab.tmql4j.path.grammar.productions.Parameters;
@@ -104,6 +105,7 @@ public abstract class FunctionTranslatorImpl extends TmqlSqlTranslatorImpl<Funct
 	private static final Map<Class<? extends IFunction>, IFunctionTranslator> translators = HashUtil.getHashMap();
 	static {
 		translators.put(RegExpFunction.class, new RegExpFunctionTranslator());
+		translators.put(SubStringFunction.class, new SubStringFunctionTranslator());
 	}
 
 	public static IFunctionTranslator getFunctionTranslator(Class<? extends IFunction> functionType) {

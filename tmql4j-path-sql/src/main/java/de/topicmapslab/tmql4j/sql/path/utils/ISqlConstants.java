@@ -27,11 +27,17 @@ public interface ISqlConstants {
 		public static final String CONCAT = "||";
 
 		public static final String REGEXP = "~";
+
+	}
+	
+	public interface ISqlFunctions {
 		
 		public static final String UNNEST = "unnest";
 		
 		public static final String ARRAY_UPPER = "array_upper";
-
+		
+		public static final String SUBSTRING = "substring";
+		
 	}
 
 	public interface ISqlKeywords {

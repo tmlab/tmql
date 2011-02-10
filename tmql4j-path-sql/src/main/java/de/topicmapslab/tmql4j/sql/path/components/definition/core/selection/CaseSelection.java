@@ -62,13 +62,13 @@ public class CaseSelection extends Selection {
 		/*
 		 * create case part
 		 */
-		builder.append(ISqlConstants.ISqlOperators.UNNEST);
+		builder.append(ISqlConstants.ISqlFunctions.UNNEST);
 		builder.append(BracketRoundOpen.TOKEN);
 		builder.append(ISqlConstants.ISqlKeywords.CASE);
 		builder.append(ISqlConstants.WHITESPACE);
 		builder.append(ISqlConstants.ISqlKeywords.WHEN);
 		builder.append(ISqlConstants.WHITESPACE);
-		builder.append(ISqlConstants.ISqlOperators.ARRAY_UPPER);
+		builder.append(ISqlConstants.ISqlFunctions.ARRAY_UPPER);
 		builder.append(BracketRoundOpen.TOKEN);
 		builder.append(ISqlConstants.ISqlKeywords.ARRAY);
 		builder.append(BracketRoundOpen.TOKEN);
