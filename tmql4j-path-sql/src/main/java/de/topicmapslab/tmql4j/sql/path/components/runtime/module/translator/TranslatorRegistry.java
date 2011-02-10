@@ -18,6 +18,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.BooleanPrimitive;
 import de.topicmapslab.tmql4j.path.grammar.productions.Content;
 import de.topicmapslab.tmql4j.path.grammar.productions.ExistsClause;
 import de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix;
+import de.topicmapslab.tmql4j.path.grammar.productions.FunctionInvocation;
 import de.topicmapslab.tmql4j.path.grammar.productions.Navigation;
 import de.topicmapslab.tmql4j.path.grammar.productions.PathExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.Postfix;
@@ -36,6 +37,7 @@ import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.ContentTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.ExistsClauseTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.FilterPostfixTranslator;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.FunctionInvocationTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.NavigationTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.PathExpressionTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.PostfixTranslator;
@@ -65,6 +67,7 @@ public class TranslatorRegistry {
 		translators.put(Content.class, new ContentTranslator());
 		translators.put(ExistsClause.class, new ExistsClauseTranslator());
 		translators.put(FilterPostfix.class, new FilterPostfixTranslator());
+		translators.put(FunctionInvocation.class, new FunctionInvocationTranslator());
 		translators.put(Navigation.class, new NavigationTranslator());
 		translators.put(PathExpression.class, new PathExpressionTranslator());
 		translators.put(PostfixedExpression.class, new PostfixedExpressionTranslator());

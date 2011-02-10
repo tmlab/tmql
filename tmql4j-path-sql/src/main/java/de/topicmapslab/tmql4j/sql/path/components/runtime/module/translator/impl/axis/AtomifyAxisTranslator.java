@@ -73,7 +73,7 @@ public class AtomifyAxisTranslator extends AxisTranslatorImpl {
 		 * append condition as connection to incoming SQL definition
 		 */
 		ISelection selection = definition.getLastSelection();
-		result.add(MessageFormat.format(BACKWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));
+		result.add(MessageFormat.format(BACKWARD_CONDITION, selection.getCurrentTable() == SqlTables.STRING ? selection.getColumn(): selection.getSelection(), fromPart.getAlias()));
 		/*
 		 * add new selection
 		 */

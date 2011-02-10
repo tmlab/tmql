@@ -23,6 +23,7 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.ICriterion;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
+import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -30,9 +31,6 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  * 
  */
 public class SqlDefinition implements ISqlDefinition {
-
-	public static final String WS = " ";
-	public static final String ALIAS = "alias";
 
 	private List<ISelection> selectionParts;
 	private List<IFromPart> fromParts;
@@ -94,7 +92,7 @@ public class SqlDefinition implements ISqlDefinition {
 	 * {@inheritDoc}
 	 */
 	public String getAlias() {
-		return ALIAS + Integer.toString(aliasIndex++);
+		return ISqlConstants.ALIAS_PREFIX + Integer.toString(aliasIndex++);
 	}
 
 	/**
@@ -206,11 +204,12 @@ public class SqlDefinition implements ISqlDefinition {
 		for (ISelection sel : this.selectionParts) {
 			if (!selection.toString().isEmpty()) {
 				selection.append(Comma.TOKEN);
-				selection.append(WS);
+				selection.append(ISqlConstants.WHITESPACE);
 			}
 			selection.append(sel.toString());
 		}
-		builder.append("SELECT ");
+		builder.append(ISqlConstants.ISqlKeywords.SELECT);
+		builder.append(ISqlConstants.WHITESPACE);
 		builder.append(selection.toString());
 		/*
 		 * ignore missing from is inner selection
@@ -225,11 +224,13 @@ public class SqlDefinition implements ISqlDefinition {
 		for (IFromPart fromPart : getFromParts()) {
 			if (!from.toString().isEmpty()) {
 				from.append(Comma.TOKEN);
-				from.append(WS);
+				from.append(ISqlConstants.WHITESPACE);
 			}
 			from.append(fromPart.toString());
 		}
-		builder.append(" FROM ");
+		builder.append(ISqlConstants.WHITESPACE);
+		builder.append(ISqlConstants.ISqlKeywords.FROM);
+		builder.append(ISqlConstants.WHITESPACE);
 		builder.append(from.toString());
 		/*
 		 * generate where part
@@ -237,7 +238,7 @@ public class SqlDefinition implements ISqlDefinition {
 		StringBuilder where = new StringBuilder();
 		if (criteria != null) {
 			where.append(Where.TOKEN);
-			where.append(WS);
+			where.append(ISqlConstants.WHITESPACE);
 			where.append(criteria.toString());
 		}
 		builder.append(where.toString());
@@ -246,11 +247,13 @@ public class SqlDefinition implements ISqlDefinition {
 			for (OrderBy orderBy : getOrderByParts()) {
 				if (!orderBys.toString().isEmpty()) {
 					orderBys.append(Comma.TOKEN);
-					orderBys.append(WS);
+					orderBys.append(ISqlConstants.WHITESPACE);
 				}
 				orderBys.append(orderBy.toString());
 			}
-			builder.append(" ORDER BY ");
+			builder.append(ISqlConstants.WHITESPACE);
+			builder.append(ISqlConstants.ISqlKeywords.ORDER_BY);
+			builder.append(ISqlConstants.WHITESPACE);
 			builder.append(orderBys.toString());
 		}
 		/*

@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -228,46 +227,72 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 	 *            the query matches
 	 */
 	public void addAll(Collection<QueryMatches> queryMatches) {
+		Collection<QueryMatches> content = HashUtil.getHashSet(queryMatches);
 		/*
-		 * create collection of iterators of given query matches
+		 * add it self if necessary
 		 */
-		Collection<Iterator<Map<String, Object>>> iterators = new LinkedList<Iterator<Map<String, Object>>>();
-		for (QueryMatches queryMatch : queryMatches) {
-			iterators.add(queryMatch.iterator());
-			this.origins.putAll(queryMatch.getOrigins());
+		if ( !isEmpty()){
+			content.add(this);
 		}
+		
 		/*
-		 * iterate over all matches
+		 * create empty list for combinations
 		 */
-		boolean finished = false;
-		while (!finished && !iterators.isEmpty()) {
+		List<Map<String, Object>> tuples = HashUtil.getList();
+		/*
+		 * create empty maps for tuples and origins
+		 */
+		Map<String, Object> tuple = HashUtil.getHashMap();
+		Map<String, String> origins = HashUtil.getHashMap();
+		/*
+		 * calculate union
+		 */
+		addAll(content, tuple, origins, tuples);
+		/*
+		 * set new matches
+		 */
+		this.matches.clear();
+		this.matches.addAll(tuples);
+		this.setOrigins(origins);
+		
+	}
+	
+	/**
+	 * Internal method to handle next iteration of combination
+	 * @param queryMatches the query matches for next iteration
+	 * @param tuple the tuple
+	 * @param origins the overall origins
+	 * @param tuples the overall tuples
+	 */
+	private void addAll(Collection<QueryMatches> queryMatches, Map<String, Object> tuple, Map<String, String> origins, List<Map<String, Object>> tuples){		
+		/*
+		 * get one query match and clone existing set
+		 */
+		QueryMatches queryMatch = queryMatches.iterator().next();
+		Collection<QueryMatches> queryMatches_ = HashUtil.getHashSet(queryMatches);
+		queryMatches_.remove(queryMatch);
+		/*
+		 * add all origins
+		 */
+		origins.putAll(queryMatch.getOrigins());
+		/*
+		 * iterate over tuples
+		 */
+		for ( Map<String, Object> thisTuple : queryMatch){
 			/*
-			 * create temporary tuple
+			 * get new tuple
 			 */
-			Map<String, Object> tuple = HashUtil.getHashMap();
+			Map<String, Object> tuple_ = HashUtil.getHashMap(tuple);
+			tuple_.putAll(thisTuple);
 			/*
-			 * iterate over all matches
+			 * do more iteration
 			 */
-			for (Iterator<Map<String, Object>> iterator : iterators) {
-				/*
-				 * check if next tuple is available
-				 */
-				if (iterator.hasNext()) {
-					tuple.putAll(iterator.next());
-
-				} else {
-					finished = true;
-					break;
-				}
+			if ( queryMatches_.isEmpty()){
+				tuples.add(tuple_);
+			}else{
+				addAll(queryMatches_, tuple_, origins, tuples);
 			}
-			/*
-			 * add new tuple
-			 */
-			if (!finished) {
-				add(tuple);
-				tuple = HashUtil.getHashMap();
-			}
-		}
+		}		
 	}
 
 	/**

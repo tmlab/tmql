@@ -61,7 +61,7 @@ public class IdAxisTranslator extends AxisTranslatorImpl {
 		 * add condition
 		 */
 		ISelection lastSelection = definition.getLastSelection();
-		newDefinition.add(MessageFormat.format(CONDITION, from.getAlias(), lastSelection.getSelection()));
+		newDefinition.add(MessageFormat.format(CONDITION, from.getAlias(), lastSelection.getCurrentTable() == SqlTables.STRING ? lastSelection.getColumn(): lastSelection.getSelection()));
 		/*
 		 * add selection part
 		 */

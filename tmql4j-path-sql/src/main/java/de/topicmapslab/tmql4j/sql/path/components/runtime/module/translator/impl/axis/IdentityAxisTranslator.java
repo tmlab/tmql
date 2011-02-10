@@ -82,14 +82,14 @@ public abstract class IdentityAxisTranslator extends AxisTranslatorImpl {
 		if (selection.getCurrentTable() == SqlTables.STRING) {
 			IFromPart fromPart = new FromPart(LOCATORS, result.getAlias(), true);
 			result.addFromPart(fromPart);
-			result.add(MessageFormat.format(BACKWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));
+			result.add(MessageFormat.format(BACKWARD_CONDITION, selection.getCurrentTable() == SqlTables.STRING ? selection.getColumn(): selection.getSelection(), fromPart.getAlias()));
 			result.add(MessageFormat.format(CONDITION, fromPart.getAlias(), fromPartRel.getAlias()));
 		}
 		/*
 		 * current nodes are locators
 		 */
 		else {
-			result.add(MessageFormat.format(CONDITION_WITHOUT_ALIAS, selection.getSelection(), fromPartRel.getAlias(), getRelationColumn()));
+			result.add(MessageFormat.format(CONDITION_WITHOUT_ALIAS, selection.getCurrentTable() == SqlTables.STRING ? selection.getColumn(): selection.getSelection(), fromPartRel.getAlias(), getRelationColumn()));
 		}
 		/*
 		 * add new selection

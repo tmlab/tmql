@@ -15,6 +15,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundClose;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundOpen;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.SqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
+import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -72,13 +73,13 @@ public class Intersect extends SqlDefinition {
 		 * add union parts
 		 */
 		for ( ISqlDefinition definition : getUnions()){
-			builder.append(WS);
+			builder.append(ISqlConstants.WHITESPACE);
 			builder.append(de.topicmapslab.tmql4j.path.grammar.lexical.Intersect.TOKEN);
-			builder.append(WS);
+			builder.append(ISqlConstants.WHITESPACE);
 			builder.append(BracketRoundOpen.TOKEN);
-			builder.append(WS);
+			builder.append(ISqlConstants.WHITESPACE);
 			builder.append(definition.toString());
-			builder.append(WS);
+			builder.append(ISqlConstants.WHITESPACE);
 			builder.append(BracketRoundClose.TOKEN);
 		}		
 		return builder.toString();

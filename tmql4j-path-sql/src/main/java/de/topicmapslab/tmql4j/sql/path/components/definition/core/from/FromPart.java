@@ -13,6 +13,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundClose;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundOpen;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.SqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
+import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
 
 /**
  * @author Sven Krosse
@@ -56,22 +57,22 @@ public class FromPart implements IFromPart {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		if ( isTable){
-			builder.append(SqlDefinition.WS);
+			builder.append(ISqlConstants.WHITESPACE);
 			builder.append(getTableOrContent());
-			builder.append(SqlDefinition.WS);
+			builder.append(ISqlConstants.WHITESPACE);
 		}else{
-			builder.append(SqlDefinition.WS);
+			builder.append(ISqlConstants.WHITESPACE);
 			builder.append(BracketRoundOpen.TOKEN);
-			builder.append(SqlDefinition.WS);
+			builder.append(ISqlConstants.WHITESPACE);
 			builder.append(getTableOrContent());
-			builder.append(SqlDefinition.WS);
+			builder.append(ISqlConstants.WHITESPACE);
 			builder.append(BracketRoundClose.TOKEN);
-			builder.append(SqlDefinition.WS);
+			builder.append(ISqlConstants.WHITESPACE);
 		}
 		builder.append(As.TOKEN);
-		builder.append(SqlDefinition.WS);
+		builder.append(ISqlConstants.WHITESPACE);
 		builder.append(getAlias());
-		builder.append(SqlDefinition.WS);
+		builder.append(ISqlConstants.WHITESPACE);
 		return builder.toString();
 	}
 

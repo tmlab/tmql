@@ -70,7 +70,7 @@ public class TestForClause extends Tmql4JTestCase {
 
 		query = "FOR $t IN // myType FOR $p IN // other RETURN $t , $p";
 		set = execute(query);
-		assertEquals(topics.size(), set.size());
+		assertEquals(topics.size()*others.size(), set.size());
 		for (IResult r : set) {
 			assertEquals(2, r.size());
 			assertTrue(topics.contains(r.first()));

@@ -35,10 +35,10 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.results.TmqlResultProcessor;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.query.IQuery;
-import de.topicmapslab.tmql4j.sql.path.components.definition.core.selection.CaseSelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
+import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -50,7 +50,31 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 	/**
 	 * 
 	 */
-	private static final String BIGINT = "bigint";
+	private static final String VARIANT = "v";
+	/**
+	 * 
+	 */
+	private static final String NAME = "n";
+	/**
+	 * 
+	 */
+	private static final String OCCURRENCE = "o";
+	/**
+	 * 
+	 */
+	private static final String ROLE = "r";
+	/**
+	 * 
+	 */
+	private static final String ASSOCIATION = "a";
+	/**
+	 * 
+	 */
+	private static final String TOPIC = "t";
+	/**
+	 * 
+	 */
+	private static final String LOCATOR = "l";
 	private static final String QUERY_RESOLVE_IDS = "WITH ids AS ( SELECT unnest(?) AS id) SELECT id, p, pp, type, reference FROM ("
 			+ "SELECT id, -1 AS p, NULL AS pp, 'l' AS type, reference FROM locators WHERE id IN ( SELECT id FROM ids ) " + "UNION "
 			+ "SELECT id, id_parent AS p, -1 AS pp, 't' AS type, NULL AS reference FROM topics WHERE id IN ( SELECT id FROM ids ) " + "UNION "
@@ -112,25 +136,25 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 			while (rs.next()) {
 				IResult result = resultSet.createResult();
 				for (int col = 1; col < metaData.getColumnCount() + 1; col++) {
-					SqlTables selectionType = tables.get(col-1);
+					SqlTables selectionType = tables.get(col - 1);
 					int columnType = metaData.getColumnType(col);
 					String value = rs.getString(col);
-					if (CaseSelection.IS_NULL_VALUE_IN_SQL.equalsIgnoreCase(value)) {
+					if (ISqlConstants.IS_NULL_VALUE_IN_SQL.equalsIgnoreCase(value)) {
 						value = null;
 					}
 					/*
 					 * store value if value is an id
 					 */
 					if (value != null) {
-						if ( selectionType == SqlTables.INTEGER ){
+						if (selectionType == SqlTables.INTEGER) {
 							result.add(BigInteger.valueOf(rs.getLong(col)));
-						}else if ( selectionType == SqlTables.STRING){
+						} else if (selectionType == SqlTables.STRING) {
 							result.add(value);
-						}else if ( selectionType == SqlTables.DECIMAL){
+						} else if (selectionType == SqlTables.DECIMAL) {
 							result.add(BigDecimal.valueOf(rs.getDouble(col)));
-						}else if ( selectionType == SqlTables.BOOLEAN){
+						} else if (selectionType == SqlTables.BOOLEAN) {
 							result.add(rs.getBoolean(col));
-						}else if ( columnType== Types.BIGINT) {
+						} else if (columnType == Types.BIGINT) {
 
 							/*
 							 * is topic map
@@ -170,7 +194,7 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 			 */
 			if (!ids.isEmpty()) {
 				PreparedStatement stmt = session.getConnection().prepareStatement(QUERY_RESOLVE_IDS);
-				Array array = session.getConnection().createArrayOf(BIGINT, ids.toArray());
+				Array array = session.getConnection().createArrayOf(ISqlConstants.ISqlTypes.BIGINT, ids.toArray());
 				stmt.setArray(1, array);
 				ResultSet r = stmt.executeQuery();
 				while (r.next()) {
@@ -221,46 +245,46 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 		/*
 		 * is locator
 		 */
-		if (type.equalsIgnoreCase("l")) {
+		if (type.equalsIgnoreCase(LOCATOR)) {
 			object = new LocatorImpl(reference, Long.toString(id));
 		}
 		/*
 		 * is topic
 		 */
-		else if (type.equalsIgnoreCase("t")) {
+		else if (type.equalsIgnoreCase(TOPIC)) {
 			object = factory.newTopic(new JdbcIdentity(id), topicMap);
 		}
 		/*
 		 * is association
 		 */
-		else if (type.equalsIgnoreCase("a")) {
+		else if (type.equalsIgnoreCase(ASSOCIATION)) {
 			object = factory.newAssociation(new JdbcIdentity(id), topicMap);
 		}
 		/*
 		 * is role
 		 */
-		else if (type.equalsIgnoreCase("r")) {
+		else if (type.equalsIgnoreCase(ROLE)) {
 			IAssociation a = factory.newAssociation(new JdbcIdentity(idP), topicMap);
 			object = factory.newAssociationRole(new JdbcIdentity(id), a);
 		}
 		/*
 		 * is occurrence
 		 */
-		else if (type.equalsIgnoreCase("o")) {
+		else if (type.equalsIgnoreCase(OCCURRENCE)) {
 			ITopic t = factory.newTopic(new JdbcIdentity(idP), topicMap);
 			object = factory.newOccurrence(new JdbcIdentity(id), t);
 		}
 		/*
 		 * is name
 		 */
-		else if (type.equalsIgnoreCase("n")) {
+		else if (type.equalsIgnoreCase(NAME)) {
 			ITopic t = factory.newTopic(new JdbcIdentity(idP), topicMap);
 			object = factory.newName(new JdbcIdentity(id), t);
 		}
 		/*
 		 * is variant
 		 */
-		else if (type.equalsIgnoreCase("v")) {
+		else if (type.equalsIgnoreCase(VARIANT)) {
 			ITopic t = factory.newTopic(new JdbcIdentity(idPP), topicMap);
 			IName n = factory.newName(new JdbcIdentity(idP), t);
 			object = factory.newVariant(new JdbcIdentity(id), n);

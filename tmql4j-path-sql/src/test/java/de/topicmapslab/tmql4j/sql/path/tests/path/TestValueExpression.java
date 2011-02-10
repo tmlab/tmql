@@ -431,7 +431,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 			Assert.fail();
 		}
 
-		query = prefix + " \"a\" > \"B\" ";
+		query = prefix + " \"C\" > \"B\" ";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -464,7 +464,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 			Assert.fail();
 		}
 
-		query = prefix + " \"a\" >= \"B\" ";
+		query = prefix + " \"C\" >= \"B\" ";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();

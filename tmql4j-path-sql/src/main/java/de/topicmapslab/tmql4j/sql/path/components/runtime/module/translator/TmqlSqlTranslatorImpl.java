@@ -17,7 +17,7 @@ import de.topicmapslab.tmql4j.grammar.productions.IExpression;
  *
  */
 public abstract class TmqlSqlTranslatorImpl<T extends IExpression> implements ISqlTranslator<T> {
-	
+		
 	private Class<T> type;
 	
 	/**

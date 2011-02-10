@@ -25,6 +25,7 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TmqlSqlTranslatorImpl;
+import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
 import de.topicmapslab.tmql4j.util.LiteralUtils;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 
@@ -95,10 +96,12 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 				ISqlDefinition def = new SqlDefinition();
 				String token = expression.getTokens().get(0);
 				SqlTables table = SqlTables.ANY;
+				String cast = null; 
 				try{
 					if ( LiteralUtils.isString(token)){
-						token = "'" + LiteralUtils.asString(token) + "'";
+						token = ISqlConstants.SINGLEQUOTE + LiteralUtils.asString(token) + ISqlConstants.SINGLEQUOTE;
 						table = SqlTables.STRING;
+						cast = ISqlConstants.ISqlTypes.VARCHAR;
 					}else if ( LiteralUtils.isInteger(token)){
 						table = SqlTables.INTEGER;
 					}else if ( LiteralUtils.isDecimal(token)){
@@ -109,7 +112,8 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 				} catch (Exception ex) {
 					throw new TMQLRuntimeException("Cannot found element for given reference '" + token + "'!");
 				}
-				ISelection sel = new Selection(token, null);
+				ISelection sel = new Selection(token, def.getAlias(), false);
+				sel.cast(cast);
 				def.addSelection(sel);
 				sel.setCurrentTable(table);
 				return def;

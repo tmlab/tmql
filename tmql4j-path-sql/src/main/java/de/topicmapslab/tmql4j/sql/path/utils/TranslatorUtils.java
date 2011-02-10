@@ -146,7 +146,6 @@ public class TranslatorUtils {
 	}
 
 	private static final String TYPEABLES = "typeables";
-	private static final String COL_TYPE = "id_type";
 	private static final String COL_ID = "id";
 	private static final String TYPE_CONDITION = "{0}.id_type = {1}";
 

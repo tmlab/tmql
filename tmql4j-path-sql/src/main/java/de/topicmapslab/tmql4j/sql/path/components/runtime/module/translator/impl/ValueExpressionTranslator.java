@@ -33,7 +33,9 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisLocators;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Star;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Unequals;
 import de.topicmapslab.tmql4j.path.grammar.productions.Content;
+import de.topicmapslab.tmql4j.path.grammar.productions.FunctionInvocation;
 import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.SqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.from.FromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.orderBy.OrderBy;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.selection.Selection;
@@ -44,6 +46,7 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ISqlTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TmqlSqlTranslatorImpl;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslatorRegistry;
+import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -53,15 +56,13 @@ import de.topicmapslab.tmql4j.util.HashUtil;
 public class ValueExpressionTranslator extends TmqlSqlTranslatorImpl<ValueExpression> {
 
 	private static final String INFIX = "({0}) {1} ({2})";
-	
-	private static final String CONCAT = "||";
-	
+
 	private static Map<Class<? extends IToken>, String> operators = HashUtil.getHashMap();
-	static{
+	static {
 		operators.put(Plus.class, Plus.TOKEN);
 		operators.put(Minus.class, Minus.TOKEN);
 		operators.put(Star.class, Star.TOKEN);
-		operators.put(RegularExpression.class, "~");
+		operators.put(RegularExpression.class, ISqlConstants.ISqlOperators.REGEXP);
 		operators.put(Modulo.class, Percent.TOKEN);
 		operators.put(Percent.class, ShortcutAxisAtomifyMoveForward.TOKEN);
 		operators.put(Equality.class, ShortcutAxisLocators.TOKEN);
@@ -71,7 +72,7 @@ public class ValueExpressionTranslator extends TmqlSqlTranslatorImpl<ValueExpres
 		operators.put(LowerThan.class, LowerThan.TOKEN);
 		operators.put(LowerEquals.class, LowerEquals.TOKEN);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -84,10 +85,33 @@ public class ValueExpressionTranslator extends TmqlSqlTranslatorImpl<ValueExpres
 				return infixToSql(runtime, context, (ValueExpression) expression, definition);
 			}
 			case ValueExpression.TYPE_PREFIX_OPERATOR: {
-				return prefixToSql(runtime, context, expression, definition);
+				return prefixToSql(runtime, context, (ValueExpression) expression, definition);
+			}
+			case ValueExpression.TYPE_FUNCTION_INVOCATION: {
+				return functionToSql(runtime, context, (ValueExpression) expression, definition);
 			}
 		}
 		throw new TMQLRuntimeException("Unsupported expression type for SQL translator.");
+	}
+
+	/**
+	 * Translates the function expression contained by this value expression to
+	 * its corresponding SQL part
+	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param context
+	 *            the context
+	 * @param expression
+	 *            the expression
+	 * @param definition
+	 *            the definition
+	 * @return the translated SQL definition
+	 * @throws TMQLRuntimeException
+	 *             thrown if anything fails
+	 */
+	private ISqlDefinition functionToSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
+		return TranslatorRegistry.getTranslator(FunctionInvocation.class).toSql(runtime, context, expression.getExpressions().get(0), definition);
 	}
 
 	/**
@@ -140,12 +164,38 @@ public class ValueExpressionTranslator extends TmqlSqlTranslatorImpl<ValueExpres
 		ISqlDefinition leftHandDef = definition.clone();
 		ValueExpression leftHand = (ValueExpression) expression.getExpressions().get(0);
 		leftHandDef = translator.toSql(runtime, context, leftHand, leftHandDef);
+		return infixToSql(runtime, context, expression, definition, translator, expression.getTmqlTokens().get(expression.getIndexOfOperator()), leftHandDef);
+	}
+
+	/**
+	 * Internal method to add the second part of an infix operation
+	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param context
+	 *            the context
+	 * @param expression
+	 *            the expression
+	 * @param definition
+	 *            the incoming SQL definition
+	 * @param translator
+	 *            the translator
+	 * @param operator
+	 *            the operator to use
+	 * @param leftHandDef
+	 *            the left hand part of the infix operation
+	 * @return the translated SQL definition
+	 * @throws TMQLRuntimeException
+	 *             thrown if anything fails
+	 */
+	private ISqlDefinition infixToSql(ITMQLRuntime runtime, IContext context, ValueExpression expression, ISqlDefinition definition, ISqlTranslator<?> translator, Class<? extends IToken> operator,
+			ISqlDefinition leftHandDef) throws TMQLRuntimeException {
 		IFromPart leftHandFromPart = new FromPart(leftHandDef.toString(), definition.getAlias(), false);
 		/*
 		 * translate right hand operation
 		 */
 		ISqlDefinition rightHandDef = definition.clone();
-		ValueExpression rightHand = (ValueExpression) expression.getExpressions().get(1);
+		ValueExpression rightHand = (ValueExpression) expression.getExpressions().get(expression.getExpressions().size() - 1);
 		rightHandDef = translator.toSql(runtime, context, rightHand, rightHandDef);
 		IFromPart rightHandFromPart = new FromPart(rightHandDef.toString(), definition.getAlias(), false);
 		/*
@@ -156,46 +206,46 @@ public class ValueExpressionTranslator extends TmqlSqlTranslatorImpl<ValueExpres
 		concat.addFromPart(rightHandFromPart);
 
 		SqlTables table = getResultTable(leftHandDef.getLastSelection().getCurrentTable(), rightHandDef.getLastSelection().getCurrentTable());
-			
-		Class<? extends IToken> op = expression.getTmqlTokens().get(expression.getIndexOfOperator());
-		String operator = operators.get(op);
-		if ( Plus.class.equals(op)& table == SqlTables.STRING ){
-			operator = CONCAT;			
+
+		String op = operators.get(operator);
+		if (Plus.class.equals(operator) & table == SqlTables.STRING) {
+			op = ISqlConstants.ISqlOperators.CONCAT;
 		}
 		/*
 		 * modify to boolean
 		 */
-		if ( GreaterThan.class.equals(op) || GreaterEquals.class.equals(op) || Equality.class.equals(op) || LowerEquals.class.equals(op) || LowerThan.class.equals(op) || RegularExpression.class.equals(op) || Unequals.class.equals(op)){
+		if (GreaterThan.class.equals(operator) || GreaterEquals.class.equals(operator) || Equality.class.equals(operator) || LowerEquals.class.equals(operator) || LowerThan.class.equals(operator)
+				|| RegularExpression.class.equals(operator) || Unequals.class.equals(operator)) {
 			table = SqlTables.BOOLEAN;
 		}
-		
-		String content = MessageFormat.format(INFIX, leftHandDef.getLastSelection().getColumn(), operator, rightHandDef.getLastSelection().getColumn());		
+
+		String content = MessageFormat.format(INFIX, leftHandDef.getLastSelection().getColumn(), op, rightHandDef.getLastSelection().getColumn());
 		ISelection selection = new Selection(content, definition.getAlias(), false);
 		concat.clearSelection();
 		concat.addSelection(selection);
-		
+
 		ISqlDefinition result = definition.clone();
 		IFromPart part = new FromPart(concat.toString(), result.getAlias(), false);
 		result.addFromPart(part);
 		ISelection sel = new Selection(selection.getAlias(), part.getAlias());
 		result.clearSelection();
-		result.addSelection(sel);		
+		result.addSelection(sel);
 		sel.setCurrentTable(table);
-		
+
 		return result;
 	}
-	
-	private SqlTables getResultTable(SqlTables left, SqlTables right){
-		if ( left == SqlTables.STRING || right == SqlTables.STRING){
+
+	private SqlTables getResultTable(SqlTables left, SqlTables right) {
+		if (left == SqlTables.STRING || right == SqlTables.STRING) {
 			return SqlTables.STRING;
 		}
-		if ( left == SqlTables.DATETIME || right == SqlTables.DATETIME){
+		if (left == SqlTables.DATETIME || right == SqlTables.DATETIME) {
 			return SqlTables.DATETIME;
 		}
-		if ( left == SqlTables.DECIMAL || right == SqlTables.DECIMAL){
+		if (left == SqlTables.DECIMAL || right == SqlTables.DECIMAL) {
 			return SqlTables.DECIMAL;
 		}
-		if ( left == SqlTables.INTEGER || right == SqlTables.INTEGER){
+		if (left == SqlTables.INTEGER || right == SqlTables.INTEGER) {
 			return SqlTables.INTEGER;
 		}
 		return left;
@@ -217,8 +267,16 @@ public class ValueExpressionTranslator extends TmqlSqlTranslatorImpl<ValueExpres
 	 * @throws TMQLRuntimeException
 	 *             thrown if anything fails
 	 */
-	private ISqlDefinition prefixToSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
-		return null;
+	private ISqlDefinition prefixToSql(ITMQLRuntime runtime, IContext context, ValueExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
+		ISqlTranslator<?> translator = TranslatorRegistry.getTranslator(ValueExpression.class);
+		/*
+		 * translate left hand operation
+		 */
+		ISqlDefinition leftHandDef = new SqlDefinition();
+		ISelection sel = new Selection(Integer.toString(-1), definition.getAlias(), false);
+		sel.setCurrentTable(SqlTables.INTEGER);
+		leftHandDef.addSelection(sel);
+		return infixToSql(runtime, context, expression, definition, translator, Star.class, leftHandDef);
 	}
 
 }

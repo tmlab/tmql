@@ -20,6 +20,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.BooleanExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TmqlSqlTranslatorImpl;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslatorRegistry;
 
@@ -208,10 +209,17 @@ public class FilterPostfixTranslator extends TmqlSqlTranslatorImpl<FilterPostfix
 		 * call boolean-expression translator
 		 */
 		ISqlDefinition newDefinition = TranslatorRegistry.getTranslator(BooleanExpression.class).toSql(runtime, context, expression.getExpressions().get(0), definition);
+		
+		String condition ;
+		if ( newDefinition.getLastSelection().getCurrentTable() == SqlTables.BOOLEAN ){
+			condition = MessageFormat.format(SQL_BOOLEAN_FILTER, Boolean.toString(true), newDefinition.toString());
+		}else{
+			condition = MessageFormat.format(SQL_BOOLEAN_FILTER, selection.getSelection(), newDefinition.toString());
+		}
 		/*
 		 * generate condition
 		 */
-		final String condition = MessageFormat.format(SQL_BOOLEAN_FILTER, selection.getSelection(), newDefinition.toString());
+		
 		/*
 		 * update SQL definition
 		 */

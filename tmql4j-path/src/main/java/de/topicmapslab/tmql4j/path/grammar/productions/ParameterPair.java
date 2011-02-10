@@ -56,7 +56,7 @@ public class ParameterPair extends ExpressionImpl {
 	public ParameterPair(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
-		checkForExtensions(ValueExpression.class, tmqlTokens.subList(2, tmqlTokens.size()), tokens.subList(2, tokens.size()), runtime);
+		checkForExtensions(AliasValueExpression.class, tmqlTokens.subList(2, tmqlTokens.size()), tokens.subList(2, tokens.size()), runtime);
 		setGrammarType(0);
 	}
 

@@ -10,6 +10,7 @@ package de.topicmapslab.tmql4j.sql.path.components.definition.core.orderBy;
 
 import de.topicmapslab.tmql4j.path.grammar.lexical.Asc;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Desc;
+import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
 
 /**
  * @author Sven Krosse
@@ -33,7 +34,7 @@ public class OrderBy {
 	 * {@inheritDoc}
 	 */
 	public String toString() {
-		return content + " " + (asc ? Asc.TOKEN : Desc.TOKEN);
+		return content + ISqlConstants.WHITESPACE + (asc ? Asc.TOKEN : Desc.TOKEN);
 	}
 
 }

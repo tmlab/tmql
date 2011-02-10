@@ -8,14 +8,13 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.definition.core.selection;
 
-import java.text.MessageFormat;
-
 import de.topicmapslab.tmql4j.path.grammar.lexical.As;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundClose;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundOpen;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Dot;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
+import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
 
 /**
  * @author Sven Krosse
@@ -23,18 +22,10 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
  */
 public class Selection implements ISelection {
 
-	/**
-	 * 
-	 */
-	private static final String WS = " ";
-
-	private static final String CAST = "CAST ( {0} AS {1} )";
-
 	private final String column;
 	private final String alias;
-	private final String selection;
 	private String cast;
-	private boolean isColumn = false;
+	private boolean isColumn = true;
 	private SqlTables sqlTable;
 
 	/**
@@ -52,7 +43,6 @@ public class Selection implements ISelection {
 			alias = null;
 			column = selection;
 		}
-		this.selection = selection;
 	}
 
 	/**
@@ -66,11 +56,6 @@ public class Selection implements ISelection {
 	public Selection(final String column, final String alias) {
 		this.alias = alias;
 		this.column = column;
-		if (alias != null) {
-			this.selection = alias + Dot.TOKEN + column;
-		} else {
-			this.selection = column;
-		}
 	}
 
 	/**
@@ -87,17 +72,6 @@ public class Selection implements ISelection {
 		this.alias = alias;
 		this.column = content;
 		this.isColumn = isColumn;
-		if (alias != null) {
-			if (isColumn) {
-				this.selection = alias + Dot.TOKEN + column;
-			} else {
-				this.selection = BracketRoundOpen.TOKEN + WS + column + WS + BracketRoundClose.TOKEN + WS + As.TOKEN + WS + alias;
-			}
-		} else if (isColumn) {
-			this.selection = column;
-		} else {
-			this.selection = BracketRoundOpen.TOKEN + WS + column + WS + BracketRoundClose.TOKEN;
-		}
 	}
 
 	/**
@@ -118,17 +92,61 @@ public class Selection implements ISelection {
 	 * {@inheritDoc}
 	 */
 	public String getSelection() {
-		return selection;
+		return toString();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String toString() {
-		if (this.cast != null) {
-			return MessageFormat.format(CAST, this.selection, this.cast);
+		StringBuilder builder = new StringBuilder();
+		/*
+		 * add cast if variable is set
+		 */
+		if (cast != null) {
+			builder.append(ISqlConstants.ISqlKeywords.CAST);
+			builder.append(BracketRoundOpen.TOKEN);
 		}
-		return selection;
+		/*
+		 * add from-part alias if content is a column name
+		 */
+		if (isColumn && alias != null) {
+			builder.append(alias);
+			builder.append(Dot.TOKEN);
+		}
+		/*
+		 * add bracket to protect non-column selection
+		 */
+		if (!isColumn) {
+			builder.append(BracketRoundOpen.TOKEN);
+		}
+		builder.append(column);
+		/*
+		 * add bracket to protect non-column selection
+		 */
+		if (!isColumn) {
+			builder.append(BracketRoundClose.TOKEN);
+		}
+		/*
+		 * end cast if cast is set
+		 */
+		if (cast != null) {
+			builder.append(ISqlConstants.WHITESPACE);
+			builder.append(As.TOKEN);
+			builder.append(ISqlConstants.WHITESPACE);
+			builder.append(cast);
+			builder.append(BracketRoundClose.TOKEN);
+		}
+		/*
+		 * add alias if content is not a column
+		 */
+		if (!isColumn && alias != null) {
+			builder.append(ISqlConstants.WHITESPACE);
+			builder.append(As.TOKEN);
+			builder.append(ISqlConstants.WHITESPACE);
+			builder.append(alias);
+		}
+		return builder.toString();
 	}
 
 	/**

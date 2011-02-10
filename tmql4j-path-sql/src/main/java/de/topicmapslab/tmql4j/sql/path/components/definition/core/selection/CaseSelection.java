@@ -8,8 +8,17 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.definition.core.selection;
 
+import de.topicmapslab.tmql4j.path.grammar.lexical.As;
+import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundClose;
+import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundOpen;
+import de.topicmapslab.tmql4j.path.grammar.lexical.BracketSquareClose;
+import de.topicmapslab.tmql4j.path.grammar.lexical.BracketSquareOpen;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Colon;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Comma;
+import de.topicmapslab.tmql4j.path.grammar.lexical.GreaterThan;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
+import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
 
 /**
  * A selection entry for Case Selection
@@ -19,10 +28,6 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
  */
 public class CaseSelection extends Selection {
 
-	/**
-	 * 
-	 */
-	public static final String IS_NULL_VALUE_IN_SQL = "IS_NULL_VALUE_IN_SQL";
 	private ISqlDefinition innerDef;
 
 	/**
@@ -38,15 +43,79 @@ public class CaseSelection extends Selection {
 	 */
 	public String toString() {
 		SqlTables table = innerDef.getLastSelection().getCurrentTable();
-		String arrayType;		
+		/*
+		 * get default array value and type dependend from current table 
+		 */
+		String arrayType;
+		String arrayValue;
 		if (table == SqlTables.STRING) {
-			arrayType = "ARRAY['" + IS_NULL_VALUE_IN_SQL + "']::varchar[]";
-		}else if (table == SqlTables.BOOLEAN) {
-			arrayType = "ARRAY[false]::boolean[]";
-		}else {
-			arrayType = "ARRAY[-1]::bigint[]";
-		} 
-		return "unnest ( CASE WHEN array_upper( ARRAY ( ( " + innerDef.toString() + " ) ) , 1 ) > 0 THEN ARRAY( " + innerDef.toString() + " ) ELSE " + arrayType + " END ) AS " + getAlias();
+			arrayValue = ISqlConstants.SINGLEQUOTE + ISqlConstants.IS_NULL_VALUE_IN_SQL + ISqlConstants.SINGLEQUOTE;
+			arrayType = ISqlConstants.ISqlTypes.VARCHAR;
+		} else if (table == SqlTables.BOOLEAN) {
+			arrayValue = Boolean.toString(false);
+			arrayType = ISqlConstants.ISqlTypes.BOOLEAN;
+		} else {
+			arrayValue = Integer.toString(-1);
+			arrayType = ISqlConstants.ISqlTypes.BIGINT;
+		}		
+		StringBuilder builder = new StringBuilder();
+		/*
+		 * create case part
+		 */
+		builder.append(ISqlConstants.ISqlOperators.UNNEST);
+		builder.append(BracketRoundOpen.TOKEN);
+		builder.append(ISqlConstants.ISqlKeywords.CASE);
+		builder.append(ISqlConstants.WHITESPACE);
+		builder.append(ISqlConstants.ISqlKeywords.WHEN);
+		builder.append(ISqlConstants.WHITESPACE);
+		builder.append(ISqlConstants.ISqlOperators.ARRAY_UPPER);
+		builder.append(BracketRoundOpen.TOKEN);
+		builder.append(ISqlConstants.ISqlKeywords.ARRAY);
+		builder.append(BracketRoundOpen.TOKEN);
+		builder.append(BracketRoundOpen.TOKEN);
+		final String innerPart =innerDef.toString(); 
+		builder.append(innerPart);
+		builder.append(BracketRoundClose.TOKEN);
+		builder.append(BracketRoundClose.TOKEN);
+		builder.append(Comma.TOKEN);
+		builder.append(Integer.toString(1));
+		builder.append(BracketRoundClose.TOKEN);
+		builder.append(GreaterThan.TOKEN);
+		builder.append(Integer.toString(0));
+		builder.append(ISqlConstants.WHITESPACE);
+		/*
+		 * create THEN part
+		 */
+		builder.append(ISqlConstants.ISqlKeywords.THEN);
+		builder.append(ISqlConstants.WHITESPACE);
+		builder.append(ISqlConstants.ISqlKeywords.ARRAY);
+		builder.append(BracketRoundOpen.TOKEN);
+		builder.append(innerPart);
+		builder.append(BracketRoundClose.TOKEN);
+		builder.append(ISqlConstants.WHITESPACE);		
+		/*
+		 * create default array part as ELSE part
+		 */
+		builder.append(ISqlConstants.ISqlKeywords.ELSE);
+		builder.append(ISqlConstants.WHITESPACE);	
+		builder.append(ISqlConstants.ISqlKeywords.ARRAY);
+		builder.append(BracketSquareOpen.TOKEN);
+		builder.append(arrayValue);
+		builder.append(BracketSquareClose.TOKEN);
+		builder.append(Colon.TOKEN);
+		builder.append(Colon.TOKEN);
+		builder.append(arrayType);
+		builder.append(BracketSquareOpen.TOKEN);
+		builder.append(BracketSquareClose.TOKEN);
+		/*
+		 * finalize case
+		 */
+		builder.append(ISqlConstants.ISqlKeywords.END);
+		builder.append(BracketRoundClose.TOKEN);
+		builder.append(As.TOKEN);
+		builder.append(ISqlConstants.WHITESPACE);	
+		builder.append(getAlias());
+		return builder.toString();
 	}
 
 	/**

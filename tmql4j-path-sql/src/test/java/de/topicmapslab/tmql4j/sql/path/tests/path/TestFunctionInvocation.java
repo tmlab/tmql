@@ -41,7 +41,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 
 		query = " fn:regexp ( \"This is a integer.\", \".*string.*\" ) ";
 		set = execute(new TMQLQuery(topicMap,query));
-		assertEquals(0, set.size());
+		assertTrue(set.isEmpty() || set.isNullValue(0, 0));
 	}
 
 	@Test

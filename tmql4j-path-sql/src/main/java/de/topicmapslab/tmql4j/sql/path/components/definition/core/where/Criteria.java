@@ -13,9 +13,9 @@ import java.util.List;
 
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundClose;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundOpen;
-import de.topicmapslab.tmql4j.sql.path.components.definition.core.SqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ICriteria;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ICriterion;
+import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -34,12 +34,12 @@ public abstract class Criteria implements ICriteria {
 		}
 		criterions.add(criterion);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public void add(String criterion) {
-		add(new Criterion(criterion));		
+		add(new Criterion(criterion));
 	}
 
 	/**
@@ -60,43 +60,44 @@ public abstract class Criteria implements ICriteria {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		boolean first = true;
-		for ( ICriterion criterion : getCriterions()){
+		for (ICriterion criterion : getCriterions()) {
 			/*
 			 * is boolean operator necessary
 			 */
-			if (!first){
-				builder.append(SqlDefinition.WS);
+			if (!first) {
+				builder.append(ISqlConstants.WHITESPACE);
 				builder.append(getBooleanOperator());
-				builder.append(SqlDefinition.WS);
+				builder.append(ISqlConstants.WHITESPACE);
 			}
 			first = false;
 			/*
 			 * is conjunction or disjunction
 			 */
-			if ( criterion instanceof ICriteria ){
-				builder.append(SqlDefinition.WS);
+			if (criterion instanceof ICriteria) {
+				builder.append(ISqlConstants.WHITESPACE);
 				builder.append(BracketRoundOpen.TOKEN);
-				builder.append(SqlDefinition.WS);
+				builder.append(ISqlConstants.WHITESPACE);
 				builder.append(criterion.toString());
-				builder.append(SqlDefinition.WS);
+				builder.append(ISqlConstants.WHITESPACE);
 				builder.append(BracketRoundClose.TOKEN);
-				builder.append(SqlDefinition.WS);
+				builder.append(ISqlConstants.WHITESPACE);
 			}
 			/*
 			 * is criterion
 			 */
 			else {
-				builder.append(SqlDefinition.WS);
+				builder.append(ISqlConstants.WHITESPACE);
 				builder.append(criterion.toString());
-				builder.append(SqlDefinition.WS);
+				builder.append(ISqlConstants.WHITESPACE);
 			}
-			
+
 		}
 		return builder.toString();
 	}
-	
+
 	/**
 	 * Returns the boolean operator used to combine the criterion
+	 * 
 	 * @return the boolean operator
 	 */
 	protected abstract String getBooleanOperator();

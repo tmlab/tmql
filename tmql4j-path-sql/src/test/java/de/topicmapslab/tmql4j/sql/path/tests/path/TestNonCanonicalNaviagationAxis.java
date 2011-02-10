@@ -346,7 +346,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 		Topic[] topics = new Topic[10];
 		for (int i = 0; i < topics.length; i++) {
 			topics[i] = createTopic();
-			topic.createName("Value", new Topic[0]).setReifier(topics[i]);
+			topic.createName("Value" + i, new Topic[0]).setReifier(topics[i]);
 		}
 		String query = null;
 		IResultSet<?> set = null;
