@@ -38,6 +38,8 @@ public interface ISqlConstants {
 		
 		public static final String SUBSTRING = "substring";
 		
+		public static final String LENGTH = "length";
+		
 	}
 
 	public interface ISqlKeywords {

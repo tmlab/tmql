@@ -18,22 +18,118 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.grammar.productions.IFunction;
+import de.topicmapslab.tmql4j.path.grammar.functions.string.LengthFunction;
 import de.topicmapslab.tmql4j.path.grammar.functions.string.RegExpFunction;
+import de.topicmapslab.tmql4j.path.grammar.functions.string.StringConcatFunction;
 import de.topicmapslab.tmql4j.path.grammar.functions.string.SubStringFunction;
 import de.topicmapslab.tmql4j.path.grammar.productions.AliasValueExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.FunctionInvocation;
 import de.topicmapslab.tmql4j.path.grammar.productions.Parameters;
 import de.topicmapslab.tmql4j.path.grammar.productions.TupleExpression;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.SqlDefinition;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.from.FromPart;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.ISqlTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TmqlSqlTranslatorImpl;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslatorRegistry;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.functions.string.RegExpFunctionTranslator;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.functions.string.StringConcatFunctionTranslator;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.functions.string.StringLengthFunctionTranslator;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.functions.string.SubStringFunctionTranslator;
 
 /**
  * @author Sven Krosse
  * 
  */
 public abstract class FunctionTranslatorImpl extends TmqlSqlTranslatorImpl<FunctionInvocation> implements IFunctionTranslator {
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public ISqlDefinition toSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
+		List<ISqlDefinition> parameters = parametersToSql(runtime, context, expression, definition);
+
+		if (!isExpectedNumberOfParameters(parameters.size())) {
+			throw new TMQLRuntimeException("Unexpected number of arguments for function");
+		}
+
+		ISqlDefinition result = new SqlDefinition();
+		result.setInternalAliasIndex(definition.getInternalAliasIndex());
+
+		/*
+		 * generate from parts
+		 */
+		List<IFromPart> fromParts = HashUtil.getList();
+		for (ISqlDefinition parameter : parameters) {
+			IFromPart fromPart = new FromPart(parameter.toString(), result.getAlias(), false);
+			fromParts.add(fromPart);
+		}
+
+		/*
+		 * add from part
+		 */
+		addFromParts(result, fromParts);
+		/*
+		 * get selection
+		 */
+		ISelection selection = getSelection(result,parameters, fromParts);
+		result.addSelection(selection);
+		/*
+		 * get criterion
+		 */
+		String criterion = getCriterion(result, parameters,fromParts);
+		if (criterion != null) {
+			result.add(criterion);
+		}
+		return result;
+	}
+
+	/**
+	 * Adding all from parts to the selection. Overwrite this method to change
+	 * the base handling.
+	 * 
+	 * @param definition
+	 *            the definition
+	 * @param fromParts
+	 *            the from parts
+	 */
+	protected void addFromParts(ISqlDefinition definition, List<IFromPart> fromParts) {
+		for (IFromPart fromPart : fromParts) {
+			definition.addFromPart(fromPart);
+		}
+	}
+
+	/**
+	 * Generates the selection for this function result. Do not set the
+	 * selection, this will be done by the caller.
+	 * 
+	 * @param definition
+	 *            the definition
+	 * @param parameters
+	 *            the origin parameters
+	 * @param fromParts
+	 *            all from parts
+	 * @return the generated selection
+	 */
+	protected abstract ISelection getSelection(ISqlDefinition definition, List<ISqlDefinition> parameters, List<IFromPart> fromParts);
+
+	/**
+	 * Generates the criterion for this selection if necessary. Do not set the
+	 * criterion, this will be done by the caller.
+	 * 
+	 * @param definition
+	 *            the definition
+	 * @param parameters
+	 *            the origin parameters
+	 * @param fromParts
+	 *            the from parts
+	 * @return the criterion or <code>null</code>
+	 */
+	protected String getCriterion(ISqlDefinition definition, List<ISqlDefinition> parameters, List<IFromPart> fromParts) {
+		return null;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -106,6 +202,8 @@ public abstract class FunctionTranslatorImpl extends TmqlSqlTranslatorImpl<Funct
 	static {
 		translators.put(RegExpFunction.class, new RegExpFunctionTranslator());
 		translators.put(SubStringFunction.class, new SubStringFunctionTranslator());
+		translators.put(StringConcatFunction.class, new StringConcatFunctionTranslator());
+		translators.put(LengthFunction.class, new StringLengthFunctionTranslator());
 	}
 
 	public static IFunctionTranslator getFunctionTranslator(Class<? extends IFunction> functionType) {
