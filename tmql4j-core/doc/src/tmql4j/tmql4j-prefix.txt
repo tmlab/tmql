@@ -34,7 +34,7 @@ The defined prefixes can be used as QNames as part of a relative IRI in the cont
 The example show two queries with the same meaning. In line 1 there is a query using prefix definitions as part of the environment clause and uses the defined prefix literal as QName of the identifier 'tmql4j:person'. As we can see the QName and the rest of the IRI will be devide by a colon. The second query in line 3 don't use a prefix definition, but in the current example it is shorter because the prefix is used only one times. Please note that the benefits of using prefixes is proportional to the number of repeating IRI parts.
 =========================================
 
-==== Define Prefixes using Properties ====
+==== Define Prefixes using  Prefix Handler ====
 
 Sometimes a prefix will be used in different queries by the same tmql4j engine, so it will be uncomfortable to define this prefixes as part of each query again. The tmql4j engine provides a method to register additional prefixes which are valid in the whole runtime lifecycle. The method expects two arguments which are the same like the tokens of the prefix definition as a part of the query. The first argument is the prefix literal and the second is the absolute IRI represented by the QName.
 
@@ -47,4 +47,14 @@ Sometimes a prefix will be used in different queries by the same tmql4j engine, 
 =====================================
 The prefix management will be encapsulate by the language context which can be accessed by the runtime method 'getLanguageExtension' as we can see in line 1. In line 3 the method 'registerPrefix' of the prefix handler will be used to add a new prefix definition to the runtime container with the prefix literal 'tmql4j' and the given string-represented IRI. The code line 3 has the same effect like the prefix definition of the last section, but in addition each query executed by the runtime container can use the prefix without defining it as a part of the query.
 =====================================
+
+==== Define Default Prefixes using  Prefix Handler ====
+
+For a whole runtime it is possible to define a default prefix without any prefix IRI. The default prefix can be used, in the way, that the relative part can be written without the prefix. The engine transforms automatically the relative IRI to a absolute IRI using this prefix.
+
+-------------------------------------
+1:	PrefixHandler handler = runtime.getLanguageContext().getPrefixHandler();
+2:
+3:	property.setDefaultPrefix("http://tmql4j.topicmapslab.de");
+-------------------------------------
 

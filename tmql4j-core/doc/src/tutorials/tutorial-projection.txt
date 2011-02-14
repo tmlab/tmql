@@ -2,7 +2,7 @@
 
 ===== Use Case =====
 
-In the previous examples we only get simple results as a sequence of singleton tuples. Now we want to extract a tuple sequence containing tripples of a topic item which is a composer, its names and all associations played.
+In the previous examples we only get simple results as a sequence of singleton tuples. Now we want to extract a tuple sequence containing triples of a topic item which is a composer, its names and all associations played.
 
 ===== Solution =====
 
@@ -36,9 +36,9 @@ To use a projection we have to extract a navigation part which is similar for al
 Projections defined by using round brackets '(' and ')'. The round brackets containing a comma separated list of projections. In this case the first projection represents the current node by using the dot '.'. The second projection projects the current node to its name literals and the last one projects the topic map construct to its played associations. 
 ===============================
 
-Please note that all projections contained by the projection list uses the same context, which means that the current node will not be inherit by privious projections. The context of the current node will defined by the navigation expression in front of the projection definition. The number of projections is not restricted by the current draft.
+Please note that all projections contained by the projection list uses the same context, which means that the current node will not be inherit by previous projections. The context of the current node will defined by the navigation expression in front of the projection definition. The number of projections is not restricted by the current draft.
 
-In relation to the topic maps data model ( TMDM ) each topic map will be unordered. This can be a problem, because the results of queries can be differs and some applications want to extract informations in a defined sequence. To realize the goal, the projection supports a kind of ordering which can be defined by the user as a part of the query. Each tuple of the projection sequence can be ordered in different ways. The interpretation will be start at the first projection and if two elements of the projection are equal the next projection will be used to order and so far. Please note that the tuples will be ordered only if at least on projection contains an ordering keyword 'ASC' and 'DESC'. Both keywords are similar for other languages too and has not to be explained. In addtion, if a keyword is missing, the default keyword 'ASC' will be add if it is necessary.
+In relation to the topic maps data model ( TMDM ) each topic map will be unordered. This can be a problem, because the results of queries can be differs and some applications want to extract informations in a defined sequence. To realize the goal, the projection supports a kind of ordering which can be defined by the user as a part of the query. Each tuple of the projection sequence can be ordered in different ways. The interpretation will be start at the first projection and if two elements of the projection are equal the next projection will be used to order and so far. Please note that the tuples will be ordered only if at least on projection contains an ordering keyword 'ASC' and 'DESC'. Both keywords are similar for other languages too and has not to be explained. In addition, if a keyword is missing, the default keyword 'ASC' will be add if it is necessary.
 
 -------------------------------------
 1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini ( . ASC , . / tm:name )

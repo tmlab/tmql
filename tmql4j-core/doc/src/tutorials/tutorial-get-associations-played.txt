@@ -6,7 +6,7 @@ In this case we want to extract all associations played by a the topic item Pucc
 
 ===== Solution =====
 
-The extract all associations played by a topic the current draft contains a navigation axis with the identifier 'players'. In forward direction this axis only supports assiciation items and results in a set of topics playing in this association. In backward direction we will get all association items played by the current node, which has to be a topic.
+The extract all associations played by a topic the current draft contains a navigation axis with the identifier 'players'. In forward direction this axis only supports association items and results in a set of topics playing in this association. In backward direction we will get all association items played by the current node, which has to be a topic.
 
 ------------------------------
 1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini << players

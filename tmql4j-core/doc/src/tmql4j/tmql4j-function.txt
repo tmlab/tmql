@@ -27,7 +27,7 @@ At first we have to create a new function interpreter class as shown in the next
 -------------------------------------
 
 =====================================
-A simple notation to create new function interpreter is to named it by the function identifier 'Length' in combination with the postfix 'FunctionInvocationInterpreter'. The class has to implements the API interface 'IFunctionInvocationInterpreter' as shown in line 3. To use the interpreter in the context of a TMQL query it also has to extend the abstract class 'ExpressionInterpreterImpl' with the type argument 'FunctionInvocation'. An expression interpreter is used by the tmql4j handler during the interpretation process to handle the expression of the specific type given by the type argument.
+A simple notation to create new function interpreter is to named it by the function identifier 'Length' in combination with the post-fix 'FunctionInvocationInterpreter'. The class has to implements the API interface 'IFunctionInvocationInterpreter' as shown in line 3. To use the interpreter in the context of a TMQL query it also has to extend the abstract class 'ExpressionInterpreterImpl' with the type argument 'FunctionInvocation'. An expression interpreter is used by the tmql4j handler during the interpretation process to handle the expression of the specific type given by the type argument.
 =====================================
 
 The new function interpreter has to implements there inherit methods. The first method only returns the internal identifier of the function use to store it as a topic of the internal environment map. The given identifier shall be unique to avoid side effects.
@@ -106,7 +106,7 @@ The processing model of the tmql4j engine based on the indirect communication be
 
 To get the results of this interpretation the interpreter has to pop the variables set which was added before from the internal stack ( line 14 ). The results are stored by the variable 'VariableNames.QUERYMATCHES', because of that we has to call the 'getValue' method with the variable name.
 
-In line 15 until 17 we will check the number of contained arguments and raise an exception if the number differes from the expected one given by the method 'getRequiredVariableCount'.
+In line 15 until 17 we will check the number of contained arguments and raise an exception if the number differs from the expected one given by the method 'getRequiredVariableCount'.
 
 Between line 22 and 46 the code realized the function interpretation. In line 23 we extracted the argument representing the tuple sequence by using the index variable '$0'. 
 

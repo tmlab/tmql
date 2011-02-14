@@ -14,7 +14,7 @@ The runtime can not be instantiate in a usual way. The user has to use an instan
 7:	LTMTopicMapReader reader = new LTMTopicMapReader(topicMap, ltm);
 8:	reader.read();			
 9:
-10:	ITMQLRuntime runtime = TMQLRuntimeFactory.newFactory().newRuntime();
+10:	ITMQLRuntime runtime = TMQLRuntimeFactory.newFactory().newRuntime("tmql-2007");
 11: 
 12:	IQuery query = runtime.run(topicMap, "http://psi.ontopedia.net/Puccini");
 -------------------------------------
@@ -32,7 +32,7 @@ Using a query instance the application can control the parsing process by exclud
 As a special shortcut the query interface provides the functionality to disable all expression types which occurs a modification of the topic map as one call.
 
 -------------------------------------
-1:	IQuery query = new TMQLQuery(topicMap, "INSERT \"\"\" myTopic . \"\"\"");
+1:	IQuery query = new TMQLQuery(topicMap, "INSERT ''' myTopic . '''");
 2:	query.forbidExpression(InsertExpression.class);
 3:
 4:	query.forbidModificationQueries();

@@ -8,7 +8,7 @@ Before execution the query instance is called by the TMQL processor to handle an
 
 ===== screener =====
 
-A screener is a special part of a compiler and clean the given string representation of the TMQL query by removing comments and whitespaces or new-line-commands. The screener implementation of the tmql4j engine is represented by the API interface 'IScreener'. The base implementation of this module is the 'TMQLScreener' which removes all comments contained by the given query symbolized by the hex character '#'. Line breaks will be removed by replacing it with a single space. The result of the screening process will be a single line string representation of the origin query.
+A screener is a special part of a compiler and clean the given string representation of the TMQL query by removing comments and white spaces or new-line-commands. The screener implementation of the tmql4j engine is represented by the API interface 'IScreener'. The base implementation of this module is the 'TMQLScreener' which removes all comments contained by the given query symbolized by the hex character '#'. Line breaks will be removed by replacing it with a single space. The result of the screening process will be a single line string representation of the origin query.
 
 ----------------------------------
 1:	SELECT $p # set the variable 
@@ -19,7 +19,7 @@ A screener is a special part of a compiler and clean the given string representa
 
 ===== whitepacer =====
 
-The whitespacer is a special part of the pre-processing module and cleaning the whitespaces of the given query. The whitespacer add optional whitespaces of the current draft missing by the user. If there are multiple whitespaces at a position where at least one is required by the draft. Protected whitespaces will not be changed. A whitespace is protected if it is a part of a string literal or an XML content. The whitespacer is represented by the API interface 'IWhitespacer' and the base implementation is 'TMQLWhiteSpacer'.
+The whitespacer is a special part of the pre-processing module and cleaning the white spaces of the given query. The white-spacer add optional white spaces of the current draft missing by the user. If there are multiple white spaces at a position where at least one is required by the draft. Protected white spaces will not be changed. A whitespace is protected if it is a part of a string literal or an XML content. The white-spacer is represented by the API interface 'IWhitespacer' and the base implementation is 'TMQLWhiteSpacer'.
 
 ----------------------------------
 1:	SELECT $p>>characteristics tm:name
@@ -30,7 +30,7 @@ The whitespacer is a special part of the pre-processing module and cleaning the 
 
 ==== Lexical scanner ====
 
-The lexical scanner is a special program module of the engine to split the given query into language-specific elements, called tokens. Each token represents a logically independent and language specific part of the query, like keywords or variables names. All tokens are defined by the lowest grammar level - token level. The lexer is represented by the API interface 'ILexer' and the base implementation is 'TMQLLexer'. 
+The lexical scanner is a special program module of the engine to split the given query into language-specific elements, called tokens. Each token represents a logically independent and language specific part of the query, like keywords or variables names. All tokens are defined by the lowest grammar level - token level. The lexical scanner is represented by the API interface 'ILexer' and the base implementation is 'TMQLLexer'. 
 
 At first the lexical scanner split the given string-represented query using a special tokenizer class provided by the internal engine processor. The tokenized string will be checked for knwon keywords element by element and will be represented by a language-specific token. The result of lexical scanning will be a chain of string-represented tokens and language-specific tokens.
 
@@ -95,32 +95,6 @@ The last module of the default processing chain will be the result processor. Th
 11:			[ "x" , "y1" , "z1" ] }
 ----------------------------------
 
-==== Module integration ====
+==== Definition of a new Runtime ====
 
-The tmql4j engine provides two methods to migrate or adapt the modules of the tmql4j runtime container. The migration or adaptation of some modules can be necessary in relation to gain business goals using the tmql4j engine. 
-
-===== Adapt an existing module =====
-
-If a developer only needs to adapt one of the internal modules of the default processing chain like the lexical scanner  or anything else, the property handler can used to integrate own implementations of the core interfaces representing each of this modules.
-
-------------------------------------
-1:	public class MyLexer implements ILexer{
-2:		....
-3:	}
-------------------------------------
-
-====================================
-At first has to implement our own module class extends an existing implementation of a module interface or implements the interface itselfs. In this example we create our own lexical scanner with the name 'MyLexer' as we see in line 1.
-====================================
-
--------------------------------------
-1:	runtime.getProperties().setProperty(TMQLRuntimeProperties.LEXER_IMPLEMENTATION_CLASS, MyLexer.class.getName());
--------------------------------------
-
-=====================================
-The last step is to tell the tmql4j engine container to use our implementation of the lexical scanner interface. In line 1 we call the properties of the current runtime instance and changing the property 'lexer-implementation-class' representing the lexical scanner implementation used during the querying process.
-=====================================
-
-===== Migrate a new module =====
-
-It is also possible to create and add a new module to the tmql4j engine. In this case the developer has to implementing its own 'ITMQLRuntime' implementation and its own 'IProcessingChain' to add the module at the correct position during the querying process.
+The tmql4j engine provides the possibility to design your own query engine and use it in the context of the other ones. To enable this, the user has to implement the 'ITmqlRuntime' interface and provide this implementation by using Java Services with the full qualified interface name as service identifier.

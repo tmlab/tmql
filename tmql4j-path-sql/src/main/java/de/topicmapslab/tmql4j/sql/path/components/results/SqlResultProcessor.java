@@ -130,11 +130,13 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 				tables.add(t == null ? SqlTables.ANY : t);
 			}
 			int row = 0;
+
 			/*
 			 * iterate over JDBC result set
 			 */
 			while (rs.next()) {
 				IResult result = resultSet.createResult();
+				boolean onlyNullValues = true;
 				for (int col = 1; col < metaData.getColumnCount() + 1; col++) {
 					SqlTables selectionType = tables.get(col - 1);
 					int columnType = metaData.getColumnType(col);
@@ -182,11 +184,14 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 								result.add(value);
 							}
 						}
+						onlyNullValues = false;
 					} else {
 						result.add(value);
 					}
 				}
-				resultSet.addResult(result);
+				if (!onlyNullValues) {
+					resultSet.addResult(result);
+				}
 				row++;
 			}
 			/*

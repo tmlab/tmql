@@ -21,7 +21,7 @@ In relation to the tutorial using select style to realize this use case, we try 
 -----------------------------
 
 =============================
-The flwr style contains any expressions we already known from the select style. In line 2 there is a where clause containing some boolean condition which has been satisfing by all variable bindings of this expression. Where-clause can be used similar to where clauses of select expression. As we see in line 3 there are also an order-by clause contained by the flwr style. The expression works like order-by clauses of a select expression we learned in a previous example. The binding-set contained by the for-clause in line 1 can be used in the same way like the binding sets of quantified expressions. 
+The flwr style contains any expressions we already known from the select style. In line 2 there is a where clause containing some boolean condition which has been satisfying by all variable bindings of this expression. Where-clause can be used similar to where clauses of select expression. As we see in line 3 there are also an order-by clause contained by the flwr style. The expression works like order-by clauses of a select expression we learned in a previous example. The binding-set contained by the for-clause in line 1 can be used in the same way like the binding sets of quantified expressions. 
 =============================
 
 If we want to use the flwr expression style to realize our use case, we need some additional information. At first we need a binding definition to get all composers. We already know that the binding set binds a variable iteratively to each possible value of the defined context. To get all composers we can use the 'instances' axis with the known type 'psi:Composer' and bind that values to a variable called '$composer'.
@@ -45,7 +45,7 @@ In line 3 we add a return clause starting with the keyword 'RETURN' to get the r
 
 ===== Summary =====
 
-This first short tutorial of the flwr style describes how to use the flwr style similar to the select style. The expression types have conformities in style and make use of the same sub-expression types including the where-clause and the order-by clause. In reverse to the select style, the flwr style does not support the selection of a specific window and can not unify the values using a unique-clause. But the flwr style only supports the variable binding as a core metric, because of that we have not to use an instance-of expression. A flwr-expression can contain an unspecific number of for-clauses to bind a set of variables in one query. The return-clause of a flwr expression is non optional and defines the return values of the expression itselfs.
+This first short tutorial of the flwr style describes how to use the flwr style similar to the select style. The expression types have conformities in style and make use of the same sub-expression types including the where-clause and the order-by clause. In reverse to the select style, the flwr style does not support the selection of a specific window and can not unify the values using a unique-clause. But the flwr style only supports the variable binding as a core metric, because of that we have not to use an instance-of expression. A flwr-expression can contain an non-specific number of for-clauses to bind a set of variables in one query. The return-clause of a flwr expression is non optional and defines the return values of the expression itself.
 
 ==== Tutorial: Create a topic map fragment ====
 
@@ -57,9 +57,9 @@ A client process wants to extract a specific construct of a topic map managed by
 
 At first we need to know something about the serialization format CTM. CTM is a simple text based serialization specification for topic maps. Each topic map construct will be represented by a specific text block. The benefit of CTM is the human readable syntax. The main drawback is the fact we needs a special parser.
 
-To realize the use case we normaly can use each of the three expression types. The problem is that only one of that can export CTM as a core element of the engine itselfs. If we don't want to transform the elements to CTM for oneself, we only can use the flwr-expression. The TMQL draft contains a production rule as a subtype of content, creating a CTM literal in combination with a number of variable bindings. Because we know the return clause of flwr expression contains a content expression, we know how to use the new content type as part of our last query.
+To realize the use case we normally can use each of the three expression types. The problem is that only one of that can export CTM as a core element of the engine itself. If we don't want to transform the elements to CTM for oneself, we only can use the flwr-expression. The TMQL draft contains a production rule as a subtype of content, creating a CTM literal in combination with a number of variable bindings. Because we know the return clause of flwr expression contains a content expression, we know how to use the new content type as part of our last query.
 
-The last think to know is, how the ctm-content looks like. The ctm-fragments used as part of a TMQL query are encapsulated by a triple quote '""""'. The interpreter will transform each content between this quotes to CTM. If the content contains a sub-query, at first the query will be interpreted and their results will be transformed to CTM itselfs. The overall result will be a set of little CTM fragments representing a fragment of our queried topic map.
+The last think to know is, how the ctm-content looks like. The ctm-fragments used as part of a TMQL query are encapsulated by a triple quote '""""'. The interpreter will transform each content between this quotes to CTM. If the content contains a sub-query, at first the query will be interpreted and their results will be transformed to CTM itself. The overall result will be a set of little CTM fragments representing a fragment of our queried topic map.
 
 ----------------------------------
 1:	%prefix psi http://psi.ontopedia.net/
@@ -73,7 +73,7 @@ The query looks like the last example except of the last line. In line 3 we chan
 
 ===== Summary =====
 
-In this lession we learn how to use the flwr style to export content as CTM. Currently only the flwr style supports the result type CTM as a part of the return clause. A CTM content are encapsulated by tripple quotes '""""' every time. If the content contains qub-queryies ( encapsulted by angle brackets '{' and '}' ) the results of the sub-query interpretation will be transformed to CTM.In addition if the constructs representing a name item, a occurrence item or a variant, the parent topic item will be exported. If the item represents an association role, the parent association item will be exported.
+In this session we learn how to use the flwr style to export content as CTM. Currently only the flwr style supports the result type CTM as a part of the return clause. A CTM content are encapsulated by triple quotes '""""' every time. If the content contains sub-queries ( encapsulated by angle brackets '{' and '}' ) the results of the sub-query interpretation will be transformed to CTM.In addition if the constructs representing a name item, a occurrence item or a variant, the parent topic item will be exported. If the item represents an association role, the parent association item will be exported.
 
 ==== Tutorial: Create an XML document ====
 
@@ -149,7 +149,7 @@ As next step we have to add a second sub-query based on the variable binding for
 -----------------------------
 
 =============================
-Between the line 8 and 14 we embed the sub-query to extract all operas composed by the current composer topic item bind to the variable '$composer'. In line 10 we bind the variable '$opera' to every instance of the topic type 'psi:Opera' and in line 11 we make use of the predicate invocations to check if there is an association of type 'psi:composed_by' played by the current opera and composer. The result of valid bindings of '$opera' will be transformed to XML in line 12. By using a subquery too, we extract the first name of the opera to add the opera item to the XML file embeded by the '<opera>' XML tag. The overall result will be a XML file which looks like the file we want.
+Between the line 8 and 14 we embed the sub-query to extract all operas composed by the current composer topic item bind to the variable '$composer'. In line 10 we bind the variable '$opera' to every instance of the topic type 'psi:Opera' and in line 11 we make use of the predicate invocations to check if there is an association of type 'psi:composed_by' played by the current opera and composer. The result of valid bindings of '$opera' will be transformed to XML in line 12. By using a sub-query too, we extract the first name of the opera to add the opera item to the XML file embedded by the '<opera>' XML tag. The overall result will be a XML file which looks like the file we want.
 =============================
 
 ===== Summary =====

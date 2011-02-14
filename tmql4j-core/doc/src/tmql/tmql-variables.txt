@@ -1,8 +1,8 @@
 === Variables and bindings ===
 
-During the querying process variables are bind to different values. The processor bind the variable to value contained by the binding definition. During the iteration each value will be checked for satisfation and validity.
+During the querying process variables are bind to different values. The processor bind the variable to value contained by the binding definition. During the iteration each value will be checked for satisfaction and validity.
 
-A variable has to start with the prefix '$' followed by a number of alphanumerical characters or an underscore character. The variable can be postfixed by number of primes. If two variables has the same name except their number of postfixed primes, the processor interpret them as protected variable sub set. Protected variables cannot be bind to the same value in one iteration.
+A variable has to start with the prefix '$' followed by a number of alpha-numerical characters or an underscore character. The variable can be post-fixed by number of primes. If two variables has the same name except their number of post-fixed primes, the processor interpret them as protected variable sub set. Protected variables cannot be bind to the same value in one iteration.
 
 The possible bindings of a variable are defined by a variable binding definition called 'variable-assignment'. A binding set is a special expression type containing a number of variable assignments. Each variable-assignment looks like the following production.
 
@@ -20,11 +20,11 @@ The current draft contains a number of predefined variables which will be reserv
 [width="100%", cols="1,5"]
 |================
 |*variable*|*description*
-|%_|Representing the queried topic map itselfs.
+|%_|Representing the queried topic map itself.
 |@_|Representing the current tuple in the context of the iteration over possible variable bindings.
 |$#|Representing the current index of the tuple in the context of the tuple sequence. The index can be used to filter tuples by their index.
 |$[0-9]+|Representing the tuples of a tuple sequence similar to the variable '$#'. The variable '$0' bound to the tuple at the first index, '$1' to the tuple at the second and so on.
-|$_|Representing anonymous write-only variables which can be used as placeholder if the variable binding is not necessary.
+|$_|Representing anonymous write-only variables which can be used as place holder if the variable binding is not necessary.
 |================
 
 All this variables are read-only variables except the anonymous variable. This variable is an write-only variable which can be used if their binding is not necessary for the query result. Anonymous variables are simply like wildcards.

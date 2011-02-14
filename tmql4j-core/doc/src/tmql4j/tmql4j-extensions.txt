@@ -8,13 +8,13 @@ The engine currently supports two different extension types - language extension
 
 An engine extension simple add or change some functionality of the querying process or the engine workflow. To learn how to integrate your own extensions, the following example showing an extension implementing a multi-threaded expression interpreter for quantified-expressions of TMQL.
 
-To intergrate an engine extension the plugin has to contain an implementation of the 'IExtensionPoint' interface representing the entry point of the plugin itselfs. An extension point is used by the runtime to initialize and register the plugin. Using Java services the extension adapter will find all implementations of the 'IExtensionPoint' interface. 
+To integrate an engine extension the plug-in has to contain an implementation of the 'IExtensionPoint' interface representing the entry point of the plug-in itself. An extension point is used by the runtime to initialize and register the plug-in. Using Java services the extension adapter will find all implementations of the 'IExtensionPoint' interface. 
 
 ---------------------------------
 1:	public interface IExtensionPoint {
 2:
 3:		/**
-4:	 	* Method called by the runtime to register the extension endpoint before
+4:	 	* Method called by the runtime to register the extension end-point before
 5:	 	* running the query process.
 6:	 	* 
 7:	 	* @param runtime
@@ -28,7 +28,7 @@ To intergrate an engine extension the plugin has to contain an implementation of
 15:		/**
 16:	 	* Each extension point has to define an unique extension point id used to
 17:	 	* represent the extension point in context of the current TMQL runtime. If
-18:	 	* two extension points has the same identifier the extension adpater will
+18:	 	* two extension points has the same identifier the extension adapter will
 19:	 	* throw an exception during the initialization time of extension points on
 20:	 	* startup.
 21:	 	* 
@@ -39,9 +39,9 @@ To intergrate an engine extension the plugin has to contain an implementation of
 26:	}
 ---------------------------------
 
-An extension point has to implement only two methods of the interface to realize the usage as a part of the tmql4j engine. The method 'getExtensionPointId' has to return a string-represented and unique identification of the plugin. The unique ID will be used by the runtime to identify the plugin during the runtime process. If the plugins are integrate using the same identification string, an exception will be raised. 
+An extension point has to implement only two methods of the interface to realize the usage as a part of the tmql4j engine. The method 'getExtensionPointId' has to return a string-represented and unique identification of the plug-in. The unique ID will be used by the runtime to identify the plug-in during the runtime process. If the plug-ins are integrate using the same identification string, an exception will be raised. 
 
-The main method of the extension point handled by the method 'registerExtension'. The method will be called by the extension adapter and get a reference of the current runtime container, which tries to load the plugin. Using this method the developer can creates changes or integrate new interpreters for existing expression types. To register your own interpreter class, the interpreter registry has to be used which is managed by the runtime properties of the current runtime container. 
+The main method of the extension point handled by the method 'registerExtension'. The method will be called by the extension adapter and get a reference of the current runtime container, which tries to load the plug-in. Using this method the developer can creates changes or integrate new interpreters for existing expression types. To register your own interpreter class, the interpreter registry has to be used which is managed by the runtime properties of the current runtime container. 
 
 ----------------------------------
 1:	public class MultiThreadExtensionPoint implements IExtensionPoint {
@@ -72,20 +72,20 @@ The main method of the extension point handled by the method 'registerExtension'
 ----------------------------------
 
 ==================================
-This extension point implementations is used as entry point of the multithread extension for quantified-expression. In line 21 the class return the string literal 'tmql4j.extension.mutlithreaded' as identification for the current plugin. In code line 10 the interpreter class 'MultiThreadExistsClauseInterpreter' is registered as the interpreter for all expressions of the type 'ExistsClause'. After this registration the tmql4j engine will create an instance of the interpreter class for each exists clause in the context of the parsing tree.
+This extension point implementations is used as entry point of the multi-thread extension for quantified-expression. In line 21 the class return the string literal 'tmql4j.extension.mutlithreaded' as identification for the current plug-in. In code line 10 the interpreter class 'MultiThreadExistsClauseInterpreter' is registered as the interpreter for all expressions of the type 'ExistsClause'. After this registration the tmql4j engine will create an instance of the interpreter class for each exists clause in the context of the parsing tree.
 
 To register the interpreter class the runtime reference is used to get the runtime properties calling the method 'getProperties'. The property handler provides the method 'getRegistry' to get the internal interpreter registry instance which should be used to add new interpreters. To realize that the method 'registerInterpreterClass' with two arguments is used. The first argument represents the expression type as Java class and the second argument is a Java class representing the interpreter.
 ==================================
 
-Please note that plugins can interfere with each other. Sometimes a plugin functionalty is overlapped by another plugin. It can not be predict which plugin will be used or which function, because the order of including is haphazardly. Plugins allways covers functionality of the core engine which cannot be used if the plugin is intergrated. Take care!
+Please note that plug-ins can interfere with each other. Sometimes a plug-in functionality is overlapped by another plug-in. It can not be predict which plug-in will be used or which function, because the order of including is haphazardly. plug-ins always covers functionality of the core engine which cannot be used if the plug-in is integrated. Take care!
 
 To use Java service provider technology, the jar file must be include a file named 'de.topicmapslab.tmql4j.extensions.model.IExtensionPoint' only includes one text line with the full qualified name of the extension point implementation.  The file has to be located in the folder 'META-INF\services'.
 
 ==== Language Extensions ====
 
-As second plugin type, the tmql4j engine supports language extensions. A language extension should be used to add some additional productions to the core language defined in the current draft. The extension may not overwrite some functionality of the current engine, it only has to add some new expression types and all which seems to be necessary to realize the interpretation and the usage of the language extension.
+As second plug-in type, the tmql4j engine supports language extensions. A language extension should be used to add some additional productions to the core language defined in the current draft. The extension may not overwrite some functionality of the current engine, it only has to add some new expression types and all which seems to be necessary to realize the interpretation and the usage of the language extension.
 
-To migrate a language extension the plugin has to implement the abstract interface 'ILanguageExtension'. A language extension is a extension point and has to implement the same methods. An extension point is used by the runtime to initialize and register the plugin. Using Java services the extension adapter will find all implementations of the 'IExtensionPoint' interface. 
+To migrate a language extension the plug-in has to implement the abstract interface 'ILanguageExtension'. A language extension is a extension point and has to implement the same methods. An extension point is used by the runtime to initialize and register the plug-in. Using Java services the extension adapter will find all implementations of the 'IExtensionPoint' interface. 
 
 --------------------------------------
 1:	public interface ILanguageExtension extends IExtensionPoint {
@@ -114,7 +114,7 @@ To migrate a language extension the plugin has to implement the abstract interfa
 24:	}
 --------------------------------------
 
-A langugae extension has to implement the two method defined in line 13 and 22. The method 'extendsExpressionType' seems to be used by the runtime to check if the extension is based on the current expression type. If the langauge extension add some functionality based on a query-expression, like a new sub-expression for creating new content, it has to return true if the parameter 'expressionType' bind to the 'QueryExpression' class.
+A language extension has to implement the two method defined in line 13 and 22. The method 'extendsExpressionType' seems to be used by the runtime to check if the extension is based on the current expression type. If the langauge extension add some functionality based on a query-expression, like a new sub-expression for creating new content, it has to return true if the parameter 'expressionType' bind to the 'QueryExpression' class.
 
 The method 'getLanguageExtensionEntry' returns a reference of the language extension entry. A language extension entry is used to migrate the new productions.
 
@@ -248,3 +248,7 @@ The interface represents a specific token of the language of TMQL or some extens
 =======================================
 
 To use Java service provider technology, the jar file must be include a file named 'de.topicmapslab.tmql4j.extensions.model.IExtensionPoint' only includes one text line with the full qualified name of the extension point implementation.  The file has to be located in the folder 'META-INF\services'.
+
+==== Omnigator Plug-in ====
+
+As one of the first implementations, we provide a generic query plug-in for the Topic Maps browser Omnigator, called tmql4j-ontopia. It offers the possibility to query the Topic Maps using the TMQL syntax. The generic plug-in is an extension of TMQL4J

@@ -4,28 +4,15 @@ A query using in context of the runtime container can represented in two differe
 
 ==== Query-Factory ====
 
-Currently there is no industrial standard of a topic maps query language, but it is fundamental for each business application to extract the information used to resolve the use cases in a easy way. Because of that and the missing standard there are many languages realizing a query language of topic maps at the moment - TOLOG, Toma, TMQL and a topic maps path language. Many applications using topic maps are based on one of this query languages but can not handle any other of them. The tmql4j provides the functionality to convert any other query format to a topic maps query language pattern ( TMQL ). A developer can use a simple interface to add a new query transformer module to the core implementation of the tmql4j engine and can use his language, like SQL, to query a topic map.
+Currently there is no industrial standard of a topic maps query language, but it is fundamental for each business application to extract the information used to resolve the use cases in a easy way. Because of that and the missing standard there are many languages realizing a query language of topic maps at the moment - tolog, Toma, TMQL and a topic maps path language. Many applications using topic maps are based on one of this query languages but can not handle any other of them. The tmql4j provides the functionality to convert any other query format to a topic maps query language pattern ( TMQL ). A developer can use a simple interface to add a new query transformer module to the core implementation of the tmql4j engine and can use his language, like SQL, to query a topic map.
 
 Because of the different syntactical notification of each language it is not secure to instantiate a query by using a specific IQuery implementation class, except the user can be sure that the given literal is valid in context of the represented query language. Instead of initializing the query the query factory shall be used to create a query from a given string-literal. The query factory try to detect the query language the given string-literal is written in and create a new instance of this query class. Because of the fact that the tmql4j engine only handles real TMQL queries the 'toTMQL' method will be called by the query factory to transform the specific query to a TMQL query. A developer has to provide the transformation functionality to use his own query language with the tmql4j engine. 
 
-==== TOLOG2tmql PlugIn ====
+==== tmql4j-tolog PlugIn ====
 
-The TOLOG2tmql plugin implementing a query transformer for the query language TOLOG, which was established as de-facto standard as a part of the Ontopia topic maps engine. Some parts of the current draft inspired by the TOLOG query language. In combination with the plugin the tmql4j engine can used with TOLOG queries. Please note that the current version of the TOLOG2tmql plugin only supports the querying part of the TOLOG query language and not the additional modification part developed in 2009. The next version of the plugin will be support the whole TOLOG specification.
-
-*Please note:* This sub-project is still not open source. If you are interested in please contact the project owner.
-
-==== tmpl2tmql PlugIn ====
-
-The second query plugin supported by the topic maps query language engine tmql4j is called tmpl2tmql. The plugin implements a query transformer for a query language similar to the XPath style and only containing path expressions to navigate through the abstract topic maps graph to extract all informations need for the use case. Because of the fact that the topic maps path language ( TMPL ) is not a standard and will be changed permanently, the plugin version can be out of date of a specific version, but we try to be up to date as soon as possible.
+The 'tmql4j-tolog' plugin implementing a query transformer for the query language tolog, which was established as de-facto standard as a part of the Ontopia topic maps engine. Some parts of the current draft inspired by the tolog query language. In combination with the plugin the tmql4j engine can used with tolog queries. Please note that the current version of the tmql4j-tolog' plugin only supports the querying part of the tolog query language and not the additional modification part developed in 2009. The next version of the plugin will be support the whole tolog specification.
 
 *Please note:* This sub-project is still not open source. If you are interested in please contact the project owner.
-
-==== Toma2tmql PlugIn ====
-
-Another query language for topic maps developed as alternative for the current topic maps query language part called Toma. The syntax of Toma is similar to an object-oriented programming language and was also inspired by the query language SQL of relation databases. The Toma2tmql plugin provides the functionality to use Toma queries to query a topic map using the tmql4j engine. Similar to the other plugins, it contains a query transformer to translate Toma queries to TMQL queries.
-
-*Please note:* This sub-project is still not open source. If you are interested in please contact the project owner.
-
 
 ==== Integrate your own query language plug-in ====
 

@@ -1,6 +1,6 @@
 == TMQL4J ==
 
-The tmql4j engine is the first Java-based engine processing the topic maps query language. The engine id designed as processing chain of independent modules and in a flexible architecture to provide the possibility of integrating your own module extensions and adaptations. The engine supports the draft of the 15th of august 2008 in addition to a number of extension like the topic maps modification language ( TMQL-ML ), the topic maps transaction language ( TMQL-TL ) and the topic maps inspection language ( TMQL-IL ).   
+The tmql4j engine is the first Java-based engine processing the topic maps query language. The engine id designed as processing chain of independent modules and in a flexible architecture to provide the possibility of integrating your own module extensions and adaptations. The engine supports the draft of the 15th of august 2008 in addition to a number of extension like the topic maps modification language ( TMQL-ML ) or the template definition language ( TMQL-TD ).   
 
 ///////////////////////////////////////
 Describe the architecture of the engine
@@ -49,6 +49,12 @@ TMQL4J API
 //////////////////////
 
 include::tmql4j-api.txt[]
+
+///////////////////////
+TMQL4J Prepared Statements
+///////////////////////
+
+include::tmql4j-prepared-statement.txt[]
 
 //////////////////////
 TMQL4J Extensions

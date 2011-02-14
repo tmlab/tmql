@@ -2,20 +2,19 @@
 
 ==== Architecture ====
 
-The TMQL4J engine offers a new abstraction layer on top of the TMAPI. Instead of accessing the Topic Maps engine directly applications may use a simple TMQL query. The architecture of Topic Maps applications is layered. The base of all applications are the Topic Maps backends, which are administrated by the Topic Maps engines. To abstract from the real implementation, TMAPI is used as a standardized interface. The last layer under the application is the TMQL4J engine.
+The TMQL4J engine offers a new abstraction layer on top of the TMAPI. Instead of accessing the Topic Maps engine directly applications may use a simple TMQL query. The architecture of Topic Maps applications is layered. The base of all applications are the Topic Maps backends, which are administrated by the Topic Maps engines. To abstract from the real implementation, TMAPI is used as a standardized interface. The last layer under the application is the TMQL4J engine. 
+
+Some special modules are designed to directly access the backend the TMAPI engine based on
 
 ==== Modularization ====
 
-TMQL4J is designed as a multi-lingual querying engine providing different TMQL versions or other topic map query languages like tolog. As base modules of version 3.0.0 the engine supports the TMQL drafts of 2007 and 2010.
+TMQL4J is designed as a multi-lingual querying engine providing different TMQL versions or other topic map query languages like tolog. As base modules of version 3.0.0 the engine supports the TMQL drafts of 2007, 2010 and an experimental SQL and tolog translator.
 
 Each style of the query language are encapsulated by its own plug-in which can be added to the class-path if needed. If a plug-in is missing, the parser and lexical scanner does not supports this style.
 
+[NOTE]
+Because of the fact, that some parts of the language style 'FLWR' and 'SELECT' of the 2007-draft based on the 'PATH' style, they depends on it, which means, that the jar has to added to the class-path to.
+
 ==== Optimization ====
 
-TMQL4J realizes an additional abstraction layer over the TMAPI and implements additional features to speed up the querying process by using new index implementations and extension of the TMAPI.
-
-==== Omnigator Plug-in ====
-
-As one of the first implementations, we provide a generic query plug-in for the Topic Maps browser Omnigator, called tmql4ontopia. It offers the possibility to query the Topic Maps using the TMQL syntax. The generic plug-in is an extension of TMQL4J
-
-
+TMQL4J realizes an additional abstraction layer over the TMAPI and implements additional features to speed up the querying process by using new index implementations and extension of the TMAPI or directly access the backend.

@@ -2,7 +2,7 @@
 
 In relation to the topic maps reference model ( TMRM ) a topic map is represented as a abstract bidirectional graph of construct nodes. Each node support a number of defined axis to navigated to a related note. This concept is similar to the XPath navigation of XML documents except the difference of a tree-structure as a special graph.
 
-The navigations concept of TMQL realize a navigation throw the abstract bidirectional graph of a topic map. The current draft supports a set of predefined axis on the canonical level which can be used to navigate in forward or in backward direction. Each axis support a set of construct types which can be used as startpoint of the navigation step represented by the current axis. Some axes support an optional type filter to control the navigation step in different ways.
+The navigations concept of TMQL realize a navigation throw the abstract bidirectional graph of a topic map. The current draft supports a set of predefined axis on the canonical level which can be used to navigate in forward or in backward direction. Each axis support a set of construct types which can be used as start point of the navigation step represented by the current axis. Some axes support an optional type filter to control the navigation step in different ways.
 
 The syntax of a navigation expression looks like the following production.
 
@@ -115,7 +115,7 @@ If the current node is a topic item the forward navigation returns all character
 [NOTE]
 There are special predefined topic references to identify the TMDM 'name-type' and 'occurrence-type' as optional type arguments of the characteristics axis. The topic reference 'tm:name' used as optional type argument of the 'characteristics' axis will return all characteristics which represent a name item in the meaning of the TMDM. The topic reference 'tm:occurrence' used as optional type argument of the 'characteristics' axis will return all characteristics which represent an occurrence item in the meaning of the TMDM.
 
-If the current node is a charcteristics item the backward navigation returns the topic item related to this characteristics item. If the optional type is used only topic items being an instance of the specified type will be returned.
+If the current node is a characteristics item the backward navigation returns the topic item related to this characteristics item. If the optional type is used only topic items being an instance of the specified type will be returned.
 
 ==== The atomify axis ====
 
@@ -124,7 +124,7 @@ The 'atomify' axis represents the relationship between a characteristics or loca
 If the current node is a characteristics item the forward navigation returns the literal representing the value of the characteristics item. The literal will be interpreted in relation to the datatype of the characteristics item and will be casted automatically. If the current node is a locator object the forward navigation returns the string literal representing the IRI of this locator object.
 
 [NOTE]
-If a characteristic or locator item compared with a literal it will be atomified automatically.
+If a characteristic or locator item compared with a literal it will be transformed to an atomic automatically.
 
 [NOTE]
 There is a shortcut definition as a part of the non-canonical level representing the combination of the 'characteristics' and 'atomify' axis. The shortcut '/' returns the literals of all characteristics of the topic item addressed by the current node. Please note that the optional type can not be left out by using this shortcut, it is obligatory .
@@ -133,6 +133,17 @@ If the current node is a string literal the backward navigation returns all char
 
 [NOTE]
 There is a shortcut definition as a part of the non-canonical level representing the combination of the 'characteristics' and 'atomify' axis. The shortcut '\' returns all topics related to at least one characteristics or locators represented by there literal. Please note that the optional type can not be left out by using this shortcut, it is obligatory .
+
+==== The ratomify axis ====
+
+The 'ratomify' axis is a special variant of the 'atomify' axis. In contrast to the 'atomify' axis, the left hand literal will be interpreted as an regular expression. The axis does not support any optional type argument and can be navigated in both directions.
+
+If the current node is a characteristics item the forward navigation returns the literal representing the value of the characteristics item similar to the 'atomify' axis. The literal will be interpreted in relation to the datatype of the characteristics item and will be casted automatically. If the current node is a locator object the forward navigation returns the string literal representing the IRI of this locator object.
+
+[NOTE]
+If a characteristic or locator item compared with a literal it will be transformed to an atomic  automatically.
+
+If the current node is a string literal the backward navigation returns all characteristic items or locator items using a literal matching the given literal interpreted as regular expression.
 
 ==== The players axis ====
 
@@ -157,7 +168,7 @@ If the current node is an association item the forward navigation returns all to
 If the current node is a topic type the backward navigation returns all association items using the topic type as a role type. The optional type has no relevance.
 
 [NOTE]
-In addition to the current draft some implementions of the query language supporting an optional type argument. If the optional type is used the backward navigation only returns association items of the defined association type.
+In addition to the current draft some implementations of the query language supporting an optional type argument. If the optional type is used the backward navigation only returns association items of the defined association type.
 
 ==== The traverse axis ====
 
@@ -180,14 +191,14 @@ The result can contains an association item multiple times, if it is connected t
 
 The 'scope' represents the relationship between an association item or an characteristic item and its scoping topics. The optional type is not supported.
 
-If the current node is an association item or an characterisitic item the forward navigation returns all themes of the scope of that constructs.
+If the current node is an association item or an characteristic item the forward navigation returns all themes of the scope of that constructs.
 
 If the current node is a topic item the backward navigation returns all association items and characteristic items containing the topic item as one theme of their scope.
 
 ==== The reifier axis ====
 
-The 'reifier' represents the relationship between an association item or an characteristic item and its reifing topic item. The optional type has no relevance.
+The 'reifier' represents the relationship between an association item or an characteristic item and its reifying topic item. The optional type has no relevance.
 
-If the current node is an association item or an chracteristic item the forward navigation returns the topic item used as reifier of the current construct.
+If the current node is an association item or an characteristic item the forward navigation returns the topic item used as reifier of the current construct.
 
 If the current node is a topic item the backward navigation returns the association item or characteristic item using the topic item as reifier.

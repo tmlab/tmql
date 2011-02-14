@@ -40,14 +40,14 @@ The next step is to extract only the first name of the topic item representing t
 
 ===== Solution =====
 
-Another filter type are index filters returning only a subset of the tuple sequence defined by interger literals. An index can be defined as single interger, than the result will only contains the element at the specific index if it exists, otherwise the result will be empty.
+Another filter type are index filters returning only a subset of the tuple sequence defined by integer literals. An index can be defined as single integer, than the result will only contains the element at the specific index if it exists, otherwise the result will be empty.
 
 ----------------------------
 1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics tm:name [ 0 ]
 ----------------------------
 
 ============================
-The index filter '[ 0 ]' specifies the selection of the first element of the navigation results. If puccini has names, the first one will be returned. Please note that topic map constructs are unsorted everytime, so the result of the query can be differ for serveral executions.
+The index filter '[ 0 ]' specifies the selection of the first element of the navigation results. If puccini has names, the first one will be returned. Please note that topic map constructs are unsorted any time, so the result of the query can be differ for several executions.
 ============================
 
 In addition there is another index filter specify an index range. The result of a query using a range filter will contain all elements between the given indexes. The lower index will be included by the result set.
@@ -57,7 +57,7 @@ In addition there is another index filter specify an index range. The result of 
 ----------------------------
 
 ============================
-The index filter '[ 0 .. 1 ]' specifies the selection of all elements between the index 0 and the index 1. Because of the fact that the first index is included, the result will be the same, like the last query. Please note that topic map constructs are unsorted everytime, so the result of the query can be differ for serveral executions.
+The index filter '[ 0 .. 1 ]' specifies the selection of all elements between the index 0 and the index 1. Because of the fact that the first index is included, the result will be the same, like the last query. Please note that topic map constructs are unsorted any time, so the result of the query can be differ for several executions.
 ============================
 
 The shown filter definitions are non-canonical shortcuts for complex expression representing an index filter at the canonical level. The following snippet shows the corresponding canonical expression of the index filters.

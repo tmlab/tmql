@@ -1,0 +1,95 @@
+=== Use Expressions ===
+
+Since version 3.0.0 the tmql4j engine supports the 'use-expression' to enable the modification of result type and result format. The 'use-expression' only contains two or three tokens representing the request format of result processing.
+
+-------------------------
+1:	USE-EXPRESSION ::=	'USE' ( 'CTM' | 'JTMQR' | 'JTMQROS' | ( 'TEMPLATE' literal ))
+-------------------------
+
+==== CTM ====
+
+The token 'CTM' in the use-expression are used to call the result processor that the results should be returned as CTM fragments. 
+
+[NOTE]
+The result processor only supports the possibility to returned topic or association CTM fragments, any other constructs will be ignored.
+
+==== JTMQR or JTMQROS ====
+
+'JTMQR' is a modification of the JSON Topic Maps Notation to enable the representation of TMQL results within the JTM syntax. The syntax is quite simple. 
+
+--------------------------
+version: "1"
+seq: [
+        {
+         t 	: [ 
+				i:	{ topic-map-construct },
+				n:	decimal or integer,
+				s:	string
+			  ],
+		}
+	 ]		 
+--------------------------
+
+The overall results of the query are contained within the 'seq' item, which contains a JSON array of result tuples 't'. A result tuple 't' is also a JSON array containing a set of cell values. A cell value can be a topic map construct represented by the 'i' key, a numerical value represented by the 'n' key or a string literal represented by 's'.
+
+In special the 'JTMQROS' only symbolize the engine to write the result in a provided output stream automatically.
+
+==== TEMPLATE ====
+
+Some query engine provides the functionality of defining templates, which should be used in a later query.
+
+===== Definition of Templates =====
+
+A template are identified by its name, because of that a name identifier can only used one times for a template. To avoid unexpected side effects, the engine only supports the redefinition for the same name identifier by a special keyword.
+
+-----------------------
+1:	TEMPLATE-DEF	::= 	( 'DEFINE' | 'REDEFINE' ) 'TEMPLATE' string-literal string-literal
+-----------------------
+
+The keyword 'DEFINE' enables the definition of a new template using a name which was not registered before. If the definition uses the same name like an other template, an error occurred. To avoid errors the keyword 'REDEFINE' can be used.
+
+The first string literal represents the name of the template. The name is important to enable the usage of this template in other queries. The template-definition is represented by a simple string and can contain any content. As wildcards it can contains any string literal encapsulated by '?'.
+
+------------------
+DEFINE TEMPLATE "myTemplate" """<div>?name?</div>"""
+------------------
+
+================
+The wildcard '?name?' within this template will be replaced by the result column aliased with the same string literal 'name'.
+================
+
+===== Anonymous Definition of Templates =====
+
+Sometimes the template only needed for one query or should be published to the query engine. To enable this use case the query engine supports the anonymous definition of a template within the same query, than the result are proceeded. Anonymous template definitions are a special kind of pragma definitions.
+
+------------------
+%pragma TEMPLATE """<div>?name?</div>"""
+// tm:subject / tm:name AS "name" 
+USE TEMPLATE
+------------------
+
+================
+The anonymous template does not have any name, because it is only defined within the query which defines it. The keyword 'TEMPLATE' in the use-expression calls the result processor to use the template with the name followed by this keyword. In this case the name is left out, because the anonymous template should be used.
+================
+
+===== Delete Templates =====
+
+To delete a template definition from the query processor, the keyword 'DELETE' followed by 'TEMPLATE' and the name of the template can be used.
+
+-----------------------
+2:	TEMPLATE-DEL	::= 	'DELETE' 'TEMPLATE' string-literal
+-----------------------
+
+===== Usage of Templates =====
+
+The defined templates can be used by the use-expression by using the keyword 'TEMPLATE' the keyword may be followed by the name of the template, except the usage of the anonymous template is expected. The template have to contain special wildcards encapsulated by '?' and named by the same literals than the result columns are aliased.
+
+------------------
+%pragma TEMPLATE """<div>?name?</div>"""
+// tm:subject / tm:name AS "name" 
+USE TEMPLATE
+------------------
+
+==================
+The result will contain a '<div>' item for each topic name. The topic name are represented by the '?name?' wildcard which will be replaced by the result column aliased with 'name'.
+==================

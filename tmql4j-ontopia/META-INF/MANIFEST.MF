@@ -1,0 +1,48 @@
+Manifest-Version: 1.0
+Service-Component: OSGI-INF/draft2010extensionpoint.xml
+Export-Package: net.ontopia.topicmaps.impl.tmapi2;uses:="net.ontopia.t
+ opicmaps.utils,de.topicmapslab.tmql4j.components.processor.runtime,ne
+ t.ontopia.utils,org.tmapi.core,net.ontopia.topicmaps.core",net.ontopi
+ a.topicmaps.query.tmql.impl.basic;uses:="de.topicmapslab.tmql4j.gramm
+ ar.productions,de.topicmapslab.tmql4j.query,de.topicmapslab.tmql4j.co
+ mponents.processor.runtime,org.tmapi.core,net.ontopia.topicmaps.query
+ .tmql.impl.util,de.topicmapslab.tmql4j.components.parser,net.ontopia.
+ topicmaps.query.core,de.topicmapslab.tmql4j.exception,de.topicmapslab
+ .tmql4j.components.processor.results,net.ontopia.topicmaps.impl.tmapi
+ 2,net.ontopia.utils,net.ontopia.topicmaps.core,net.ontopia.topicmaps.
+ query.tmql.impl.tmql4jextension,net.ontopia.infoset.core,de.topicmaps
+ lab.tmql4j.draft2010.query",net.ontopia.topicmaps.query.tmql.impl.tmq
+ l4jextension;uses:="org.tmapi.core,de.topicmapslab.tmql4j.components.
+ processor.results",net.ontopia.topicmaps.query.tmql.impl.util;uses:="
+ de.topicmapslab.tmql4j.grammar.productions,de.topicmapslab.tmql4j.que
+ ry,de.topicmapslab.tmql4j.components.processor.runtime,de.topicmapsla
+ b.tmql4j.components.parser,de.topicmapslab.tmql4j.draft2010.grammar.p
+ roductions,de.topicmapslab.tmql4j.exception"
+Bundle-ActivationPolicy: lazy
+Tool: Bnd-1.15.0
+Bundle-Name: TMQL Ontopia Extension
+Created-By: 1.6.0_20 (Sun Microsystems Inc.)
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: de.topicmapslab.tmql4j;bundle-version="3.0.0",org.tmap
+ i;bundle-version="2.0.3",de.topicmapslab.tmql4j.draft2010;bundle-vers
+ ion="3.0.0"
+Bundle-Version: 3.0.0.201102101046
+Bnd-LastModified: 1297331187515
+Bundle-ManifestVersion: 2
+Bundle-Description: TMQL Ontopia
+Import-Package: de.topicmapslab.majortom.util;resolution:=optional,de.
+ topicmapslab.tmql4j.components.parser,de.topicmapslab.tmql4j.componen
+ ts.processor.results,de.topicmapslab.tmql4j.components.processor.runt
+ ime,de.topicmapslab.tmql4j.draft2010.grammar.productions,de.topicmaps
+ lab.tmql4j.draft2010.query,de.topicmapslab.tmql4j.exception,de.topicm
+ apslab.tmql4j.grammar.productions,de.topicmapslab.tmql4j.query,net.on
+ topia.infoset.core,net.ontopia.topicmaps.core,net.ontopia.topicmaps.q
+ uery.core,net.ontopia.topicmaps.utils,net.ontopia.utils,org.osgi.fram
+ ework;version="[1.4,2)",org.slf4j;specification-version="1.6.1";versi
+ on="[1.5,2)",org.tmapi.core;version="[2.0,3)"
+Bundle-SymbolicName: de.topicmapslab.tmql4j.ontopia;singleton=true
+Provide-Package: net.ontopia.topicmaps.impl.tmapi2,net.ontopia.topicma
+ ps.query.tmql.impl.basic,net.ontopia.topicmaps.query.tmql.impl.tmql4j
+ extension,net.ontopia.topicmaps.query.tmql.impl.util
+Originally-Created-By: 1.6.0_20 (Sun Microsystems Inc.)
+

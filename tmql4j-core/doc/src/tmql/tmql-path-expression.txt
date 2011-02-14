@@ -2,7 +2,7 @@
 
 The current draft of the topic maps query language supports three different types of query-expressions. Each of theme will be inspired by other query languages of other industrial standards. On of them is the path expression style inspired by the XPath language of XML documents.
 
-A path expression represent a set of navigations through the abstract bidirectional topic maps graph. To realize that the path-expression contains navigations as combination of the defined axes. By combine the navigation axes a path expression can be used to extract information of a topic map without complex conditions on the result set. In additon the results can be filtered by using an optional filter expression based on the boolean expressions. Currently the filter can only added at the end of the whole navigation and cannot be used after one step over a specific axis. This will be changed as soon as possible.
+A path expression represent a set of navigations through the abstract bidirectional topic maps graph. To realize that the path-expression contains navigations as combination of the defined axes. By combine the navigation axes a path expression can be used to extract information of a topic map without complex conditions on the result set. In addition the results can be filtered by using an optional filter expression based on the boolean expressions. Currently the filter can only added at the end of the whole navigation and cannot be used after one step over a specific axis. This will be changed as soon as possible.
 
 ==== Filter expressions ====
 
@@ -39,10 +39,10 @@ There is a shortcut defined on the non-canonical level representing a type filte
 
 ===== Index filter =====
 
-If the user is only interested in a specific element at a defined index the index filter can be used to extract the element at the current position defined by a numerical literal. If the index is out of bound the constant topic 'un-def' will be returned.
+If the user is only interested in a specific element at a defined index the index filter can be used to extract the element at the current position defined by a numerical literal. If the index is out of bound the constant topic 'undef' will be returned.
 
 [NOTE]
-By default topic maps and topic map items are unorded. The order of the contained items of the navigation result is quite haphazardly. Because of that the result of an index filter will be different for each execution.
+By default topic maps and topic map items are unordered. The order of the contained items of the navigation result is quite haphazardly. Because of that the result of an index filter will be different for each execution.
 
 A index filter simply represented by a numerical value. The canonical counterpart take use of a predefined variable of the query processor representing the current iteration index. The processor simple checks if the variable is bound to the same value than the user specified by the numerical literal.
 
@@ -57,7 +57,7 @@ A index filter simply represented by a numerical value. The canonical counterpar
 In addition to index filter the user can define an upper and lower border interpreted as a sub set of valid indexes. The processor will return each item with an index which is greater or equal to the lower bound but less than the upper bound. 
 
 [NOTE]
-The upper bound will be excluded everytime and all indices are zero based.
+The upper bound will be excluded any time and all indices are zero based.
 
 A index range filter simply represented by two numerical values and the special token '..'. The canonical counterpart take use of a predefined variable of the query processor representing the current iteration index. The processor simple checks if the variable is bound to a value contained by the defined range.
 
@@ -69,7 +69,7 @@ A index range filter simply represented by two numerical values and the special 
 
 ===== Scope filter =====
 
-If the user is only interested in association items or characteristic items valid in a special scope, he can use the scope filter. A scope filter simply define a topic item representing one theme which has been included by the scope of the current node. If the current node is a topic item the filter fails everytime. The filter symbolized by the token '@'.
+If the user is only interested in association items or characteristic items valid in a special scope, he can use the scope filter. A scope filter simply define a topic item representing one theme which has been included by the scope of the current node. If the current node is a topic item the filter fails any time. The filter symbolized by the token '@'.
 
 ----------------------------
 1:	[ @ TOPIC-REF ]
@@ -109,3 +109,14 @@ In addition to the simple navigation expressions a path expression can create a 
 A tuple expression can be used to extract a set of topic items by using a comma-separated list of topic references. 
 
 On the other hand the tuple expressions often used as parts of other productions like merge expressions.
+
+===== Using Alias Expression =====
+
+In special use cases the numerical index of the result set are not useful. In such a case it would be helpful to use alias defined in a value expression, which enables the usage of special string-based access methods of the result set. An alias expression is a special value-expression ending of the two tokens 'AS' and a string literal used as alias for this index. The index are the same than the index of the value expression within the tuple-expression. 
+
+[NOTE]
+If there are more than one alias expression using the same string reference, an error occurred.
+
+-------------------------------
+1:	ALIAS ::=	VALUE-EXPRESSION 'AS' STRING-LITERAL
+-------------------------------

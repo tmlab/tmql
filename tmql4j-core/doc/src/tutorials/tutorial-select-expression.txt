@@ -23,8 +23,8 @@ Now we want to use a select expression to realize the same use case. The results
 2:		WHERE boolean-expression
 3:		ORDER BY < value-expression >
 4:		UNIQUE
-5:		LIMIT interger
-6:		OFFSET interger
+5:		LIMIT integer
+6:		OFFSET integer
 ---------------------------
 
 For our example we only need a select clause and a boolean expression. 
@@ -55,7 +55,7 @@ Now we want to order the results of the last tutorial by there first name.
 
 ===== Solution =====
 
-To realize this task we make use of the tuple ordering syntax of the path expression. A tuple expression can be ordered by using the keywords 'ASC' and 'DESC'. Similar to tuple expressions a selection expressions containes an order-by clause symbolized by the keywords 'ORDER BY'. The order-by clause can contain a set of value expressions separated by a simple comma and the keyword 'ASC' can be left out.
+To realize this task we make use of the tuple ordering syntax of the path expression. A tuple expression can be ordered by using the keywords 'ASC' and 'DESC'. Similar to tuple expressions a selection expressions contains an order-by clause symbolized by the keywords 'ORDER BY'. The order-by clause can contain a set of value expressions separated by a simple comma and the keyword 'ASC' can be left out.
 
 To order our results we need a short path expression describing the values we used for ordering our result tuples.
 
@@ -88,7 +88,7 @@ Currently we take use of the order-by clause to order the variable bindings whic
 
 ===== Use Case =====
 
-We want to realize a simple website displaying all composers by their name. Because of the hugh number of composers we want to implement a paging algorithm, which should be based on TMQL queries. We need a query to extract only the values for the next page between 10 and 20.
+We want to realize a simple website displaying all composers by their name. Because of the huge number of composers we want to implement a paging algorithm, which should be based on TMQL queries. We need a query to extract only the values for the next page between 10 and 20.
 
 ===== Solution =====
 
@@ -112,11 +112,11 @@ The next step is to add simple a selection range to get all tuples between the i
 --------------------------
 
 ==========================
-The shown syntax is similar to SQL. In line 2 we add the navigation to our select clause to get only the name literals of a composer and not the topic itselfs. To realize the selection range we add a offset-clause with the keyword 'OFFSET' in line 5. The interger value after the keyword represents the first index to select. The limit clause with the keyword 'LIMIT' defines a number of elements which should be selected at most.
+The shown syntax is similar to SQL. In line 2 we add the navigation to our select clause to get only the name literals of a composer and not the topic itself. To realize the selection range we add a offset-clause with the keyword 'OFFSET' in line 5. The integer value after the keyword represents the first index to select. The limit clause with the keyword 'LIMIT' defines a number of elements which should be selected at most.
 ==========================
 
 ===== Summary =====
-The keyword 'OFFSET' defines an offset-clause which can be used to extract the tuples starting at a specific index, given as literal after the keyword. To extract only a specific number of elements the limit-clause can be used. The limit-clause is defined by the keyword 'LIMIT' and contains a simple interger literal two. If the number of avaible elements is smaller than the limit expect, the result will be smaller than the limit value.
+The keyword 'OFFSET' defines an offset-clause which can be used to extract the tuples starting at a specific index, given as literal after the keyword. To extract only a specific number of elements the limit-clause can be used. The limit-clause is defined by the keyword 'LIMIT' and contains a simple integer literal two. If the number of available elements is smaller than the limit expect, the result will be smaller than the limit value.
 
 ==== Tutorial: Use disjunction ====
 
@@ -155,13 +155,13 @@ The next task is more complex than the other one. We try to extract only compose
 
 Now we want to extract only a subset of composers. The subset is defined by a new restriction, that the composer has composed at least 10 operas.
 
-The semantic pattern 'at least' suggest us, that this is a quantified restriction. The restriction isn't unquantified in that meaning that the existing of a fact satisfies the condition. The satisfaction is bind to a numerical bound, which suggests a quantified expression. Quantified expressions are realized as exists-clause in TMQL. A exists clause can be un-quantified like the 'ISA' keyword or can be quantified which we need here. The syntax of a quantified expression is similar to human speach: "at least some satisfies something". The production of a quantified expressions looks like the following one
+The semantic pattern 'at least' suggest us, that this is a quantified restriction. The restriction isn't non-quantified in that meaning that the existing of a fact satisfies the condition. The satisfaction is bind to a numerical bound, which suggests a quantified expression. Quantified expressions are realized as exists-clause in TMQL. A exists clause can be un-quantified like the 'ISA' keyword or can be quantified which we need here. The syntax of a quantified expression is similar to human speach: "at least some satisfies something". The production of a quantified expressions looks like the following one
 
 ---------------------------------
 1:	AT LEAST < number > < binding-set > SATISFIES < boolean-expression >
 ---------------------------------
 
-The next step is to get the informations missing in the production rule. The 'number' will be 10. The boolean expression has to check the restriction of composing an opera. This is modelled as an association in the topic map of the type 'psi:composed_by'. The roles are 'psi:Composer' for the composer and 'psi:Work' for the opera or something else. The condition will look like 'psi:composed_by ( psi:Work : $opera , psi:Composer : $composer )'. The boolean condition dependent on two variables '$composer' and '$opera'. The first variable '$composer' will be bound by the 'ISA' statement of our last query. To bind the variable 'opera' we will use a binding set as we see in the given production.
+The next step is to get the informations missing in the production rule. The 'number' will be 10. The boolean expression has to check the restriction of composing an opera. This is modeled as an association in the topic map of the type 'psi:composed_by'. The roles are 'psi:Composer' for the composer and 'psi:Work' for the opera or something else. The condition will look like 'psi:composed_by ( psi:Work : $opera , psi:Composer : $composer )'. The boolean condition dependent on two variables '$composer' and '$opera'. The first variable '$composer' will be bound by the 'ISA' statement of our last query. To bind the variable 'opera' we will use a binding set as we see in the given production.
 
 A bindings set is defined as a variable in the context of a sequence of possible values. In our example the variable '$opera' as an instance of all operas. The production rule of a binding set looks like the following one
 
@@ -199,7 +199,7 @@ If we change our use case to get all composers composed at most 10 expression, t
 
 ===== Summary =====
 
-The tutorial explain the syntax and interpretation of quantified expressions. Quantified expression can restrict an upper or lower number of satisfying bindings. A quantfied expression with the keyword 'AT LEAST' creates the restriction with a lower bound. The keyword 'AT MOST' describe the reverse case. In addition if the number of satisfying elements is not important the keyword 'SOME' can also used.
+The tutorial explain the syntax and interpretation of quantified expressions. Quantified expression can restrict an upper or lower number of satisfying bindings. A quantified expression with the keyword 'AT LEAST' creates the restriction with a lower bound. The keyword 'AT MOST' describe the reverse case. In addition if the number of satisfying elements is not important the keyword 'SOME' can also used.
 
 ==== Tutorial: Use the forall clause ====
 
@@ -270,7 +270,7 @@ The forall clause is the reverse expression of the exists clause an checks if ev
 
 ===== Use Case =====
 
-Extract all co-players of any composer instance, but each elements only onetimes.
+Extract all co-players of any composer instance, but each elements only one times.
 
 ===== Solution =====
 
@@ -280,7 +280,7 @@ At first we have to get all co-players of a specific topic item. There are diffe
 1:	$composer << players >> players
 ------------------------
 
-The problem of this expression is that the starting node of the navigation is contained by the result set, but we only wants the co-players and not the items itselfs. The solution of our problem is to use the 'traverse' axis retrieving exacatly the co-players of our topic item.
+The problem of this expression is that the starting node of the navigation is contained by the result set, but we only wants the co-players and not the items itselfs. The solution of our problem is to use the 'traverse' axis retrieving exactly the co-players of our topic item.
 
 ------------------------
 1:	$composer >> traverse
@@ -294,7 +294,7 @@ The overall select expression looks like the following one using the sub query d
 3:		WHERE $composer ISA psi:Composer
 --------------------------
 
-If we check the result set, we will found multiple instances of the same topic item. The cause of that is the fact that a topic item can be a co-player of different topic items. For example a opera can be composed by two composers. To solve this problem we can add the keyword 'UNIQUE' which realize a reduction of the result set to a unique tuple sequence contains each item only onetimes.
+If we check the result set, we will found multiple instances of the same topic item. The cause of that is the fact that a topic item can be a co-player of different topic items. For example a opera can be composed by two composers. To solve this problem we can add the keyword 'UNIQUE' which realize a reduction of the result set to a unique tuple sequence contains each item only one times.
 
 --------------------------
 1:	%prefix psi http://psi.ontopedia.net/
@@ -305,4 +305,4 @@ If we check the result set, we will found multiple instances of the same topic i
 
 ===== Summary =====
 
-Each item can be contained multiple times by the result set because of the strong linkage between the items of a topic map construct. To extract each element only onetime the keyword 'UNIQUE' can be add to the select expression.
+Each item can be contained multiple times by the result set because of the strong linkage between the items of a topic map construct. To extract each element only one time the keyword 'UNIQUE' can be add to the select expression.

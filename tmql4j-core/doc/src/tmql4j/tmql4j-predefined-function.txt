@@ -8,7 +8,7 @@
 |*precedence*| 2
 |================
 
-The function 'string-concat' combines a set of strings. The function expects exactly two arguments given by the following tuple-expression. The type of the argument can be simple strings or sets of strings and the result will be a set of strings or a simple string. The behaviour of the function is dependent from the given argument type. If the first argument 'a' is a string and the second argument 'b' two, the method will return the string combination of 'a' and 'b'. If one of the arguments 'a' or 'b' is a set of strings the method will return a set of strings containing each combination of the atomic string and each string of the given set. If both arguments are sets the method will return each combination of each string of the first set and the second set.
+The function 'string-concat' combines a set of strings. The function expects exactly two arguments given by the following tuple-expression. The type of the argument can be simple strings or sets of strings and the result will be a set of strings or a simple string. The behavior of the function is dependent from the given argument type. If the first argument 'a' is a string and the second argument 'b' two, the method will return the string combination of 'a' and 'b'. If one of the arguments 'a' or 'b' is a set of strings the method will return a set of strings containing each combination of the atomic string and each string of the given set. If both arguments are sets the method will return each combination of each string of the first set and the second set.
 
 -------------------------------------
 1:	fn:string-concat ( a => [ "foo" ] , b => [ "bar" ] )
@@ -29,7 +29,7 @@ The function 'string-concat' combines a set of strings. The function expects exa
 |*profile*| fn:length (s : string) return integer
 |================
 
-The function 'length' returns the internal size of a string literal by counting the contained characters. The function expect exactly one argument which can be a simple string or a sequence of strings. The behaviour of the function is dependent from the given argument type. If the argument is a simple string the function return a single integer value. If the argument is a set of strings it will return a sequence of integer values.
+The function 'length' returns the internal size of a string literal by counting the contained characters. The function expect exactly one argument which can be a simple string or a sequence of strings. The behavior of the function is dependent from the given argument type. If the argument is a simple string the function return a single integer value. If the argument is a set of strings it will return a sequence of integer values.
 
 -------------------------------------
 1:	fn:length ( s => [ "foo" ]  )
@@ -49,7 +49,7 @@ The function 'length' returns the internal size of a string literal by counting 
 |*precedence*| 5
 |================
 
-The function 'string-lt' compare the two string literals and only return the string literal given by the first argument if the literal is lexicographically lower than the second string. The function expected two arguments which has be of the type string. The first argument also can be a sequence of strings. The behaviour of the function is dependent from the given argument type. If the first argument is a set of strings the function returns a set containing the lexicographically lower string in relation to the second string argument. If the first argument is a string it return the given string if it is lexicographically lower than the second one, otherwise it return an empty set. If the second argument is a set of strings the first one will be used. 
+The function 'string-lt' compare the two string literals and only return the string literal given by the first argument if the literal is lexicographically lower than the second string. The function expected two arguments which has be of the type string. The first argument also can be a sequence of strings. The behavior of the function is dependent from the given argument type. If the first argument is a set of strings the function returns a set containing the lexicographically lower string in relation to the second string argument. If the first argument is a string it return the given string if it is lexicographically lower than the second one, otherwise it return an empty set. If the second argument is a set of strings the first one will be used. 
 
 -------------------------------------
 1:	fn:string-lt ( a => [ "a" ] , b => [ "aaa" ] )
@@ -72,7 +72,7 @@ The function 'string-lt' compare the two string literals and only return the str
 |*precedence*| 5
 |================
 
-The function 'string-leq' compare the two string literals and only return the string literal given by the first argument if the literal is lexicographically lower or equal than the second string. The function expected two arguments which has be of the type string. The first argument also can be a sequence of strings. The behaviour of the function is dependent from the given argument type. If the first argument is a set of strings the function returns a set containing the lexicographically lower string in relation to the second string argument. If the first argument is a string it return the given string if it is lexicographically lower or equal than the second one, otherwise it return an empty set. If the second argument is a set of strings the first one will be used. 
+The function 'string-leq' compare the two string literals and only return the string literal given by the first argument if the literal is lexicographically lower or equal than the second string. The function expected two arguments which has be of the type string. The first argument also can be a sequence of strings. The behavior of the function is dependent from the given argument type. If the first argument is a set of strings the function returns a set containing the lexicographically lower string in relation to the second string argument. If the first argument is a string it return the given string if it is lexicographically lower or equal than the second one, otherwise it return an empty set. If the second argument is a set of strings the first one will be used. 
 
 -------------------------------------
 1:	fn:string-leq ( a => [ "a" ] , b => [ "aaa" ] )
@@ -95,7 +95,7 @@ The function 'string-leq' compare the two string literals and only return the st
 |*precedence*| 5
 |================
 
-The function 'string-geq' compare the two string literals and only return the string literal given by the first argument if the literal is lexicographically greater or equal than the second string. The function expected two arguments which has be of the type string. The first argument also can be a sequence of strings. The behaviour of the function is dependent from the given argument type. If the first argument is a set of strings the function returns a set containing the lexicographically greater string in relation to the second string argument. If the first argument is a string it return the given string if it is lexicographically greater or equal than the second one, otherwise it return an empty set. If the second argument is a set of strings the first one will be used. 
+The function 'string-geq' compare the two string literals and only return the string literal given by the first argument if the literal is lexicographically greater or equal than the second string. The function expected two arguments which has be of the type string. The first argument also can be a sequence of strings. The behavior of the function is dependent from the given argument type. If the first argument is a set of strings the function returns a set containing the lexicographically greater string in relation to the second string argument. If the first argument is a string it return the given string if it is lexicographically greater or equal than the second one, otherwise it return an empty set. If the second argument is a set of strings the first one will be used. 
 
 -------------------------------------
 1:	fn:string-geq ( a => [ "a" ] , b => [ "aaa" ] )
@@ -118,7 +118,7 @@ The function 'string-geq' compare the two string literals and only return the st
 |*precedence*| 5
 |================
 
-The function 'string-gt' compare the two string literals and only return the string literal given by the first argument if the literal is lexicographically greater than the second string. The function expected two arguments which has be of the type string. The first argument also can be a sequence of strings. The behaviour of the function is dependent from the given argument type. If the first argument is a set of strings the function returns a set containing the lexicographically greater string in relation to the second string argument. If the first argument is a string it return the given string if it is lexicographically greater than the second one, otherwise it return an empty set. If the second argument is a set of strings the first one will be used. 
+The function 'string-gt' compare the two string literals and only return the string literal given by the first argument if the literal is lexicographically greater than the second string. The function expected two arguments which has be of the type string. The first argument also can be a sequence of strings. The behavior of the function is dependent from the given argument type. If the first argument is a set of strings the function returns a set containing the lexicographically greater string in relation to the second string argument. If the first argument is a string it return the given string if it is lexicographically greater than the second one, otherwise it return an empty set. If the second argument is a set of strings the first one will be used. 
 
 -------------------------------------
 1:	fn:string-gt ( a => [ "a" ] , b => [ "aaa" ] )
@@ -141,7 +141,7 @@ The function 'string-gt' compare the two string literals and only return the str
 |*precedence*| 5
 |================
 
-The function 'regexp' checks if the given string argument matches to the regular expression. The method expected exactly two arguments, which can be an instance of string or a simple sequence or strings. The behaviour of the function is dependent from the given argument type. If the first argument is a simple string, the result will be an empty sequence if the string does not match or the string if it matches. If the first argument is a set of strings the function will return a set of all matching strings. If the second argument is a set of strings only the first one will be used.
+The function 'regexp' checks if the given string argument matches to the regular expression. The method expected exactly two arguments, which can be an instance of string or a simple sequence or strings. The behavior of the function is dependent from the given argument type. If the first argument is a simple string, the result will be an empty sequence if the string does not match or the string if it matches. If the first argument is a set of strings the function will return a set of all matching strings. If the second argument is a set of strings only the first one will be used.
 
 -------------------------------------
 1:	fn:regexp ( a => [ "aaa" ] , b => [ "[a]+" ] )
@@ -160,11 +160,11 @@ The function 'regexp' checks if the given string argument matches to the regular
 [width="50%", cols="1,3"]
 |================
 |*item-identifier*|   http://psi.topicmaps.org/tmql/1.0/functions/substring
-|*profile*| fn:substring (s : string, f : interger , t : interger ) return string
+|*profile*| fn:substring (s : string, f : integer , t : integer ) return string
 |*precedence*| 5
 |================
 
-The function 'substring' will be return an substring of the given string argument addressed by the given indexes. The function expects exactly three arguments of type string and integer. As first argument a string sequence is supported two. The behaviour of the function is dependent from the given arguments. If the first argument is a string it will return a single string representing the substring of the first argument. If the first argument is a sequence it will return a sequence of substrings. If any of the indexes is out of bounds the function will clear this indexes to the possible values which are encapsulate by the given range. The string indexes will be zero-based and the upper index will be excluded.
+The function 'substring' will be return an substring of the given string argument addressed by the given indexes. The function expects exactly three arguments of type string and integer. As first argument a string sequence is supported two. The behavior of the function is dependent from the given arguments. If the first argument is a string it will return a single string representing the substring of the first argument. If the first argument is a sequence it will return a sequence of substrings. If any of the indexes is out of bounds the function will clear this indexes to the possible values which are encapsulate by the given range. The string indexes will be zero-based and the upper index will be excluded.
 
 -------------------------------------
 1:	fn:substring ( s => [ "Java-based engine" ] , f => 1 , t => 5 )
@@ -191,11 +191,11 @@ The function 'substring' will be return an substring of the given string argumen
 |*profile*| fn:has-datatype (s: tuple-sequence) return tuple-sequence
 |================
 
-The function 'has-datatype' retrieves the data type for each tuple element in each tuple. The function expects exactly one argument which has to be a tuple or a tuple sequence. The behaviour of the functions is dependent from the given arguments. If the the contained element is a name item the data type will be 'string', for occurrence item  it will be the internal data type and for each atom it will be the data type of the atom itself. Any other item results in the data type 'any'. Each data type is a IRI.
+The function 'has-datatype' retrieves the data type for each tuple element in each tuple. The function expects exactly one argument which has to be a tuple or a tuple sequence. The behavior of the functions is dependent from the given arguments. If the the contained element is a name item the data type will be 'string', for occurrence item  it will be the internal data type and for each atom it will be the data type of the atom itself. Any other item results in the data type 'any'. Each data type is a IRI.
 
 -------------------------------------
 1:	fn:has-datatype ( s => [ "http://tmql4j.topicmapslab.de"^^xsd:anyURI , "aaa" , 5 ] )
-2:	=>  [ "xsd:anyURI" , "xsd:string" , "xsd:interger" ] 
+2:	=>  [ "xsd:anyURI" , "xsd:string" , "xsd:integer" ] 
 -------------------------------------
 
 ===== has-variant =====
@@ -216,7 +216,7 @@ The function has-variant only supported for topic name items. The function expec
 |*profile*| fn:slice (s : tuple-sequence, low : integer, high : integer) return tuple-sequence
 |================
 
-The function 'slice' is a function supports tuple-sequences. The method returns the selected tuples of the sequence with an index between the given arguments. The indexes are zero-based and the upper index will be excluded. If the indexes given as strings, it will be transformed to interger values automatically. The function will be used by the select expression to realize the keywords 'LIMIT' and 'OFFSET'. If the interger values are negative or invalid an error will be raised. If the indexes are out of bounds the function will return the tuples with an index in range of the tuple-sequence and the given arguments.
+The function 'slice' is a function supports tuple-sequences. The method returns the selected tuples of the sequence with an index between the given arguments. The indexes are zero-based and the upper index will be excluded. If the indexes given as strings, it will be transformed to integer values automatically. The function will be used by the select expression to realize the keywords 'LIMIT' and 'OFFSET'. If the integer values are negative or invalid an error will be raised. If the indexes are out of bounds the function will return the tuples with an index in range of the tuple-sequence and the given arguments.
 
 -------------------------------------
 1:	fn:slice  ( s => [ "a" , "b" , "c" , "d" ] , low => 1 , high => 2 )
@@ -237,7 +237,7 @@ The function 'slice' is a function supports tuple-sequences. The method returns 
 |*profile*| fn:count (s : tuple-sequence) return integer
 |================
 
-The function 'count' returns the number of tuples of the tuple sequence. The function expected one argument which should be a tuple sequence or an atom. The behaviour of the function is dependent from given arguments. If an atom is given the method will return 1 every time. If it is an tuple sequence it will return the number of contained items.
+The function 'count' returns the number of tuples of the tuple sequence. The function expected one argument which should be a tuple sequence or an atom. The behavior of the function is dependent from given arguments. If an atom is given the method will return 1 every time. If it is an tuple sequence it will return the number of contained items.
 
 -------------------------------------
 1:	fn:count  ( s => [ "a" , "b" , "c" , "d" ]  )
@@ -366,3 +366,74 @@ The function 'zagzig' is the reverse function of 'zigzag' and returns a tuple se
 1:	fn:zagzig  ( s =>  [ "a" , "b" , "a" , "b" ] )
 2:	=> [ [ "a" ] , [ "a" ] , [ "a" ] , [ "a" ] )
 -------------------------------------
+
+
+===== url-decode =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/url-decode
+|*profile*|fn:url-decode (s : string) return string
+|================
+
+The function 'url-decode' decodes the given URL reference. The result will be the reference without any encoded characters.
+
+-------------------------------------
+1:	fn:url-decode  ( s =>  "http://psi.example.org/Hello%20World" )
+2:	=> ( "http://psi.example.org/Hello World" )
+-------------------------------------
+
+===== url-encode =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/url-encode
+|*profile*|fn:url-encode (s : string) return string
+|================
+
+The function 'url-encode' encodes the given string literal as an URI reference and escape all forbidden characters of the URI syntax.
+
+-------------------------------------
+1:	fn:url-encode  ( s =>  "http://psi.example.org/Hello World" )
+2:	=> ( "http://psi.example.org/Hello%20World" )
+-------------------------------------
+
+===== topics-by-subjectidentifier =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/topics-by-subjectidentifier
+|*profile*|fn:topics-by-subjectidentifier ((s : string)+) return sequence
+|================
+
+The function returns a sequence of topics idenitified by one of the provided subject-identifiers. The identifiers are given as string literals.
+
+===== topics-by-subjectlocator =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/topics-by-subjectlocator
+|*profile*|fn:topics-by-subjectlocator ((s : string)+) return sequence
+|================
+
+The function returns a sequence of topics idenitified by one of the provided subject-locators. The identifiers are given as string literals.
+
+===== topics-by-itemidentifier =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/topics-by-itemidentifier
+|*profile*|fn:topics-by-itemidentifier ((s : string)+) return sequence
+|================
+
+The function returns a sequence of topics idenitified by one of the provided item-identifiers. The identifiers are given as string literals.
+
+===== array =====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/array
+|*profile*|fn:array ( (a : anytype)+ ) return sequence
+|================
+
+The 'array' function convert the given list of any objects to an array, which will returned without reduction in the result set.

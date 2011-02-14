@@ -18,6 +18,8 @@ include::tmql-variables.txt[]
 
 include::tmql-boolean-expression.txt[]
 
+include::tmql-using-expression.txt[]
+
 include::tmql-path-expression.txt[]
 
 include::tmql-select-expression.txt[]

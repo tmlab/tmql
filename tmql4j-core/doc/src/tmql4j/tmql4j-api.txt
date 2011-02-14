@@ -63,7 +63,7 @@ The interface definition represents a utility module to find a construct by diff
 
 The first parameter of each method contains the current context of querying processes, like the topic map instance it-self, the query and some additional prefixes defined by the query.
 
-Like the name of 'getTopicBySubjectIdentifier' method indicates, implements the method the functionality to get a topic item by its subject-identifier. As parameters the method will get an unique subject-identifier of a topic as string-represented IRI and an instance of the topic map construct, contains the information. The topic map construct can also be an abtraction container for the underlying backend. As alternative the function 'getTopicBySubjectLocator' returns a topic item represented by its subject-locator. Both method has to return the topic item identified by the given IRI but never null. If the construct cannot be resolved, 'null' shall be returned.
+Like the name of 'getTopicBySubjectIdentifier' method indicates, implements the method the functionality to get a topic item by its subject-identifier. As parameters the method will get an unique subject-identifier of a topic as string-represented IRI and an instance of the topic map construct, contains the information. The topic map construct can also be an abstraction container for the underlying backend. As alternative the function 'getTopicBySubjectLocator' returns a topic item represented by its subject-locator. Both method has to return the topic item identified by the given IRI but never null. If the construct cannot be resolved, 'null' shall be returned.
 
 In relation to the topic maps data model the third method 'getConstructByItemIdentifier' has to return an topic map construct identified by it item-identifier given by the first argument. If there is no construct with this item-identifier, 'null' shall be returned.
 
@@ -80,7 +80,7 @@ The current draft of the topic maps query language contains a special navigation
 4:	
 5:		void setTopicMap(TopicMap topicMap);
 10:
-11:		NavigationAxis getNavigationType();
+11:		Class<? extends IToken> getNavigationType();
 12:
 13:		boolean supportsForwardNavigation(final Object construct, final Object optional) throws NavigationException;
 14:
@@ -97,7 +97,7 @@ The current draft of the topic maps query language contains a special navigation
 
 The method 'setTopicMap' used by the runtime container to set the current topic map to the navigation axis implementation. The given topic maps can be used by the implementation to realize the navigation step if it is necessary. 
 
-The 'getNavigationType' returns an enumeration value describing the type of this axis. The core engine defines enumeration values for each of the predefined navigation axis. To add new axis the extension has to extend this enumeration and add new values.
+The 'getNavigationType' returns a the class of the token representing this axis. The core engine defines one token for each pre-defined navigation axis.
 
 Some of the TMQL axis supporting an optional type parameter in addition to the navigation start represented by a topic reference. Because of that most of the methods of the interface are overloaded to realize the usage with an optional argument or without it. The method 'supportsForwardNavigation' checks if the given start node of the abstract topic maps graph will be supported by the axis and if the optional type can be used if it is not 'null'.
 

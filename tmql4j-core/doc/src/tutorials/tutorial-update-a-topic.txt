@@ -10,7 +10,7 @@ In this case we want to add a new name to the topic item representing the compos
 
 ===== Solution =====
 
-To realize the use case we need to learn something about the update-expressions at first. An update-expression contains a where-clause defining the context of changes. The where-clause contains a simple path-expression to define the items which should be updated. The context of updates is used for all changes defined by the update-clauses and is dependend from the preferred changes.
+To realize the use case we need to learn something about the update-expressions at first. An update-expression contains a where-clause defining the context of changes. The where-clause contains a simple path-expression to define the items which should be updated. The context of updates is used for all changes defined by the update-clauses and is dependent from the preferred changes.
 
 An update-clause similar represented by a triple or a 4-tuple looks like the following one.
 
@@ -47,7 +47,7 @@ As final step we have to combine all query snippets to the final update-expressi
 ---------------------------
 
 ==========================
-In line 1 we add an evironment-clause containing our prefix definition. Please note that an environment-clause has to add at the beginning of the query everytime. In line 3 we use the where-clause to define the update context and set them to the topic item represented by the subject-identifier 'psi:Puccini'. In line 2 we add our update-clause starting with the keyword 'UPDATE'. The update-expression only contains one update-clause adding a new name with the literal "the new name" to the topic puccini. 
+In line 1 we add an environment-clause containing our prefix definition. Please note that an environment-clause has to add at the beginning of the query any time. In line 3 we use the where-clause to define the update context and set them to the topic item represented by the subject-identifier 'psi:Puccini'. In line 2 we add our update-clause starting with the keyword 'UPDATE'. The update-expression only contains one update-clause adding a new name with the literal "the new name" to the topic puccini. 
 ==========================
 
 ===== Summary =====
@@ -58,7 +58,7 @@ The tutorial explain how to use a update-clause to add a new name to a specific 
 
 ===== Use Case =====
 
-Now we want to change the value of a occurrence of the same topic item. The occurrence has to be of a website and has to be scoped by the theme Web. The new value has to 'http://en.wikipedia.org/wiki/Puccini' with the correct data type.
+Now we want to change the value of a occurrence of the same topic item. The occurrence has to be of a web site and has to be scoped by the theme Web. The new value has to 'http://en.wikipedia.org/wiki/Puccini' with the correct data type.
 
 ===== Solution =====
 
@@ -68,20 +68,20 @@ In relation to the last tutorial we need another anchor and another keyword. Cur
 1:	occurrences SET "http://en.wikipedia.org/wiki/Puccini"
 -----------------------
 
-In our case the literal represent a string value and the data type of the occurrence will be changed to 'xsd:string' automatically if this query will be execute, but our occurrence should represent an IRI. To realize that the data type has to be canged to 'xsd:anyIRI'. To use a specific data type the TMQL draft supports datatyped literals looks like '"literal"^^data-type'. So we can change our query to the following one.
+In our case the literal represent a string value and the data type of the occurrence will be changed to 'xsd:string' automatically if this query will be execute, but our occurrence should represent an IRI. To realize that the data type has to be changed to 'xsd:anyIRI'. To use a specific data type the TMQL draft supports data-typed literals looks like '"literal"^^data-type'. So we can change our query to the following one.
 
 -----------------------
 1:	occurrences SET "http://en.wikipedia.org/wiki/Puccini"^^xsd:anyIRI
 -----------------------
 
-Because of the fact that the changes will effected the occurrence item itselfs, the current context has to be the occurrence item. To define the context we will use a simple path expression using a scope and type filter to satisfy the requirements of the use case.
+Because of the fact that the changes will effected the occurrence item itself, the current context has to be the occurrence item. To define the context we will use a simple path expression using a scope and type filter to satisfy the requirements of the use case.
 
 ------------------------------
 1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics psi:website @ psi:Web
 ------------------------------
 
 ===============================
-At first we define the prefix 'psi' representing the absolute IRI 'http://psi.ontopedia.net/'. The rest of the query represent the path expression to get all occurrence of the type website at the scope Web. Our navigation start at the topic item 'psi:Puccini' navigates to the occurrences of the type 'psi:website' using the 'characteristics' axis. The scope filter symbolized by the token '@' is used to reduce the navigation results to all scoped occurrences.
+At first we define the prefix 'psi' representing the absolute IRI 'http://psi.ontopedia.net/'. The rest of the query represent the path expression to get all occurrence of the type web site at the scope Web. Our navigation start at the topic item 'psi:Puccini' navigates to the occurrences of the type 'psi:website' using the 'characteristics' axis. The scope filter symbolized by the token '@' is used to reduce the navigation results to all scoped occurrences.
 ===============================
 
 After the combination our final query looks like the following one.

@@ -12,7 +12,7 @@ We try to delete a topic item from the topic map. The topic item will be represe
 
 ===== Solution =====
 
-A delete-expression can be splitted into two parts. The where-clause can be used to bind variables or check conditions to extract items to remove. The where-clause is optional and can be left out if the delete-clause is quite simple. The delete-clause define exactly the topic map items to remove.
+A delete-expression can be split into two parts. The where-clause can be used to bind variables or check conditions to extract items to remove. The where-clause is optional and can be left out if the delete-clause is quite simple. The delete-clause define exactly the topic map items to remove.
 
 A delete-clause always starts with the keyword 'DELETE' following by the delete-clause and the optional where-clause. The items to remove can addressed by a simple path-expression only contains a topic reference - the subject-identifier.
 
@@ -20,7 +20,7 @@ A delete-clause always starts with the keyword 'DELETE' following by the delete-
 1:	DELETE http://psi.ontopedia.net/Puccini
 -------------------------
 
-In context of the opera topic map the execution of this query will be failed, because the topic item with the identifier 'http://psi.ontopedia.net/Puccini' will be used by other topic map constructs for example as reifier or as a association player. A delete-expression only removes independent constructs. Depenedent constructs are topic items used as theme, type or player.
+In context of the opera topic map the execution of this query will be failed, because the topic item with the identifier 'http://psi.ontopedia.net/Puccini' will be used by other topic map constructs for example as reifier or as a association player. A delete-expression only removes independent constructs. Dependent constructs are topic items used as theme, type or player.
 
 The delete-expression supports an optional keyword to remove dependent constructs too. Please take care, because all dependent elements will be removed too. If the delete-expression contains the keyword 'CASCADE' all dependent elements will be removed. This means that all scoped elements, all instances or subtypes and all played associations will be removed from the topic map.
 
@@ -82,11 +82,11 @@ By using variables the delete-clause can be used to remove specific elements of 
 
 ===== Use Case =====
 
-In the last tutorial in this section we want to remove all topic map constructs except the topic map itselfs.
+In the last tutorial in this section we want to remove all topic map constructs except the topic map itself.
 
 ===== Solution =====
 
-To realize the removage of all topic map items, the delete-expression can used the special keyword 'ALL'. The keyword 'CASCADE' will be mandatory because the topic map constructs will be depend to each other. The whole delete-expression similar contains only three keywords and nothing more.
+To realize the deletion of all topic map items, the delete-expression can used the special keyword 'ALL'. The keyword 'CASCADE' will be mandatory because the topic map constructs will be depend to each other. The whole delete-expression similar contains only three keywords and nothing more.
 
 ----------------------
 1:	DELETE CASCADE ALL

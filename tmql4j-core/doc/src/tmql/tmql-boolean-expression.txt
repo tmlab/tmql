@@ -1,14 +1,14 @@
 === Boolean expressions and boolean primitives ===
 
-To define conditions which should be satisfied by the items contained in the result set, the draft supports boolean expressions representing the combination of boolean primitves. A booleam primitive represent an atomic condition for example a type or scope matching.
+To define conditions which should be satisfied by the items contained in the result set, the draft supports boolean expressions representing the combination of boolean primitives. A boolean primitive represent an atomic condition for example a type or scope matching.
 
-In the context of query booleaqn expressions and boolean primitives can be used at different positions, for example as filter definitions after navigation steps or as a part of where-clauses. For more information please take a look at the corresponding chapter.
+In the context of query boolean expressions and boolean primitives can be used at different positions, for example as filter definitions after navigation steps or as a part of where-clauses. For more information please take a look at the corresponding chapter.
 
-There are different types of boolean primitves and boolean combinations. This chapter give a short overview about boolean primitives and their combinations using boolean expressions.
+There are different types of boolean primitives and boolean combinations. This chapter give a short overview about boolean primitives and their combinations using boolean expressions.
 
 ==== Instance-of expressions ====
 
-The 'instance-of expression' or 'ISA-expression' is contained by the non-canonical level of the query language and describe the type-instance relation of a topic type and an instance represented by a topic item. The expression should be used to bind variables only to instances of a specific type. In this context a variable will be bind only to instances of this specific type. The production of an 'instance-of expression' is quite simple and looks like the following definintion.
+The 'instance-of expression' or 'ISA-expression' is contained by the non-canonical level of the query language and describe the type-instance relation of a topic type and an instance represented by a topic item. The expression should be used to bind variables only to instances of a specific type. In this context a variable will be bind only to instances of this specific type. The production of an 'instance-of expression' is quite simple and looks like the following definition.
 
 ----------------------------
 1:	ISA-EXPRESSION 		::=	VALUE-EXPRESSION 'ISA' VALUE-EXPRESSION
@@ -18,11 +18,11 @@ The 'instance-of expression' or 'ISA-expression' is contained by the non-canonic
 An instance-of expression symbolized by the keyword 'ISA' which will be reserved for this expression type. The first value-expression in front of the keyword represents the instance. Normally the first value-expression only contains a variable which will be bind to different topic map items. The second value expression represents the topic type which will be represented by a topic reference or a navigation expression. The expression returns 'true' only if the value-expression in front of the keyword returns a topic item being an instance of the topic type returned by the second value-expression. If the first value-expression is represented as a variable the set of possible variable bindings will be reduced to all instances of the topic type returned by the second value-expression.
 
 [NOTE]
-The production is only valid on the non-canonical level. The expression can be replaced by its canonical counterpart representing a 'predicate-invocation' with the predefined type of a 'type-instance' associaton and the predefined role types.
+The production is only valid on the non-canonical level. The expression can be replaced by its canonical counterpart representing a 'predicate-invocation' with the predefined type of a 'type-instance' association and the predefined role types.
 
 ==== Kind-of expressions ====
 
-The 'kind-of expression' or 'AKO-expression' is contained by the non-canonical level of the query language and describe the supertype-subtype relation of a topic type and its supertypes. The expression should be used to bind variables only to subtypes of a specific type. In this context a variable will be bind only to subtypes of this specific type. The production of an 'kind-of expression' is quite simple and looks like the following definintion.
+The 'kind-of expression' or 'AKO-expression' is contained by the non-canonical level of the query language and describe the supertype-subtype relation of a topic type and its supertypes. The expression should be used to bind variables only to subtypes of a specific type. In this context a variable will be bind only to subtypes of this specific type. The production of an 'kind-of expression' is quite simple and looks like the following definition.
 
 ----------------------------
 1:	AKO-EXPRESSION 		::=	VALUE-EXPRESSION 'AKO' VALUE-EXPRESSION
@@ -32,28 +32,28 @@ The 'kind-of expression' or 'AKO-expression' is contained by the non-canonical l
 A kind-of expression symbolized by the keyword 'AKO' which will be reserved for this expression type. The first value-expression in front of the keyword represents the subtype. Normally the first value-expression only contains a variable which will be bind to different topic map items. The second value expression represents the supertype which will be represented by a topic reference or a navigation expression. The expression returns 'true' only if the value-expression in front of the keyword returns a topic type being a subtype of the topic type returned by the second value-expression. If the first value-expression is represented as a variable the set of possible variable bindings will be reduced to all subtypes of the topic type returned by the second value-expression.
 
 [NOTE]
-The production is only valid on the non-canonical level. The expression can be replaced by its canonical counterpart representing a 'predicate-invocation' with the predefined type of a 'supertype-subtype' associaton and the predefined role types.
+The production is only valid on the non-canonical level. The expression can be replaced by its canonical counterpart representing a 'predicate-invocation' with the predefined type of a 'supertype-subtype' association and the predefined role types.
 
 ==== Predicate invocations ====
 
 One of the fundamental concept of a topic map are association items. An association item is used to define a relationship between a set of topic items and representing a defined semantic meaning. Each topic item can act as a player in the context of different role types.
 
-The importance of association items indicates that necessity of modelling associations as a part of a query. To realize the definition of relations between topic items as a condition, the topic maps query language contains the special expression type called 'predicate-invocation'. The syntax of predicates is similar to the CTM syntax to define associations.
+The importance of association items indicates that necessity of modeling associations as a part of a query. To realize the definition of relations between topic items as a condition, the topic maps query language contains the special expression type called 'predicate-invocation'. The syntax of predicates is similar to the CTM syntax to define associations.
 
 ---------------------------------
 1:	PREDICATE-INVOCATION 	::= TOPIC-REF '(' < TYPE-PLAYER-DEFINITION > ')'
 2:	TYPE-PLAYER-DEFINITION	::=	TOPIC-REF ':' VALUE-EXPRESSION | '...'
 ---------------------------------
 
-The 'predicate-invocation' starts with a topic reference representng the association type followed by a set of type-player definitions for a specific role construct. If the association type does not exists an error will be raised by the query processor. A predicate can contain a unquantified number of role constraints define a type-player combination which has to be satisfied by an association item. A role type will be represented by a topic reference and the player can be a topic reference or a variable. If the player is bound to a variable the condition checks if the variable is bind to a topic reference playing the specific role in one association item with the other constraints. Each constraint must be satsified by the association item. 
+The 'predicate-invocation' starts with a topic reference representing the association type followed by a set of type-player definitions for a specific role construct. If the association type does not exists an error will be raised by the query processor. A predicate can contain a non-quantified number of role constraints define a type-player combination which has to be satisfied by an association item. A role type will be represented by a topic reference and the player can be a topic reference or a variable. If the player is bound to a variable the condition checks if the variable is bind to a topic reference playing the specific role in one association item with the other constraints. Each constraint must be satisfied by the association item. 
 
-In contrast to the Tolog query language this operation is strict, which means that the association item has to satisify exactly the constraints defined and must not contain any other role construct than defined by the set of constraints. To handle them as non-strict operation the ellipsis '...' has to be used at the end of role-constraints.
+In contrast to the tolog query language this operation is strict, which means that the association item has to satisfy exactly the constraints defined and must not contain any other role construct than defined by the set of constraints. To handle them as non-strict operation the ellipsis '...' has to be used at the end of role-constraints.
 
 ==== Quantified expressions ====
 
-Quantified expressions are special boolean primitives checks a boolean condition in combination with a numerical restriction of satistying items. 
+Quantified expressions are special boolean primitives checks a boolean condition in combination with a numerical restriction of satisfying items. 
 
-A quantified expression define a sub set of variables bindings which will be checked for satisfaction of the given boolean condition. The number of satifying items depends on the type of quantified expression and can be defined as upper or lower bound. Quantified expressions can be split into two types 'for-all clauses' and 'exists clauses'.
+A quantified expression define a sub set of variables bindings which will be checked for satisfaction of the given boolean condition. The number of satisfying items depends on the type of quantified expression and can be defined as upper or lower bound. Quantified expressions can be split into two types 'for-all clauses' and 'exists clauses'.
 
 ===== Forall clauses =====
 
@@ -69,11 +69,11 @@ In this context a binding set is used to define a variable binding for the speci
 A for-all clause only returns 'true' if each value of the content satisfies the condition defined by the contained boolean-expression. After the execution of the for-all clause the internal variable will be destroyed.
 
 [NOTE]
-The complexity of quantified expression is much higher than simple expression because of the internal iteration over a varaible binding set.
+The complexity of quantified expression is much higher than simple expression because of the internal iteration over a variable binding set.
 
 ===== Exists clauses =====
 
-An 'exists clause' can be split into numerically unrestricted and numerically restricted expression. Unrestricted exists clauses always starts with the keyword 'SOME' followed by a binding-set and a boolean-expression similar to the 'for-all caluse' as we see at the following query snippet. 
+An 'exists clause' can be split into numerically unrestricted and numerically restricted expression. Unrestricted exists clauses always starts with the keyword 'SOME' followed by a binding-set and a boolean-expression similar to the 'for-all clause' as we see at the following query snippet. 
 
 -------------------------------
 1:	EXISTS-CLAUSE 	::=	'SOME' BINDING-SET 'SATISFIES' BOOLEAN-EXPRESSION
@@ -97,6 +97,6 @@ There are two syntactical forms of numerically restricted exists clauses. If the
 
 ==== Boolean operators ====
 
-To combine boolean primitves in the context of boolean condition the current draft supports 'boolean expressions'. Boolean expressions normally representing a boolean conjunction, disjunction or negation. Sometimes they will be used to clamp a boolean combination to change the execution order.
+To combine boolean primitives in the context of boolean condition the current draft supports 'boolean expressions'. Boolean expressions normally representing a boolean conjunction, disjunction or negation. Sometimes they will be used to clamp a boolean combination to change the execution order.
 
 Boolean conjunctions are symbolized by the keyword 'AND' and disjunction by the keyword 'OR'. The keyword 'NOT' is used to create a negation of a condition.

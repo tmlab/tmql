@@ -12,9 +12,9 @@ It is possible to use embedded queries to create connections between existing co
 
 ==== Processing model ====
 
-The processing model of insert expressions is quite simple. If there is an where clause it will be interpreted in the same way like as a part of a select expression or flwr expression. The where clause is used to evalute a sub set of possible variables bindings which should be used in the content of the insert clause. The result of the evalutation will be a set of variables bindings.
+The processing model of insert expressions is quite simple. If there is an where clause it will be interpreted in the same way like as a part of a select expression or flwr expression. The where clause is used to evaluate a sub set of possible variables bindings which should be used in the content of the insert clause. The result of the evaluation will be a set of variables bindings.
 
-Then the insert clause will be interpreted for each variable binding returned by the where-clause. If the CTM fragment contains an embedded query it will be interpreted and the result will be added to the CTM stream. If the result is an topic map information item it will be serialized to CTM. Literals will keep unmodified. Each variable binding creates one CTM fragment which will be deserialized to the corresponding topic map fragment and will be added to the queried topic map.
+Then the insert clause will be interpreted for each variable binding returned by the where-clause. If the CTM fragment contains an embedded query it will be interpreted and the result will be added to the CTM stream. If the result is an topic map information item it will be serialized to CTM. Literals will keep unmodified. Each variable binding creates one CTM fragment which will be de-serialized to the corresponding topic map fragment and will be added to the queried topic map.
 
 The overall result of the query will be a singleton sequence of a singleton tuple containing the number of created items.
 
@@ -22,7 +22,7 @@ The overall result of the query will be a singleton sequence of a singleton tupl
 
 The insert clause only contains the keyword 'INSERT' followed by a CTM stream enclosing by triple single quotes. 
 
-By using embedded queries the CTM fragment can use the bounded variables of the 'where clause' or embed an independent sub-query. An embedded query expression symbolized by the enclosing angle brackets '{' and '}'. The content of this query expression can be represented by every expression type described by the whole draft like an other flwr expression or a path expression. At first the sub-query will be interpreted in the normal way except the dependency of inherit variable bindings by the enclosing expression, which means that the embeded query can use all variables bound by the enclosing expression, too. 
+By using embedded queries the CTM fragment can use the bounded variables of the 'where clause' or embed an independent sub-query. An embedded query expression symbolized by the enclosing angle brackets '{' and '}'. The content of this query expression can be represented by every expression type described by the whole draft like an other flwr expression or a path expression. At first the sub-query will be interpreted in the normal way except the dependency of inherit variable bindings by the enclosing expression, which means that the embedded query can use all variables bound by the enclosing expression, too. 
 
 If the 'insert clause' creates an invalid CTM fragment in relation to the current CTM draft an error will be raised.
 

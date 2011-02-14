@@ -2,7 +2,7 @@
 
 Literals are terminals which aren't reserved keywords of the query language. Non-constant literals normally represent values of constant atoms like a string literal. 
 
-Constant literals are called atoms and representing the internal datatypes which can be used in the constant way by using the identifier of the datatype. The current draft adopts a list of primitve datatypes of the CTM draft and add the 'date' and 'dateTime' datatype of XSD to define time as core types of the queried topic map. The following table contains a number of all predefined atoms and there values which can be represented by other literals.
+Constant literals are called atoms and representing the internal datatypes which can be used in the constant way by using the identifier of the datatype. The current draft adopts a list of primitive datatypes of the CTM draft and add the 'date' and 'dateTime' datatype of XSD to define time as core types of the queried topic map. The following table contains a number of all predefined atoms and there values which can be represented by other literals.
 
 [cols="1,5"]
 |=====

@@ -21,6 +21,10 @@ import de.topicmapslab.tmql4j.grammar.productions.IFunction;
 import de.topicmapslab.tmql4j.path.grammar.functions.string.LengthFunction;
 import de.topicmapslab.tmql4j.path.grammar.functions.string.RegExpFunction;
 import de.topicmapslab.tmql4j.path.grammar.functions.string.StringConcatFunction;
+import de.topicmapslab.tmql4j.path.grammar.functions.string.StringGeqFunction;
+import de.topicmapslab.tmql4j.path.grammar.functions.string.StringGtFunction;
+import de.topicmapslab.tmql4j.path.grammar.functions.string.StringLeqFunction;
+import de.topicmapslab.tmql4j.path.grammar.functions.string.StringLtFunction;
 import de.topicmapslab.tmql4j.path.grammar.functions.string.SubStringFunction;
 import de.topicmapslab.tmql4j.path.grammar.productions.AliasValueExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.FunctionInvocation;
@@ -36,7 +40,11 @@ import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.Tmql
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.TranslatorRegistry;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.functions.string.RegExpFunctionTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.functions.string.StringConcatFunctionTranslator;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.functions.string.StringGeqFunctionTranslator;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.functions.string.StringGtFunctionTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.functions.string.StringLengthFunctionTranslator;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.functions.string.StringLeqFunctionTranslator;
+import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.functions.string.StringLtFunctionTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.functions.string.SubStringFunctionTranslator;
 
 /**
@@ -204,6 +212,10 @@ public abstract class FunctionTranslatorImpl extends TmqlSqlTranslatorImpl<Funct
 		translators.put(SubStringFunction.class, new SubStringFunctionTranslator());
 		translators.put(StringConcatFunction.class, new StringConcatFunctionTranslator());
 		translators.put(LengthFunction.class, new StringLengthFunctionTranslator());
+		translators.put(StringGeqFunction.class, new StringGeqFunctionTranslator());
+		translators.put(StringGtFunction.class, new StringGtFunctionTranslator());
+		translators.put(StringLeqFunction.class, new StringLeqFunctionTranslator());
+		translators.put(StringLtFunction.class, new StringLtFunctionTranslator());
 	}
 
 	public static IFunctionTranslator getFunctionTranslator(Class<? extends IFunction> functionType) {
