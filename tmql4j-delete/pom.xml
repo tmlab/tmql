@@ -7,8 +7,8 @@
 		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 	<groupId>de.topicmapslab.tmql4j</groupId>
-	<artifactId>tmql4j-merge</artifactId>
-	<name>TMQL Merge Style</name>
+	<artifactId>tmql4j-delete</artifactId>
+	<name>TMQL Delete Style</name>
 	<build>
 		<resources>
 			<resource>
@@ -64,24 +64,25 @@
 					<manifestLocation>META-INF</manifestLocation>
 					<instructions>
 						<Bundle-Version>${osgi.version}</Bundle-Version>
-						<Export-Package>
-							de.topicmapslab.tmql4j.merge.* 
+						<Export-Package>de.topicmapslab.tmql4j.delete.*
 						</Export-Package>
 						<Require-Bundle>
 							org.tmapi;bundle-version="2.0.3",
 							de.topicmapslab.tmql4j;bundle-version="3.0.0",
 							de.topicmapslab.tmql4j.path;bundle-version="3.0.0"
-						</Require-Bundle>
+							</Require-Bundle>
 						<Import-Package>
-							de.topicmapslab.majortom.util;resolution:=optional,
 							org.osgi.framework,
-							org.slf4j;version="1.6.1"
- 						</Import-Package>
-						<Bundle-SymbolicName>de.topicmapslab.tmql4j.merge</Bundle-SymbolicName>
-						<Bundle-Name>TMQL Merge Style</Bundle-Name>
+							org.slf4j;version="1.6.1",
+							org.slf4j.helpers;version="1.6.1",
+							org.slf4j.impl;version="1.6.1",
+							org.slf4j.spi;version="1.6.1"
+						</Import-Package>
+						<Bundle-SymbolicName>de.topicmapslab.tmql4j.delete</Bundle-SymbolicName>
+						<Bundle-Name>TMQL Delete Style</Bundle-Name>
 						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
 						<Bundle-RequiredExecutionEnvironment>JavaSE-1.6</Bundle-RequiredExecutionEnvironment>
-						<Service-Component>OSGI-INF/tmql4j-merge.xml</Service-Component>
+						<Service-Component>OSGI-INF/tmql4j-delete.xml</Service-Component>
 					</instructions>
 				</configuration>
 			</plugin>

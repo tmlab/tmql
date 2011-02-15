@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Service-Component: OSGI-INF/tmql4j-flwr.xml
 Export-Package: de.topicmapslab.tmql4j.flwr.grammar.productions;uses:=
  "de.topicmapslab.tmql4j.flwr.grammar.lexical",de.topicmapslab.tmql4j.
  flwr.components.processor.results.xml,de.topicmapslab.tmql4j.flwr.com
@@ -12,7 +13,6 @@ Export-Package: de.topicmapslab.tmql4j.flwr.grammar.productions;uses:=
  s:="de.topicmapslab.tmql4j.flwr.grammar.productions,de.topicmapslab.t
  mql4j.flwr.components.interpreter,de.topicmapslab.tmql4j.flwr.grammar
  .lexical"
-Service-Component: OSGI-INF/tmql4j-flwr.xml
 Bundle-ActivationPolicy: lazy
 Tool: Bnd-1.15.0
 Bundle-Name: TMQL FLWR Style
@@ -23,8 +23,8 @@ Require-Bundle: org.tmapi;bundle-version="2.0.3",de.topicmapslab.tmql4
  3.0.0",de.topicmapslab.ctmwriter;bundle-version="1.0.8",org.tmapix.co
  re;bundle-version="0.2.0",org.tmapix.io;bundle-version="1.0.0",com.se
  magia.mio.syntaxpacknodeps;bundle-version="0.1.2"
-Bundle-Version: 3.0.0.201102141546
-Bnd-LastModified: 1297694928795
+Bundle-Version: 3.0.0.201102150734
+Bnd-LastModified: 1297751802373
 Bundle-ManifestVersion: 2
 Import-Package: de.topicmapslab.majortom.util;resolution:=optional,org
  .osgi.framework;version="[1.4,2)",org.slf4j;version="1.6.1",org.tmapi

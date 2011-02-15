@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Service-Component: OSGI-INF/tmql4j-update.xml
 Export-Package: de.topicmapslab.tmql4j.update.grammar.productions;uses
  :="de.topicmapslab.tmql4j.update.grammar.tokens",de.topicmapslab.tmql
  4j.update.util;uses:="de.topicmapslab.tmql4j.update.exception,de.topi
@@ -10,7 +11,6 @@ Export-Package: de.topicmapslab.tmql4j.update.grammar.productions;uses
  opicmapslab.tmql4j.update.components.interpreter,de.topicmapslab.tmql
  4j.update.grammar.tokens",de.topicmapslab.tmql4j.update.grammar.token
  s,de.topicmapslab.tmql4j.update.exception
-Service-Component: OSGI-INF/tmql4j-update.xml
 Bundle-ActivationPolicy: lazy
 Tool: Bnd-1.15.0
 Bundle-Name: TMQL Update Style
@@ -19,8 +19,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.tmapi;bundle-version="2.0.3",de.topicmapslab.tmql4
  j;bundle-version="3.0.0",de.topicmapslab.tmql4j.path;bundle-version="
  3.0.0"
-Bundle-Version: 3.0.0.201102141546
-Bnd-LastModified: 1297694973451
+Bundle-Version: 3.0.0.201102150734
+Bnd-LastModified: 1297751811685
 Bundle-ManifestVersion: 2
 Import-Package: org.osgi.framework;version="[1.4,2)",org.slf4j;version
  ="1.6.1"
