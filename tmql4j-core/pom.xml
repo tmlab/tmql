@@ -8,7 +8,6 @@
 	</parent>
 	<groupId>de.topicmapslab.tmql4j</groupId>
 	<artifactId>tmql4j-core</artifactId>
-	<version>${project.parent.version}</version>
 	<name>Tmql4J Core Components</name>
 	<build>
 		<resources>

@@ -23,8 +23,8 @@ Require-Bundle: org.tmapi;bundle-version="2.0.3",de.topicmapslab.tmql4
  3.0.0",de.topicmapslab.ctmwriter;bundle-version="1.0.8",org.tmapix.co
  re;bundle-version="0.2.0",org.tmapix.io;bundle-version="1.0.0",com.se
  magia.mio.syntaxpacknodeps;bundle-version="0.1.2"
-Bundle-Version: 3.0.0.201102140721
-Bnd-LastModified: 1297664464187
+Bundle-Version: 3.0.0.201102141546
+Bnd-LastModified: 1297694928795
 Bundle-ManifestVersion: 2
 Import-Package: de.topicmapslab.majortom.util;resolution:=optional,org
  .osgi.framework;version="[1.4,2)",org.slf4j;version="1.6.1",org.tmapi

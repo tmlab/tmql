@@ -14,6 +14,7 @@ import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.junit.Test;
 import org.tmapi.core.Association;
@@ -45,7 +46,8 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(topic.getId(), set.first().first());
+		assertEquals(topic.getId(), set.get(0,"topics"));
 		assertEquals(1, topic.getSubjectLocators().size());
 		assertEquals("http://psi.example.org/loc", topic.getSubjectLocators().iterator().next().getReference());
 
@@ -61,7 +63,8 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(topic.getId(), set.first().first());
+		assertEquals(topic.getId(), set.get(0,"topics"));
 		assertEquals(1, topic.getSubjectIdentifiers().size());
 		assertEquals("http://psi.example.org/loc", topic.getSubjectIdentifiers().iterator().next().getReference());
 	}
@@ -76,7 +79,8 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(topic.getId(), set.first().first());
+		assertEquals(topic.getId(), set.get(0,"topics"));
 		assertEquals(1, topic.getItemIdentifiers().size());
 		assertEquals("http://psi.example.org/loc", topic.getItemIdentifiers().iterator().next().getReference());
 	}
@@ -90,10 +94,12 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		String query = " UPDATE names ADD \"Name\" WHERE myTopic ";
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
-		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(2, set.first().size());
+		assertEquals(topic.getId(), set.get(0,"topics"));
+		
 		assertEquals(1, topic.getNames().size());
-		;
+		assertEquals(topic.getNames().iterator().next().getId(), set.get(0,"names"));
+		
 		assertEquals("Name", topic.getNames().iterator().next().getValue());
 	}
 
@@ -107,9 +113,11 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		String query = " UPDATE names myType ADD \"Name\" WHERE myTopic ";
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
-		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(2, set.first().size());
+		assertEquals(topic.getId(), set.get(0,"topics"));
+		
 		assertEquals(1, topic.getNames().size());
+		assertEquals(topic.getNames().iterator().next().getId(), set.get(0,"names"));
 		assertEquals("Name", topic.getNames().iterator().next().getValue());
 		assertEquals(type, topic.getNames().iterator().next().getType());
 	}
@@ -126,7 +134,8 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(name.getId(), set.first().first());
+		assertEquals(name.getId(), set.get(0,"names"));
 		assertEquals(1, topic.getNames().size());
 		assertEquals("New Name", name.getValue());
 
@@ -134,70 +143,80 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(name.getId(), set.first().first());
+		assertEquals(name.getId(), set.get(0,"names"));
 		assertEquals("\"Abra\"", name.getValue());
 
 		query = " UPDATE names SET \"\\\"Abra\\\"\" WHERE \"" + name.getId() + "\" << id";
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(name.getId(), set.first().first());
+		assertEquals(name.getId(), set.get(0,"names"));
 		assertEquals("\"Abra\"", name.getValue());
 
 		query = " UPDATE names SET \"Abr\\\"a\" WHERE \"" + name.getId() + "\" << id";
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(name.getId(), set.first().first());
+		assertEquals(name.getId(), set.get(0,"names"));
 		assertEquals("Abr\"a", name.getValue());
 
 		query = " UPDATE names SET \"\"\"Abr\\\"a\"\"\" WHERE \"" + name.getId() + "\" << id";
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(name.getId(), set.first().first());
+		assertEquals(name.getId(), set.get(0,"names"));
 		assertEquals("Abr\"a", name.getValue());
 
 		query = " UPDATE names SET \"Abra\\\"\" WHERE \"" + name.getId() + "\" << id";
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(name.getId(), set.first().first());
+		assertEquals(name.getId(), set.get(0,"names"));
 		assertEquals("Abra\"", name.getValue());
 
 		query = " UPDATE names SET \"\"\"Abra\\\"\"\"\" WHERE \"" + name.getId() + "\" << id";
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(name.getId(), set.first().first());
+		assertEquals(name.getId(), set.get(0,"names"));
 		assertEquals("Abra\"", name.getValue());
 
 		query = " UPDATE names SET \"Abra\\\\\" WHERE \"" + name.getId() + "\" << id";
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(name.getId(), set.first().first());
+		assertEquals(name.getId(), set.get(0,"names"));
 		assertEquals("Abra\\", name.getValue());
 
 		query = " UPDATE names SET \"\"\"Abra\\\\\"\"\" WHERE \"" + name.getId() + "\" << id";
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(name.getId(), set.first().first());
+		assertEquals(name.getId(), set.get(0,"names"));
 		assertEquals("Abra\\", name.getValue());
 
 		query = " UPDATE names SET \"\\\\\\\"Abra\\\\\\\"\" WHERE \"" + name.getId() + "\" << id";
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(name.getId(), set.first().first());
+		assertEquals(name.getId(), set.get(0,"names"));
 		assertEquals("\\\"Abra\\\"", name.getValue());
 
 		query = " UPDATE names SET \"\"\"\\\\\\\"Abra\\\\\\\"\"\"\" WHERE \"" + name.getId() + "\" << id";
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(name.getId(), set.first().first());
+		assertEquals(name.getId(), set.get(0,"names"));
 		assertEquals("\\\"Abra\\\"", name.getValue());
 	}
 
@@ -211,9 +230,10 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		String query = " UPDATE occurrences myType ADD \"Value\" WHERE myTopic ";
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
-		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(2, set.first().size());
+		assertEquals(topic.getId(), set.get(0,"topics"));
 		assertEquals(1, topic.getOccurrences().size());
+		assertEquals(topic.getOccurrences().iterator().next().getId(), set.get(0,"occurrences"));		
 		assertEquals("Value", topic.getOccurrences().iterator().next().getValue());
 		assertEquals(type, topic.getOccurrences().iterator().next().getType());
 	}
@@ -229,7 +249,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(topic.getOccurrences().iterator().next().getId(), set.get(0,"occurrences"));
 		assertEquals(1, topic.getOccurrences().size());
 		assertEquals("New Value", topic.getOccurrences().iterator().next().getValue());
 
@@ -237,7 +257,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(topic.getOccurrences().iterator().next().getId(), set.get(0,"occurrences"));
 		assertEquals(1, topic.getOccurrences().size());
 		assertEquals("New\"'Value", topic.getOccurrences().iterator().next().getValue());
 
@@ -245,7 +265,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(topic.getOccurrences().iterator().next().getId(), set.get(0,"occurrences"));
 		assertEquals(1, topic.getOccurrences().size());
 		assertEquals("New\"'Value\"", topic.getOccurrences().iterator().next().getValue());
 
@@ -253,7 +273,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(topic.getOccurrences().iterator().next().getId(), set.get(0,"occurrences"));
 		assertEquals(1, topic.getOccurrences().size());
 		assertEquals("\"New\"'Value\"", topic.getOccurrences().iterator().next().getValue());
 
@@ -261,7 +281,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(topic.getOccurrences().iterator().next().getId(), set.get(0,"occurrences"));
 		assertEquals(1, topic.getOccurrences().size());
 		assertEquals("New Value", topic.getOccurrences().iterator().next().getValue());
 		assertEquals(XmlSchemeDatatypes.XSD_BOOLEAN, topic.getOccurrences().iterator().next().getDatatype().getReference());
@@ -270,7 +290,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(topic.getOccurrences().iterator().next().getId(), set.get(0,"occurrences"));
 		assertEquals(1, topic.getOccurrences().size());
 		assertEquals("2'11", topic.getOccurrences().iterator().next().getValue());
 		assertEquals(XmlSchemeDatatypes.XSD_STRING, topic.getOccurrences().iterator().next().getDatatype().getReference());
@@ -279,7 +299,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(topic.getOccurrences().iterator().next().getId(), set.get(0,"occurrences"));
 		assertEquals(1, topic.getOccurrences().size());
 		assertEquals("2'11", topic.getOccurrences().iterator().next().getValue());
 		assertEquals(XmlSchemeDatatypes.XSD_STRING, topic.getOccurrences().iterator().next().getDatatype().getReference());
@@ -288,7 +308,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(topic.getOccurrences().iterator().next().getId(), set.get(0,"occurrences"));
 		assertEquals(1, topic.getOccurrences().size());
 		assertEquals("Abra\"", topic.getOccurrences().iterator().next().getValue());
 		assertEquals(XmlSchemeDatatypes.XSD_STRING, topic.getOccurrences().iterator().next().getDatatype().getReference());
@@ -297,7 +317,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(topic.getOccurrences().iterator().next().getId(), set.get(0,"occurrences"));
 		assertEquals(1, topic.getOccurrences().size());
 		assertEquals("Abra\"", topic.getOccurrences().iterator().next().getValue());
 		assertEquals(XmlSchemeDatatypes.XSD_STRING, topic.getOccurrences().iterator().next().getDatatype().getReference());
@@ -306,7 +326,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(topic.getOccurrences().iterator().next().getId(), set.get(0,"occurrences"));
 		assertEquals(1, topic.getOccurrences().size());
 		assertEquals("Abra\\", topic.getOccurrences().iterator().next().getValue());
 		assertEquals(XmlSchemeDatatypes.XSD_STRING, topic.getOccurrences().iterator().next().getDatatype().getReference());
@@ -315,7 +335,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(topic.getOccurrences().iterator().next().getId(), set.get(0,"occurrences"));
 		assertEquals(1, topic.getOccurrences().size());
 		assertEquals("Abra\\", topic.getOccurrences().iterator().next().getValue());
 		assertEquals(XmlSchemeDatatypes.XSD_STRING, topic.getOccurrences().iterator().next().getDatatype().getReference());
@@ -333,7 +353,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(topic.getOccurrences().iterator().next().getId(), set.get(0,"occurrences"));
 		assertEquals(1, topic.getOccurrences().size());
 		assertEquals(1, topic.getOccurrences().iterator().next().getScope().size());
 		assertTrue(topic.getOccurrences().iterator().next().getScope().contains(theme));
@@ -351,7 +371,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(topic.getNames().iterator().next().getId(), set.get(0,"names"));
 		assertEquals(1, topic.getNames().size());
 		assertEquals(1, topic.getNames().iterator().next().getScope().size());
 		assertTrue(topic.getNames().iterator().next().getScope().contains(theme));
@@ -370,7 +390,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(a.getId(), set.get(0,"associations"));
 		assertEquals(1, a.getScope().size());
 		assertTrue(a.getScope().contains(theme));
 	}
@@ -385,7 +405,8 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertTrue(set.get(0,"topics") instanceof Collection<?>);
+		assertEquals(1,((Collection<?>)set.get(0,"topics")).size());
 		assertEquals(1, topic.getTypes().size());
 		assertTrue(topic.getTypes().contains(type));
 	}
@@ -402,7 +423,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(o.getId(), set.get(0,"occurrences"));
 		assertEquals(other, o.getType());
 	}
 
@@ -418,7 +439,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(n.getId(), set.get(0,"names"));
 		assertEquals(other, n.getType());
 	}
 
@@ -435,7 +456,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(a.getId(), set.get(0,"associations"));
 		assertEquals(other, a.getType());
 	}
 
@@ -449,7 +470,8 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertTrue(set.get(0,"topics") instanceof Collection<?>);
+		assertEquals(1,((Collection<?>)set.get(0,"topics")).size());
 		assertEquals(1, topic.getTypes().size());
 		assertTrue(topic.getTypes().contains(type));
 	}
@@ -466,7 +488,8 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertTrue(set.get(0,"topics") instanceof Collection<?>);
+		assertEquals(1,((Collection<?>)set.get(0,"topics")).size());
 		assertEquals(1, topic.getRolesPlayed(subtype).size());
 		assertEquals(type, topic.getRolesPlayed(subtype).iterator().next().getParent().getRoles(supertype).iterator().next().getPlayer());
 	}
@@ -483,7 +506,8 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertTrue(set.get(0,"topics") instanceof Collection<?>);
+		assertEquals(1,((Collection<?>)set.get(0,"topics")).size());
 		assertEquals(1, topic.getRolesPlayed(subtype).size());
 		assertEquals(type, topic.getRolesPlayed(subtype).iterator().next().getParent().getRoles(supertype).iterator().next().getPlayer());
 	}
@@ -501,7 +525,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertTrue(set.get(0,"roles") instanceof Collection<?>);
 		assertEquals(other, r.getPlayer());
 	}
 
@@ -512,15 +536,22 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		Topic otherType = createTopicBySL("otherType");
 		Topic other = createTopicBySL("other");
 		Association a = createAssociation(type);
-		a.createRole(createTopic(), topic);
+		Role r = a.createRole(createTopic(), topic);
 		assertEquals(1, a.getRoles().size());
 		assertEquals(0, a.getRoles(otherType).size());
 
 		String query = " UPDATE roles other ADD otherType WHERE myType ( tm:subject : myTopic )";
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
-		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(2, set.first().size());
+		assertEquals(a.getId(),set.get(0,"associations"));
+		assertNotNull(set.get(0,"roles"));
+		Iterator<Role> it = a.getRoles(otherType).iterator();
+		Role r2 = it.next();
+		if ( r2.equals(r)){
+			r2 = it.next();
+		}
+		assertEquals(r2.getId(),set.get(0,"roles"));
 		assertEquals(2, a.getRoles().size());
 		assertEquals(1, a.getRoles(otherType).size());
 		assertEquals(other, a.getRoles(otherType).iterator().next().getPlayer());
@@ -546,7 +577,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(a.getId(), set.get(0, "associations"));
 		assertEquals(reifier, a.getReifier());
 		assertEquals(a, reifier.getReified());
 
@@ -560,7 +591,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(a.getId(), set.get(0, "associations"));
 		assertEquals(reifier, a.getReifier());
 		assertEquals(a, reifier.getReified());
 
@@ -575,7 +606,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(n.getId(), set.get(0, "names"));
 		assertEquals(reifier, n.getReifier());
 		assertEquals(n, reifier.getReified());
 
@@ -589,7 +620,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(n.getId(), set.get(0, "names"));
 		assertEquals(reifier, n.getReifier());
 		assertEquals(n, reifier.getReified());
 
@@ -604,7 +635,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(o.getId(), set.get(0, "occurrences"));
 		assertEquals(reifier, o.getReifier());
 		assertEquals(o, reifier.getReified());
 
@@ -618,7 +649,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(1L, set.first().first());
+		assertEquals(o.getId(), set.get(0, "occurrences"));
 		assertEquals(reifier, o.getReifier());
 		assertEquals(o, reifier.getReified());
 
@@ -636,10 +667,10 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 
 		String query = " UPDATE indicators ADD \"http://psi.example.org/loc\", item ADD \"http://psi.example.org/ii\" WHERE myTopic ";
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
-		assertEquals(1, set.size());
-		assertEquals(2, set.first().size());
-		assertEquals(1L, set.first().first());
-		assertEquals(1L, set.first().getResults().get(1));
+		assertEquals(2, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(topic.getId(), set.get(0, "topics"));
+		assertEquals(topic.getId(), set.get(1, "topics"));
 		assertEquals(1, topic.getSubjectIdentifiers().size());
 		assertEquals("http://psi.example.org/loc", topic.getSubjectIdentifiers().iterator().next().getReference());
 		assertEquals(1, topic.getItemIdentifiers().size());
@@ -738,8 +769,9 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		size += 3;
 
-		assertEquals(1, set.size());
+		assertEquals(3, set.size());		
 		assertEquals(size, topicMap.getTopics().size());
+		
 		assertNotNull(topicMap.getConstructByItemIdentifier(topicMap.createLocator("http://psi.example.org/1")));
 		assertNotNull(topicMap.getTopicBySubjectLocator(topicMap.createLocator("http://psi.example.org/2")));
 		assertNotNull(topicMap.getTopicBySubjectIdentifier(topicMap.createLocator("http://psi.example.org/3")));
@@ -754,10 +786,12 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		query = "%prefix e http://psi.example.org/ UPDATE associations ADD e:association-type ( http://psi.example.org/role-type-1 : http://psi.example.org/player1 , http://psi.example.org/role-type-2 : http://psi.example.org/player2 )";
 		IResultSet<?> rs = execute(query);		
 		assertEquals(1,rs.size());
-		assertEquals(2,rs.first().size());
+		assertEquals(3,rs.first().size());
 		assertTrue(rs.get(0, "associations") instanceof String);
 		assertTrue(rs.get(0, "roles") instanceof Collection);
+		assertTrue(rs.get(0, "topics") instanceof Collection);
 		assertEquals(2,((Collection<?>)rs.get(0, "roles")).size());
+		assertEquals(5,((Collection<?>)rs.get(0, "topics")).size());
 		
 		size++;
 

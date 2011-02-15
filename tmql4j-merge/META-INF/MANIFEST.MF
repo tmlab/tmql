@@ -18,8 +18,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.tmapi;bundle-version="2.0.3",de.topicmapslab.tmql4
  j;bundle-version="3.0.0",de.topicmapslab.tmql4j.path;bundle-version="
  3.0.0"
-Bundle-Version: 3.0.0.201102140721
-Bnd-LastModified: 1297664465750
+Bundle-Version: 3.0.0.201102141546
+Bnd-LastModified: 1297695004795
 Bundle-ManifestVersion: 2
 Import-Package: org.osgi.framework;version="[1.4,2)",org.slf4j;version
  ="1.6.1",org.slf4j.helpers;version="1.6.1",org.slf4j.impl;version="1.

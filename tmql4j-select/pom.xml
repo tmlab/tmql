@@ -8,7 +8,6 @@
 	</parent>
 	<groupId>de.topicmapslab.tmql4j</groupId>
 	<artifactId>tmql4j-select</artifactId>
-	<version>${project.parent.version}</version>
 	<name>Tmql4j Select Language Components</name>
 	<build>
 		<resources>

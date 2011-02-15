@@ -10,16 +10,18 @@
  */
 package de.topicmapslab.tmql4j.update.components.interpreter;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.Context;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.results.IResultProcessor;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.update.components.results.IUpdateAlias;
 import de.topicmapslab.tmql4j.update.grammar.productions.UpdateClause;
 import de.topicmapslab.tmql4j.update.grammar.productions.UpdateExpression;
 import de.topicmapslab.tmql4j.update.grammar.productions.WhereClause;
@@ -42,6 +44,9 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  * 
  */
 public class UpdateExpressionInterpreter extends ExpressionInterpreterImpl<UpdateExpression> {
+
+	private static String[] KEY_ARGS = new String[] { IUpdateAlias.TOPICS, IUpdateAlias.ASSOCIATIONS, IUpdateAlias.NAMES, IUpdateAlias.OCCURRENCES, IUpdateAlias.ROLES, IUpdateAlias.VARIANTS,
+			IUpdateAlias.IS_NEW };
 
 	/**
 	 * base constructor to create a new instance
@@ -67,7 +72,8 @@ public class UpdateExpressionInterpreter extends ExpressionInterpreterImpl<Updat
 			newContext.setContextBindings(matches);
 		}
 
-		Map<String, Object> tuple = HashUtil.getHashMap();
+		QueryMatches results = new QueryMatches(runtime);
+		IResultProcessor resultProcessor = context.getTmqlProcessor().getResultProcessor();
 		/*
 		 * iterate over update-clauses
 		 */
@@ -76,14 +82,23 @@ public class UpdateExpressionInterpreter extends ExpressionInterpreterImpl<Updat
 			 * call update-clause
 			 */
 			QueryMatches matches = interpreter.interpret(runtime, newContext, optionalArguments);
-			List<Object> possibleValuesForVariable = matches.getPossibleValuesForVariable();
-			if (possibleValuesForVariable.isEmpty()) {
-				return matches;
-			} else {
-				tuple.put("$" + tuple.size(), possibleValuesForVariable.get(0));
+			/*
+			 * translate to new indexes
+			 */
+			for (Map<String, Object> tuple : matches) {
+				Map<String, Object> tuple_ = HashUtil.getHashMap();
+				for (Entry<String, Object> entry : tuple.entrySet()) {
+					int index = resultProcessor.getIndexOfAlias(entry.getKey());
+					if (index == -1) {
+						throw new TMQLRuntimeException("The update clause may define an alias index!");
+					}
+					tuple_.put("$" + index, entry.getValue());
+				}
+				results.add(tuple_);
 			}
 		}
-		return QueryMatches.asQueryMatchNS(runtime, tuple);
+		context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
+		return results;
 	}
 
 	/**

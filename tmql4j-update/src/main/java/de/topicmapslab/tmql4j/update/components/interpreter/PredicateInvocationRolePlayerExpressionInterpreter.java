@@ -11,6 +11,7 @@
 package de.topicmapslab.tmql4j.update.components.interpreter;
 
 import java.util.List;
+import java.util.Map;
 
 import org.tmapi.core.Locator;
 import org.tmapi.core.Topic;
@@ -26,6 +27,7 @@ import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisIndicators;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Ellipsis;
 import de.topicmapslab.tmql4j.path.util.Restriction;
+import de.topicmapslab.tmql4j.update.components.results.IUpdateAlias;
 import de.topicmapslab.tmql4j.update.grammar.productions.PredicateInvocationRolePlayerExpression;
 import de.topicmapslab.tmql4j.util.LiteralUtils;
 
@@ -87,11 +89,15 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends Expressi
 		}
 		Restriction restriction = new Restriction();
 		restriction.setExpression(getExpression());
-		restriction.setRoleType(getOrCreateTopic(runtime, context, interpreters.get(0)));
-		restriction.setPlayer(getOrCreateTopic(runtime, context, interpreters.get(1)));
+		Container roleType = getOrCreateTopic(runtime, context, interpreters.get(0));
+		restriction.setRoleType(roleType.topic);
+		restriction.setNewRoleType(roleType.isNew);
+		Container player = getOrCreateTopic(runtime, context, interpreters.get(1));
+		restriction.setPlayer(player.topic);
+		restriction.setNewPlayer(player.isNew);
 		return restriction;
 	}
-
+	
 	/**
 	 * Method try to find the topic represented by the reference or variable. If
 	 * there isn't a topic with this identifier, a new topic will be created
@@ -112,17 +118,22 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends Expressi
 	 *             thrown if found construct isn't a topic or the variable is
 	 *             not set
 	 */
-	private final Topic getOrCreateTopic(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> interpreter) throws TMQLRuntimeException {
+	private final Container getOrCreateTopic(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> interpreter) throws TMQLRuntimeException {
+		Container c = new Container();
 		TopicMap topicMap = context.getQuery().getTopicMap();
 		QueryMatches matches = interpreter.interpret(runtime, context);
 		if (!matches.isEmpty()){
 			Object val = matches.getFirstValue();
 			if ( val instanceof Topic ){
-				return (Topic) matches.getFirstValue();
+				c.topic = (Topic)matches.getFirstValue();
+				return c;
 			}else if ( val instanceof String ){
 				String ref = runtime.getConstructResolver().toAbsoluteIRI(context, (String)val);
 				Locator locator = topicMap.createLocator(ref);
-				return TopicDefinitionInterpreter.createTopic(topicMap, AxisIndicators.class, locator);
+				Map<String, Object> tuple = TopicDefinitionInterpreter.createTopic(topicMap, AxisIndicators.class, locator);
+				c.topic = (Topic)context.getQuery().getTopicMap().getConstructById(tuple.get(IUpdateAlias.TOPICS).toString());
+				c.isNew = (Boolean)tuple.get(IUpdateAlias.IS_NEW);
+				return c;
 			}
 		}
 		
@@ -145,7 +156,14 @@ public class PredicateInvocationRolePlayerExpressionInterpreter extends Expressi
 		 * extract string-represented reference
 		 */
 		Locator locator = topicMap.createLocator(runtime.getConstructResolver().toAbsoluteIRI(context, LiteralUtils.asString(interpreter.getTokens().get(0))));
-		return TopicDefinitionInterpreter.createTopic(topicMap, identifierType, locator);
+		Map<String, Object> tuple = TopicDefinitionInterpreter.createTopic(topicMap, identifierType, locator);
+		c.topic = (Topic)context.getQuery().getTopicMap().getConstructById(tuple.get(IUpdateAlias.TOPICS).toString());
+		c.isNew = (Boolean)tuple.get(IUpdateAlias.IS_NEW);
+		return c;
 	}
 
+	class Container{
+		Topic topic;
+		boolean isNew = false;
+	}
 }

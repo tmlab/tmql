@@ -3,12 +3,13 @@ Export-Package: de.topicmapslab.tmql4j.update.grammar.productions;uses
  :="de.topicmapslab.tmql4j.update.grammar.tokens",de.topicmapslab.tmql
  4j.update.util;uses:="de.topicmapslab.tmql4j.update.exception,de.topi
  cmapslab.tmql4j.update.grammar.tokens",de.topicmapslab.tmql4j.update.
- components.interpreter;uses:="de.topicmapslab.tmql4j.update.grammar.p
- roductions,org.slf4j,de.topicmapslab.tmql4j.update.util",de.topicmaps
- lab.tmql4j.update.extension;uses:="de.topicmapslab.tmql4j.update.gram
- mar.productions,de.topicmapslab.tmql4j.update.components.interpreter,
- de.topicmapslab.tmql4j.update.grammar.tokens",de.topicmapslab.tmql4j.
- update.grammar.tokens,de.topicmapslab.tmql4j.update.exception
+ components.results,de.topicmapslab.tmql4j.update.components.interpret
+ er;uses:="de.topicmapslab.tmql4j.update.grammar.productions,org.slf4j
+ ,de.topicmapslab.tmql4j.update.util",de.topicmapslab.tmql4j.update.ex
+ tension;uses:="de.topicmapslab.tmql4j.update.grammar.productions,de.t
+ opicmapslab.tmql4j.update.components.interpreter,de.topicmapslab.tmql
+ 4j.update.grammar.tokens",de.topicmapslab.tmql4j.update.grammar.token
+ s,de.topicmapslab.tmql4j.update.exception
 Service-Component: OSGI-INF/tmql4j-update.xml
 Bundle-ActivationPolicy: lazy
 Tool: Bnd-1.15.0
@@ -18,8 +19,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.tmapi;bundle-version="2.0.3",de.topicmapslab.tmql4
  j;bundle-version="3.0.0",de.topicmapslab.tmql4j.path;bundle-version="
  3.0.0"
-Bundle-Version: 3.0.0.201102140721
-Bnd-LastModified: 1297664483765
+Bundle-Version: 3.0.0.201102141546
+Bnd-LastModified: 1297694973451
 Bundle-ManifestVersion: 2
 Import-Package: org.osgi.framework;version="[1.4,2)",org.slf4j;version
  ="1.6.1"

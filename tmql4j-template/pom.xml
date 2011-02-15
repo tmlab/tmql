@@ -42,7 +42,6 @@
 	</build>
 	<groupId>de.topicmapslab.tmql4j</groupId>
 	<artifactId>tmql4j-template</artifactId>
-	<version>${project.parent.version}</version>
 	<name>TMQL4J Template Engine</name>
 	<repositories>
 		<repository>

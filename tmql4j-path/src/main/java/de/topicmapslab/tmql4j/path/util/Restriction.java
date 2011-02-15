@@ -23,9 +23,17 @@ import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
  */
 public class Restriction {
 	/**
+	 * new player	
+	 */
+	protected boolean isNewPlayer = false;
+	/**
 	 * the player
 	 */
 	protected Object player;
+	/**
+	 * new player	
+	 */
+	protected boolean isNewRoleType = false;
 	/**
 	 * the role type
 	 */
@@ -145,6 +153,34 @@ public class Restriction {
 	public void setExpression(IExpression expression) {
 		this.ex = expression;
 		;
+	}
+	
+	/**
+	 * @return the isNewPlayer
+	 */
+	public boolean isNewPlayer() {
+		return isNewPlayer;
+	}
+	
+	/**
+	 * @return the isNewRoleType
+	 */
+	public boolean isNewRoleType() {
+		return isNewRoleType;
+	}
+	
+	/**
+	 * @param isNewPlayer the isNewPlayer to set
+	 */
+	public void setNewPlayer(boolean isNewPlayer) {
+		this.isNewPlayer = isNewPlayer;
+	}
+	
+	/**
+	 * @param isNewRoleType the isNewRoleType to set
+	 */
+	public void setNewRoleType(boolean isNewRoleType) {
+		this.isNewRoleType = isNewRoleType;
 	}
 
 }

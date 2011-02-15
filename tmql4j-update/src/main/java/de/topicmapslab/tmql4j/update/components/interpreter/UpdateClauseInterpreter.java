@@ -10,8 +10,9 @@
  */
 package de.topicmapslab.tmql4j.update.components.interpreter;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.slf4j.Logger;
@@ -32,6 +33,7 @@ import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Datatype;
 import de.topicmapslab.tmql4j.path.grammar.lexical.DatatypedElement;
+import de.topicmapslab.tmql4j.update.components.results.IUpdateAlias;
 import de.topicmapslab.tmql4j.update.grammar.productions.PredicateInvocation;
 import de.topicmapslab.tmql4j.update.grammar.productions.TopicDefinition;
 import de.topicmapslab.tmql4j.update.grammar.productions.UpdateClause;
@@ -120,21 +122,15 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 		/*
 		 * store of update-results
 		 */
-		long count = 0;
+		QueryMatches results = new QueryMatches(runtime);
 		for (IExpressionInterpreter<TopicDefinition> interpreter : getInterpretersFilteredByEypressionType(runtime, TopicDefinition.class)) {
 			/*
 			 * run interpreter
 			 */
 			QueryMatches matches = interpreter.interpret(runtime, context, optionalArguments);
-			List<Object> possibleValuesForVariable = matches.getPossibleValuesForVariable();
-			if (!possibleValuesForVariable.isEmpty()) {
-				Object obj = possibleValuesForVariable.get(0);
-				if (obj instanceof Long) {
-					count += (Long) obj;
-				}
-			}
+			results.add(matches.getMatches());
 		}
-		return QueryMatches.asQueryMatchNS(runtime, count);
+		return results;
 	}
 
 	/**
@@ -162,21 +158,15 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 		/*
 		 * store of update-results
 		 */
-		List<Object> results = HashUtil.getList();
+		QueryMatches results = new QueryMatches(runtime);
 		for (IExpressionInterpreter<PredicateInvocation> interpreter : getInterpretersFilteredByEypressionType(runtime, PredicateInvocation.class)) {
-
 			/*
 			 * run interpreter
 			 */
 			QueryMatches matches = interpreter.interpret(runtime, context, optionalArguments);
-			List<Object> possibleValuesForVariable = matches.getPossibleValuesForVariable();
-			if (!possibleValuesForVariable.isEmpty()) {
-				results.add(possibleValuesForVariable.get(0));
-			} else {
-				results.addAll(matches.getMatches());
-			}
+			results.add(matches.getMatches());
 		}
-		return QueryMatches.asQueryMatchNS(runtime, results.toArray());
+		return results;
 	}
 
 	/**
@@ -200,19 +190,18 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
+	@SuppressWarnings("unchecked")
 	private QueryMatches interpretContentModification(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		if (context.getContextBindings() == null) {
 			logger.warn("Context of modification is missing!");
 			return QueryMatches.emptyMatches();
 		}
-		/*
-		 * store number of updates
-		 */
-		long count = 0;
+		QueryMatches results = new QueryMatches(runtime);
 		/*
 		 * iterate over all tuple sequences returned by the where-clause
 		 */
 		for (Map<String, Object> tuple : context.getContextBindings()) {
+			Set<String> topicIds = HashUtil.getHashSet();
 			/*
 			 * get modification context
 			 */
@@ -248,7 +237,7 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 				if (optionalType == null) {
 					optionalType = context.getQuery().getTopicMap()
 							.createTopicBySubjectIdentifier(context.getQuery().getTopicMap().createLocator(runtime.getConstructResolver().toAbsoluteIRI(context, optionalType_)));
-					count++;
+					topicIds.add(optionalType.getId());
 				}
 			}
 			/*
@@ -267,7 +256,7 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 					if (optionalType == null) {
 						optionalType = context.getQuery().getTopicMap()
 								.createTopicBySubjectIdentifier(context.getQuery().getTopicMap().createLocator(runtime.getConstructResolver().toAbsoluteIRI(context, (String) obj)));
-						count++;
+						topicIds.add(optionalType.getId());
 					}
 				} else {
 					throw new TMQLRuntimeException("Invalid result of prepared statement, expects a string literal");
@@ -305,10 +294,28 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 				/*
 				 * perform update
 				 */
-				count += new UpdateHandler(runtime, context).update(node, value, anchor, optionalType, getGrammarTypeOfExpression() == UpdateClause.TYPE_SET, optionalDatatype);
+				QueryMatches result = new UpdateHandler(runtime, context).update(node, value, anchor, optionalType, getGrammarTypeOfExpression() == UpdateClause.TYPE_SET, optionalDatatype);
+				if (!result.isEmpty()) {
+					if (!topicIds.isEmpty()) {
+						for (Map<String, Object> match : result) {
+							if (match.containsKey(IUpdateAlias.TOPICS)) {
+								if (match.get(IUpdateAlias.TOPICS) instanceof String) {
+									Set<String> set = HashUtil.getHashSet(topicIds);
+									set.add(match.get(IUpdateAlias.TOPICS).toString());
+									match.put(IUpdateAlias.TOPICS, set);
+								} else if (match.get(IUpdateAlias.TOPICS) instanceof Collection<?>) {
+									Set<String> set = HashUtil.getHashSet(topicIds);
+									set.addAll((Collection<String>) match.get(IUpdateAlias.TOPICS));
+									match.put(IUpdateAlias.TOPICS, set);
+								}
+							}
+						}
+					}
+					results.add(result.getMatches());
+				}
 			}
 		}
-		return QueryMatches.asQueryMatchNS(runtime, count);
+		return results;
 	}
 
 	/**
@@ -364,7 +371,7 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 		/*
 		 * datatype is provided as separate symbol
 		 */
-		else if ( ParserUtils.containsTokens(value.getTmqlTokens(), Datatype.class) ){
+		else if (ParserUtils.containsTokens(value.getTmqlTokens(), Datatype.class)) {
 			int index = ParserUtils.indexOfTokens(value.getTmqlTokens(), Datatype.class);
 			String token = value.getTokens().get(index).substring(2);
 			try {

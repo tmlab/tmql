@@ -9,7 +9,6 @@
 	<groupId>de.topicmapslab.tmql4j</groupId>
 	<artifactId>tmql4j-draft2010</artifactId>
 	<name>TMQL Draft 2010 Support</name>
-	<version>${project.parent.version}</version>
 	<build>
 		<!-- copying the resources form the root of the directory, necessary for 
 			OSGi testing in eclipse -->

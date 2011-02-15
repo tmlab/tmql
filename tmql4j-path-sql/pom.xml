@@ -8,7 +8,6 @@
 	</parent>
 	<groupId>de.topicmapslab.tmql4j.sql</groupId>
 	<artifactId>tmql4j-path-sql</artifactId>
-	<version>${project.parent.version}</version>
 	<name>TMQL Path Style Translater For SQL</name>
 	<build>
 		<resources>

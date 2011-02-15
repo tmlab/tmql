@@ -10,6 +10,8 @@
  */
 package de.topicmapslab.tmql4j.update.components.interpreter;
 
+import java.util.Map;
+
 import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Topic;
@@ -28,7 +30,9 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.AxisLocators;
 import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisIndicators;
 import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisItem;
 import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisLocators;
+import de.topicmapslab.tmql4j.update.components.results.IUpdateAlias;
 import de.topicmapslab.tmql4j.update.grammar.productions.TopicDefinition;
+import de.topicmapslab.tmql4j.util.HashUtil;
 import de.topicmapslab.tmql4j.util.LiteralUtils;
 
 /**
@@ -84,8 +88,16 @@ public class TopicDefinitionInterpreter extends ExpressionInterpreterImpl<TopicD
 		 */
 		Locator locator = topicMap.createLocator(runtime.getConstructResolver().toAbsoluteIRI(context, reference));
 
-		Topic topic = createTopic(topicMap, identifierType, locator);
-		return QueryMatches.asQueryMatchNS(runtime, topic == null ? 0 : 1);
+		Map<String, Object> tuple = createTopic(topicMap, identifierType, locator);
+		if (tuple.isEmpty()) {
+			return QueryMatches.emptyMatches();
+		}
+		
+		context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.TOPICS);
+		context.getTmqlProcessor().getResultProcessor().setColumnAlias(1, IUpdateAlias.IS_NEW);
+		context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
+		
+		return QueryMatches.asQueryMatchNS(runtime, tuple);
 	}
 
 	/**
@@ -97,17 +109,19 @@ public class TopicDefinitionInterpreter extends ExpressionInterpreterImpl<TopicD
 	 *            the token represent the type of used identity
 	 * @param locator
 	 *            the locator used as identity
-	 * @return the topic or <code>null</code>
+	 * @return the tuple as part of the result
 	 */
-	public static Topic createTopic(TopicMap topicMap, Class<? extends IToken> identifierType, Locator locator) {
-		long count = 0;
+	public static Map<String, Object> createTopic(TopicMap topicMap, Class<? extends IToken> identifierType, Locator locator) {
+		Map<String, Object> tuple = HashUtil.getHashMap();
 		if (identifierType.equals(AxisIndicators.class) || identifierType.equals(ShortcutAxisIndicators.class)) {
 			/*
 			 * check topic by subject-identifier
 			 */
 			Topic topic = topicMap.getTopicBySubjectIdentifier(locator);
 			if (topic != null) {
-				return topic;
+				tuple.put(IUpdateAlias.TOPICS, topic.getId());
+				tuple.put(IUpdateAlias.IS_NEW, false);
+				return tuple;
 			}
 			/*
 			 * check construct by item-identifier
@@ -115,22 +129,28 @@ public class TopicDefinitionInterpreter extends ExpressionInterpreterImpl<TopicD
 			Construct construct = topicMap.getConstructByItemIdentifier(locator);
 			if (construct != null) {
 				if (construct instanceof Topic) {
-					return (Topic) construct;
+					tuple.put(IUpdateAlias.TOPICS, construct.getId());
+					tuple.put(IUpdateAlias.IS_NEW, false);
+					return tuple;
 				}
 				throw new TMQLRuntimeException("Topic expected but identifier is used by anything else than a topic!");
 			}
 			/*
 			 * create topic by subject-identifier
 			 */
-			count++;
-			return topicMap.createTopicBySubjectIdentifier(locator);
+			topic = topicMap.createTopicBySubjectIdentifier(locator);
+			tuple.put(IUpdateAlias.TOPICS, topic.getId());
+			tuple.put(IUpdateAlias.IS_NEW, true);
+			return tuple;
 		} else if (identifierType.equals(AxisItem.class) || identifierType.equals(ShortcutAxisItem.class)) {
 			/*
 			 * check topic by subject-identifier
 			 */
 			Topic topic = topicMap.getTopicBySubjectIdentifier(locator);
 			if (topic != null) {
-				return topic;
+				tuple.put(IUpdateAlias.TOPICS, topic.getId());
+				tuple.put(IUpdateAlias.IS_NEW, false);
+				return tuple;
 			}
 			/*
 			 * check construct by item-identifier
@@ -138,29 +158,37 @@ public class TopicDefinitionInterpreter extends ExpressionInterpreterImpl<TopicD
 			Construct construct = topicMap.getConstructByItemIdentifier(locator);
 			if (construct != null) {
 				if (construct instanceof Topic) {
-					return (Topic) construct;
+					tuple.put(IUpdateAlias.TOPICS, construct.getId());
+					tuple.put(IUpdateAlias.IS_NEW, false);
+					return tuple;
 				}
 				throw new TMQLRuntimeException("Topic expected but identifier is used by anything else than a topic!");
 			}
 			/*
 			 * create topic by item-identifier
 			 */
-			count++;
-			return topicMap.createTopicByItemIdentifier(locator);
+			topic = topicMap.createTopicByItemIdentifier(locator);
+			tuple.put(IUpdateAlias.TOPICS, topic.getId());
+			tuple.put(IUpdateAlias.IS_NEW, true);
+			return tuple;
 		} else if (identifierType.equals(AxisLocators.class) || identifierType.equals(ShortcutAxisLocators.class)) {
 			/*
 			 * check topic by subject-locator
 			 */
 			Topic topic = topicMap.getTopicBySubjectLocator(locator);
 			if (topic != null) {
-				return topic;
+				tuple.put(IUpdateAlias.TOPICS, topic.getId());
+				tuple.put(IUpdateAlias.IS_NEW, false);
+				return tuple;
 			}
 			/*
 			 * create topic by subject-locator
 			 */
-			count++;
-			return topicMap.createTopicBySubjectLocator(locator);
+			topic = topicMap.createTopicBySubjectLocator(locator);
+			tuple.put(IUpdateAlias.TOPICS, topic.getId());
+			tuple.put(IUpdateAlias.IS_NEW, true);
+			return tuple;
 		}
-		return null;
+		return tuple;
 	}
 }

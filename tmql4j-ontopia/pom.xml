@@ -9,7 +9,6 @@
 	<groupId>de.topicmapslab.tmql4j</groupId>
 	<artifactId>tmql4j-ontopia</artifactId>
 	<name>TMQL Ontopia PlugIn</name>
-	<version>${project.parent.version}</version>
 	<description>TMQL Ontopia</description>
 	<build>
 		<resources>

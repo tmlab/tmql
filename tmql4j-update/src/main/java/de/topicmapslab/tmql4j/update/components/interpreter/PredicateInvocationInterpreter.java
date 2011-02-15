@@ -10,8 +10,10 @@
  */
 package de.topicmapslab.tmql4j.update.components.interpreter;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,7 @@ import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Dot;
 import de.topicmapslab.tmql4j.path.util.Restriction;
+import de.topicmapslab.tmql4j.update.components.results.IUpdateAlias;
 import de.topicmapslab.tmql4j.update.grammar.productions.PredicateInvocation;
 import de.topicmapslab.tmql4j.update.grammar.productions.PredicateInvocationRolePlayerExpression;
 import de.topicmapslab.tmql4j.util.HashUtil;
@@ -112,7 +115,9 @@ public class PredicateInvocationInterpreter extends ExpressionInterpreterImpl<Pr
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation failed
 	 */
+	@SuppressWarnings("unchecked")
 	private void interpretAsUpdateStream(ITMQLRuntime runtime, IContext context, QueryMatches results, Object... optionalArguments) throws TMQLRuntimeException {
+		Set<String> topicsIds = HashUtil.getHashSet();
 		/*
 		 * create the association type
 		 */
@@ -133,6 +138,7 @@ public class PredicateInvocationInterpreter extends ExpressionInterpreterImpl<Pr
 				associationType = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, (String) obj);
 				if (associationType == null) {
 					associationType = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(runtime.getConstructResolver().toAbsoluteIRI(context, (String) obj)));
+					topicsIds.add(associationType.getId());
 				}
 			} else {
 				throw new TMQLRuntimeException("Invalid result of prepared statement, expects a topic");
@@ -157,6 +163,7 @@ public class PredicateInvocationInterpreter extends ExpressionInterpreterImpl<Pr
 					associationType = (Topic) c;
 				} else if (c == null) {
 					associationType = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(runtime.getConstructResolver().toAbsoluteIRI(context, reference)));
+					topicsIds.add(associationType.getId());
 				} else {
 					throw new TMQLRuntimeException("Construct used as association type is not a topic!");
 				}
@@ -168,6 +175,15 @@ public class PredicateInvocationInterpreter extends ExpressionInterpreterImpl<Pr
 		 */
 		if (context.getContextBindings() == null) {
 			createAssociation(runtime, context, results, topicMap, associationType);
+			if (!topicsIds.isEmpty()) {
+				Object val = results.getMatches().get(0).get(IUpdateAlias.TOPICS);
+				if ( val != null ){
+					((Collection<String>)val).addAll(topicsIds);
+				}else{
+					val = topicsIds;
+				}
+				results.getMatches().get(0).put(IUpdateAlias.TOPICS, val);
+			}
 		}
 		/*
 		 * variable binding defined
@@ -181,14 +197,22 @@ public class PredicateInvocationInterpreter extends ExpressionInterpreterImpl<Pr
 				newContext.setContextBindings(null);
 				newContext.setCurrentTuple(tuple);
 				createAssociation(runtime, newContext, results, topicMap, associationType);
+				if (!topicsIds.isEmpty()) {
+					Object val = results.getMatches().get(results.getMatches().size() - 1).get(IUpdateAlias.TOPICS);
+					if ( val != null ){
+						((Collection<String>)val).addAll(topicsIds);
+					}else{
+						val = topicsIds;
+					}
+					results.getMatches().get(results.getMatches().size() - 1).put(IUpdateAlias.TOPICS, val);
+				}
 			}
 		}
-		/*
-		 * define results
-		 */
-		runtime.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
-		runtime.getTmqlProcessor().getResultProcessor().setColumnAlias(0, "associations");
-		runtime.getTmqlProcessor().getResultProcessor().setColumnAlias(1, "roles");
+
+		context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.ASSOCIATIONS);
+		context.getTmqlProcessor().getResultProcessor().setColumnAlias(1, IUpdateAlias.ROLES);
+		context.getTmqlProcessor().getResultProcessor().setColumnAlias(2, IUpdateAlias.TOPICS);
+		context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
 	}
 
 	/**
@@ -205,11 +229,11 @@ public class PredicateInvocationInterpreter extends ExpressionInterpreterImpl<Pr
 	 */
 	private void createAssociation(ITMQLRuntime runtime, IContext context, QueryMatches matches, TopicMap topicMap, Topic associationType) {
 		List<String> roles = HashUtil.getList();
+		List<String> topics = HashUtil.getList();
 		/*
 		 * create association
 		 */
-		Association association = topicMap.createAssociation(associationType);
-		long count = 1;
+		Association association = topicMap.createAssociation(associationType);	
 		/*
 		 * get role-player definitions
 		 */
@@ -222,21 +246,29 @@ public class PredicateInvocationInterpreter extends ExpressionInterpreterImpl<Pr
 			if (roleType instanceof String) {
 				throw new TMQLRuntimeException("The identifier '" + roleType.toString() + "' is not allowed as role-type");
 			}
+			if ( restriction.isNewRoleType()){
+				topics.add(((Topic)roleType).getId());
+			}
 			Object player = restriction.getPlayer();
 			if (player instanceof String) {
 				throw new TMQLRuntimeException("The identifier '" + roleType.toString() + "' is not allowed as player");
+			}
+			if ( restriction.isNewPlayer()){
+				topics.add(((Topic)player).getId());
 			}
 			/*
 			 * create role
 			 */
 			Role role = association.createRole((Topic) roleType, (Topic) player);
 			roles.add(role.getId());
-			count++;
+			
 		}
 		Map<String, Object> tuple = HashUtil.getHashMap();
-		tuple.put("$0", association.getId());
-		tuple.put("$1", roles);
+		tuple.put(IUpdateAlias.ASSOCIATIONS, association.getId());
+		tuple.put(IUpdateAlias.ROLES, roles);
+		if ( !topics.isEmpty()){
+			tuple.put(IUpdateAlias.TOPICS, topics);
+		}
 		matches.add(tuple);
 	}
-
 }
