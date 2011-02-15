@@ -1,5 +1,4 @@
 Manifest-Version: 1.0
-Service-Component: OSGI-INF/tmql4j-merge.xml
 Export-Package: de.topicmapslab.tmql4j.merge.components.interpreter;us
  es:="org.slf4j,de.topicmapslab.tmql4j.merge.grammar.productions,de.to
  picmapslab.tmql4j.merge.util",de.topicmapslab.tmql4j.merge.grammar.pr
@@ -8,6 +7,7 @@ Export-Package: de.topicmapslab.tmql4j.merge.components.interpreter;us
  s,de.topicmapslab.tmql4j.merge.extension;uses:="de.topicmapslab.tmql4
  j.merge.grammar.tokens,de.topicmapslab.tmql4j.merge.components.interp
  reter,de.topicmapslab.tmql4j.merge.grammar.productions"
+Service-Component: OSGI-INF/tmql4j-merge.xml
 Bundle-ActivationPolicy: lazy
 Tool: Bnd-1.15.0
 Bundle-Name: TMQL Merge Style
@@ -16,8 +16,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.tmapi;bundle-version="2.0.3",de.topicmapslab.tmql4
  j;bundle-version="3.0.0",de.topicmapslab.tmql4j.path;bundle-version="
  3.0.0"
-Bundle-Version: 3.0.0.201102151326
-Bnd-LastModified: 1297772931591
+Bundle-Version: 3.0.0.201102151339
+Bnd-LastModified: 1297773791279
 Bundle-ManifestVersion: 2
 Import-Package: de.topicmapslab.majortom.util;resolution:=optional,org
  .osgi.framework;version="[1.4,2)",org.slf4j;version="1.6.1"

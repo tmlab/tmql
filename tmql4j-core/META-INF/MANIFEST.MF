@@ -3,8 +3,8 @@ Export-Package: de.topicmapslab.tmql4j.grammar.productions;uses:="de.t
  opicmapslab.tmql4j.grammar.lexical,de.topicmapslab.tmql4j.util,de.top
  icmapslab.tmql4j.components.interpreter,de.topicmapslab.tmql4j.compon
  ents.processor.runtime,de.topicmapslab.tmql4j.exception,de.topicmapsl
- ab.tmql4j.components.processor.core,de.topicmapslab.tmql4j.components
- .processor.runtime.module.model,de.topicmapslab.tmql4j.extension",de.
+ ab.tmql4j.components.processor.runtime.module.model,de.topicmapslab.t
+ mql4j.components.processor.core,de.topicmapslab.tmql4j.extension",de.
  topicmapslab.tmql4j.components.lexer;uses:="de.topicmapslab.tmql4j.qu
  ery,de.topicmapslab.tmql4j.grammar.lexical,de.topicmapslab.tmql4j.exc
  eption,de.topicmapslab.tmql4j.components.processor.runtime,de.topicma
@@ -45,14 +45,14 @@ Export-Package: de.topicmapslab.tmql4j.grammar.productions;uses:="de.t
  mapslab.tmql4j.components.processor.runtime.module.model,de.topicmaps
  lab.tmql4j.grammar.productions,de.topicmapslab.tmql4j.query,de.topicm
  apslab.tmql4j.components.parser,de.topicmapslab.tmql4j.components.pro
- cessor.prepared,de.topicmapslab.tmql4j.extension,de.topicmapslab.tmql
- 4j.components.processor,de.topicmapslab.tmql4j.osgi,org.slf4j,de.topi
+ cessor.prepared,de.topicmapslab.tmql4j.components.processor,de.topicm
+ apslab.tmql4j.extension,de.topicmapslab.tmql4j.osgi,org.slf4j,de.topi
  cmapslab.tmql4j.util",de.topicmapslab.tmql4j.components.interpreter;u
  ses:="de.topicmapslab.tmql4j.grammar.productions,de.topicmapslab.tmql
  4j.query,de.topicmapslab.tmql4j.grammar.lexical,de.topicmapslab.tmql4
  j.components.processor.runtime,de.topicmapslab.tmql4j.exception,de.to
- picmapslab.tmql4j.components.processor.runtime.module.model,de.topicm
- apslab.tmql4j.components.processor.core,de.topicmapslab.tmql4j.compon
+ picmapslab.tmql4j.components.processor.core,de.topicmapslab.tmql4j.co
+ mponents.processor.runtime.module.model,de.topicmapslab.tmql4j.compon
  ents.processor.prepared,org.slf4j",de.topicmapslab.tmql4j.components.
  parser;uses:="de.topicmapslab.tmql4j.components.processor.runtime,de.
  topicmapslab.tmql4j.exception,de.topicmapslab.tmql4j.grammar.producti
@@ -89,8 +89,8 @@ Bundle-Name: TMQL Query Engine
 Created-By: 1.6.0_20 (Sun Microsystems Inc.)
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.tmapi;bundle-version="2.0.3"
-Bundle-Version: 3.0.0.201102151326
-Bnd-LastModified: 1297772812373
+Bundle-Version: 3.0.0.201102151339
+Bnd-LastModified: 1297773597857
 Bundle-ManifestVersion: 2
 Bundle-Activator: de.topicmapslab.tmql4j.osgi.TMQLActivator
 Import-Package: org.osgi.framework;version="[1.4,2)",org.slf4j;version

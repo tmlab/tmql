@@ -1,6 +1,4 @@
 Manifest-Version: 1.0
-Service-Component: OSGI-INF/tmql2007-queryprocessor.xml,OSGI-INF/tmql2
- 007-runtime.xml
 Export-Package: de.topicmapslab.tmql4j.path.grammar.functions.sequence
  s;uses:="de.topicmapslab.tmql4j.path.grammar.functions",de.topicmapsl
  ab.tmql4j.path.components.navigation.model;uses:="de.topicmapslab.tmq
@@ -14,7 +12,7 @@ Export-Package: de.topicmapslab.tmql4j.path.grammar.functions.sequence
  pslab.tmql4j.path.components.processor.runtime.module;uses:="de.topic
  mapslab.tmql4j.path.grammar.functions.sequences,de.topicmapslab.tmql4
  j.path.grammar.functions.string,de.topicmapslab.tmql4j.path.grammar.f
- unctions.topicmap,de.topicmapslab.tmql4j.path.grammar.functions.url,d
+ unctions.url,de.topicmapslab.tmql4j.path.grammar.functions.topicmap,d
  e.topicmapslab.tmql4j.path.components.interpreter,de.topicmapslab.tmq
  l4j.path.grammar.productions,de.topicmapslab.tmql4j.path.grammar.lexi
  cal",de.topicmapslab.tmql4j.path.grammar.productions;uses:="de.topicm
@@ -22,8 +20,8 @@ Export-Package: de.topicmapslab.tmql4j.path.grammar.functions.sequence
  ents.parser",de.topicmapslab.tmql4j.path.components.interpreter;uses:
  ="de.topicmapslab.tmql4j.path.components.navigation.model,de.topicmap
  slab.tmql4j.path.grammar.productions,de.topicmapslab.tmql4j.path.comp
- onents.navigation,de.topicmapslab.tmql4j.path.exception,de.topicmapsl
- ab.tmql4j.path.grammar.lexical,org.slf4j,de.topicmapslab.tmql4j.path.
+ onents.navigation,de.topicmapslab.tmql4j.path.grammar.lexical,de.topi
+ cmapslab.tmql4j.path.exception,org.slf4j,de.topicmapslab.tmql4j.path.
  util",de.topicmapslab.tmql4j.path.util;uses:="de.topicmapslab.tmql4j.
  path.grammar.lexical",de.topicmapslab.tmql4j.path.grammar.functions.s
  tring;uses:="de.topicmapslab.tmql4j.path.grammar.functions",de.topicm
@@ -41,9 +39,11 @@ Export-Package: de.topicmapslab.tmql4j.path.grammar.functions.sequence
  :="de.topicmapslab.tmql4j.path.grammar.productions,de.topicmapslab.tm
  ql4j.path.grammar.lexical",de.topicmapslab.tmql4j.path.components.nav
  igation.axis;uses:="de.topicmapslab.tmql4j.path.components.navigation
- ,de.topicmapslab.tmql4j.path.exception,de.topicmapslab.tmql4j.path.gr
- ammar.lexical,de.topicmapslab.tmql4j.path.components.navigation.model
+ ,de.topicmapslab.tmql4j.path.grammar.lexical,de.topicmapslab.tmql4j.p
+ ath.exception,de.topicmapslab.tmql4j.path.components.navigation.model
  "
+Service-Component: OSGI-INF/tmql2007-queryprocessor.xml,OSGI-INF/tmql2
+ 007-runtime.xml
 Bundle-ActivationPolicy: lazy
 Tool: Bnd-1.15.0
 Bundle-Name: TMQL Path Style
@@ -51,8 +51,8 @@ Created-By: 1.6.0_20 (Sun Microsystems Inc.)
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: de.topicmapslab.tmql4j;bundle-version="3.0.0",org.tmap
  i;bundle-version="2.0.3"
-Bundle-Version: 3.0.0.201102151326
-Bnd-LastModified: 1297772814138
+Bundle-Version: 3.0.0.201102151339
+Bnd-LastModified: 1297773618154
 Bundle-ManifestVersion: 2
 Import-Package: org.osgi.framework;version="[1.4,2)",org.slf4j;version
  ="1.6.1"

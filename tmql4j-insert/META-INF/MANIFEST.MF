@@ -1,5 +1,4 @@
 Manifest-Version: 1.0
-Service-Component: OSGI-INF/tmql4j-insert.xml
 Export-Package: de.topicmapslab.tmql4j.insert.util;uses:="de.topicmaps
  lab.tmql4j.insert.exceptions",de.topicmapslab.tmql4j.insert.exception
  s,de.topicmapslab.tmql4j.insert.grammar.productions;uses:="de.topicma
@@ -10,6 +9,7 @@ Export-Package: de.topicmapslab.tmql4j.insert.util;uses:="de.topicmaps
  erpreter;uses:="de.topicmapslab.tmql4j.insert.grammar.productions,de.
  topicmapslab.tmql4j.insert.util,org.slf4j",de.topicmapslab.tmql4j.ins
  ert.grammar.tokens
+Service-Component: OSGI-INF/tmql4j-insert.xml
 Bundle-ActivationPolicy: lazy
 Tool: Bnd-1.15.0
 Bundle-Name: TMQL Insert Style
@@ -20,8 +20,8 @@ Require-Bundle: org.tmapi;bundle-version="2.0.3",de.topicmapslab.tmql4
  3.0.0",de.topicmapslab.ctmwriter;bundle-version="1.0.8",org.tmapix.co
  re;bundle-version="0.2.0",org.tmapix.io;bundle-version="1.0.0",com.se
  magia.mio.syntaxpacknodeps;bundle-version="0.1.2"
-Bundle-Version: 3.0.0.201102151326
-Bnd-LastModified: 1297772927232
+Bundle-Version: 3.0.0.201102151339
+Bnd-LastModified: 1297773758763
 Bundle-ManifestVersion: 2
 Import-Package: org.osgi.framework;version="[1.4,2)",org.slf4j;version
  ="1.6.1"

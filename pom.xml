@@ -89,5 +89,6 @@
 		<module>tmql4j-draft2010</module>
 		<module>tmql4j-majortom</module>
 		<module>tmql4j-template</module>
+		<module>tmql4j-draft2007-pack</module>
 	</modules>
 </project>

@@ -1,5 +1,4 @@
 Manifest-Version: 1.0
-Service-Component: OSGI-INF/tmql4j-delete.xml
 Export-Package: de.topicmapslab.tmql4j.delete.grammar.tokens,de.topicm
  apslab.tmql4j.delete.components.interpreter;uses:="de.topicmapslab.tm
  ql4j.delete.util,de.topicmapslab.tmql4j.delete.grammar.productions",d
@@ -10,6 +9,7 @@ Export-Package: de.topicmapslab.tmql4j.delete.grammar.tokens,de.topicm
  opicmapslab.tmql4j.delete.components.interpreter,de.topicmapslab.tmql
  4j.delete.grammar.tokens,de.topicmapslab.tmql4j.delete.grammar.produc
  tions"
+Service-Component: OSGI-INF/tmql4j-delete.xml
 Bundle-ActivationPolicy: lazy
 Tool: Bnd-1.15.0
 Bundle-Name: TMQL Delete Style
@@ -18,8 +18,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.tmapi;bundle-version="2.0.3",de.topicmapslab.tmql4
  j;bundle-version="3.0.0",de.topicmapslab.tmql4j.path;bundle-version="
  3.0.0"
-Bundle-Version: 3.0.0.201102151326
-Bnd-LastModified: 1297772929544
+Bundle-Version: 3.0.0.201102151339
+Bnd-LastModified: 1297773780263
 Bundle-ManifestVersion: 2
 Import-Package: org.osgi.framework;version="[1.4,2)",org.slf4j;version
  ="1.6.1",org.slf4j.helpers;version="1.6.1",org.slf4j.impl;version="1.
