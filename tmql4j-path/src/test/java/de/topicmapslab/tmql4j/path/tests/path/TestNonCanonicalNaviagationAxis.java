@@ -208,19 +208,20 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 	@Test
 	public void testNCLPlayersAxis() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
-		Topic roleType = createTopicBySI("roleType");
+		Topic type = createTopicBySI("myType");
 		Topic[] topics = new Topic[100];
 		for (int i = 0; i < topics.length; i++) {
 			topics[i] = createTopic();
-			createAssociation(topic).createRole(roleType, topics[i]);
+			topics[i].addType(type);
+			createAssociation(topic).createRole(createTopic(), topics[i]);
 			createAssociation(topic).createRole(createTopic(), createTopic());
 		}
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "myTopic -> roleType";
-		set = execute(query);
-		assertEquals(topics.length, set.size());
+		query = "myTopic -> myType";
+		set = execute(query);		
+		assertEquals(topics.length*2, set.size());
 
 		Set<Topic> result = HashUtil.getHashSet();
 		for (IResult r : set.getResults()) {
@@ -237,27 +238,27 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 	public void testNCLPlayersBWAxis() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
 		Topic roleType = createTopicBySI("roleType");
-		Association[] associations = new Association[100];
-		for (int i = 0; i < associations.length; i++) {
-			associations[i] = createAssociation();
-			associations[i].createRole(roleType, topic);
-			associations[i].createRole(createTopic(), topic);
+		Role[] roles = new Role[100];
+		for (int i = 0; i < roles.length; i++) {
+			Association a = createAssociation();
+			roles[i] = a.createRole(roleType, topic);
+			a.createRole(createTopic(), topic);
 		}
 		String query = null;
 		SimpleResultSet set = null;
 
 		query = "myTopic <- roleType";
 		set = execute(query);
-		assertEquals(associations.length, set.size());
+		assertEquals(roles.length, set.size());
 
-		Set<Association> result = HashUtil.getHashSet();
+		Set<Role> result = HashUtil.getHashSet();
 		for (IResult r : set.getResults()) {
-			assertTrue(r.first() instanceof Association);
-			result.add((Association) r.first());
+			assertTrue(r.first() instanceof Role);
+			result.add((Role) r.first());
 		}
 
-		for (int i = 0; i < associations.length; i++) {
-			assertTrue(result.contains(associations[i]));
+		for (int i = 0; i < roles.length; i++) {
+			assertTrue(result.contains(roles[i]));
 		}
 	}
 

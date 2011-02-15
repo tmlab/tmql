@@ -7,11 +7,13 @@ The flwr style represented by the production called 'flwr expression'. A flwr ex
 --------------------------------------------
 1:	flwr-expression	::=	[  FOR   variable-assignment ]
 2:						[  WHERE   boolean-expression ]
-3:						[  ORDER BY  < value-expression > ]
+3:						[  GROUP BY  < $[0-9]+ > ]
+4:						[  ORDER BY  < value-expression > ]
 5:						[  UNIQUE  ]
 6:						[  OFFSET  value-expression ]
 7:						[  LIMIT  value-expression ] 
-4:						RETURN   content
+9:						RETURN   content
+10:						[ USE use-definition ]
 --------------------------------------------
 	 
 Only the 'return clause' represented by the keyword 'RETURN' is mandatory.

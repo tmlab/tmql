@@ -16,28 +16,25 @@ import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
-import org.tmapi.core.TopicMap;
 
 import de.topicmapslab.tmql4j.path.components.navigation.BaseNavigationAxisImpl;
 import de.topicmapslab.tmql4j.path.exception.InvalidValueException;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisPlayers;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Class definition representing the players axis.
  * <p>
  * If the value is an association item, in forward direction this step computes
- * all role-playing items of that item. The optional item specifies the type of
- * the roles to be considered. If a playing topic plays several roles in such an
- * association item, then it appears as many times in the result (multiset
- * interpretation).
+ * all topic players. If the value is a role, the player will be returned. The
+ * optional item specifies the type of the player to be considered.
  * </p>
  * <p>
  * If the value is a topic item, in backward direction this step computes all
- * association items in which that topic plays a role. If a role playing topic
- * plays several roles in one and the same association, this association will
- * appear as many times. The optional item specifies the type of the roles to be
- * considered.
+ * role items in which that topic plays. If a role playing topic plays several
+ * roles in one and the same association, this association will appear as many
+ * times. The optional item specifies the type of the roles to be considered.
  * </p>
  * 
  * @author Sven Krosse
@@ -57,7 +54,7 @@ public class PlayersNavigationAxis extends BaseNavigationAxisImpl {
 	 * {@inheritDoc}
 	 */
 	public Class<?> getBackwardNavigationResultClass(Object construct) throws NavigationException {
-		return Association.class;
+		return Role.class;
 	}
 
 	/**
@@ -76,40 +73,12 @@ public class PlayersNavigationAxis extends BaseNavigationAxisImpl {
 		 */
 		if (construct instanceof Topic) {
 			Topic topic = (Topic) construct;
-			TopicMap map = topic.getTopicMap();
-			/*
-			 * create new instance of tuple-sequence
-			 */
+
 			Collection<Object> set = new LinkedList<Object>();
-			/*
-			 * iterate over all associations
-			 */
-			Set<Association> associations = map.getAssociations();
-			for (Association a : associations) {
-				Set<Role> roles = null;
-				/*
-				 * extract roles by type if optional parameter is used
-				 */
-				if (optional != null && optional instanceof Topic) {
-					roles = a.getRoles((Topic) optional);
-				}
-				/*
-				 * extract all roles
-				 */
-				else {
-					roles = a.getRoles();
-				}
-				/*
-				 * iterate over roles
-				 */
-				for (Role role : roles) {
-					/*
-					 * check if player of role is equal to the given topic
-					 */
-					if (role.getPlayer().equals(topic)) {
-						set.add(a);
-					}
-				}
+			if (optional != null && optional instanceof Topic) {
+				set.addAll(topic.getRolesPlayed((Topic) optional));
+			} else {
+				set.addAll(topic.getRolesPlayed());
 			}
 			return set;
 		}
@@ -120,66 +89,33 @@ public class PlayersNavigationAxis extends BaseNavigationAxisImpl {
 	 * {@inheritDoc}
 	 */
 	public Collection<?> navigateForward(Object construct, Object optional) throws NavigationException {
+		Set<Role> roles = null;
 		if (construct instanceof Association) {
 			Association association = (Association) construct;
-			/*
-			 * create new instance of tuple-sequence
-			 */
-			Collection<Object> set = new LinkedList<Object>();
-			Set<Role> roles = null;
-			if (optional != null && optional instanceof Topic) {
-				roles = association.getRoles((Topic) optional);
-			} else {
-				roles = association.getRoles();
-			}
-			for (Role role : roles) {
-				set.add(role.getPlayer());
-			}
-			return set;
+			roles = HashUtil.getHashSet(association.getRoles());
 		} else if (construct instanceof Topic) {
 			Topic type = (Topic) construct;
-			/*
-			 * create new instance of tuple-sequence
-			 */
-			Collection<Object> set = new LinkedList<Object>();
-
+			roles = HashUtil.getHashSet();
 			for (Association association : type.getTopicMap().getAssociations()) {
-				if (association.getType().equals(type)) {
-					Set<Role> roles = null;
-					if (optional != null && optional instanceof Topic) {
-						roles = association.getRoles((Topic) optional);
-					} else {
-						roles = association.getRoles();
-					}
-					for (Role role : roles) {
-						set.add(role.getPlayer());
-					}
-				}
+				roles.addAll(association.getRoles());
 			}
-			return set;
 		} else if (construct instanceof Role) {
-			Topic type = ((Role) construct).getType();
-			/*
-			 * create new instance of tuple-sequence
-			 */
-			Collection<Object> set = new LinkedList<Object>();
-
-			for (Association association : type.getTopicMap().getAssociations()) {
-				if (association.getType().equals(type)) {
-					Set<Role> roles = null;
-					if (optional != null && optional instanceof Topic) {
-						roles = association.getRoles((Topic) optional);
-					} else {
-						roles = association.getRoles();
-					}
-					for (Role role : roles) {
-						set.add(role.getPlayer());
-					}
-				}
-			}
-			return set;
+			roles = HashUtil.getHashSet();
+			roles.add((Role) construct);
 		}
-		throw new InvalidValueException("unsupported navigation value");
+
+		if (roles == null) {
+			throw new InvalidValueException("unsupported navigation value");
+		}
+		Collection<Object> set = new LinkedList<Object>();
+		for (Role r : roles) {
+			if (optional == null || !(optional instanceof Topic)) {
+				set.add(r.getPlayer());
+			} else if (r.getPlayer().getTypes().contains(optional)) {
+				set.add(r.getPlayer());
+			}
+		}
+		return set;
 	}
 
 	/**

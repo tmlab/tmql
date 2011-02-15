@@ -29,6 +29,7 @@ import de.topicmapslab.tmql4j.path.components.navigation.axis.ItemNavigationAxis
 import de.topicmapslab.tmql4j.path.components.navigation.axis.LocatorsNavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.axis.PlayersNavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.axis.ReifierNavigationAxis;
+import de.topicmapslab.tmql4j.path.components.navigation.axis.RoleTypesNavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.axis.RolesNavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.axis.ScopeNavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.axis.SubtypesNavigationAxis;
@@ -50,6 +51,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.AxisItem;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisLocators;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisPlayers;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisReifier;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisRoleTypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisRoles;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisScope;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisSubtypes;
@@ -90,6 +92,7 @@ public class NavigationRegistry implements INavigationHandler {
 		axis.put(AxisSubtypes.class, SubtypesNavigationAxis.class);
 		axis.put(AxisPlayers.class, PlayersNavigationAxis.class);
 		axis.put(AxisRoles.class, RolesNavigationAxis.class);
+		axis.put(AxisRoleTypes.class, RoleTypesNavigationAxis.class);
 		axis.put(AxisTraverse.class, TraverseNavigationAxis.class);
 		axis.put(AxisCharacteristics.class, CharacteristicsNavigationAxis.class);
 		axis.put(AxisScope.class, ScopeNavigationAxis.class);
@@ -138,7 +141,7 @@ public class NavigationRegistry implements INavigationHandler {
 		}
 		return set;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

@@ -41,8 +41,8 @@ Export-Package: de.topicmapslab.tmql4j.path.grammar.functions.sequence
  :="de.topicmapslab.tmql4j.path.grammar.productions,de.topicmapslab.tm
  ql4j.path.grammar.lexical",de.topicmapslab.tmql4j.path.components.nav
  igation.axis;uses:="de.topicmapslab.tmql4j.path.components.navigation
- ,de.topicmapslab.tmql4j.path.grammar.lexical,de.topicmapslab.tmql4j.p
- ath.exception,de.topicmapslab.tmql4j.path.components.navigation.model
+ ,de.topicmapslab.tmql4j.path.exception,de.topicmapslab.tmql4j.path.gr
+ ammar.lexical,de.topicmapslab.tmql4j.path.components.navigation.model
  "
 Bundle-ActivationPolicy: lazy
 Tool: Bnd-1.15.0
@@ -51,8 +51,8 @@ Created-By: 1.6.0_20 (Sun Microsystems Inc.)
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: de.topicmapslab.tmql4j;bundle-version="3.0.0",org.tmap
  i;bundle-version="2.0.3"
-Bundle-Version: 3.0.0.201102150734
-Bnd-LastModified: 1297751697216
+Bundle-Version: 3.0.0.201102151326
+Bnd-LastModified: 1297772814138
 Bundle-ManifestVersion: 2
 Import-Package: org.osgi.framework;version="[1.4,2)",org.slf4j;version
  ="1.6.1"

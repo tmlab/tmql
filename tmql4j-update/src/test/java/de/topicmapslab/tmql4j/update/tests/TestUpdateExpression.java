@@ -521,7 +521,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		Role r = a.createRole(createTopic(), topic);
 		assertEquals(topic, r.getPlayer());
 
-		String query = " UPDATE players SET other WHERE myTopic << players ";
+		String query = " UPDATE players SET other WHERE myTopic << players << roles";
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());

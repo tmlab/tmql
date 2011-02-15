@@ -9,10 +9,11 @@ The select style represented by the production called 'select expression'. A sel
 2:							[  FROM   value-expression ]
 3:							[  WHERE   boolean-expression ]
 4:							[  GROUP BY  < $[0-9]+ > ]
-4:							[  ORDER BY    < value-expression > ]
-5:							[  UNIQUE  ]
-6:							[  OFFSET  value-expression ]
-7:							[  LIMIT  value-expression ] 
+5:							[  ORDER BY    < value-expression > ]
+6:							[  UNIQUE  ]
+7:							[  OFFSET  value-expression ]
+8:							[  LIMIT  value-expression ] 
+9:							[ USE use-definition ]
 --------------------------------------
 
 Only the select-clause represented by the keyword 'SELECT' is mandatory, all other expression can be left out.

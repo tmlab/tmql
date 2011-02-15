@@ -28,6 +28,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.AxisItem;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisLocators;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisPlayers;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisReifier;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisRoleTypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisRoles;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisScope;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisSubtypes;
@@ -161,6 +162,7 @@ public class TokenRegistry extends TokenRegistryImpl {
 			register(AxisPlayers.class);
 			register(AxisReifier.class);
 			register(AxisRoles.class);
+			register(AxisRoleTypes.class);
 			register(AxisScope.class);
 			register(AxisSubtypes.class);
 			register(AxisSupertypes.class);

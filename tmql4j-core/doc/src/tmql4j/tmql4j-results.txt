@@ -89,3 +89,20 @@ Using the flwr-expression of the current language draft a querying can returns a
 The method 'toXMLDocument()' returns an 'org.w3c.dom.Document' representing the whole XML result. The document will be created by adding all XML fragments to one content. If the result contains more than one fragment a additional root node 'xml-root' will be added.
 
 The method 'resultsAsMergedXML()' return a string representing the whole XML result. The document content will be returned as a string.
+
+===== Update Results =====
+
+Using the update-expression of the Topic Maps Modification Language (TMQL-ML) the result contains a set of information about the construct modified. The update-expression returns the internal ids of the constructs which were created, modified or being context of any modification. For example if a name was added to a topic, the result set will contain the name id, the topic id and in special cases if the type used for the new name does not exist before, the id of this new type will also be contained.
+
+The results of the modification will be aliased by the type of the construct. The following table contains the alias and a description.
+
+[width="100%", cols="1,5"]
+|================
+|*column alias*| *description*
+|topics| The id of the topic a name or occurrences was added to or the id of topic which has to be created to use as type, theme or player.
+|associations| The id of the association a role was added to or the id of the new association created.
+|names| The id of the name which was modified, created or a variant was added to.
+|occurrences| The id of the occurrence which was modified or created.
+|roles| The id of the role which was modified or created.
+|variants| The id of the variant which was modified or created.
+|================

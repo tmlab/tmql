@@ -15,7 +15,6 @@ import java.util.Set;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
-import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.index.TypeInstanceIndex;
@@ -23,7 +22,7 @@ import org.tmapi.index.TypeInstanceIndex;
 import de.topicmapslab.tmql4j.path.components.navigation.BaseNavigationAxisImpl;
 import de.topicmapslab.tmql4j.path.exception.InvalidValueException;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
-import de.topicmapslab.tmql4j.path.grammar.lexical.AxisRoles;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisRoleTypes;
 
 /**
  * Class definition representing the roles axis.
@@ -43,13 +42,13 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.AxisRoles;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class RolesNavigationAxis extends BaseNavigationAxisImpl {
+public class RoleTypesNavigationAxis extends BaseNavigationAxisImpl {
 
 	/**
 	 * base constructor to create an new instance
 	 */
-	public RolesNavigationAxis() {
-		super(AxisRoles.class);
+	public RoleTypesNavigationAxis() {
+		super(AxisRoleTypes.class);
 	}
 
 	/**
@@ -63,7 +62,7 @@ public class RolesNavigationAxis extends BaseNavigationAxisImpl {
 	 * {@inheritDoc}
 	 */
 	public Class<? extends Construct> getForwardNavigationResultClass(Object construct) throws NavigationException {
-		return Role.class;
+		return Topic.class;
 	}
 
 	/**
@@ -96,23 +95,12 @@ public class RolesNavigationAxis extends BaseNavigationAxisImpl {
 			 * iterate over all associations
 			 */
 			for (Association association : associations) {
-				set.add(association);
+				Set<Topic> types = association.getRoleTypes();
+				if (types.contains(topic)) {
+					set.add(association);
+				}
 			}
 
-			return set;
-		}
-		/*
-		 * current node is a role
-		 */
-		else if (construct instanceof Role) {
-			Association a = ((Role) construct).getParent();
-			Collection<Object> set = new LinkedList<Object>();
-			/*
-			 * check optional type
-			 */
-			if (optional == null  || ( optional instanceof Topic && a.getType().equals(optional))) {
-				set.add(a);
-			} 
 			return set;
 		}
 		throw new InvalidValueException();
@@ -125,7 +113,19 @@ public class RolesNavigationAxis extends BaseNavigationAxisImpl {
 		if (construct instanceof Topic) {
 			Topic topic = (Topic) construct;
 			TopicMap map = topic.getTopicMap();
-			Set<Association> associations = map.getAssociations();
+			Set<Association> associations =  new HashSet<Association>();
+			/*
+			 * check optional type
+			 */
+			if (optional != null && optional instanceof Topic) {
+				TypeInstanceIndex index = map.getIndex(TypeInstanceIndex.class);
+				if (!index.isOpen()) {
+					index.open();
+				}
+				associations.addAll(index.getAssociations((Topic) optional));
+			} else {
+				associations.addAll(map.getAssociations());
+			}
 			/*
 			 * create new instance of tuple-sequence
 			 */
@@ -134,12 +134,7 @@ public class RolesNavigationAxis extends BaseNavigationAxisImpl {
 			 * iterate over all associations
 			 */
 			for (Association association : associations) {
-				/*
-				 * check association type
-				 */
-				if (association.getType().equals(topic)) {
-					set.addAll(association.getRoles());
-				}
+				set.addAll(association.getRoleTypes());				
 			}
 			return set;
 		}
@@ -152,7 +147,7 @@ public class RolesNavigationAxis extends BaseNavigationAxisImpl {
 			 * create new instance of tuple-sequence
 			 */
 			Collection<Object> set = new LinkedList<Object>();
-			set.addAll(association.getRoles());
+			set.addAll(association.getRoleTypes());
 			return set;
 		}
 		throw new InvalidValueException();
@@ -173,8 +168,6 @@ public class RolesNavigationAxis extends BaseNavigationAxisImpl {
 	 */
 	public boolean supportsForwardNavigation(Object construct, Object optional) throws NavigationException {
 		if (construct instanceof Topic) {
-			return true;
-		}else if (construct instanceof Association) {
 			return true;
 		}
 		return false;

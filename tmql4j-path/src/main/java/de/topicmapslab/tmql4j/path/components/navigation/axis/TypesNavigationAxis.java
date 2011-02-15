@@ -13,7 +13,6 @@ import java.util.LinkedList;
 
 import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
-import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 import org.tmapi.core.Typed;
 import org.tmapi.index.TypeInstanceIndex;
@@ -85,12 +84,6 @@ public class TypesNavigationAxis extends BaseNavigationAxisImpl implements IType
 			topic = (Topic) construct;
 		}
 		/*
-		 * check if construct is a role
-		 */
-		else if (construct instanceof Role) {
-			topic = ((Role) construct).getType();
-		}
-		/*
 		 * check if it is special string tm:subject
 		 */
 		else if ("tmdm:subject".equalsIgnoreCase(construct.toString()) || "tm:subject".equalsIgnoreCase(construct.toString())) {
@@ -157,13 +150,6 @@ public class TypesNavigationAxis extends BaseNavigationAxisImpl implements IType
 		 */
 		if (construct instanceof Topic) {
 			topic = (Topic) construct;
-		}
-		/*
-		 * check if construct is a role
-		 */
-		else if (construct instanceof Role) {
-			set.add(((Role) construct).getType());
-			return set;
 		}
 		/*
 		 * check if construct is a name, occurrence or association
