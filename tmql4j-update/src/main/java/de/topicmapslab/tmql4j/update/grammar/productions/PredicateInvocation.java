@@ -14,10 +14,7 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
-import de.topicmapslab.tmql4j.grammar.lexical.Wildcard;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
-import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
-import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
 
 /**
  * Predicate invocation extension especially for update-clauses

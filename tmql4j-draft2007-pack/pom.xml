@@ -13,70 +13,70 @@
   	<dependency>
   		<groupId>de.topicmapslab.tmql4j</groupId>
   		<artifactId>tmql4j-core</artifactId>
-  		<version>3.0.0</version>
+  		<version>${project.version}</version>
   		<type>jar</type>
   		<scope>compile</scope>
   	</dependency>
   	<dependency>
   		<groupId>de.topicmapslab.tmql4j</groupId>
   		<artifactId>tmql4j-delete</artifactId>
-  		<version>3.0.0</version>
+  		<version>${project.version}</version>
   		<type>jar</type>
   		<scope>compile</scope>
   	</dependency>
   	<dependency>
   		<groupId>de.topicmapslab.tmql4j</groupId>
   		<artifactId>tmql4j-flwr</artifactId>
-  		<version>3.0.0</version>
+  		<version>${project.version}</version>
   		<type>jar</type>
   		<scope>compile</scope>
   	</dependency>
   	<dependency>
   		<groupId>de.topicmapslab.tmql4j</groupId>
   		<artifactId>tmql4j-insert</artifactId>
-  		<version>3.0.0</version>
+  		<version>${project.version}</version>
   		<type>jar</type>
   		<scope>compile</scope>
   	</dependency>
   	<dependency>
   		<groupId>de.topicmapslab.tmql4j</groupId>
   		<artifactId>tmql4j-majortom</artifactId>
-  		<version>3.0.0</version>
+  		<version>${project.version}</version>
   		<type>jar</type>
   		<scope>compile</scope>
   	</dependency>
   	<dependency>
   		<groupId>de.topicmapslab.tmql4j</groupId>
   		<artifactId>tmql4j-merge</artifactId>
-  		<version>3.0.0</version>
+  		<version>${project.version}</version>
   		<type>jar</type>
   		<scope>compile</scope>
   	</dependency>
   	<dependency>
   		<groupId>de.topicmapslab.tmql4j</groupId>
   		<artifactId>tmql4j-path</artifactId>
-  		<version>3.0.0</version>
+  		<version>${project.version}</version>
   		<type>jar</type>
   		<scope>compile</scope>
   	</dependency>
   	<dependency>
   		<groupId>de.topicmapslab.tmql4j</groupId>
   		<artifactId>tmql4j-select</artifactId>
-  		<version>3.0.0</version>
+  		<version>${project.version}</version>
   		<type>jar</type>
   		<scope>compile</scope>
   	</dependency>
   	<dependency>
   		<groupId>de.topicmapslab.tmql4j</groupId>
   		<artifactId>tmql4j-update</artifactId>
-  		<version>3.0.0</version>
+  		<version>${project.version}</version>
   		<type>jar</type>
   		<scope>compile</scope>
   	</dependency>
   	<dependency>
   		<groupId>de.topicmapslab.tmql4j</groupId>
   		<artifactId>tmql4j-template</artifactId>
-  		<version>3.0.0</version>
+  		<version>${project.version}</version>
   		<type>jar</type>
   		<scope>compile</scope>
   	</dependency>
