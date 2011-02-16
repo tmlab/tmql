@@ -71,11 +71,11 @@
 						</Export-Package>
 						<Require-Bundle>
 							org.tmapi;bundle-version="2.0.3",
-							de.topicmapslab.tmql4j;bundle-version="3.1.0",
-							de.topicmapslab.tmql4j.path;bundle-version="3.1.0",
-							de.topicmapslab.majortom.core;bundle-version="1.1.4",
-							de.topicmapslab.majortom.model;bundle-version="1.1.4",
-							de.topicmapslab.geotype;bundle-version="1.1.4"
+							de.topicmapslab.tmql4j;bundle-version="${osgi.version}",
+							de.topicmapslab.tmql4j.path;bundle-version="${osgi.version}",
+							de.topicmapslab.majortom.core;bundle-version="1.2.0",
+							de.topicmapslab.majortom.model;bundle-version="1.2.0",
+							de.topicmapslab.geotype;bundle-version="1.2.0"
 						</Require-Bundle>
 						<Import-Package>
 							org.osgi.framework,

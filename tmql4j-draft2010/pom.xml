@@ -69,7 +69,7 @@
 						<Export-Package>de.topicmapslab.tmql4j.draft2010.*
 						</Export-Package>
 						<Require-Bundle>
-							de.topicmapslab.tmql4j;bundle-version="3.1.0",
+							de.topicmapslab.tmql4j;bundle-version="${osgi.version}",
 							org.tmapi;bundle-version="2.0.3",
 							de.topicmapslab.majortom.core;bundle-version="1.2.0";resolution:=optional
 							</Require-Bundle>

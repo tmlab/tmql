@@ -69,8 +69,8 @@
 						</Export-Package>
 						<Require-Bundle>
 							org.tmapi;bundle-version="2.0.3",
-							de.topicmapslab.tmql4j;bundle-version="3.1.0",
-							de.topicmapslab.tmql4j.path;bundle-version="3.1.0",
+							de.topicmapslab.tmql4j;bundle-version="${osgi.version}",
+							de.topicmapslab.tmql4j.path;bundle-version="${osgi.version}",
 							de.topicmapslab.ctmwriter;bundle-version="1.0.8",
 							org.tmapix.core;bundle-version="0.2.0",
 							org.tmapix.io;bundle-version="1.0.0",
