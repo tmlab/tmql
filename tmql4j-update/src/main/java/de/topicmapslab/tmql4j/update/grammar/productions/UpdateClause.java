@@ -26,6 +26,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.PredicateInvocation;
 import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Add;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Associations;
+import de.topicmapslab.tmql4j.update.grammar.tokens.Remove;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Set;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Topics;
 
@@ -64,6 +65,10 @@ public class UpdateClause extends ExpressionImpl {
 	 */
 	public static final int ASSOCIATION_ADD = 3;
 	/**
+	 * grammar type of update-clauses containing the keyword REMOVE
+	 */
+	public static final int TYPE_REMOVE = 4;
+	/**
 	 * the language-specific token representing the anchor
 	 */
 	private final Class<? extends IToken> anchor;
@@ -76,6 +81,8 @@ public class UpdateClause extends ExpressionImpl {
 	 * the variable defining the context which should be updated
 	 */
 	private String variableName = QueryMatches.getNonScopedVariable();
+
+	private final Class<? extends IToken> operator;
 
 	/**
 	 * base constructor to create a new instance.
@@ -111,32 +118,34 @@ public class UpdateClause extends ExpressionImpl {
 			anchor = token;
 			indexOfAnchor = 0;
 		}
-
+		int indexOfOperator;
 		/*
-		 * get index of the keyword SET
+		 * get keyword
 		 */
-		int indexOfSetOrAdd = tmqlTokens.indexOf(Set.class);
-
-		/*
-		 * get anchor of the keyword ADD
-		 */
-		if (indexOfSetOrAdd != -1) {
+		if (tmqlTokens.contains(Set.class)) {
+			operator = Set.class;
+			indexOfOperator = tmqlTokens.indexOf(Set.class);
 			setGrammarType(TYPE_SET);
 		} else if (tmqlTokens.contains(Add.class)) {
-			indexOfSetOrAdd = tmqlTokens.indexOf(Add.class);
+			operator = Add.class;
+			indexOfOperator = tmqlTokens.indexOf(Add.class);
 			setGrammarType(TYPE_ADD);
+		} else if (tmqlTokens.contains(Remove.class)) {
+			operator = Remove.class;
+			indexOfOperator = tmqlTokens.indexOf(Remove.class);
+			setGrammarType(TYPE_REMOVE);
 		} else {
-			throw new TMQLInvalidSyntaxException(getTmqlTokens(), getTokens(), getClass(), "Error keyword SET or ADD was expected but " + tmqlTokens.get(2).toString() + " was found.");
+			throw new TMQLInvalidSyntaxException(getTmqlTokens(), getTokens(), getClass(), "Error keyword SET, ADD or REMOVE was expected but " + tmqlTokens.get(2).toString() + " was found.");
 		}
 
 		/*
 		 * extract optional type parameter
 		 */
-		if (indexOfSetOrAdd - indexOfAnchor == 2) {
-			if ( getTmqlTokens().get(indexOfAnchor + 1).equals(Wildcard.class)){
+		if (indexOfOperator - indexOfAnchor == 2) {
+			if (getTmqlTokens().get(indexOfAnchor + 1).equals(Wildcard.class)) {
 				checkForExtensions(PreparedExpression.class, tmqlTokens.subList(indexOfAnchor + 1, indexOfAnchor + 2), tokens.subList(indexOfAnchor + 1, indexOfAnchor + 2), runtime);
 				optionalType = null;
-			}else{
+			} else {
 				optionalType = tokens.get(indexOfAnchor + 1);
 			}
 		} else {
@@ -147,19 +156,19 @@ public class UpdateClause extends ExpressionImpl {
 			/*
 			 * add topic definition
 			 */
-			checkForExtensions(TopicDefinition.class, tmqlTokens.subList(indexOfSetOrAdd + 1, tmqlTokens.size()), tokens.subList(indexOfSetOrAdd + 1, tokens.size()), runtime);
+			checkForExtensions(TopicDefinition.class, tmqlTokens.subList(indexOfOperator + 1, tmqlTokens.size()), tokens.subList(indexOfOperator + 1, tokens.size()), runtime);
 			setGrammarType(TOPIC_ADD);
 		} else if (anchor.equals(Associations.class)) {
 			/*
 			 * add association definition
 			 */
-			checkForExtensions(PredicateInvocation.class, tmqlTokens.subList(indexOfSetOrAdd + 1, tmqlTokens.size()), tokens.subList(indexOfSetOrAdd + 1, tokens.size()), runtime);
+			checkForExtensions(PredicateInvocation.class, tmqlTokens.subList(indexOfOperator + 1, tmqlTokens.size()), tokens.subList(indexOfOperator + 1, tokens.size()), runtime);
 			setGrammarType(ASSOCIATION_ADD);
 		} else {
 			/*
 			 * add value expression
 			 */
-			checkForExtensions(ValueExpression.class, tmqlTokens.subList(indexOfSetOrAdd + 1, tmqlTokens.size()), tokens.subList(indexOfSetOrAdd + 1, tokens.size()), runtime);
+			checkForExtensions(ValueExpression.class, tmqlTokens.subList(indexOfOperator + 1, tmqlTokens.size()), tokens.subList(indexOfOperator + 1, tokens.size()), runtime);
 		}
 	}
 
@@ -168,7 +177,7 @@ public class UpdateClause extends ExpressionImpl {
 	 */
 	@Override
 	public boolean isValid() {
-		if (!getTmqlTokens().contains(Set.class) && !getTmqlTokens().contains(Add.class)) {
+		if (!getTmqlTokens().contains(Set.class) && !getTmqlTokens().contains(Add.class)&& !getTmqlTokens().contains(Remove.class)) {
 			return false;
 		}
 		return true;
@@ -195,6 +204,15 @@ public class UpdateClause extends ExpressionImpl {
 	 */
 	public String getVariableName() {
 		return variableName;
+	}
+
+	/**
+	 * Returns the operator
+	 * 
+	 * @return the operator
+	 */
+	public Class<? extends IToken> getOperator() {
+		return operator;
 	}
 
 }

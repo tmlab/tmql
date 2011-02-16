@@ -10,6 +10,8 @@
  */
 package de.topicmapslab.tmql4j.update.util;
 
+import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,10 +45,13 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.AxisScope;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisSubtypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisSupertypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTypes;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Null;
 import de.topicmapslab.tmql4j.update.components.results.IUpdateAlias;
 import de.topicmapslab.tmql4j.update.exception.UpdateException;
+import de.topicmapslab.tmql4j.update.grammar.tokens.Add;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Names;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Occurrences;
+import de.topicmapslab.tmql4j.update.grammar.tokens.Remove;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -93,46 +98,58 @@ public class UpdateHandler {
 		}
 	}
 
-	public QueryMatches update(Object entry, Object value, Class<? extends IToken> anchor, Topic optionalType, boolean isSetOperation, Locator optionalDatatype) throws UpdateException {
+	public QueryMatches update(Object entry, Object value, Class<? extends IToken> anchor, Object optionalType, Class<? extends IToken> operator, Locator optionalDatatype) throws UpdateException {
 		if (anchor.equals(AxisLocators.class)) {
-			return updateLocators(entry, value, optionalType, isSetOperation);
+			return updateLocators(entry, value, optionalType, operator);
 		} else if (anchor.equals(AxisIndicators.class)) {
-			return updateIndicators(entry, value, optionalType, isSetOperation);
+			return updateIndicators(entry, value, optionalType, operator);
 		} else if (anchor.equals(AxisItem.class)) {
-			return updateItem(entry, value, optionalType, isSetOperation);
+			return updateItem(entry, value, optionalType, operator);
 		} else if (anchor.equals(Names.class)) {
-			return updateNames(entry, value, optionalType, isSetOperation);
+			return updateNames(entry, value, optionalType, operator);
 		} else if (anchor.equals(Occurrences.class)) {
-			return updateOccurrences(entry, value, optionalType, isSetOperation, optionalDatatype);
+			return updateOccurrences(entry, value, optionalType, operator, optionalDatatype);
 		} else if (anchor.equals(AxisScope.class)) {
-			return updateScope(entry, value, optionalType, isSetOperation);
+			return updateScope(entry, value, optionalType, operator);
 		} else if (anchor.equals(AxisInstances.class)) {
-			return updateType(value, entry, optionalType, isSetOperation);
+			return updateType(value, entry, optionalType, operator);
 		} else if (anchor.equals(AxisTypes.class)) {
-			return updateType(entry, value, optionalType, isSetOperation);
+			return updateType(entry, value, optionalType, operator);
 		} else if (anchor.equals(AxisSupertypes.class)) {
-			return updateSupertype(entry, value, optionalType, isSetOperation);
+			return updateSupertype(entry, value, optionalType, operator);
 		} else if (anchor.equals(AxisSubtypes.class)) {
-			return updateSupertype(value, entry, optionalType, isSetOperation);
+			return updateSupertype(value, entry, optionalType, operator);
 		} else if (anchor.equals(AxisPlayers.class)) {
-			return updatePlayers(entry, value, optionalType, isSetOperation);
+			return updatePlayers(entry, value, optionalType, operator);
 		} else if (anchor.equals(AxisRoles.class)) {
-			return updateRoles(entry, value, optionalType, isSetOperation);
+			return updateRoles(entry, value, optionalType, operator);
 		} else if (anchor.equals(AxisReifier.class)) {
-			return updateReifier(entry, value, optionalType, isSetOperation);
+			return updateReifier(entry, value, optionalType, operator);
 		} else {
 			throw new UpdateException("Unsupported anchor for update-expression: " + anchor.toString().toUpperCase());
 		}
 	}
 
-	public QueryMatches updateLocators(Object entry, Object value, Topic optionalType, boolean isSetOperation) throws UpdateException {
-		if (isSetOperation) {
-			throw new UpdateException("Error at position 2 because keyword ADD was exprected but keyword SET was found.");
-		}
-
+	/**
+	 * Utility method handles the modification of topic identities
+	 * 
+	 * @param entry
+	 *            the entry which has to be a topic
+	 * @param value
+	 *            the value which has to be a locator
+	 * @param methodName
+	 *            the method name to call for modification
+	 * @return the result
+	 * @throws UpdateException
+	 */
+	private QueryMatches updateIdentity(Object entry, Object value, String methodName) throws UpdateException {
+		Topic topic;
+		Locator locator;
+		/*
+		 * check given entry
+		 */
 		if (entry instanceof Topic) {
-			Topic topic = (Topic) entry;
-			Locator locator;
+			topic = (Topic) entry;
 			if (value instanceof Locator) {
 				locator = (Locator) value;
 			} else {
@@ -142,119 +159,190 @@ public class UpdateHandler {
 					throw new UpdateException("Invalid value for locator.", e);
 				}
 			}
-			/*
-			 * TODO: check merging and store for transaction management
-			 */
-			topic.addSubjectLocator(locator);
-			/*
-			 * modify result processor
-			 */
-			context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.TOPICS);
-			context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
-			/*
-			 * create result
-			 */
-			Map<String, Object> tuple = HashUtil.getHashMap();
-			tuple.put(IUpdateAlias.TOPICS, topic.getId());
-			return QueryMatches.asQueryMatchNS(runtime, tuple);
+		} else {
+			throw new UpdateException("Entry has to be a topic.");
 		}
-
-		throw new UpdateException("Entry has to be a topic.");
+		try {
+			Method method = Topic.class.getMethod(methodName, Locator.class);
+			method.invoke(topic, locator);
+		} catch (Exception e) {
+			throw new TMQLRuntimeException("An error occurred during the modification of identity.", e);
+		}
+		/*
+		 * modify result processor
+		 */
+		context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.TOPICS);
+		context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
+		/*
+		 * create result
+		 */
+		Map<String, Object> tuple = HashUtil.getHashMap();
+		tuple.put(IUpdateAlias.TOPICS, topic.getId());
+		return QueryMatches.asQueryMatchNS(runtime, tuple);
 	}
 
-	public QueryMatches updateIndicators(Object entry, Object value, Topic optionalType, boolean isSetOperation) throws UpdateException {
-		if (isSetOperation) {
-			throw new UpdateException("Error at position 2 because keyword ADD was exprected but keyword SET was found.");
-		}
-
+	/**
+	 * Utility method to extract a topic from given entry
+	 * 
+	 * @param entry
+	 *            the entry
+	 * @param createNonExisting
+	 *            flag indicates if the topic should be created by given locator
+	 *            or string if not exists
+	 * @param topicIds
+	 *            a collection to add the new topic id or <code>null</code>
+	 * @return the topic or <code>null</code> if the topic does not exists and
+	 *         should not created.
+	 * @throws TMQLRuntimeException
+	 *             thrown if the given string is not a valid IRI
+	 */
+	private Topic getTopic(Object entry, boolean createNonExisting, Collection<String> topicIds) throws TMQLRuntimeException {
+		/*
+		 * get theme
+		 */
 		if (entry instanceof Topic) {
-			Topic topic = (Topic) entry;
-			Locator locator;
-			if (value instanceof Locator) {
-				locator = (Locator) value;
-			} else {
-				try {
-					locator = topicMap.createLocator((String) value);
-				} catch (Exception e) {
-					throw new UpdateException("Invalid value for subject-identifier.", e);
+			return (Topic) entry;
+		} else if (entry instanceof Locator) {
+			Topic t = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, (((Locator) entry).getReference()));
+			if (t == null && createNonExisting) {
+				t = topicMap.createTopicBySubjectIdentifier((Locator) entry);
+				if (topicIds != null) {
+					topicIds.add(t.getId());
 				}
 			}
-			/*
-			 * TODO: check merging and store for transaction management
-			 */
-			topic.addSubjectIdentifier(locator);
-			/*
-			 * modify result processor
-			 */
-			context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.TOPICS);
-			context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
-			/*
-			 * create result
-			 */
-			Map<String, Object> tuple = HashUtil.getHashMap();
-			tuple.put(IUpdateAlias.TOPICS, topic.getId());
-			return QueryMatches.asQueryMatchNS(runtime, tuple);
+			return t;
 		}
-
-		throw new UpdateException("Entry has to be a topic.");
+		Topic t = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, entry.toString());
+		if (t == null && createNonExisting) {
+			try {
+				t = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(entry.toString()));
+				if (topicIds != null) {
+					topicIds.add(t.getId());
+				}
+			} catch (Exception e) {
+				throw new TMQLRuntimeException("The given IRI seems to be invalid!", e);
+			}
+		}
+		return t;
 	}
 
-	public QueryMatches updateItem(Object entry, Object value, Topic optionalType, boolean isSetOperation) throws UpdateException {
-		if (isSetOperation) {
-			throw new UpdateException("Error at position 2 because keyword ADD was exprected but keyword SET was found.");
+	public QueryMatches updateLocators(Object entry, Object value, Object optionalType, Class<? extends IToken> operator) throws UpdateException {
+		/*
+		 * is add operation
+		 */
+		if (Add.class.equals(operator)) {
+			return updateIdentity(entry, value, "addSubjectLocator");
+		}
+		/*
+		 * is remove operation
+		 */
+		else if (Remove.class.equals(operator)) {
+			return updateIdentity(entry, value, "removeSubjectLocator");
+		}
+		/*
+		 * is set operation
+		 */
+		else {
+			throw new TMQLRuntimeException("Invalid operator found at position 2. Expected ADD or REMOVE but SET was found!");
 		}
 
+	}
+
+	public QueryMatches updateIndicators(Object entry, Object value, Object optionalType, Class<? extends IToken> operator) throws UpdateException {
+		/*
+		 * is add operation
+		 */
+		if (Add.class.equals(operator)) {
+			return updateIdentity(entry, value, "addSubjectIdentifier");
+		}
+		/*
+		 * is remove operation
+		 */
+		else if (Remove.class.equals(operator)) {
+			return updateIdentity(entry, value, "removeSubjectIdentifier");
+		}
+		/*
+		 * is set operation
+		 */
+		else {
+			throw new TMQLRuntimeException("Invalid operator found at position 2. Expected ADD or REMOVE but SET was found!");
+		}
+	}
+
+	public QueryMatches updateItem(Object entry, Object value, Object optionalType, Class<? extends IToken> operator) throws UpdateException {
+		Construct construct;
+		Locator locator;
+		/*
+		 * check given entry
+		 */
 		if (entry instanceof Construct) {
-			Construct construct = (Construct) entry;
-			Locator locator;
+			construct = (Construct) entry;
 			if (value instanceof Locator) {
 				locator = (Locator) value;
 			} else {
 				try {
 					locator = topicMap.createLocator((String) value);
 				} catch (Exception e) {
-					throw new UpdateException("Invalid value for item-identifier.", e);
+					throw new UpdateException("Invalid value for locator.", e);
 				}
 			}
-			/*
-			 * TODO: check merging and store for transaction management
-			 */
-			construct.addItemIdentifier(locator);
-			/*
-			 * modify result processor
-			 */
-			context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
-			/*
-			 * create result
-			 */
-			Map<String, Object> tuple = HashUtil.getHashMap();
-			if (construct instanceof Topic) {
-				tuple.put(IUpdateAlias.TOPICS, construct.getId());
-				context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.TOPICS);
-			} else if (construct instanceof Association) {
-				tuple.put(IUpdateAlias.ASSOCIATIONS, construct.getId());
-				context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.ASSOCIATIONS);
-			} else if (construct instanceof Name) {
-				tuple.put(IUpdateAlias.NAMES, construct.getId());
-				context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.NAMES);
-			} else if (construct instanceof Occurrence) {
-				tuple.put(IUpdateAlias.OCCURRENCES, construct.getId());
-				context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.OCCURRENCES);
-			} else if (construct instanceof Variant) {
-				tuple.put(IUpdateAlias.VARIANTS, construct.getId());
-				context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.VARIANTS);
-			} else if (construct instanceof Role) {
-				tuple.put(IUpdateAlias.ROLES, construct.getId());
-				context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.ROLES);
-			}
-			return QueryMatches.asQueryMatchNS(runtime, tuple);
+		} else {
+			throw new UpdateException("Entry has to be a construct.");
 		}
 
-		throw new UpdateException("Entry has to be a construct.");
+		/*
+		 * is add operation
+		 */
+		if (Add.class.equals(operator)) {
+			construct.addItemIdentifier(locator);
+		}
+		/*
+		 * is remove operation
+		 */
+		else if (Remove.class.equals(operator)) {
+			construct.removeItemIdentifier(locator);
+		}
+		/*
+		 * is set operation
+		 */
+		else {
+			throw new TMQLRuntimeException("Invalid operator found at position 2. Expected ADD or REMOVE but SET was found!");
+		}
+		/*
+		 * modify result processor
+		 */
+		context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
+		/*
+		 * create result
+		 */
+		Map<String, Object> tuple = HashUtil.getHashMap();
+		if (construct instanceof Topic) {
+			tuple.put(IUpdateAlias.TOPICS, construct.getId());
+			context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.TOPICS);
+		} else if (construct instanceof Association) {
+			tuple.put(IUpdateAlias.ASSOCIATIONS, construct.getId());
+			context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.ASSOCIATIONS);
+		} else if (construct instanceof Name) {
+			tuple.put(IUpdateAlias.NAMES, construct.getId());
+			context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.NAMES);
+		} else if (construct instanceof Occurrence) {
+			tuple.put(IUpdateAlias.OCCURRENCES, construct.getId());
+			context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.OCCURRENCES);
+		} else if (construct instanceof Variant) {
+			tuple.put(IUpdateAlias.VARIANTS, construct.getId());
+			context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.VARIANTS);
+		} else if (construct instanceof Role) {
+			tuple.put(IUpdateAlias.ROLES, construct.getId());
+			context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.ROLES);
+		}
+		return QueryMatches.asQueryMatchNS(runtime, tuple);
 	}
 
-	public QueryMatches updateNames(Object entry, Object value, Topic optionalType, boolean isSetOperation) throws UpdateException {
-		if (isSetOperation) {
+	public QueryMatches updateNames(Object entry, Object value, Object optionalType, Class<? extends IToken> operator) throws UpdateException {
+		/*
+		 * is set operation modifies the value of a name
+		 */
+		if (de.topicmapslab.tmql4j.update.grammar.tokens.Set.class.equals(operator)) {
 			if (entry instanceof Name) {
 				((Name) entry).setValue(value.toString());
 				/*
@@ -270,11 +358,38 @@ public class UpdateHandler {
 				return QueryMatches.asQueryMatchNS(runtime, tuple);
 			}
 			throw new UpdateException("Entry has to be a name.");
-		} else {
+		}
+		/*
+		 * is remove operation removes the name of a topic
+		 */
+		else if (Remove.class.equals(operator)) {
+			if (entry instanceof Name) {
+				final String id = ((Name) entry).getId();
+				((Name) entry).remove();
+				/*
+				 * modify result processor
+				 */
+				context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.NAMES);
+				context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
+				/*
+				 * create result
+				 */
+				Map<String, Object> tuple = HashUtil.getHashMap();
+				tuple.put(IUpdateAlias.NAMES, id);
+				return QueryMatches.asQueryMatchNS(runtime, tuple);
+			}
+			throw new UpdateException("Entry has to be a name.");
+		}
+		/*
+		 * is add operation adding a new name
+		 */
+		else {
 			if (entry instanceof Topic) {
+				Collection<String> topicIds = HashUtil.getHashSet();
 				Name name = ((Topic) entry).createName(value.toString(), new Topic[0]);
 				if (optionalType != null) {
-					name.setType(optionalType);
+					Topic type = getTopic(optionalType, true, topicIds);
+					name.setType(type);
 				}
 				/*
 				 * modify result processor
@@ -287,15 +402,23 @@ public class UpdateHandler {
 				 */
 				Map<String, Object> tuple = HashUtil.getHashMap();
 				tuple.put(IUpdateAlias.NAMES, name.getId());
-				tuple.put(IUpdateAlias.TOPICS, ((Topic) entry).getId());
+				if (topicIds.isEmpty()) {
+					tuple.put(IUpdateAlias.TOPICS, ((Topic) entry).getId());
+				} else {
+					topicIds.add(((Topic) entry).getId());
+					tuple.put(IUpdateAlias.TOPICS, topicIds);
+				}
 				return QueryMatches.asQueryMatchNS(runtime, tuple);
 			}
 			throw new UpdateException("Entry has to be a topic.");
 		}
 	}
 
-	public QueryMatches updateOccurrences(Object entry, Object value, Topic optionalType, boolean isSetOperation, Locator optionalDatatype) throws UpdateException {
-		if (isSetOperation) {
+	public QueryMatches updateOccurrences(Object entry, Object value, Object optionalType, Class<? extends IToken> operator, Locator optionalDatatype) throws UpdateException {
+		/*
+		 * is set operation modifies the value of an occurrence
+		 */
+		if (de.topicmapslab.tmql4j.update.grammar.tokens.Set.class.equals(operator)) {
 			if (entry instanceof Occurrence) {
 				Occurrence occurrence = (Occurrence) entry;
 				if (optionalDatatype == null) {
@@ -316,19 +439,45 @@ public class UpdateHandler {
 				return QueryMatches.asQueryMatchNS(runtime, tuple);
 			}
 			throw new UpdateException("Entry has to be an occurrence.");
-		} else {
+		}
+		/*
+		 * is remove operation removes the occurrence of a topic
+		 */
+		else if (Remove.class.equals(operator)) {
+			if (entry instanceof Occurrence) {
+				final String id = ((Occurrence) entry).getId();
+				((Occurrence) entry).remove();
+				/*
+				 * modify result processor
+				 */
+				context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.OCCURRENCES);
+				context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
+				/*
+				 * create result
+				 */
+				Map<String, Object> tuple = HashUtil.getHashMap();
+				tuple.put(IUpdateAlias.OCCURRENCES, id);
+				return QueryMatches.asQueryMatchNS(runtime, tuple);
+			}
+			throw new UpdateException("Entry has to be an occurrence.");
+		}
+		/*
+		 * is add operation adding a new occurrence
+		 */
+		else {
 			if (entry instanceof Topic) {
-				Construct type = null;
+				Collection<String> topicIds = HashUtil.getHashSet();
+				Topic type = null;
 				if (optionalType == null) {
 					throw new UpdateException("Entry type is missing.");
 				} else {
-					type = optionalType;
+					type = getTopic(optionalType, true, topicIds);
 				}
 				Occurrence occurrence;
 				if (optionalDatatype != null) {
-					occurrence = ((Topic) entry).createOccurrence((Topic) type, value.toString(), optionalDatatype, new Topic[0]);
+					occurrence = ((Topic) entry).createOccurrence(type, value.toString(), optionalDatatype, new Topic[0]);
 				} else {
-					occurrence = ((Topic) entry).createOccurrence((Topic) type, value.toString(), new Topic[0]);
+					occurrence = ((Topic) entry).createOccurrence(type, value.toString(), new Topic[0]);
 				}
 				/*
 				 * modify result processor
@@ -341,93 +490,89 @@ public class UpdateHandler {
 				 */
 				Map<String, Object> tuple = HashUtil.getHashMap();
 				tuple.put(IUpdateAlias.OCCURRENCES, occurrence.getId());
-				tuple.put(IUpdateAlias.TOPICS, ((Topic) entry).getId());
+				if (topicIds.isEmpty()) {
+					tuple.put(IUpdateAlias.TOPICS, ((Topic) entry).getId());
+				} else {
+					topicIds.add(((Topic) entry).getId());
+					tuple.put(IUpdateAlias.TOPICS, topicIds);
+				}
 				return QueryMatches.asQueryMatchNS(runtime, tuple);
 			}
 			throw new UpdateException("Entry has to be a topic.");
 		}
 	}
 
-	public QueryMatches updateScope(Object entry, Object value, Topic optionalType, boolean isSetOperation) throws UpdateException {
-		if (isSetOperation) {
-			throw new UpdateException("Error at position 2 because keyword ADD was exprected but keyword SET was found.");
-		}
+	public QueryMatches updateScope(Object entry, Object value, Object optionalType, Class<? extends IToken> operator) throws UpdateException {
 		Set<String> topicIds = HashUtil.getHashSet();
+		Topic theme = getTopic(value, Add.class.equals(operator), topicIds);
+		Scoped scoped;
+		/*
+		 * get scoped element
+		 */
 		if (entry instanceof Scoped) {
-			Scoped scoped = (Scoped) entry;
-			Topic theme;
-			if (value instanceof Topic) {
-				theme = (Topic) value;
-			} else if (value instanceof Locator) {
-				try {
-					theme = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, (((Locator) value).getReference()));
-				} catch (Exception e) {
-					theme = topicMap.createTopicBySubjectIdentifier((Locator) value);
-					topicIds.add(theme.getId());
-				}
-			} else {
-				try {
-					theme = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, value.toString());
-				} catch (Exception e) {
-					theme = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(value.toString()));
-					topicIds.add(theme.getId());
-				}
-			}
+			scoped = (Scoped) entry;
+		} else {
+			throw new UpdateException("Entry has to be a scoped item.");
+		}
+		/*
+		 * is add operation
+		 */
+		if (Add.class.equals(operator)) {
 			scoped.addTheme(theme);
-			/*
-			 * modify result processor
-			 */
-			context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
-			/*
-			 * create result
-			 */
-			Map<String, Object> tuple = HashUtil.getHashMap();
-			if (scoped instanceof Association) {
-				tuple.put(IUpdateAlias.ASSOCIATIONS, scoped.getId());
-				context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.ASSOCIATIONS);
-			} else if (scoped instanceof Name) {
-				tuple.put(IUpdateAlias.NAMES, scoped.getId());
-				context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.NAMES);
-			} else if (scoped instanceof Occurrence) {
-				tuple.put(IUpdateAlias.OCCURRENCES, scoped.getId());
-				context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.OCCURRENCES);
-			} else if (scoped instanceof Variant) {
-				tuple.put(IUpdateAlias.VARIANTS, scoped.getId());
-				context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.VARIANTS);
+		}
+		/*
+		 * is remove operation
+		 */
+		else if (Remove.class.equals(operator)) {
+			if (theme != null) {
+				try {
+					scoped.removeTheme(theme);
+				} catch (Exception e) {
+					throw new TMQLRuntimeException("An error occur during the modification of scope!", e);
+				}
 			}
-			if (!topicIds.isEmpty()) {
-				tuple.put(IUpdateAlias.TOPICS, topicIds);
-				context.getTmqlProcessor().getResultProcessor().setColumnAlias(1, IUpdateAlias.TOPICS);
-			}
-			return QueryMatches.asQueryMatchNS(runtime, tuple);
+		}
+		/*
+		 * is set operation
+		 */
+		else {
+			throw new TMQLRuntimeException("Invalid operator found at position 2. Expected ADD or REMOVE but SET was found!");
 		}
 
-		throw new UpdateException("Entry has to be a association, name or occurrence.");
+		/*
+		 * modify result processor
+		 */
+		context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
+		/*
+		 * create result
+		 */
+		Map<String, Object> tuple = HashUtil.getHashMap();
+		if (scoped instanceof Association) {
+			tuple.put(IUpdateAlias.ASSOCIATIONS, scoped.getId());
+			context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.ASSOCIATIONS);
+		} else if (scoped instanceof Name) {
+			tuple.put(IUpdateAlias.NAMES, scoped.getId());
+			context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.NAMES);
+		} else if (scoped instanceof Occurrence) {
+			tuple.put(IUpdateAlias.OCCURRENCES, scoped.getId());
+			context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.OCCURRENCES);
+		} else if (scoped instanceof Variant) {
+			tuple.put(IUpdateAlias.VARIANTS, scoped.getId());
+			context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.VARIANTS);
+		}
+		if (!topicIds.isEmpty()) {
+			tuple.put(IUpdateAlias.TOPICS, topicIds);
+			context.getTmqlProcessor().getResultProcessor().setColumnAlias(1, IUpdateAlias.TOPICS);
+		}
+		return QueryMatches.asQueryMatchNS(runtime, tuple);
 	}
 
-	public QueryMatches updateType(Object entry, Object value, Topic optionalType, boolean isSetOperation) throws UpdateException {
+	public QueryMatches updateType(Object entry, Object value, Object optionalType, Class<? extends IToken> operator) throws UpdateException {
 		Set<String> topicIds = HashUtil.getHashSet();
-		if (isSetOperation) {
+		Topic type = getTopic(value, !Remove.class.equals(operator), topicIds);
+		if (de.topicmapslab.tmql4j.update.grammar.tokens.Set.class.equals(operator)) {
 			if (entry instanceof Typed) {
 				Typed typed = (Typed) entry;
-				Topic type;
-				if (value instanceof Topic) {
-					type = (Topic) value;
-				} else if (value instanceof Locator) {
-					try {
-						type = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, (((Locator) value).getReference()));
-					} catch (Exception e) {
-						type = topicMap.createTopicBySubjectIdentifier((Locator) value);
-						topicIds.add(type.getId());
-					}
-				} else {
-					try {
-						type = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, value.toString());
-					} catch (Exception e) {
-						type = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(value.toString()));
-						topicIds.add(type.getId());
-					}
-				}
 				typed.setType(type);
 				/*
 				 * modify result processor
@@ -460,25 +605,18 @@ public class UpdateHandler {
 			throw new UpdateException("Entry has to be an association, a role, a name or an occurrence.");
 		} else if (entry instanceof Topic) {
 			Topic topic = (Topic) entry;
-			Topic type;
-			if (value instanceof Topic) {
-				type = (Topic) value;
-			} else if (value instanceof Locator) {
-				try {
-					type = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, (((Locator) value).getReference()));
-				} catch (Exception e) {
-					type = topicMap.createTopicBySubjectIdentifier((Locator) value);
-					topicIds.add(type.getId());
-				}
-			} else {
-				try {
-					type = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, value.toString());
-				} catch (Exception e) {
-					type = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(value.toString()));
-					topicIds.add(type.getId());
-				}
+			/*
+			 * is add operation
+			 */
+			if (Add.class.equals(operator)) {
+				topic.addType(type);
 			}
-			topic.addType(type);
+			/*
+			 * is remove operation
+			 */
+			else if (Remove.class.equals(operator) && type != null) {
+				topic.removeType(type);
+			}
 			topicIds.add(topic.getId());
 			/*
 			 * modify result processor
@@ -495,175 +633,75 @@ public class UpdateHandler {
 		throw new UpdateException("Entry has to be a topic.");
 	}
 
-	public QueryMatches updateSupertype(Object entry, Object value, Topic optionalType, boolean isSetOperation) throws UpdateException {
-		if (isSetOperation) {
-			throw new UpdateException("Error at position 2 because keyword ADD was exprected but keyword SET was found.");
-		}
-
-		if (entry instanceof Topic) {
-			Set<String> topicIds = HashUtil.getHashSet();
-			Topic topic = (Topic) entry;
-			Topic type;
-			if (value instanceof Topic) {
-				type = (Topic) value;
-			} else if (value instanceof Locator) {
-				try {
-					type = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, (((Locator) value).getReference()));
-				} catch (Exception e) {
-					type = topicMap.createTopicBySubjectIdentifier((Locator) value);
-					topicIds.add(type.getId());
-				}
-			} else {
-				try {
-					type = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, value.toString());
-				} catch (Exception e) {
-					type = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(value.toString()));
-					topicIds.add(type.getId());
-				}
-			}
-
-			try {
-				TmdmUtility.ako(topic.getTopicMap(), type, topic);
-				topicIds.add(topic.getId());
-			} catch (Exception e) {
-				throw new UpdateException(e);
-			}
-			/*
-			 * modify result processor
-			 */
-			context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
-			context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.TOPICS);
-			/*
-			 * create result
-			 */
-			Map<String, Object> tuple = HashUtil.getHashMap();
-			tuple.put(IUpdateAlias.TOPICS, topicIds);
-			return QueryMatches.asQueryMatchNS(runtime, tuple);
-		}
-
-		throw new UpdateException("Entry has to be a topic.");
-	}
-
-	public QueryMatches updateInstances(Object entry, Object value, Topic optionalType, boolean isSetOperation) throws UpdateException {
-		if (isSetOperation) {
-			throw new UpdateException("Error at position 2 because keyword ADD was exprected but keyword SET was found.");
-		}
+	@SuppressWarnings("unchecked")
+	public QueryMatches updateSupertype(Object entry, Object value, Object optionalType, Class<? extends IToken> operator) throws UpdateException {
 		Set<String> topicIds = HashUtil.getHashSet();
+		Topic topic;
 		if (entry instanceof Topic) {
-			Topic topic = (Topic) entry;
-			Topic instance;
-			if (value instanceof Topic) {
-				instance = (Topic) value;
-			} else if (value instanceof Locator) {
-				try {
-					instance = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, (((Locator) value).getReference()));
-				} catch (Exception e) {
-					instance = topicMap.createTopicBySubjectIdentifier((Locator) value);
-					topicIds.add(instance.getId());
-				}
-			} else {
-				try {
-					instance = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, value.toString());
-				} catch (Exception e) {
-					instance = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(value.toString()));
-					topicIds.add(instance.getId());
-				}
-			}
-			instance.addType(topic);
-			topicIds.add(topic.getId());
-			/*
-			 * modify result processor
-			 */
-			context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
-			context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.TOPICS);
-			/*
-			 * create result
-			 */
-			Map<String, Object> tuple = HashUtil.getHashMap();
-			tuple.put(IUpdateAlias.TOPICS, topicIds);
-			return QueryMatches.asQueryMatchNS(runtime, tuple);
+			topic = (Topic) entry;
+		} else {
+			throw new UpdateException("Entry has to be a topic.");
 		}
-		throw new UpdateException("Entry has to be a topic.");
+		topicIds.add(topic.getId());
+		Topic type = getTopic(value, Add.class.equals(operator), topicIds);
+		Map<String, Object> tuple = HashUtil.getHashMap();
+		/*
+		 * is add operation
+		 */
+		if (Add.class.equals(operator)) {
+			TmdmUtility.addSupertype(topic.getTopicMap(), type, topic, tuple);
+		}
+		/*
+		 * is remove operation
+		 */
+		else if (Remove.class.equals(operator)) {
+			TmdmUtility.removeSupertype(topic.getTopicMap(), type, topic, tuple);
+		}
+		/*
+		 * is set operation
+		 */
+		else {
+			throw new TMQLRuntimeException("Invalid operator found at position 2. Expected ADD or REMOVE but SET was found!");
+		}
+		/*
+		 * modify result processor
+		 */
+		context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
+		context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.TOPICS);
+		if (tuple.containsKey(IUpdateAlias.ASSOCIATIONS)) {
+			context.getTmqlProcessor().getResultProcessor().setColumnAlias(1, IUpdateAlias.ASSOCIATIONS);
+			context.getTmqlProcessor().getResultProcessor().setColumnAlias(2, IUpdateAlias.ROLES);
+		}
+		/*
+		 * create result
+		 */
+		if (tuple.containsKey(IUpdateAlias.TOPICS)) {
+			topicIds.addAll((Collection<String>) tuple.get(IUpdateAlias.TOPICS));
+		}
+		tuple.put(IUpdateAlias.TOPICS, topicIds);
+		return QueryMatches.asQueryMatchNS(runtime, tuple);
+	}
+
+	public QueryMatches updateInstances(Object entry, Object value, Object optionalType, Class<? extends IToken> operator) throws UpdateException {
+		return updateType(value, entry, optionalType, operator);
 
 	}
 
-	public QueryMatches updateSubtype(Object entry, Object value, Topic optionalType, boolean isSetOperation) throws UpdateException {
-		if (isSetOperation) {
-			throw new UpdateException("Error at position 2 because keyword ADD was exprected but keyword SET was found.");
-		}
-		Set<String> topicIds = HashUtil.getHashSet();
-		if (entry instanceof Topic) {
-			Topic topic = (Topic) entry;
-			Topic subtype;
-			if (value instanceof Topic) {
-				subtype = (Topic) value;
-			} else if (value instanceof Locator) {
-				try {
-					subtype = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, (((Locator) value).getReference()));
-				} catch (Exception e) {
-					subtype = topicMap.createTopicBySubjectIdentifier((Locator) value);
-					topicIds.add(subtype.getId());
-				}
-			} else {
-				try {
-					subtype = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, value.toString());
-				} catch (Exception e) {
-					subtype = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(value.toString()));
-					topicIds.add(subtype.getId());
-				}
-			}
-
-			try {
-				TmdmUtility.ako(topic.getTopicMap(), topic, subtype);
-				topicIds.add(topic.getId());
-			} catch (Exception e) {
-				throw new UpdateException(e);
-			}
-			/*
-			 * modify result processor
-			 */
-			context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
-			context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.TOPICS);
-			/*
-			 * create result
-			 */
-			Map<String, Object> tuple = HashUtil.getHashMap();
-			tuple.put(IUpdateAlias.TOPICS, topicIds);
-			return QueryMatches.asQueryMatchNS(runtime, tuple);
-		}
-
-		throw new UpdateException("Entry has to be a topic.");
+	public QueryMatches updateSubtype(Object entry, Object value, Object optionalType, Class<? extends IToken> operator) throws UpdateException {
+		return updateSupertype(value, entry, optionalType, operator);
 	}
 
-	public QueryMatches updatePlayers(Object entry, Object value, Topic optionalType, boolean isSetOperation) throws UpdateException {
-		if (!isSetOperation) {
+	public QueryMatches updatePlayers(Object entry, Object value, Object optionalType, Class<? extends IToken> operator) throws UpdateException {
+		if (!de.topicmapslab.tmql4j.update.grammar.tokens.Set.class.equals(operator)) {
 			throw new UpdateException("Error at position 2 because keyword SET was exprected but keyword ADD was found.");
 		}
 
 		Set<String> topicIds = HashUtil.getHashSet();
 		Set<String> roleIds = HashUtil.getHashSet();
-
+		Topic player = getTopic(value, true, topicIds);
+		Association association;
 		if (entry instanceof Association) {
-			Association association = (Association) entry;
-			Topic player;
-			if (value instanceof Topic) {
-				player = (Topic) value;
-			} else if (value instanceof Locator) {
-				try {
-					player = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, (((Locator) value).getReference()));
-				} catch (Exception e) {
-					player = topicMap.createTopicBySubjectIdentifier((Locator) value);
-					topicIds.add(player.getId());
-				}
-			} else {
-				try {
-					player = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, value.toString());
-				} catch (Exception e) {
-					player = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(value.toString()));
-					topicIds.add(player.getId());
-				}
-			}
-
+			association = (Association) entry;
 			for (Role role : association.getRoles()) {
 				if (optionalType != null && !role.getType().equals(optionalType)) {
 					continue;
@@ -692,58 +730,71 @@ public class UpdateHandler {
 			}
 			return QueryMatches.asQueryMatchNS(runtime, tuple);
 		}
-
 		throw new UpdateException("Entry has to be an association.");
 	}
 
-	public QueryMatches updateRoles(Object entry, Object value, Topic optionalType, boolean isSetOperation) throws UpdateException {
-		if (isSetOperation) {
-			throw new UpdateException("Error at position 2 because keyword ADD was exprected but keyword SET was found.");
-		}
-
-		if (entry instanceof Association) {
-			return updateAssociation((Association) entry, value, optionalType);
-		} else if (entry instanceof Topic) {
-			TypeInstanceIndex index = topicMap.getIndex(TypeInstanceIndex.class);
-			if (!index.isOpen()) {
-				index.open();
+	public QueryMatches updateRoles(Object entry, Object value, Object optionalType, Class<? extends IToken> operator) throws UpdateException {
+		/*
+		 * is add operation
+		 */
+		if (Add.class.equals(operator)) {
+			if (entry instanceof Association) {
+				return updateAssociation((Association) entry, value, optionalType);
+			} else if (entry instanceof Topic) {
+				TypeInstanceIndex index = topicMap.getIndex(TypeInstanceIndex.class);
+				if (!index.isOpen()) {
+					index.open();
+				}
+				QueryMatches matches = new QueryMatches(runtime);
+				for (Association association : index.getAssociations((Topic) entry)) {
+					matches.add(updateAssociation(association, value, optionalType).getMatches());
+				}
+				return matches;
 			}
-			QueryMatches matches = new QueryMatches(runtime);
-			for (Association association : index.getAssociations((Topic) entry)) {
-				matches.add(updateAssociation(association, value, optionalType).getMatches());
-			}
-			return matches;
+			throw new UpdateException("Entry has to be a topic or an association.");
 		}
-		throw new UpdateException("Entry has to be a topic or an association.");
+		/*
+		 * is remove operation
+		 */
+		else if ( Remove.class.equals(operator)){
+			if (entry instanceof Role) {
+				Role role = (Role) entry;
+				/*
+				 * modify result processor
+				 */
+				context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
+				context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.ROLES);
+				
+				/*
+				 * create results
+				 */
+				Map<String, Object> tuple = HashUtil.getHashMap();				
+				tuple.put(IUpdateAlias.ROLES, role.getId());
+				QueryMatches matches = new QueryMatches(runtime);
+				matches.add(tuple);
+				return matches;
+			}
+			throw new UpdateException("Entry has to be a role.");
+		}
+		/*
+		 * is set operation
+		 */
+		else{
+			throw new UpdateException("Error at position 2 because keyword ADD or REMOVE was exprected but keyword SET was found.");
+		}
 	}
 
-	public QueryMatches updateReifier(Object entry, Object value, Topic optionalType, boolean isSetOperation) throws UpdateException {
-		if (!isSetOperation) {
+	public QueryMatches updateReifier(Object entry, Object value, Object optionalType, Class<? extends IToken> operator) throws UpdateException {
+		if (!de.topicmapslab.tmql4j.update.grammar.tokens.Set.class.equals(operator)) {
 			throw new UpdateException("Error at position 2 because keyword SET was exprected but keyword ADD was found.");
 		}
 		Set<String> topicIds = HashUtil.getHashSet();
 		Reifiable reifiable;
-		Topic reifier;
+		Topic reifier = null;
 
 		if (entry instanceof Reifiable) {
 			reifiable = (Reifiable) entry;
-			if (value instanceof Topic) {
-				reifier = (Topic) value;
-			} else if (value instanceof Locator) {
-				try {
-					reifier = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, (((Locator) value).getReference()));
-				} catch (Exception e) {
-					reifier = topicMap.createTopicBySubjectIdentifier((Locator) value);
-					topicIds.add(reifier.getId());
-				}
-			} else {
-				try {
-					reifier = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, value.toString());
-				} catch (Exception e) {
-					reifier = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(value.toString()));
-					topicIds.add(reifier.getId());
-				}
-			}
+			reifier = entry.toString().equals(Null.TOKEN)? null:getTopic(value, true, topicIds);			
 		} else if (entry instanceof Topic) {
 			reifier = (Topic) entry;
 			if (value instanceof Reifiable) {
@@ -788,36 +839,14 @@ public class UpdateHandler {
 		return matches;
 	}
 
-	private QueryMatches updateAssociation(Association association, Object roleType, Topic optionalPlayer) throws UpdateException {
+	private QueryMatches updateAssociation(Association association, Object roleType, Object optionalPlayer) throws UpdateException {
 		Set<String> topicIds = HashUtil.getHashSet();
-		Topic roleType_;
-		if (roleType instanceof Topic) {
-			roleType_ = (Topic) roleType;
-		} else if (roleType instanceof Locator) {
-			try {
-				roleType_ = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, (((Locator) roleType).getReference()));
-			} catch (Exception e) {
-				roleType_ = topicMap.createTopicBySubjectIdentifier((Locator) roleType);
-				topicIds.add(roleType_.getId());
-			}
-		} else {
-			try {
-				roleType_ = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, roleType.toString());
-			} catch (Exception e) {
-				roleType_ = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(roleType.toString()));
-				topicIds.add(roleType_.getId());
-			}
-		}
-
-		Construct player = null;
+		Topic roleType_ = getTopic(roleType, true, topicIds);
+		Topic player = null;
 		if (optionalPlayer == null) {
-			player = topicMap.getConstructByItemIdentifier(topicMap.createLocator("tm:subject"));
-			if (player == null) {
-				player = topicMap.createTopicByItemIdentifier(topicMap.createLocator("tm:subject"));
-				topicIds.add(player.getId());
-			}
+			throw new TMQLRuntimeException("Player of role cannot be null!");
 		} else {
-			player = optionalPlayer;
+			player = getTopic(optionalPlayer, true, topicIds);
 		}
 		/*
 		 * modify result processor

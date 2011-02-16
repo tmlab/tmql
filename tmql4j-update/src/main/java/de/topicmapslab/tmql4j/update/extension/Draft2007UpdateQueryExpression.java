@@ -33,6 +33,7 @@ import de.topicmapslab.tmql4j.update.grammar.tokens.Add;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Associations;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Names;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Occurrences;
+import de.topicmapslab.tmql4j.update.grammar.tokens.Remove;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Set;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Topics;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Update;
@@ -52,6 +53,7 @@ public class Draft2007UpdateQueryExpression implements ILanguageExtension {
 		tokens.register(Associations.class);
 		tokens.register(Names.class);
 		tokens.register(Occurrences.class);
+		tokens.register(Remove.class);
 		tokens.register(Set.class);
 		tokens.register(Topics.class);
 		tokens.register(Update.class);

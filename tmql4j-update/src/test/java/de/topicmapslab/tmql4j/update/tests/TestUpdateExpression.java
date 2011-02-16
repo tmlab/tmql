@@ -26,6 +26,7 @@ import org.tmapi.core.Topic;
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.path.query.TMQLQuery;
+import de.topicmapslab.tmql4j.update.components.results.IUpdateAlias;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 import de.topicmapslab.tmql4j.util.XmlSchemeDatatypes;
 
@@ -111,6 +112,24 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals(0, topic.getNames().size());
 
 		String query = " UPDATE names myType ADD \"Name\" WHERE myTopic ";
+		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(2, set.first().size());
+		assertEquals(topic.getId(), set.get(0,"topics"));
+		
+		assertEquals(1, topic.getNames().size());
+		assertEquals(topic.getNames().iterator().next().getId(), set.get(0,"names"));
+		assertEquals("Name", topic.getNames().iterator().next().getValue());
+		assertEquals(type, topic.getNames().iterator().next().getType());
+	}
+	
+	@Test
+	public void testAddRemoveName() throws Exception {
+		Topic topic = createTopicBySL("myTopic");
+		Name name = topic.createName("Name");
+		assertEquals(1, topic.getNames().size());
+
+		String query = " UPDATE names REMOVE \"" + name.getId() + "\" << id WHERE myTopic ";
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(2, set.first().size());
@@ -675,6 +694,89 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals("http://psi.example.org/loc", topic.getSubjectIdentifiers().iterator().next().getReference());
 		assertEquals(1, topic.getItemIdentifiers().size());
 		assertEquals("http://psi.example.org/ii", topic.getItemIdentifiers().iterator().next().getReference());
+	}
+	
+	@Test
+	public void testRemoveTopic() throws Exception {
+		String query = null;
+		SimpleResultSet set = null;
+		
+		Topic topicBySi = createTopicBySI("topicBySi");
+		final String idTopicBySi = topicBySi.getId(); 
+		Topic topicBySi2 = createTopicBySI("topicBySi2");
+		final String idTopicBySi2 = topicBySi2.getId();
+		Topic topicBySi3 = createTopicBySI("topicBySi3");
+		final String idTopicBySi3 = topicBySi3.getId();
+		Topic topicBySl = createTopicBySL("topicBySl");
+		final String idTopicBySl = topicBySl.getId();
+		Topic topicBySl2 = createTopicBySL("topicBySl2");
+		final String idTopicBySl2 = topicBySl2.getId();
+		Topic topicByIi = createTopicByII("topicByIi");
+		final String idTopicByIi = topicByIi.getId();
+		Topic topicByIi2 = createTopicByII("topicByIi2");
+		final String idTopicByIi2 = topicByIi2.getId();
+		int size = topicMap.getTopics().size();
+		
+		/*
+		 * default identifier type
+		 */
+		query = " UPDATE topics REMOVE \"" + base + "topicBySi\"";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(--size, topicMap.getTopics().size());
+		assertEquals(1, set.size());
+		assertEquals(1, set.get(0).size());
+		assertEquals(idTopicBySi, set.get(0, IUpdateAlias.TOPICS));
+		
+		/*
+		 * subject-identifier
+		 */
+		query = " UPDATE topics REMOVE \"" + base + "topicBySi2\" << indicators ";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(--size, topicMap.getTopics().size());
+		assertEquals(1, set.size());
+		assertEquals(1, set.get(0).size());
+		assertEquals(idTopicBySi2, set.get(0, IUpdateAlias.TOPICS));
+		
+		query = " UPDATE topics REMOVE \"" + base + "topicBySi3\" ~ ";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(--size, topicMap.getTopics().size());
+		assertEquals(1, set.size());
+		assertEquals(1, set.get(0).size());
+		assertEquals(idTopicBySi3, set.get(0, IUpdateAlias.TOPICS));
+		
+		/*
+		 * subject-locator
+		 */
+		query = " UPDATE topics REMOVE \"" + base + "topicBySl\" << locators ";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(--size, topicMap.getTopics().size());
+		assertEquals(1, set.size());
+		assertEquals(1, set.get(0).size());
+		assertEquals(idTopicBySl, set.get(0, IUpdateAlias.TOPICS));
+		
+		query = " UPDATE topics REMOVE \"" + base + "topicBySl2\" = ";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(--size, topicMap.getTopics().size());
+		assertEquals(1, set.size());
+		assertEquals(1, set.get(0).size());
+		assertEquals(idTopicBySl2, set.get(0, IUpdateAlias.TOPICS));
+		
+		/*
+		 * item-identifier
+		 */
+		query = " UPDATE topics REMOVE \"" + base + "topicByIi\" << item ";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(--size, topicMap.getTopics().size());
+		assertEquals(1, set.size());
+		assertEquals(1, set.get(0).size());
+		assertEquals(idTopicByIi, set.get(0, IUpdateAlias.TOPICS));
+		
+		query = " UPDATE topics REMOVE \"" + base + "topicByIi2\" ! ";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(--size, topicMap.getTopics().size());
+		assertEquals(1, set.size());
+		assertEquals(1, set.get(0).size());
+		assertEquals(idTopicByIi2, set.get(0, IUpdateAlias.TOPICS));
 	}
 
 	@Test

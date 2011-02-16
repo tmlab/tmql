@@ -68,8 +68,8 @@
 						</Export-Package>
 						<Require-Bundle>
 							org.tmapi;bundle-version="2.0.3",
-							de.topicmapslab.tmql4j;bundle-version="3.0.0",
-							de.topicmapslab.tmql4j.path;bundle-version="3.0.0"
+							de.topicmapslab.tmql4j;bundle-version="3.1.0",
+							de.topicmapslab.tmql4j.path;bundle-version="3.1.0"
 							</Require-Bundle>
 						<Import-Package>
 							org.osgi.framework,

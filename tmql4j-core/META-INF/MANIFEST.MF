@@ -89,8 +89,8 @@ Bundle-Name: TMQL Query Engine
 Created-By: 1.6.0_20 (Sun Microsystems Inc.)
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.tmapi;bundle-version="2.0.3"
-Bundle-Version: 3.0.0.201102151339
-Bnd-LastModified: 1297773597857
+Bundle-Version: 3.0.0.201102160823
+Bnd-LastModified: 1297841009640
 Bundle-ManifestVersion: 2
 Bundle-Activator: de.topicmapslab.tmql4j.osgi.TMQLActivator
 Import-Package: org.osgi.framework;version="[1.4,2)",org.slf4j;version

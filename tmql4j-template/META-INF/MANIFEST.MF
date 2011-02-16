@@ -1,21 +1,40 @@
-Bundle-SymbolicName: de.topicmapslab.tmql4j.template;singleton=true
-Bundle-Version: 3.0.0
-Bundle-Name: TMQL Template Engine
-Provide-Package: de.topicmapslab.tmql4j.template.components.interpreter,
- de.topicmapslab.tmql4j.template.components.processor.runtime.module,
- de.topicmapslab.tmql4j.template.extension,
- de.topicmapslab.tmql4j.template.grammar.lexical,
- de.topicmapslab.tmql4j.template.grammar.pragma,
- de.topicmapslab.tmql4j.template.grammar.productions
-Import-Package: de.topicmapslab.majortom.util;optional=true,
- org.osgi.framework,
- org.slf4j;specification-version="1.6.1"
+Manifest-Version: 1.0
 Service-Component: OSGI-INF/tmql4j-template.xml
+Export-Package: de.topicmapslab.tmql4j.template.components.processor.r
+ esults,de.topicmapslab.tmql4j.template.components.interpreter;uses:="
+ de.topicmapslab.tmql4j.template.grammar.productions,de.topicmapslab.t
+ mql4j.template.grammar.lexical,de.topicmapslab.tmql4j.template.compon
+ ents.processor.runtime.module,de.topicmapslab.tmql4j.template.compone
+ nts.processor.results,de.topicmapslab.tmql4j.template.util.json",de.t
+ opicmapslab.tmql4j.template.components.processor.runtime.module,de.to
+ picmapslab.tmql4j.template.grammar.lexical,de.topicmapslab.tmql4j.tem
+ plate.util.json,de.topicmapslab.tmql4j.template.extension;uses:="de.t
+ opicmapslab.tmql4j.template.grammar.pragma,de.topicmapslab.tmql4j.tem
+ plate.components.interpreter,de.topicmapslab.tmql4j.template.grammar.
+ lexical,de.topicmapslab.tmql4j.template.grammar.productions",de.topic
+ mapslab.tmql4j.template.grammar.productions;uses:="de.topicmapslab.tm
+ ql4j.template.grammar.lexical",de.topicmapslab.tmql4j.template.gramma
+ r.pragma;uses:="de.topicmapslab.tmql4j.template.components.processor.
+ runtime.module"
 Eclipse-AutoStart: true
-Require-Bundle: org.tmapi;bundle-version="2.0.3",
- de.topicmapslab.tmql4j;bundle-version="3.0.0",
- de.topicmapslab.tmql4j.path;bundle-version="3.0.0",
- de.topicmapslab.ctmwriter;bundle-version="1.0.8",
- org.tmapix.core;bundle-version="0.2.0",
- org.tmapix.io;bundle-version="1.0.0",
- com.semagia.mio.syntaxpacknodeps;bundle-version="0.1.2"
+Bundle-ActivationPolicy: lazy
+Tool: Bnd-1.15.0
+Bundle-Name: TMQL Templates
+Created-By: 1.6.0_20 (Sun Microsystems Inc.)
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.tmapi;bundle-version="2.0.3",de.topicmapslab.tmql4
+ j;bundle-version="3.1.0",de.topicmapslab.tmql4j.path;bundle-version="
+ 3.1.0"
+Bundle-Version: 3.0.0.201102160823
+Bnd-LastModified: 1297841290937
+Bundle-ManifestVersion: 2
+Import-Package: org.osgi.framework;version="[1.4,2)",org.slf4j;version
+ ="1.6.1"
+Bundle-SymbolicName: de.topicmapslab.tmql4j.template
+Provide-Package: de.topicmapslab.tmql4j.template.components.interprete
+ r,de.topicmapslab.tmql4j.template.components.processor.runtime.module
+ ,de.topicmapslab.tmql4j.template.extension,de.topicmapslab.tmql4j.tem
+ plate.grammar.lexical,de.topicmapslab.tmql4j.template.grammar.pragma,
+ de.topicmapslab.tmql4j.template.grammar.productions
+Originally-Created-By: 1.6.0_20 (Sun Microsystems Inc.)
+

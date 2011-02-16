@@ -26,8 +26,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: de.topicmapslab.tmql4j;bundle-version="3.0.0",org.tmap
  i;bundle-version="2.0.3",de.topicmapslab.tmql4j.draft2010;bundle-vers
  ion="3.0.0"
-Bundle-Version: 3.0.0.201102151219
-Bnd-LastModified: 1297768778826
+Bundle-Version: 3.0.0.201102160811
+Bnd-LastModified: 1297840270859
 Bundle-ManifestVersion: 2
 Bundle-Description: TMQL Ontopia
 Import-Package: de.topicmapslab.majortom.util;resolution:=optional,de.

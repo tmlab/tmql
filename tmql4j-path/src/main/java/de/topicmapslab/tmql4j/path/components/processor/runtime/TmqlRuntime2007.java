@@ -83,7 +83,7 @@ public class TmqlRuntime2007 extends TmqlRuntimeImpl {
 			throw new TMQLRuntimeException("Topic map not set to query instance!");
 		}
 		if (!query.getQueryString().isEmpty()) {
-			ITmqlProcessor processor = getTmqlProcessor();
+			ITmqlProcessor processor = createTmqlProcessor();
 			IResultSet<?> results = processor.query(query, stream);
 			query.setResults(results);
 		} else {

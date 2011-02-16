@@ -25,6 +25,7 @@ import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Comma;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Where;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Add;
+import de.topicmapslab.tmql4j.update.grammar.tokens.Remove;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Set;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Update;
 import de.topicmapslab.tmql4j.util.HashUtil;
@@ -114,7 +115,7 @@ public class UpdateExpression extends ExpressionImpl {
 			return false;
 		} else if (!getTmqlTokens().get(0).equals(Update.class)) {
 			return false;
-		} else if (!getTmqlTokens().contains(Set.class) && !getTmqlTokens().contains(Add.class)) {
+		} else if (!getTmqlTokens().contains(Set.class) && !getTmqlTokens().contains(Add.class)&& !getTmqlTokens().contains(Remove.class)) {
 			return false;
 		}
 		return true;

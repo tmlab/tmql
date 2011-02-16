@@ -113,7 +113,7 @@ public class UseExpressionInterpreter extends ExpressionInterpreterImpl<UseExpre
 	 * @return the query matches containing the JTMQR
 	 */
 	private QueryMatches useCTM(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		runtime.getTmqlProcessor().getResultProcessor().setResultType(CTMResult.class);
+		context.getTmqlProcessor().getResultProcessor().setResultType(CTMResult.class);
 		/*
 		 * extract values
 		 */
@@ -181,7 +181,7 @@ public class UseExpressionInterpreter extends ExpressionInterpreterImpl<UseExpre
 	 * @return the query matches containing the JTMQR
 	 */
 	private QueryMatches useJTMQR(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		runtime.getTmqlProcessor().getResultProcessor().setResultType(JTMQRResult.class);
+		context.getTmqlProcessor().getResultProcessor().setResultType(JTMQRResult.class);
 		/*
 		 * fill template
 		 */
@@ -205,7 +205,7 @@ public class UseExpressionInterpreter extends ExpressionInterpreterImpl<UseExpre
 	 * @return the query matches containing the template snippets
 	 */
 	private QueryMatches useTemplate(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		runtime.getTmqlProcessor().getResultProcessor().setResultType(TemplateResult.class);
+		context.getTmqlProcessor().getResultProcessor().setResultType(TemplateResult.class);
 		/*
 		 * extract template name
 		 */

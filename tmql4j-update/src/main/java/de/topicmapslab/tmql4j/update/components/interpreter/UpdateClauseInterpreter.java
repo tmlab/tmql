@@ -49,7 +49,7 @@ import de.topicmapslab.tmql4j.util.XmlSchemeDatatypes;
  * <p>
  * The grammar production rule of the expression is: <code>
  * <p>
- * update-clause ::= anchor [parameter] ( SET | ADD ) value-expression
+ * update-clause ::= anchor [parameter] ( SET | ADD | REMOVE ) value-expression
  * </p>
  * </code> </p>
  * 
@@ -127,7 +127,7 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 			/*
 			 * run interpreter
 			 */
-			QueryMatches matches = interpreter.interpret(runtime, context, optionalArguments);
+			QueryMatches matches = interpreter.interpret(runtime, context, getExpression().getOperator());
 			results.add(matches.getMatches());
 		}
 		return results;
@@ -230,20 +230,11 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 			/*
 			 * check optionalType
 			 */
-			String optionalType_ = ((UpdateClause) getExpression()).getOptionalType();
-			Topic optionalType = null;
-			if (optionalType_ != null) {
-				optionalType = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, optionalType_);
-				if (optionalType == null) {
-					optionalType = context.getQuery().getTopicMap()
-							.createTopicBySubjectIdentifier(context.getQuery().getTopicMap().createLocator(runtime.getConstructResolver().toAbsoluteIRI(context, optionalType_)));
-					topicIds.add(optionalType.getId());
-				}
-			}
+			Object optionalType = ((UpdateClause) getExpression()).getOptionalType();
 			/*
 			 * is wildcard
 			 */
-			else if (containsExpressionsType(PreparedExpression.class)) {
+			if (containsExpressionsType(PreparedExpression.class)) {
 				QueryMatches matches = extractArguments(runtime, PreparedExpression.class, 0, context, optionalArguments);
 				if (matches.isEmpty()) {
 					throw new TMQLRuntimeException("Prepared statement has to be bound to a value!");
@@ -252,12 +243,7 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 				if (obj instanceof Topic) {
 					optionalType = (Topic) obj;
 				} else if (obj instanceof String) {
-					optionalType = runtime.getConstructResolver().getTopicBySubjectIdentifier(newContext, (String) obj);
-					if (optionalType == null) {
-						optionalType = context.getQuery().getTopicMap()
-								.createTopicBySubjectIdentifier(context.getQuery().getTopicMap().createLocator(runtime.getConstructResolver().toAbsoluteIRI(context, (String) obj)));
-						topicIds.add(optionalType.getId());
-					}
+					optionalType = obj;
 				} else {
 					throw new TMQLRuntimeException("Invalid result of prepared statement, expects a string literal");
 				}
@@ -294,7 +280,7 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 				/*
 				 * perform update
 				 */
-				QueryMatches result = new UpdateHandler(runtime, context).update(node, value, anchor, optionalType, getGrammarTypeOfExpression() == UpdateClause.TYPE_SET, optionalDatatype);
+				QueryMatches result = new UpdateHandler(runtime, context).update(node, value, anchor, optionalType, getExpression().getOperator() ,optionalDatatype);
 				if (!result.isEmpty()) {
 					if (!topicIds.isEmpty()) {
 						for (Map<String, Object> match : result) {

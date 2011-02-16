@@ -14,12 +14,12 @@ Bundle-Name: TMQL4J MaJorToM Extension
 Created-By: 1.6.0_20 (Sun Microsystems Inc.)
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.tmapi;bundle-version="2.0.3",de.topicmapslab.tmql4
- j;bundle-version="3.0.0",de.topicmapslab.tmql4j.path;bundle-version="
- 3.0.0",de.topicmapslab.majortom.core;bundle-version="1.1.4",de.topicm
+ j;bundle-version="3.1.0",de.topicmapslab.tmql4j.path;bundle-version="
+ 3.1.0",de.topicmapslab.majortom.core;bundle-version="1.1.4",de.topicm
  apslab.majortom.model;bundle-version="1.1.4",de.topicmapslab.geotype;
  bundle-version="1.1.4"
-Bundle-Version: 3.0.0.201102151339
-Bnd-LastModified: 1297773862076
+Bundle-Version: 3.0.0.201102160823
+Bnd-LastModified: 1297841274546
 Bundle-ManifestVersion: 2
 Import-Package: org.osgi.framework;version="[1.4,2)",org.slf4j;version
  ="1.6.1",org.tmapix.io;resolution:=optional

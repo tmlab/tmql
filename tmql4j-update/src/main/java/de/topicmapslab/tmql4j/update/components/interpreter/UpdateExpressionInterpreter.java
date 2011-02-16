@@ -21,7 +21,6 @@ import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.results.IResultProcessor;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.update.components.results.IUpdateAlias;
 import de.topicmapslab.tmql4j.update.grammar.productions.UpdateClause;
 import de.topicmapslab.tmql4j.update.grammar.productions.UpdateExpression;
 import de.topicmapslab.tmql4j.update.grammar.productions.WhereClause;
@@ -44,9 +43,6 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  * 
  */
 public class UpdateExpressionInterpreter extends ExpressionInterpreterImpl<UpdateExpression> {
-
-	private static String[] KEY_ARGS = new String[] { IUpdateAlias.TOPICS, IUpdateAlias.ASSOCIATIONS, IUpdateAlias.NAMES, IUpdateAlias.OCCURRENCES, IUpdateAlias.ROLES, IUpdateAlias.VARIANTS,
-			IUpdateAlias.IS_NEW };
 
 	/**
 	 * base constructor to create a new instance
