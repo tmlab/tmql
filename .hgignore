@@ -28,3 +28,4 @@ glob:onotoa.documentation/build.properties
 de.topicmapslab.tmcledit.doc/toc.xml
 doc/build.properties
 *pom.xml.versionsBackup
+MANIFEST.MF
