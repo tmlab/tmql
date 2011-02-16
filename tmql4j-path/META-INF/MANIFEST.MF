@@ -51,8 +51,8 @@ Created-By: 1.6.0_20 (Sun Microsystems Inc.)
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: de.topicmapslab.tmql4j;bundle-version="3.1.0",org.tmap
  i;bundle-version="2.0.3"
-Bundle-Version: 3.0.0.201102160823
-Bnd-LastModified: 1297841031484
+Bundle-Version: 3.1.0.201102161109
+Bnd-LastModified: 1297851013578
 Bundle-ManifestVersion: 2
 Import-Package: org.osgi.framework;version="[1.4,2)",org.slf4j;version
  ="1.6.1"

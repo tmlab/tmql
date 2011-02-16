@@ -31,8 +31,10 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisReifier;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Datatype;
 import de.topicmapslab.tmql4j.path.grammar.lexical.DatatypedElement;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Null;
 import de.topicmapslab.tmql4j.update.components.results.IUpdateAlias;
 import de.topicmapslab.tmql4j.update.grammar.productions.PredicateInvocation;
 import de.topicmapslab.tmql4j.update.grammar.productions.TopicDefinition;
@@ -227,6 +229,35 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 			 */
 			QueryMatches values = interpretValueExpression(runtime, newContext, optionalArguments);
 			Class<? extends IToken> anchor = getExpression().getAnchor();
+			/*
+			 * special handling for NULL as reifier
+			 */
+			if ( AxisReifier.class.equals(anchor) && values.isEmpty()){
+				if ( getInterpretersFilteredByEypressionType(runtime, ValueExpression.class).get(0).getTmqlTokens().contains(Null.class)){
+					/*
+					 * perform update
+					 */
+					QueryMatches result = new UpdateHandler(runtime, context).update(node, null, anchor, null, getExpression().getOperator() ,null);
+					if (!result.isEmpty()) {
+						if (!topicIds.isEmpty()) {
+							for (Map<String, Object> match : result) {
+								if (match.containsKey(IUpdateAlias.TOPICS)) {
+									if (match.get(IUpdateAlias.TOPICS) instanceof String) {
+										Set<String> set = HashUtil.getHashSet(topicIds);
+										set.add(match.get(IUpdateAlias.TOPICS).toString());
+										match.put(IUpdateAlias.TOPICS, set);
+									} else if (match.get(IUpdateAlias.TOPICS) instanceof Collection<?>) {
+										Set<String> set = HashUtil.getHashSet(topicIds);
+										set.addAll((Collection<String>) match.get(IUpdateAlias.TOPICS));
+										match.put(IUpdateAlias.TOPICS, set);
+									}
+								}
+							}
+						}
+						results.add(result.getMatches());
+					}
+				}				
+			}
 			/*
 			 * check optionalType
 			 */

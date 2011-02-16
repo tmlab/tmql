@@ -363,9 +363,9 @@ public class UpdateHandler {
 		 * is remove operation removes the name of a topic
 		 */
 		else if (Remove.class.equals(operator)) {
-			if (entry instanceof Name) {
-				final String id = ((Name) entry).getId();
-				((Name) entry).remove();
+			if (value instanceof Name) {
+				final String id = ((Name) value).getId();
+				((Name) value).remove();
 				/*
 				 * modify result processor
 				 */
@@ -444,9 +444,9 @@ public class UpdateHandler {
 		 * is remove operation removes the occurrence of a topic
 		 */
 		else if (Remove.class.equals(operator)) {
-			if (entry instanceof Occurrence) {
-				final String id = ((Occurrence) entry).getId();
-				((Occurrence) entry).remove();
+			if (value instanceof Occurrence) {
+				final String id = ((Occurrence) value).getId();
+				((Occurrence) value).remove();
 				/*
 				 * modify result processor
 				 */
@@ -757,8 +757,10 @@ public class UpdateHandler {
 		 * is remove operation
 		 */
 		else if ( Remove.class.equals(operator)){
-			if (entry instanceof Role) {
-				Role role = (Role) entry;
+			if (value instanceof Role) {
+				Role role = (Role) value;
+				final String id = role.getId();
+				role.remove();
 				/*
 				 * modify result processor
 				 */
@@ -769,7 +771,7 @@ public class UpdateHandler {
 				 * create results
 				 */
 				Map<String, Object> tuple = HashUtil.getHashMap();				
-				tuple.put(IUpdateAlias.ROLES, role.getId());
+				tuple.put(IUpdateAlias.ROLES, id);
 				QueryMatches matches = new QueryMatches(runtime);
 				matches.add(tuple);
 				return matches;
@@ -794,7 +796,7 @@ public class UpdateHandler {
 
 		if (entry instanceof Reifiable) {
 			reifiable = (Reifiable) entry;
-			reifier = entry.toString().equals(Null.TOKEN)? null:getTopic(value, true, topicIds);			
+			reifier = value == null ? null:getTopic(value, true, topicIds);			
 		} else if (entry instanceof Topic) {
 			reifier = (Topic) entry;
 			if (value instanceof Reifiable) {

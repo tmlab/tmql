@@ -18,6 +18,7 @@ import java.util.Iterator;
 
 import org.junit.Test;
 import org.tmapi.core.Association;
+import org.tmapi.core.Locator;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
 import org.tmapi.core.Role;
@@ -27,6 +28,7 @@ import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
 import de.topicmapslab.tmql4j.path.query.TMQLQuery;
 import de.topicmapslab.tmql4j.update.components.results.IUpdateAlias;
+import de.topicmapslab.tmql4j.update.util.TmdmUtility;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 import de.topicmapslab.tmql4j.util.XmlSchemeDatatypes;
 
@@ -51,7 +53,21 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals(topic.getId(), set.get(0,"topics"));
 		assertEquals(1, topic.getSubjectLocators().size());
 		assertEquals("http://psi.example.org/loc", topic.getSubjectLocators().iterator().next().getReference());
+	}
+	
+	@Test
+	public void testRemoveLocator() throws Exception {
+		Topic topic = createTopicBySL("myTopic");
+		Locator locator = createLocator("locator");
+		topic.addSubjectLocator(locator);
+		assertEquals(2, topic.getSubjectLocators().size());
 
+		String query = " UPDATE locators REMOVE \"" + base + "locator\" WHERE myTopic ";
+		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());		
+		assertEquals(1, topic.getSubjectLocators().size());
+		assertEquals(topic.getId(), set.get(0,"topics"));
 	}
 
 	@Test
@@ -69,6 +85,21 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals(1, topic.getSubjectIdentifiers().size());
 		assertEquals("http://psi.example.org/loc", topic.getSubjectIdentifiers().iterator().next().getReference());
 	}
+	
+	@Test
+	public void testRemoveIndicator() throws Exception {
+		Topic topic = createTopicBySL("myTopic");
+		Locator locator = createLocator("locator");
+		topic.addSubjectIdentifier(locator);
+		assertEquals(1, topic.getSubjectIdentifiers().size());
+
+		String query = " UPDATE indicators REMOVE \"" + base + "locator\" WHERE myTopic ";
+		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());		
+		assertEquals(0, topic.getSubjectIdentifiers().size());
+		assertEquals(topic.getId(), set.get(0,"topics"));
+	}
 
 	@Test
 	public void testAddItemIdentifier() throws Exception {
@@ -84,6 +115,21 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals(topic.getId(), set.get(0,"topics"));
 		assertEquals(1, topic.getItemIdentifiers().size());
 		assertEquals("http://psi.example.org/loc", topic.getItemIdentifiers().iterator().next().getReference());
+	}
+	
+	@Test
+	public void testRemoveItem() throws Exception {
+		Topic topic = createTopicBySL("myTopic");
+		Locator locator = createLocator("locator");
+		topic.addItemIdentifier(locator);
+		assertEquals(1, topic.getItemIdentifiers().size());
+
+		String query = " UPDATE item REMOVE \"" + base + "locator\" WHERE myTopic ";
+		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());		
+		assertEquals(0, topic.getItemIdentifiers().size());
+		assertEquals(topic.getId(), set.get(0,"topics"));
 	}
 
 	@Test
@@ -124,21 +170,18 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 	}
 	
 	@Test
-	public void testAddRemoveName() throws Exception {
+	public void testRemoveName() throws Exception {
 		Topic topic = createTopicBySL("myTopic");
 		Name name = topic.createName("Name");
+		String id = name.getId();
 		assertEquals(1, topic.getNames().size());
 
-		String query = " UPDATE names REMOVE \"" + name.getId() + "\" << id WHERE myTopic ";
+		String query = " UPDATE names REMOVE \"" + id + "\" << id WHERE myTopic ";
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
-		assertEquals(2, set.first().size());
-		assertEquals(topic.getId(), set.get(0,"topics"));
-		
-		assertEquals(1, topic.getNames().size());
-		assertEquals(topic.getNames().iterator().next().getId(), set.get(0,"names"));
-		assertEquals("Name", topic.getNames().iterator().next().getValue());
-		assertEquals(type, topic.getNames().iterator().next().getType());
+		assertEquals(1, set.first().size());		
+		assertEquals(0, topic.getNames().size());
+		assertEquals(id, set.get(0,"names"));
 	}
 
 	@Test
@@ -255,6 +298,21 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals(topic.getOccurrences().iterator().next().getId(), set.get(0,"occurrences"));		
 		assertEquals("Value", topic.getOccurrences().iterator().next().getValue());
 		assertEquals(type, topic.getOccurrences().iterator().next().getType());
+	}
+	
+	@Test
+	public void testRemoveOccurrence() throws Exception {
+		Topic topic = createTopicBySL("myTopic");
+		Occurrence occurrence = topic.createOccurrence(createTopic(),"Value");
+		String id = occurrence.getId();
+		assertEquals(1, topic.getOccurrences().size());
+
+		String query = " UPDATE occurrences REMOVE \"" + id + "\" << id WHERE myTopic ";
+		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());		
+		assertEquals(0, topic.getOccurrences().size());
+		assertEquals(id, set.get(0,"occurrences"));
 	}
 
 	@Test
@@ -429,6 +487,22 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals(1, topic.getTypes().size());
 		assertTrue(topic.getTypes().contains(type));
 	}
+	
+	@Test
+	public void testRemoveTypeToTopic() throws Exception {
+		Topic topic = createTopicBySL("myTopic");
+		Topic type = createTopicBySL("myType");
+		topic.addType(type);
+		assertEquals(1, topic.getTypes().size());
+
+		String query = " UPDATE types REMOVE myType WHERE myTopic ";
+		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertTrue(set.get(0,"topics") instanceof Collection<?>);
+		assertEquals(1,((Collection<?>)set.get(0,"topics")).size());
+		assertEquals(0, topic.getTypes().size());
+	}
 
 	@Test
 	public void testSetTypeToOccurrence() throws Exception {
@@ -494,6 +568,22 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals(1, topic.getTypes().size());
 		assertTrue(topic.getTypes().contains(type));
 	}
+	
+	@Test
+	public void testRemoveInstance() throws Exception {
+		Topic topic = createTopicBySL("myTopic");
+		Topic type = createTopicBySL("myType");
+		topic.addType(type);
+		assertEquals(1, topic.getTypes().size());
+
+		String query = " UPDATE instances REMOVE myTopic WHERE myType ";
+		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertTrue(set.get(0,"topics") instanceof Collection<?>);
+		assertEquals(1,((Collection<?>)set.get(0,"topics")).size());
+		assertEquals(0, topic.getTypes().size());
+	}
 
 	@Test
 	public void testAddSupertypes() throws Exception {
@@ -512,6 +602,20 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals(1, topic.getRolesPlayed(subtype).size());
 		assertEquals(type, topic.getRolesPlayed(subtype).iterator().next().getParent().getRoles(supertype).iterator().next().getPlayer());
 	}
+	
+	@Test
+	public void testRemoveSupertype() throws Exception {
+		Topic topic = createTopicBySL("myTopic");
+		Topic type = createTopicBySL("myType");
+		TmdmUtility.addSupertype(topicMap, type, topic, null);		
+
+		String query = " UPDATE supertypes REMOVE myType WHERE myTopic ";
+		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertTrue(set.get(0,"topics") instanceof Collection<?>);
+		assertEquals(1,((Collection<?>)set.get(0,"topics")).size());
+	}
 
 	@Test
 	public void testAddSubtypes() throws Exception {
@@ -529,6 +633,20 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals(1,((Collection<?>)set.get(0,"topics")).size());
 		assertEquals(1, topic.getRolesPlayed(subtype).size());
 		assertEquals(type, topic.getRolesPlayed(subtype).iterator().next().getParent().getRoles(supertype).iterator().next().getPlayer());
+	}
+	
+	@Test
+	public void testRemoveSubtype() throws Exception {
+		Topic topic = createTopicBySL("myTopic");
+		Topic type = createTopicBySL("myType");
+		TmdmUtility.addSupertype(topicMap, type, topic, null);		
+
+		String query = " UPDATE subtypes REMOVE myTopic  WHERE myType";
+		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertTrue(set.get(0,"topics") instanceof Collection<?>);
+		assertEquals(1,((Collection<?>)set.get(0,"topics")).size());
 	}
 
 	@Test
@@ -574,6 +692,23 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals(2, a.getRoles().size());
 		assertEquals(1, a.getRoles(otherType).size());
 		assertEquals(other, a.getRoles(otherType).iterator().next().getPlayer());
+	}
+	
+	@Test
+	public void testRemoveRole() throws Exception {
+		Topic topic = createTopicBySL("myTopic");
+		Topic type = createTopicBySL("myType");
+		Association a = createAssociation(type);
+		Role r = a.createRole(createTopic(), topic);
+		final String id = r.getId(); 
+		assertEquals(1, a.getRoles().size());
+
+		String query = " UPDATE roles REMOVE \"" + r.getId() + "\" << id WHERE \"" + a.getId() + "\" << id";
+		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());		
+		assertEquals(id,set.get(0,"roles"));
+		assertEquals(0, a.getRoles().size());
 	}
 
 	@Test
@@ -671,10 +806,13 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals(o.getId(), set.get(0, "occurrences"));
 		assertEquals(reifier, o.getReifier());
 		assertEquals(o, reifier.getReified());
-
-		o.setReifier(null);
+		
+		query = " UPDATE reifier SET NULL WHERE myTopic >> characteristics tm:occurrence";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(o.getId(), set.get(0, "occurrences"));
 		assertNull(o.getReifier());
-		assertNull(reifier.getReified());
 	}
 
 	@Test
