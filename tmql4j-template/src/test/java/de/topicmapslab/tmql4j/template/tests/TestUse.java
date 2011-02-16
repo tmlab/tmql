@@ -56,6 +56,21 @@ public class TestUse extends Tmql4JTestCase {
 	}
 	
 	@Test
+	public void testUseWithStream() throws Exception {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		Topic topic = createTopic();
+		topic.createName("Topic with name");
+		String value ="<div>Topic with name</div>";
+		
+		final String query 	= "%pragma TEMPLATE \"\"\"<div>?name?</div>\"\"\" " 
+							+ " // tm:subject / tm:name AS \"name\" USE TEMPLATE";
+		IResultSet<?> rs = runtime.run(topicMap, query, os).getResults();
+		os.flush();
+		assertEquals(value, os.toString("UTF-8"));
+		assertEquals(Template.TOKEN, rs.getResultType());
+	}
+	
+	@Test
 	public void testUse2() throws Exception {
 		Set<String> values = new HashSet<String>();
 		values.add("<div>"+ TmdmSubjectIdentifier.TMDM_DEFAULT_NAME_TYPE + " with name NULL</div>");
@@ -97,16 +112,10 @@ public class TestUse extends Tmql4JTestCase {
 		assertEquals(jtmqr, rs.get(0,0));
 	}
 	
-	@Test(expected=TMQLRuntimeException.class)
-	public void testJTMQROSIllegal() throws Exception {
-		final String query 	= "// tm:subject USE JTMQROS";
-		execute(query);
-	}
-	
 	@Test
 	public void testJTMQROS() throws Exception {
 		final String jtmqr = JTMQRWriter.write(QueryMatches.emptyMatches());
-		final String query 	= "// tm:subject USE JTMQROS";
+		final String query 	= "// tm:subject USE JTMQR";
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		runtime.run(topicMap,query, os);
 		os.flush();
@@ -131,5 +140,18 @@ public class TestUse extends Tmql4JTestCase {
 		for ( String result : results ){
 			assertTrue(ctm.contains(result));
 		}
+	}
+	
+	@Test
+	public void testUseCTMWithStream() throws Exception {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		Topic topic = createTopicBySI("myTopic");
+		topic.createName("Topic with name");
+		String value ="<" + base + "myTopic>";		
+		final String query 	= " // tm:subject USE CTM";
+		IResultSet<?> rs = runtime.run(topicMap, query, os).getResults();
+		os.flush();
+		assertTrue(os.toString("UTF-8").contains(value));
+		assertEquals(CTM.TOKEN, rs.getResultType());
 	}
 }

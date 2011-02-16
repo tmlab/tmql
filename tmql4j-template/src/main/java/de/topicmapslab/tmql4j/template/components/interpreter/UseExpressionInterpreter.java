@@ -10,6 +10,7 @@ package de.topicmapslab.tmql4j.template.components.interpreter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +36,6 @@ import de.topicmapslab.tmql4j.template.components.processor.runtime.module.Templ
 import de.topicmapslab.tmql4j.template.components.processor.runtime.module.TemplateManager;
 import de.topicmapslab.tmql4j.template.grammar.lexical.CTM;
 import de.topicmapslab.tmql4j.template.grammar.lexical.JTMQR;
-import de.topicmapslab.tmql4j.template.grammar.lexical.JTMQROS;
 import de.topicmapslab.tmql4j.template.grammar.productions.UseExpression;
 import de.topicmapslab.tmql4j.template.util.json.JTMQRWriter;
 import de.topicmapslab.tmql4j.util.HashUtil;
@@ -85,12 +85,6 @@ public class UseExpressionInterpreter extends ExpressionInterpreterImpl<UseExpre
 			return useJTMQR(runtime, context, optionalArguments);
 		}
 		/*
-		 * use JTMQROS
-		 */
-		else if (JTMQROS.class.equals(token)) {
-			return useJTMQROS(runtime, context, optionalArguments);
-		}
-		/*
 		 * use CTM
 		 */
 		else if (CTM.class.equals(token)) {
@@ -130,40 +124,26 @@ public class UseExpressionInterpreter extends ExpressionInterpreterImpl<UseExpre
 					}
 				}
 			}
-			ByteArrayOutputStream os = new ByteArrayOutputStream();
+			OutputStream os;
+			/*
+			 * check if output stream set
+			 */
+			if (context.getOutputStream() != null) {
+				os = (OutputStream) context.getOutputStream();
+			} else {
+				os = new ByteArrayOutputStream();
+			}
 			try {
 				new CTMTopicMapWriter(os, context.getQuery().getTopicMap().getLocator().getReference()).write(results);
 			} catch (IOException e) {
 				throw new TMQLRuntimeException("Transformation to CTM failed!", e);
 			}
-			return QueryMatches.asQueryMatchNS(runtime, os.toString());
-		}
-		return QueryMatches.emptyMatches();
-	}
-
-	/**
-	 * The method extracts the values from context and create a JTMQROS for the
-	 * whole sequence
-	 * 
-	 * @param runtime
-	 *            the runtime
-	 * @param context
-	 *            the context
-	 * @param optionalArguments
-	 *            optional arguments
-	 * @return the query matches containing the JTMQR
-	 */
-	private QueryMatches useJTMQROS(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-		if (context.getOutputStream() == null) {
-			throw new TMQLRuntimeException("Missing outputstream to use JTMQROS");
-		}
-		/*
-		 * fill result
-		 */
-		if (context.getContextBindings() != null) {
-			JTMQRWriter.write(context.getOutputStream(), context.getContextBindings());
-		} else {
-			JTMQRWriter.write(context.getOutputStream(), QueryMatches.emptyMatches());
+			/*
+			 * check if output stream set
+			 */
+			if (context.getOutputStream() == null) {
+				return QueryMatches.asQueryMatchNS(runtime, os.toString());
+			}
 		}
 		return QueryMatches.emptyMatches();
 	}
@@ -183,7 +163,17 @@ public class UseExpressionInterpreter extends ExpressionInterpreterImpl<UseExpre
 	private QueryMatches useJTMQR(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		context.getTmqlProcessor().getResultProcessor().setResultType(JTMQRResult.class);
 		/*
-		 * fill template
+		 * check if output stream is provided
+		 */
+		if (context.getOutputStream() != null) {
+			if (context.getContextBindings() != null) {
+				JTMQRWriter.write(context.getOutputStream(), context.getContextBindings());
+			} else {
+				JTMQRWriter.write(context.getOutputStream(), QueryMatches.emptyMatches());
+			}
+		}
+		/*
+		 * fill JTMQR
 		 */
 		if (context.getContextBindings() != null) {
 			String json = JTMQRWriter.write(context.getContextBindings());
@@ -230,7 +220,11 @@ public class UseExpressionInterpreter extends ExpressionInterpreterImpl<UseExpre
 			for (Map<String, Object> tuple : ProjectionUtils.asTwoDimensionalMap(context.getContextBindings())) {
 				Context newContext = new Context(context);
 				newContext.setCurrentTuple(tuple);
-				values.add(template.use(runtime, newContext, optionalArguments));
+				if (context.getOutputStream() != null) {
+					template.use(runtime, newContext, context.getOutputStream(), optionalArguments);
+				} else {
+					values.add(template.use(runtime, newContext, optionalArguments));
+				}
 			}
 			if (!values.isEmpty()) {
 				return QueryMatches.asQueryMatchNS(runtime, values);

@@ -8,6 +8,10 @@
  */
 package de.topicmapslab.tmql4j.template.components.processor.runtime.module;
 
+import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -70,10 +74,10 @@ public class Template {
 		while (index != -1) {
 			String part = definition.substring(lastIndex, index);
 			this.parts.add(part);
-			lastIndex = definition.indexOf(Wildcard.TOKEN, index+1);			
+			lastIndex = definition.indexOf(Wildcard.TOKEN, index + 1);
 			final String wildcard = definition.substring(index + 1, lastIndex);
 			this.wildcards.add(wildcard);
-			lastIndex ++;
+			lastIndex++;
 			index = definition.indexOf(Wildcard.TOKEN, lastIndex);
 		}
 		if (lastIndex < definition.length()) {
@@ -89,27 +93,29 @@ public class Template {
 	 *            the runtime
 	 * @param context
 	 *            the context
+	 * @param os
+	 *            the output stream
 	 * @param objects
 	 *            optional arguments
 	 * @return the query matches and never <code>null</code>
 	 * @throws TMQLRuntimeException
 	 */
-	public String use(ITMQLRuntime runtime, IContext context, Object... objects) throws TMQLRuntimeException {
+	public void use(ITMQLRuntime runtime, IContext context, OutputStream os, Object... objects) throws TMQLRuntimeException {
 		Iterator<String> iParts = parts.iterator();
 		Iterator<String> iWildcards = wildcards.iterator();
-		StringBuilder builder = new StringBuilder();
+		PrintWriter writer = new PrintWriter(os);
 		/*
 		 * iterate over parts
 		 */
 		while (iParts.hasNext()) {
 			String part = iParts.next();
-			builder.append(part);
+			writer.append(part);
 			/*
 			 * use next wildcard
 			 */
 			if (iWildcards.hasNext()) {
 				String wildcard = iWildcards.next();
-				builder.append(getPart(context, wildcard));
+				writer.append(getPart(context, wildcard));
 			}
 		}
 		/*
@@ -117,9 +123,31 @@ public class Template {
 		 */
 		while (iWildcards.hasNext()) {
 			String wildcard = iWildcards.next();
-			builder.append(getPart(context, wildcard));
+			writer.append(getPart(context, wildcard));
 		}
-		return builder.toString();
+		writer.flush();
+	}
+
+	/**
+	 * Uses the template for the given context
+	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param context
+	 *            the context
+	 * @param objects
+	 *            optional arguments
+	 * @return the query matches and never <code>null</code>
+	 * @throws TMQLRuntimeException
+	 */
+	public String use(ITMQLRuntime runtime, IContext context, Object... objects) throws TMQLRuntimeException {
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		use(runtime, context, os, objects);
+		try {
+			return os.toString("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new TMQLRuntimeException("Cannot convert byte array to string using UTF-8", e);
+		}
 	}
 
 	/**
@@ -152,8 +180,7 @@ public class Template {
 		if (context.getCurrentTuple() != null) {
 			if (context.getCurrentTuple().containsKey(variable)) {
 				value = context.getCurrentTuple().get(variable);
-			}
-			else {
+			} else {
 				throw new TMQLRuntimeException(MessageFormat.format(MISSING_BINDING_VALUE_FOR_VARIABLE, wildcard));
 			}
 		} else if (CURRENT_NODE.equalsIgnoreCase(variable) && context.getCurrentNode() != null) {
