@@ -23,6 +23,7 @@ import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
+import org.tmapi.core.Variant;
 
 import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
 import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
@@ -149,7 +150,7 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		
 		assertEquals("Name", topic.getNames().iterator().next().getValue());
 	}
-
+	
 	@Test
 	public void testAddNameWithType() throws Exception {
 		Topic topic = createTopicBySL("myTopic");
@@ -280,6 +281,138 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals(name.getId(), set.first().first());
 		assertEquals(name.getId(), set.get(0,"names"));
 		assertEquals("\\\"Abra\\\"", name.getValue());
+	}
+	
+	@Test
+	public void testAddVariant() throws Exception {
+		Topic topic = createTopicBySL("myTopic");
+		Name n = topic.createName("Name");
+		assertEquals(0, n.getVariants().size());
+
+		String query = " UPDATE variants myTheme ADD \"Variant\" WHERE \"" + n.getId() + "\" << id ";
+		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, n.getVariants().size());
+		assertEquals(1, set.size());
+		assertEquals(3, set.first().size());
+		assertEquals(n.getId(), set.get(0,"names"));
+		Variant v = n.getVariants().iterator().next();
+		assertEquals(v.getId(), set.get(0,"variants"));
+		assertEquals(1, v.getScope().size());
+		assertEquals(v.getScope().iterator().next().getId(), set.get(0,"topics"));
+	}
+	
+	@Test
+	public void testRemoveVariant() throws Exception {
+		Topic topic = createTopicBySL("myTopic");
+		Name n = topic.createName("Name");
+		Variant v = n.createVariant("Value", createTopic());
+		final String id = v.getId();
+		assertEquals(1, n.getVariants().size());
+
+		String query = " UPDATE variants REMOVE \"" + v.getId() + "\" << id WHERE \"" + n.getId() + "\" << id ";
+		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(0, n.getVariants().size());
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());		
+		assertEquals(id, set.get(0,"variants"));
+	}
+
+	@Test
+	public void testSetVariantValue() throws Exception {
+		Topic topic = createTopicBySL("myTopic");
+		topic.createName("Name");
+		assertEquals(1, topic.getNames().size());
+		Name name = topic.getNames().iterator().next();
+		Variant v = name.createVariant("Name", createTopic());
+
+		String query = " UPDATE variants SET \"New Name\" WHERE myTopic >> characteristics tm:name >> variants";
+		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(v.getId(), set.first().first());
+		assertEquals(v.getId(), set.get(0,"variants"));
+		assertEquals(1, topic.getNames().size());
+		assertEquals("New Name", v.getValue());
+
+		query = " UPDATE variants SET \"\"\"\\\"Abra\\\"\"\"\" WHERE \"" + v.getId() + "\" << id";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(v.getId(), set.first().first());
+		assertEquals(v.getId(), set.get(0,"variants"));
+		assertEquals("\"Abra\"", v.getValue());
+
+		query = " UPDATE variants SET \"\\\"Abra\\\"\" WHERE \"" + v.getId() + "\" << id";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(v.getId(), set.first().first());
+		assertEquals(v.getId(), set.get(0,"variants"));
+		assertEquals("\"Abra\"", v.getValue());
+
+		query = " UPDATE variants SET \"Abr\\\"a\" WHERE \"" + v.getId() + "\" << id";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(v.getId(), set.first().first());
+		assertEquals(v.getId(), set.get(0,"variants"));
+		assertEquals("Abr\"a", v.getValue());
+
+		query = " UPDATE variants SET \"\"\"Abr\\\"a\"\"\" WHERE \"" + v.getId() + "\" << id";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(v.getId(), set.first().first());
+		assertEquals(v.getId(), set.get(0,"variants"));
+		assertEquals("Abr\"a", v.getValue());
+
+		query = " UPDATE variants SET \"Abra\\\"\" WHERE \"" + v.getId() + "\" << id";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(v.getId(), set.first().first());
+		assertEquals(v.getId(), set.get(0,"variants"));
+		assertEquals("Abra\"", v.getValue());
+
+		query = " UPDATE variants SET \"\"\"Abra\\\"\"\"\" WHERE \"" + v.getId() + "\" << id";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(v.getId(), set.first().first());
+		assertEquals(v.getId(), set.get(0,"variants"));
+		assertEquals("Abra\"", v.getValue());
+
+		query = " UPDATE variants SET \"Abra\\\\\" WHERE \"" + v.getId() + "\" << id";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(v.getId(), set.first().first());
+		assertEquals(v.getId(), set.get(0,"variants"));
+		assertEquals("Abra\\", v.getValue());
+
+		query = " UPDATE variants SET \"\"\"Abra\\\\\"\"\" WHERE \"" + v.getId() + "\" << id";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(v.getId(), set.first().first());
+		assertEquals(v.getId(), set.get(0,"variants"));
+		assertEquals("Abra\\", v.getValue());
+
+		query = " UPDATE variants SET \"\\\\\\\"Abra\\\\\\\"\" WHERE \"" + v.getId() + "\" << id";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(v.getId(), set.first().first());
+		assertEquals(v.getId(), set.get(0,"variants"));
+		assertEquals("\\\"Abra\\\"", v.getValue());
+
+		query = " UPDATE variants SET \"\"\"\\\\\\\"Abra\\\\\\\"\"\"\" WHERE \"" + v.getId() + "\" << id";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(v.getId(), set.first().first());
+		assertEquals(v.getId(), set.get(0,"variants"));
+		assertEquals("\\\"Abra\\\"", v.getValue());
 	}
 
 	@Test

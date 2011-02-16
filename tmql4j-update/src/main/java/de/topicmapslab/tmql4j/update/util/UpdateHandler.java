@@ -34,6 +34,7 @@ import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisCharacteristics;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisIndicators;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisInstances;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisItem;
@@ -45,7 +46,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.AxisScope;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisSubtypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisSupertypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTypes;
-import de.topicmapslab.tmql4j.path.grammar.lexical.Null;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisVariants;
 import de.topicmapslab.tmql4j.update.components.results.IUpdateAlias;
 import de.topicmapslab.tmql4j.update.exception.UpdateException;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Add;
@@ -107,8 +108,18 @@ public class UpdateHandler {
 			return updateItem(entry, value, optionalType, operator);
 		} else if (anchor.equals(Names.class)) {
 			return updateNames(entry, value, optionalType, operator);
+		} else if (anchor.equals(AxisVariants.class)) {
+			return updateVariants(entry, value, optionalType, operator, optionalDatatype);
 		} else if (anchor.equals(Occurrences.class)) {
 			return updateOccurrences(entry, value, optionalType, operator, optionalDatatype);
+		} else if (anchor.equals(AxisCharacteristics.class)) {
+			if (entry instanceof Name) {
+				return updateNames(entry, value, optionalType, operator);
+			} else if (entry instanceof Occurrence) {
+				return updateOccurrences(entry, value, optionalType, operator, optionalDatatype);
+			} else {
+				throw new UpdateException("Entry has to be a name or an occurrence.");
+			}
 		} else if (anchor.equals(AxisScope.class)) {
 			return updateScope(entry, value, optionalType, operator);
 		} else if (anchor.equals(AxisInstances.class)) {
@@ -215,7 +226,7 @@ public class UpdateHandler {
 		Topic t = (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, entry.toString());
 		if (t == null && createNonExisting) {
 			try {
-				t = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(entry.toString()));
+				t = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(runtime.getConstructResolver().toAbsoluteIRI(context, entry.toString())));
 				if (topicIds != null) {
 					topicIds.add(t.getId());
 				}
@@ -337,7 +348,7 @@ public class UpdateHandler {
 		}
 		return QueryMatches.asQueryMatchNS(runtime, tuple);
 	}
-
+	
 	public QueryMatches updateNames(Object entry, Object value, Object optionalType, Class<? extends IToken> operator) throws UpdateException {
 		/*
 		 * is set operation modifies the value of a name
@@ -411,6 +422,96 @@ public class UpdateHandler {
 				return QueryMatches.asQueryMatchNS(runtime, tuple);
 			}
 			throw new UpdateException("Entry has to be a topic.");
+		}
+	}
+
+	public QueryMatches updateVariants(Object entry, Object value, Object theme, Class<? extends IToken> operator, Locator optionalDatatype) throws UpdateException {
+		/*
+		 * is set operation modifies the value of a variant
+		 */
+		if (de.topicmapslab.tmql4j.update.grammar.tokens.Set.class.equals(operator)) {
+			if (entry instanceof Variant) {
+				Variant variant = (Variant) entry;
+				if (optionalDatatype == null) {
+					variant.setValue(value.toString());
+				} else {
+					variant.setValue(value.toString(), optionalDatatype);
+				}
+				/*
+				 * modify result processor
+				 */
+				context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.VARIANTS);
+				context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
+				/*
+				 * create result
+				 */
+				Map<String, Object> tuple = HashUtil.getHashMap();
+				tuple.put(IUpdateAlias.VARIANTS, variant.getId());
+				return QueryMatches.asQueryMatchNS(runtime, tuple);
+			}
+			throw new UpdateException("Entry has to be a variant.");
+		}
+		/*
+		 * is remove operation removes the variant of a topic
+		 */
+		else if (Remove.class.equals(operator)) {
+			if (value instanceof Variant) {
+				final String id = ((Variant) value).getId();
+				((Variant) value).remove();
+				/*
+				 * modify result processor
+				 */
+				context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.VARIANTS);
+				context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
+				/*
+				 * create result
+				 */
+				Map<String, Object> tuple = HashUtil.getHashMap();
+				tuple.put(IUpdateAlias.VARIANTS, id);
+				return QueryMatches.asQueryMatchNS(runtime, tuple);
+			}
+			throw new UpdateException("Entry has to be a variant.");
+		}
+		/*
+		 * is add operation adding a new occurrence
+		 */
+		else {
+			if (entry instanceof Name) {
+				Name name = (Name) entry;
+				Collection<String> topicIds = HashUtil.getHashSet();
+				Topic theme_ = null;
+				if (theme == null) {
+					throw new UpdateException("Entry type is missing.");
+				} else {
+					theme_ = getTopic(theme, true, topicIds);
+				}
+				Variant variant;
+				if (optionalDatatype != null) {
+					variant = name.createVariant(value.toString(), optionalDatatype, theme_);
+				} else {
+					variant = name.createVariant(value.toString(), theme_);
+				}
+				/*
+				 * modify result processor
+				 */
+				context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.VARIANTS);
+				context.getTmqlProcessor().getResultProcessor().setColumnAlias(1, IUpdateAlias.NAMES);
+				if ( !topicIds.isEmpty()){
+					context.getTmqlProcessor().getResultProcessor().setColumnAlias(2, IUpdateAlias.TOPICS);
+				}
+				context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
+				/*
+				 * create result
+				 */
+				Map<String, Object> tuple = HashUtil.getHashMap();
+				tuple.put(IUpdateAlias.VARIANTS, variant.getId());
+				tuple.put(IUpdateAlias.NAMES, name.getId());
+				if (!topicIds.isEmpty()) {
+					tuple.put(IUpdateAlias.TOPICS, topicIds.iterator().next());
+				}
+				return QueryMatches.asQueryMatchNS(runtime, tuple);
+			}
+			throw new UpdateException("Entry has to be a name.");
 		}
 	}
 
@@ -756,7 +857,7 @@ public class UpdateHandler {
 		/*
 		 * is remove operation
 		 */
-		else if ( Remove.class.equals(operator)){
+		else if (Remove.class.equals(operator)) {
 			if (value instanceof Role) {
 				Role role = (Role) value;
 				final String id = role.getId();
@@ -766,11 +867,11 @@ public class UpdateHandler {
 				 */
 				context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
 				context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.ROLES);
-				
+
 				/*
 				 * create results
 				 */
-				Map<String, Object> tuple = HashUtil.getHashMap();				
+				Map<String, Object> tuple = HashUtil.getHashMap();
 				tuple.put(IUpdateAlias.ROLES, id);
 				QueryMatches matches = new QueryMatches(runtime);
 				matches.add(tuple);
@@ -781,7 +882,7 @@ public class UpdateHandler {
 		/*
 		 * is set operation
 		 */
-		else{
+		else {
 			throw new UpdateException("Error at position 2 because keyword ADD or REMOVE was exprected but keyword SET was found.");
 		}
 	}
@@ -796,7 +897,7 @@ public class UpdateHandler {
 
 		if (entry instanceof Reifiable) {
 			reifiable = (Reifiable) entry;
-			reifier = value == null ? null:getTopic(value, true, topicIds);			
+			reifier = value == null ? null : getTopic(value, true, topicIds);
 		} else if (entry instanceof Topic) {
 			reifier = (Topic) entry;
 			if (value instanceof Reifiable) {
