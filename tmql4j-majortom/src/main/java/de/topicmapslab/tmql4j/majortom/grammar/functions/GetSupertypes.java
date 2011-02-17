@@ -48,8 +48,13 @@ public class GetSupertypes extends FunctionImpl {
 			throw new TMQLRuntimeException(getItemIdentifier() + "() requieres 0 or 1 parameters.");
 		}
 		
-		ISupertypeSubtypeIndex index = context.getQuery().getTopicMap().getIndex(
+		ISupertypeSubtypeIndex index = null;
+		try{
+			index = context.getQuery().getTopicMap().getIndex(		
 				ISupertypeSubtypeIndex.class);
+		}catch(Exception e){
+			return QueryMatches.emptyMatches();
+		}
 		if (!index.isOpen()) {
 			index.open();
 		}
