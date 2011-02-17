@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import de.topicmapslab.tmql4j.exception.TMQLInitializationException;
-import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.util.HashUtil;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 
@@ -168,36 +167,41 @@ public class PrefixHandler {
 		return prefixes.containsKey(prefix);
 	}
 
-	/**
-	 * Transform the given relative to its absolute IRI reference. If the given
-	 * reference is already an absolute IRI, it will be returned unmodified. If
-	 * the prefix is unknown, an exception will be thrown.
-	 * 
-	 * @param reference
-	 *            the reference
-	 * @return the absolute IRI
-	 * @throws TMQLRuntimeException
-	 *             thrown if the prefix is unknown
-	 */
-	private String toAbsoluteIRI(final String reference) throws TMQLRuntimeException {
-		int index = reference.indexOf(":");
-		if (index != -1) {
-			String id = reference.substring(0, index);
-			if (id.equalsIgnoreCase("http") || id.equalsIgnoreCase("file") || id.equalsIgnoreCase("ftp") || id.equalsIgnoreCase("https")) {
-				return reference;
-			}
-			if (prefixes.containsKey(id)) {
-				String prefix = prefixes.get(id);
-				if (!prefix.endsWith("/") && !prefix.endsWith("#")) {
-					prefix += "/";
-				}
-				return prefix + reference.substring(index + 1);
-			}
-			throw new TMQLRuntimeException("Unknown prefix '" + id + "'!");
-		} else if (reference.indexOf("://") == -1) {
-			return defaultPrefix + (defaultPrefix.endsWith("/") || defaultPrefix.endsWith("#") ? "" : "/") + reference;
-		}
-		return reference;
-	}
+	// /**
+	// * Transform the given relative to its absolute IRI reference. If the
+	// given
+	// * reference is already an absolute IRI, it will be returned unmodified.
+	// If
+	// * the prefix is unknown, an exception will be thrown.
+	// *
+	// * @param reference
+	// * the reference
+	// * @return the absolute IRI
+	// * @throws TMQLRuntimeException
+	// * thrown if the prefix is unknown
+	// */
+	// private String toAbsoluteIRI(final String reference) throws
+	// TMQLRuntimeException {
+	// int index = reference.indexOf(":");
+	// if (index != -1) {
+	// String id = reference.substring(0, index);
+	// if (id.equalsIgnoreCase("http") || id.equalsIgnoreCase("file") ||
+	// id.equalsIgnoreCase("ftp") || id.equalsIgnoreCase("https")) {
+	// return reference;
+	// }
+	// if (prefixes.containsKey(id)) {
+	// String prefix = prefixes.get(id);
+	// if (!prefix.endsWith("/") && !prefix.endsWith("#")) {
+	// prefix += "/";
+	// }
+	// return prefix + reference.substring(index + 1);
+	// }
+	// throw new TMQLRuntimeException("Unknown prefix '" + id + "'!");
+	// } else if (reference.indexOf("://") == -1) {
+	// return defaultPrefix + (defaultPrefix.endsWith("/") ||
+	// defaultPrefix.endsWith("#") ? "" : "/") + reference;
+	// }
+	// return reference;
+	// }
 
 }

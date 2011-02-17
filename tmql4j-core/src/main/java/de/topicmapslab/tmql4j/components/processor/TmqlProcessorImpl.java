@@ -18,11 +18,11 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.prepared.IPreparedStatement;
 import de.topicmapslab.tmql4j.components.processor.prepared.PreparedStatement;
-import de.topicmapslab.tmql4j.components.processor.results.IResultProcessor;
-import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
-import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.TmqlResultProcessor;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResultProcessor;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.ResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.results.TmqlResultProcessor;
 import de.topicmapslab.tmql4j.query.IQuery;
 
 /**
@@ -55,7 +55,7 @@ public abstract class TmqlProcessorImpl implements ITmqlProcessor {
 			QueryMatches results = tree.root().interpret(runtime, context);
 
 			IResultProcessor resultProcessor = getResultProcessor();
-			resultProcessor.proceed(results);
+			resultProcessor.proceed(context,results);
 
 			return resultProcessor.getResultSet();
 		}
@@ -73,7 +73,7 @@ public abstract class TmqlProcessorImpl implements ITmqlProcessor {
 			QueryMatches results = tree.root().interpret(runtime, context);
 
 			IResultProcessor resultProcessor = getResultProcessor();
-			resultProcessor.proceed(results);
+			resultProcessor.proceed(context, results);
 
 			return resultProcessor.getResultSet();
 		}
@@ -96,7 +96,7 @@ public abstract class TmqlProcessorImpl implements ITmqlProcessor {
 		 * proceed results
 		 */
 		IResultProcessor resultProcessor = getResultProcessor();
-		resultProcessor.proceed(results);
+		resultProcessor.proceed(context, results);
 		/*
 		 * set results to statement and return it
 		 */

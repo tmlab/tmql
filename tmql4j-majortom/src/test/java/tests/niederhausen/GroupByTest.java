@@ -11,7 +11,7 @@ package tests.niederhausen;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 import de.topicmapslab.tmql4j.majortom.tests.Tmql4JTestCase;
 
 /**

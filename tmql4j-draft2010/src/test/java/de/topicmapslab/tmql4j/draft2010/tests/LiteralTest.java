@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 
 /**
  * Test class of literals

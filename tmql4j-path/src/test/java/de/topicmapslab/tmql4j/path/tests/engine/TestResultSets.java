@@ -17,9 +17,9 @@ import java.util.Set;
 import org.junit.Test;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.tmql4j.components.processor.results.IResult;
-import de.topicmapslab.tmql4j.components.results.SimpleResult;
-import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
+import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResult;
+import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
@@ -54,7 +54,7 @@ public class TestResultSets extends Tmql4JTestCase {
 
 	@Test
 	public void testIsNull() throws Exception {
-		SimpleResultSet set = new SimpleResultSet();
+		SimpleResultSet set = new SimpleResultSet(null, null);
 		SimpleResult result = new SimpleResult(set);
 		result.add((Object) null);
 		result.add("Topic");

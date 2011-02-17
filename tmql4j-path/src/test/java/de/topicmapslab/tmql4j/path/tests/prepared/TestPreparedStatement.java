@@ -21,8 +21,8 @@ import org.tmapi.core.Construct;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.components.processor.prepared.IPreparedStatement;
-import de.topicmapslab.tmql4j.components.processor.results.IResult;
-import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
 import de.topicmapslab.tmql4j.query.IQuery;
 import de.topicmapslab.tmql4j.util.HashUtil;

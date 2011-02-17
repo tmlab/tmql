@@ -17,6 +17,7 @@ import de.topicmapslab.tmql4j.delete.grammar.tokens.Cascade;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.grammar.lexical.Wildcard;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
@@ -124,7 +125,7 @@ public class DeleteExpression extends ExpressionImpl {
 		} else if (!getTmqlTokens().get(0).equals(Delete.class)) {
 			return false;
 		}
-		return  getTmqlTokens().get(1).equals(Cascade.class) || getTmqlTokens().get(1).equals(Element.class)  || ParserUtils.containsTokens(getTmqlTokens(), Where.class);
+		return  getTmqlTokens().get(1).equals(Cascade.class) || getTmqlTokens().get(1).equals(Element.class) || getTmqlTokens().get(1).equals(Wildcard.class)  || ParserUtils.containsTokens(getTmqlTokens(), Where.class);
 	}
 
 }

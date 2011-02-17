@@ -13,7 +13,7 @@ import static junit.framework.Assert.assertEquals;
 import org.junit.Test;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
 
 /**

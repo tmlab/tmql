@@ -942,14 +942,20 @@ public class UpdateHandler {
 		return matches;
 	}
 
-	private QueryMatches updateAssociation(Association association, Object roleType, Object optionalPlayer) throws UpdateException {
+	private QueryMatches updateAssociation(Association association, Object player, Object roleType) throws UpdateException {
 		Set<String> topicIds = HashUtil.getHashSet();
-		Topic roleType_ = getTopic(roleType, true, topicIds);
-		Topic player = null;
-		if (optionalPlayer == null) {
+		Topic roleType_ = null;
+		if (roleType == null) {
+			throw new TMQLRuntimeException("Type of role cannot be null!");
+		} else {
+			roleType_ = getTopic(roleType, true, topicIds);
+		}
+		getTopic(roleType, true, topicIds);
+		Topic player_ = null;
+		if (player == null) {
 			throw new TMQLRuntimeException("Player of role cannot be null!");
 		} else {
-			player = getTopic(optionalPlayer, true, topicIds);
+			player_ = getTopic(player, true, topicIds);
 		}
 		/*
 		 * modify result processor
@@ -960,7 +966,7 @@ public class UpdateHandler {
 		 * create results
 		 */
 		Map<String, Object> tuple = HashUtil.getHashMap();
-		Role role = association.createRole(roleType_, (Topic) player);
+		Role role = association.createRole(roleType_, (Topic) player_);
 		tuple.put(IUpdateAlias.ROLES, role.getId());
 		context.getTmqlProcessor().getResultProcessor().setColumnAlias(1, IUpdateAlias.ROLES);
 		tuple.put(IUpdateAlias.ASSOCIATIONS, association.getId());

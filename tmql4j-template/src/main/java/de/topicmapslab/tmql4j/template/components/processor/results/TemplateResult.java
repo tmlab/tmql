@@ -8,9 +8,12 @@
  */
 package de.topicmapslab.tmql4j.template.components.processor.results;
 
-import de.topicmapslab.tmql4j.components.processor.results.IResult;
-import de.topicmapslab.tmql4j.components.processor.results.Result;
-import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
+import org.tmapi.core.TopicMap;
+import org.tmapi.core.TopicMapSystem;
+
+import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
+import de.topicmapslab.tmql4j.components.processor.results.model.Result;
+import de.topicmapslab.tmql4j.components.processor.results.model.ResultSet;
 import de.topicmapslab.tmql4j.template.grammar.lexical.Template;
 
 /**
@@ -19,6 +22,18 @@ import de.topicmapslab.tmql4j.template.grammar.lexical.Template;
  */
 public class TemplateResult extends ResultSet<TemplateValue> {
 
+	/**
+	 * constructor create an empty result set
+	 * 
+	 * @param topicMapSystem
+	 *            the topic map system
+	 * @param topicMap
+	 *            the topic map
+	 */
+	public TemplateResult(final TopicMapSystem topicMapSystem, final TopicMap topicMap) {
+		super(topicMapSystem, topicMap);
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */

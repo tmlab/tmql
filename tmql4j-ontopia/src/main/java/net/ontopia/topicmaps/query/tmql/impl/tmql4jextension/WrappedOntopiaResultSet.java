@@ -12,14 +12,25 @@ package net.ontopia.topicmaps.query.tmql.impl.tmql4jextension;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.topicmapslab.tmql4j.components.processor.results.IResult;
-import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
-import de.topicmapslab.tmql4j.components.processor.results.ResultType;
+import org.tmapi.core.TopicMap;
+import org.tmapi.core.TopicMapSystem;
+
+import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
+import de.topicmapslab.tmql4j.components.processor.results.model.ResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.ResultType;
 
 public class WrappedOntopiaResultSet extends ResultSet<WrappedOntopiaResult> {
 
-	public WrappedOntopiaResultSet() {
-
+	/**
+	 * constructor create an empty result set
+	 * 
+	 * @param topicMapSystem
+	 *            the topic map system
+	 * @param topicMap
+	 *            the topic map
+	 */
+	public WrappedOntopiaResultSet(final TopicMapSystem topicMapSystem, final TopicMap topicMap) {
+		super(topicMapSystem, topicMap);
 	}
 
 	/**

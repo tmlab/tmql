@@ -15,8 +15,8 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.Variant;
 
 import de.topicmapslab.majortom.util.FeatureStrings;
-import de.topicmapslab.tmql4j.components.processor.results.IResult;
-import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
+import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 import de.topicmapslab.tmql4j.util.HashUtil;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 import de.topicmapslab.tmql4j.util.XmlSchemeDatatypes;

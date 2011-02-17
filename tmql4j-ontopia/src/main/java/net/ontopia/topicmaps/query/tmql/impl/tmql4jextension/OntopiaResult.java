@@ -23,8 +23,8 @@ import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 import org.tmapi.core.Variant;
 
-import de.topicmapslab.tmql4j.components.processor.results.Result;
-import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.Result;
+import de.topicmapslab.tmql4j.components.processor.results.model.ResultSet;
 
 public class OntopiaResult extends Result {
 

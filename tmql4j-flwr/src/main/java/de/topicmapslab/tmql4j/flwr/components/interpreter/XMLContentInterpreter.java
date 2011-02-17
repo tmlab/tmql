@@ -19,9 +19,9 @@ import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.results.xml.XMLResult;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.flwr.components.processor.results.xml.XMLResult;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.XMLContent;
 import de.topicmapslab.tmql4j.flwr.util.XTMConverter;
 

@@ -18,8 +18,8 @@ import org.tmapi.core.Association;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.majortom.model.namespace.Namespaces;
-import de.topicmapslab.tmql4j.components.processor.results.IResult;
-import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**

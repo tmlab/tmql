@@ -12,7 +12,7 @@ import org.tmapi.core.Name;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.majortom.model.core.ITopic;
-import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 
 /**
  * @author Hannes Niederhausen

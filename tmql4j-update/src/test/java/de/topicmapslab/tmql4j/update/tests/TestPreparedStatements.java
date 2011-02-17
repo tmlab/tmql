@@ -16,7 +16,7 @@ import org.tmapi.core.Occurrence;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.components.processor.prepared.IPreparedStatement;
-import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 import de.topicmapslab.tmql4j.util.XmlSchemeDatatypes;
 
 /**

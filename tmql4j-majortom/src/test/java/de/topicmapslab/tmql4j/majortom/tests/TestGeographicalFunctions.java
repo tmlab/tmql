@@ -18,8 +18,8 @@ import de.topicmapslab.geotype.wgs84.Wgs84Coordinate;
 import de.topicmapslab.geotype.wgs84.Wgs84Degree;
 import de.topicmapslab.majortom.model.core.IOccurrence;
 import de.topicmapslab.majortom.model.namespace.Namespaces;
-import de.topicmapslab.tmql4j.components.processor.results.IResult;
-import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
+import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetCoordinatesInDistance;
 import de.topicmapslab.tmql4j.majortom.grammar.functions.GetDistance;
 

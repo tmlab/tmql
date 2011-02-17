@@ -10,7 +10,9 @@
  */
 package de.topicmapslab.tmql4j.update.components.interpreter;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -19,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.tmapi.core.Locator;
 import org.tmapi.core.MalformedIRIException;
-import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
@@ -29,7 +30,6 @@ import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
-import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisReifier;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Datatype;
@@ -51,7 +51,7 @@ import de.topicmapslab.tmql4j.util.XmlSchemeDatatypes;
  * <p>
  * The grammar production rule of the expression is: <code>
  * <p>
- * update-clause ::= anchor [parameter] ( SET | ADD | REMOVE ) value-expression
+ * update-clause ::= anchor value-expression ( SET | ADD | REMOVE ) value-expression
  * </p>
  * </code> </p>
  * 
@@ -220,24 +220,54 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 					return QueryMatches.emptyMatches();
 				}
 			}
-			Context newContext = new Context(context);
-			newContext.setContextBindings(null);
-			newContext.setCurrentTuple(tuple);
-			newContext.setCurrentNode(node);
+			/*
+			 * check if optional type value expression is set to interpret
+			 */
+			List<IExpressionInterpreter<ValueExpression>> interpreters = getInterpretersFilteredByEypressionType(runtime, ValueExpression.class);
+			IExpressionInterpreter<ValueExpression> valueInterpreter;
+			List<Object> optionalTypes;
+			if (interpreters.size() == 2) {
+				Context newContext = new Context(context);
+				newContext = new Context(context);
+				newContext.setContextBindings(null);
+				newContext.setCurrentTuple(tuple);
+				newContext.setCurrentNode(node);
+				IExpressionInterpreter<ValueExpression> interpreter = interpreters.get(0);
+				QueryMatches matches = interpreter.interpret(runtime, newContext, optionalArguments);
+				optionalTypes = matches.getPossibleValuesForVariable();
+				valueInterpreter = interpreters.get(1);
+				/*
+				 * optional type is a topic which should be created in the context of update-clause
+				 */
+				if  ( optionalTypes.isEmpty() && interpreter.getTokens().size() == 1 ){
+					optionalTypes.add(interpreter.getTokens().get(0));
+				}
+			} else {
+				optionalTypes = new ArrayList<Object>();
+				optionalTypes.add(null);
+				valueInterpreter = interpreters.get(0);
+			}
+
 			/*
 			 * get values to add or set
 			 */
-			QueryMatches values = interpretValueExpression(runtime, newContext, optionalArguments);
+			Context newContext = new Context(context);
+			newContext = new Context(context);
+			newContext.setContextBindings(null);
+			newContext.setCurrentTuple(tuple);
+			newContext.setCurrentNode(node);
+			QueryMatches values = interpretValueExpression(runtime, newContext, valueInterpreter, optionalArguments);
 			Class<? extends IToken> anchor = getExpression().getAnchor();
+
 			/*
 			 * special handling for NULL as reifier
 			 */
-			if ( AxisReifier.class.equals(anchor) && values.isEmpty()){
-				if ( getInterpretersFilteredByEypressionType(runtime, ValueExpression.class).get(0).getTmqlTokens().contains(Null.class)){
+			if (AxisReifier.class.equals(anchor) && values.isEmpty()) {
+				if (interpreters.get(0).getTmqlTokens().contains(Null.class)) {
 					/*
 					 * perform update
 					 */
-					QueryMatches result = new UpdateHandler(runtime, context).update(node, null, anchor, null, getExpression().getOperator() ,null);
+					QueryMatches result = new UpdateHandler(runtime, context).update(node, null, anchor, null, getExpression().getOperator(), null);
 					if (!result.isEmpty()) {
 						if (!topicIds.isEmpty()) {
 							for (Map<String, Object> match : result) {
@@ -256,79 +286,63 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 						}
 						results.add(result.getMatches());
 					}
-				}				
-			}
-			/*
-			 * check optionalType
-			 */
-			Object optionalType = ((UpdateClause) getExpression()).getOptionalType();
-			/*
-			 * is wildcard
-			 */
-			if (containsExpressionsType(PreparedExpression.class)) {
-				QueryMatches matches = extractArguments(runtime, PreparedExpression.class, 0, context, optionalArguments);
-				if (matches.isEmpty()) {
-					throw new TMQLRuntimeException("Prepared statement has to be bound to a value!");
-				}
-				Object obj = matches.getFirstValue();
-				if (obj instanceof Topic) {
-					optionalType = (Topic) obj;
-				} else if (obj instanceof String) {
-					optionalType = obj;
-				} else {
-					throw new TMQLRuntimeException("Invalid result of prepared statement, expects a string literal");
 				}
 			}
 			/*
-			 * iterate over all values to set or add
+			 * iterate over optional types
 			 */
-			for (Map<String, Object> vTuple : values) {
-				Object value = vTuple.get(QueryMatches.getNonScopedVariable());
+			for (Object optionalType : optionalTypes) {
 				/*
-				 * missing value
+				 * iterate over all values to set or add
 				 */
-				if (value == null) {
-					continue;
-				}
-				Locator optionalDatatype = vTuple.containsKey(DATATYPE) ? (Locator) vTuple.get(DATATYPE) : null;
-				/*
-				 * check if string contains datatype
-				 */
-				if (optionalDatatype == null && value.toString().contains("^^")) {
+				for (Map<String, Object> vTuple : values) {
+					Object value = vTuple.get(QueryMatches.getNonScopedVariable());
 					/*
-					 * split string into value and datatype
+					 * missing value
 					 */
-					int i = value.toString().indexOf("^^");
-					String ref = value.toString().substring(i + 2);
-					ref = XmlSchemeDatatypes.toExternalForm(ref);
-					value = value.toString().substring(0, i);
-					try {
-						optionalDatatype = context.getQuery().getTopicMap().createLocator(ref);
-					} catch (Exception e) {
-						throw new TMQLRuntimeException("Cannot generate the datatype reference for " + ref + ".");
+					if (value == null) {
+						continue;
 					}
-				}
-				/*
-				 * perform update
-				 */
-				QueryMatches result = new UpdateHandler(runtime, context).update(node, value, anchor, optionalType, getExpression().getOperator() ,optionalDatatype);
-				if (!result.isEmpty()) {
-					if (!topicIds.isEmpty()) {
-						for (Map<String, Object> match : result) {
-							if (match.containsKey(IUpdateAlias.TOPICS)) {
-								if (match.get(IUpdateAlias.TOPICS) instanceof String) {
-									Set<String> set = HashUtil.getHashSet(topicIds);
-									set.add(match.get(IUpdateAlias.TOPICS).toString());
-									match.put(IUpdateAlias.TOPICS, set);
-								} else if (match.get(IUpdateAlias.TOPICS) instanceof Collection<?>) {
-									Set<String> set = HashUtil.getHashSet(topicIds);
-									set.addAll((Collection<String>) match.get(IUpdateAlias.TOPICS));
-									match.put(IUpdateAlias.TOPICS, set);
+					Locator optionalDatatype = vTuple.containsKey(DATATYPE) ? (Locator) vTuple.get(DATATYPE) : null;
+					/*
+					 * check if string contains datatype
+					 */
+					if (optionalDatatype == null && value.toString().contains("^^")) {
+						/*
+						 * split string into value and datatype
+						 */
+						int i = value.toString().indexOf("^^");
+						String ref = value.toString().substring(i + 2);
+						ref = XmlSchemeDatatypes.toExternalForm(ref);
+						value = value.toString().substring(0, i);
+						try {
+							optionalDatatype = context.getQuery().getTopicMap().createLocator(ref);
+						} catch (Exception e) {
+							throw new TMQLRuntimeException("Cannot generate the datatype reference for " + ref + ".");
+						}
+					}
+					/*
+					 * perform update
+					 */
+					QueryMatches result = new UpdateHandler(runtime, context).update(node, value, anchor, optionalType, getExpression().getOperator(), optionalDatatype);
+					if (!result.isEmpty()) {
+						if (!topicIds.isEmpty()) {
+							for (Map<String, Object> match : result) {
+								if (match.containsKey(IUpdateAlias.TOPICS)) {
+									if (match.get(IUpdateAlias.TOPICS) instanceof String) {
+										Set<String> set = HashUtil.getHashSet(topicIds);
+										set.add(match.get(IUpdateAlias.TOPICS).toString());
+										match.put(IUpdateAlias.TOPICS, set);
+									} else if (match.get(IUpdateAlias.TOPICS) instanceof Collection<?>) {
+										Set<String> set = HashUtil.getHashSet(topicIds);
+										set.addAll((Collection<String>) match.get(IUpdateAlias.TOPICS));
+										match.put(IUpdateAlias.TOPICS, set);
+									}
 								}
 							}
 						}
+						results.add(result.getMatches());
 					}
-					results.add(result.getMatches());
 				}
 			}
 		}
@@ -358,22 +372,16 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 	 *             thrown if interpretation fails
 	 */
 	@SuppressWarnings("unchecked")
-	private QueryMatches interpretValueExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
-
-		/*
-		 * get expression interpreter for navigation
-		 */
-		IExpressionInterpreter<ValueExpression> value = getInterpretersFilteredByEypressionType(runtime, ValueExpression.class).get(0);
-
+	private QueryMatches interpretValueExpression(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<ValueExpression> interpreter, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * interpret
 		 */
-		QueryMatches matches = value.interpret(runtime, context, optionalArguments);
+		QueryMatches matches = interpreter.interpret(runtime, context, optionalArguments);
 		/*
 		 * check for datatype as part of a datatyped-element
 		 */
-		if (value.getTmqlTokens().get(0).equals(DatatypedElement.class) && value.getTmqlTokens().size() == 1) {
-			StringTokenizer tokenizer = new StringTokenizer(value.getTokens().get(0), "^^");
+		if (interpreter.getTmqlTokens().get(0).equals(DatatypedElement.class) && interpreter.getTmqlTokens().size() == 1) {
+			StringTokenizer tokenizer = new StringTokenizer(interpreter.getTokens().get(0), "^^");
 			tokenizer.nextToken();
 			try {
 				Locator loc = context.getQuery().getTopicMap().createLocator(XmlSchemeDatatypes.toExternalForm(tokenizer.nextToken()));
@@ -388,9 +396,9 @@ public class UpdateClauseInterpreter extends ExpressionInterpreterImpl<UpdateCla
 		/*
 		 * datatype is provided as separate symbol
 		 */
-		else if (ParserUtils.containsTokens(value.getTmqlTokens(), Datatype.class)) {
-			int index = ParserUtils.indexOfTokens(value.getTmqlTokens(), Datatype.class);
-			String token = value.getTokens().get(index).substring(2);
+		else if (ParserUtils.containsTokens(interpreter.getTmqlTokens(), Datatype.class)) {
+			int index = ParserUtils.indexOfTokens(interpreter.getTmqlTokens(), Datatype.class);
+			String token = interpreter.getTokens().get(index).substring(2);
 			try {
 				Locator loc = context.getQuery().getTopicMap().createLocator(XmlSchemeDatatypes.toExternalForm(token));
 				for (Map<String, Object> tuple : matches) {

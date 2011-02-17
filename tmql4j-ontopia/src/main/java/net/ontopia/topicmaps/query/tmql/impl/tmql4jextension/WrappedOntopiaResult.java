@@ -14,8 +14,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.topicmapslab.tmql4j.components.processor.results.Result;
-import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.Result;
+import de.topicmapslab.tmql4j.components.processor.results.model.ResultSet;
 
 public class WrappedOntopiaResult extends Result {
 

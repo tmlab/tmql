@@ -25,19 +25,19 @@ import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.processor.core.Context;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
-import de.topicmapslab.tmql4j.components.processor.results.ProjectionUtils;
+import de.topicmapslab.tmql4j.components.processor.results.ctm.CTMResult;
+import de.topicmapslab.tmql4j.components.processor.results.jtmqr.JTMQRResult;
+import de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer.JTMQRWriter;
+import de.topicmapslab.tmql4j.components.processor.results.model.ProjectionUtils;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
-import de.topicmapslab.tmql4j.template.components.processor.results.CTMResult;
-import de.topicmapslab.tmql4j.template.components.processor.results.JTMQRResult;
 import de.topicmapslab.tmql4j.template.components.processor.results.TemplateResult;
 import de.topicmapslab.tmql4j.template.components.processor.runtime.module.Template;
 import de.topicmapslab.tmql4j.template.components.processor.runtime.module.TemplateManager;
 import de.topicmapslab.tmql4j.template.grammar.lexical.CTM;
 import de.topicmapslab.tmql4j.template.grammar.lexical.JTMQR;
 import de.topicmapslab.tmql4j.template.grammar.productions.UseExpression;
-import de.topicmapslab.tmql4j.template.util.json.JTMQRWriter;
 import de.topicmapslab.tmql4j.util.HashUtil;
 import de.topicmapslab.tmql4j.util.LiteralUtils;
 
@@ -167,16 +167,16 @@ public class UseExpressionInterpreter extends ExpressionInterpreterImpl<UseExpre
 		 */
 		if (context.getOutputStream() != null) {
 			if (context.getContextBindings() != null) {
-				JTMQRWriter.write(context.getOutputStream(), context.getContextBindings());
+				JTMQRWriter.getJsonAsStream(context.getOutputStream(), context.getContextBindings());
 			} else {
-				JTMQRWriter.write(context.getOutputStream(), QueryMatches.emptyMatches());
+				JTMQRWriter.getJsonAsStream(context.getOutputStream(), QueryMatches.emptyMatches());
 			}
 		}
 		/*
 		 * fill JTMQR
 		 */
 		if (context.getContextBindings() != null) {
-			String json = JTMQRWriter.write(context.getContextBindings());
+			String json = JTMQRWriter.getJson(context.getContextBindings());
 			return QueryMatches.asQueryMatchNS(runtime, json);
 		}
 		return QueryMatches.emptyMatches();

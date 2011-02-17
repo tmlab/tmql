@@ -21,7 +21,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import de.topicmapslab.tmql4j.components.processor.core.ProjectionQueryMatches.ProjectionQueryMatch;
-import de.topicmapslab.tmql4j.components.processor.results.ProjectionUtils;
+import de.topicmapslab.tmql4j.components.processor.results.model.ProjectionUtils;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.util.CollectionsUtility;

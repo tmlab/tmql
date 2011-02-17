@@ -15,8 +15,8 @@ import java.util.List;
 import net.ontopia.topicmaps.query.core.QueryResultIF;
 import net.ontopia.topicmaps.query.tmql.impl.tmql4jextension.WrappedOntopiaResult;
 import net.ontopia.topicmaps.query.tmql.impl.tmql4jextension.WrappedOntopiaResultSet;
-import de.topicmapslab.tmql4j.components.processor.results.IResult;
-import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 
 public class TMQL4JQueryResult implements QueryResultIF {
 
@@ -41,7 +41,7 @@ public class TMQL4JQueryResult implements QueryResultIF {
 			this.columnNames = new LinkedList<String>();
 		}
 
-		this.resultSet = new WrappedOntopiaResultSet();
+		this.resultSet = new WrappedOntopiaResultSet(null,null);
 
 		/*
 		 * convert to ontopia result
@@ -77,7 +77,7 @@ public class TMQL4JQueryResult implements QueryResultIF {
 	 */
 	public TMQL4JQueryResult(final String tmid, final IResultSet<?> resultSet) {
 		this.columnNames = new LinkedList<String>();
-		this.resultSet = new WrappedOntopiaResultSet();
+		this.resultSet = new WrappedOntopiaResultSet(null,null);
 
 		/*
 		 * convert to ontopia result

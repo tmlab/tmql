@@ -21,7 +21,7 @@ import org.tmapi.core.TopicMapSystemFactory;
 import org.tmapix.io.XTMTopicMapReader;
 
 import de.topicmapslab.identifier.TmdmSubjectIdentifier;
-import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.runtime.TMQLRuntimeFactory;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;

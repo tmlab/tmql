@@ -25,8 +25,8 @@ import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 import org.tmapi.core.Variant;
 
-import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
-import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 import de.topicmapslab.tmql4j.path.query.TMQLQuery;
 import de.topicmapslab.tmql4j.update.components.results.IUpdateAlias;
 import de.topicmapslab.tmql4j.update.util.TmdmUtility;
@@ -293,12 +293,12 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, n.getVariants().size());
 		assertEquals(1, set.size());
-		assertEquals(3, set.first().size());
+		assertEquals(2, set.first().size());
 		assertEquals(n.getId(), set.get(0,"names"));
 		Variant v = n.getVariants().iterator().next();
 		assertEquals(v.getId(), set.get(0,"variants"));
 		assertEquals(1, v.getScope().size());
-		assertEquals(v.getScope().iterator().next().getId(), set.get(0,"topics"));
+		assertEquals(v.getScope().iterator().next(), topicMap.getTopicBySubjectIdentifier(createLocator("myTheme")));
 	}
 	
 	@Test
@@ -810,7 +810,35 @@ public class TestUpdateExpression extends Tmql4JTestCase {
 		assertEquals(1, a.getRoles().size());
 		assertEquals(0, a.getRoles(otherType).size());
 
-		String query = " UPDATE roles other ADD otherType WHERE myType ( tm:subject : myTopic )";
+		String query = " UPDATE roles otherType ADD other WHERE myType ( tm:subject : myTopic )";
+		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(2, set.first().size());
+		assertEquals(a.getId(),set.get(0,"associations"));
+		assertNotNull(set.get(0,"roles"));
+		Iterator<Role> it = a.getRoles(otherType).iterator();
+		Role r2 = it.next();
+		if ( r2.equals(r)){
+			r2 = it.next();
+		}
+		assertEquals(r2.getId(),set.get(0,"roles"));
+		assertEquals(2, a.getRoles().size());
+		assertEquals(1, a.getRoles(otherType).size());
+		assertEquals(other, a.getRoles(otherType).iterator().next().getPlayer());
+	}
+	
+	@Test
+	public void testAddRolesWithValueEx() throws Exception {
+		Topic topic = createTopicBySL("myTopic");
+		Topic type = createTopicBySL("myType");
+		Topic otherType = createTopicBySL("otherType");
+		Topic other = createTopicBySL("other");
+		Association a = createAssociation(type);
+		Role r = a.createRole(createTopic(), topic);
+		assertEquals(1, a.getRoles().size());
+		assertEquals(0, a.getRoles(otherType).size());
+
+		String query = " UPDATE roles \"" + otherType.getId() + "\" << id ADD other WHERE myType ( tm:subject : myTopic )";
 		SimpleResultSet set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(2, set.first().size());

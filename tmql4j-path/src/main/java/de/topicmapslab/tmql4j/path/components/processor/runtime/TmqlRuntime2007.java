@@ -15,8 +15,8 @@ import org.tmapi.core.TopicMapSystem;
 
 import de.topicmapslab.tmql4j.components.parser.IParserTree;
 import de.topicmapslab.tmql4j.components.processor.ITmqlProcessor;
-import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
-import de.topicmapslab.tmql4j.components.processor.results.ResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.ResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.IConstructResolver;
 import de.topicmapslab.tmql4j.components.processor.runtime.ILanguageContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.TmqlConstructResolver;

@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
-import de.topicmapslab.tmql4j.components.processor.results.IResultProcessor;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResultProcessor;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.Wildcard;

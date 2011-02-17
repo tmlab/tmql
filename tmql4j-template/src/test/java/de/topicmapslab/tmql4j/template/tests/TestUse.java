@@ -22,13 +22,12 @@ import org.junit.Test;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
-import de.topicmapslab.tmql4j.components.processor.results.IResult;
-import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
-import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer.JTMQRWriter;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 import de.topicmapslab.tmql4j.template.grammar.lexical.CTM;
 import de.topicmapslab.tmql4j.template.grammar.lexical.JTMQR;
 import de.topicmapslab.tmql4j.template.grammar.lexical.Template;
-import de.topicmapslab.tmql4j.template.util.json.JTMQRWriter;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 /**
  * @author Sven Krosse
@@ -103,7 +102,7 @@ public class TestUse extends Tmql4JTestCase {
 	}
 	@Test
 	public void testJTMQR() throws Exception {
-		final String jtmqr = JTMQRWriter.write(QueryMatches.emptyMatches());
+		final String jtmqr = JTMQRWriter.getJson(QueryMatches.emptyMatches());
 		final String query 	= "// tm:subject USE JTMQR";
 		IResultSet<?> rs = execute(query);
 		assertEquals(1, rs.size());
@@ -114,7 +113,7 @@ public class TestUse extends Tmql4JTestCase {
 	
 	@Test
 	public void testJTMQROS() throws Exception {
-		final String jtmqr = JTMQRWriter.write(QueryMatches.emptyMatches());
+		final String jtmqr = JTMQRWriter.getJson(QueryMatches.emptyMatches());
 		final String query 	= "// tm:subject USE JTMQR";
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		runtime.run(topicMap,query, os);

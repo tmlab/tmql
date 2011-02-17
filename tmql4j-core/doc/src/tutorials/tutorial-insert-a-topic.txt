@@ -15,16 +15,16 @@ Similar to the rule - 'keep it simple' - we start with the simple use case to ad
 The insert expression contains two parts an insert-clause and a where-clause. The where-clause can be used to specify a variable binding using as a part of the insert-expression. In our case the where-clause is not necessary. The insert-clause contains a CTM fragment defining the content to add. Currently we don't want to explain how to write CTM fragment, please take a look at the current CTM draft to get more information.
 
 ------------------------------
-1:	INSERT """ http://tmql4j.topicmapslab.de/types/engine/tmql4j . """
+1:	INSERT ''' http://tmql4j.topicmapslab.de/types/engine/tmql4j . '''
 ------------------------------
 
 ==============================
-The insert-expression always starts with the keyword 'INSERT' followed by the insert-clause defining a CTM fragment encapsulated by the triple quotes '""""'. The syntax of the CTM fragment is based on the current CTM draft. In our case we define a topic block using the identifier 'http://tmql4j.topicmapslab.de/types/engine/tmql4j' as a subject-identifier. The dot'.' symbolize the end of the topic definition.
+The insert-expression always starts with the keyword 'INSERT' followed by the insert-clause defining a CTM fragment encapsulated by the triple quotes +++'''+++. The syntax of the CTM fragment is based on the current CTM draft. In our case we define a topic block using the identifier 'http://tmql4j.topicmapslab.de/types/engine/tmql4j' as a subject-identifier. The dot'.' symbolize the end of the topic definition.
 ==============================
 
 ===== Summary =====
 
-The insert-expression always starts with the keyword 'INSERT' followed by the insert-clause defining a CTM fragment encapsulated by the triple quotes '""""'. The syntax of the CTM fragment is based on the current CTM draft. As optional part a insert-expression can contain a where-clause defining conditions used to bind variables. Variables can be used in the context of the insert-clause, which we will see in a later example.
+The insert-expression always starts with the keyword 'INSERT' followed by the insert-clause defining a CTM fragment encapsulated by the triple quotes +++'''+++. The syntax of the CTM fragment is based on the current CTM draft. As optional part a insert-expression can contain a where-clause defining conditions used to bind variables. Variables can be used in the context of the insert-clause, which we will see in a later example.
 
 ==== Tutorial: Using variables as part of the insert-clause ====
 
@@ -64,7 +64,7 @@ The last step will be the combination of both elements in our insert-expression.
 
 ---------------------------------
 1:	%prefix psi http://psi.ontopedia.net/
-2:	INSERT """ can-queried ( topic-content : { $composer >> indicators >> atomify [0] } , engine : http://tmql4j.topicmapslab.de/types/engine/tmql4j ) """
+2:	INSERT ''' can-queried ( topic-content : { $composer >> indicators >> atomify [0] } , engine : http://tmql4j.topicmapslab.de/types/engine/tmql4j ) '''
 3:		WHERE $composer ISA psi:Composer
 ---------------------------------
 

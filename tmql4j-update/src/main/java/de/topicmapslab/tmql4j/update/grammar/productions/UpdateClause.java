@@ -17,10 +17,8 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
-import de.topicmapslab.tmql4j.grammar.lexical.Wildcard;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
-import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Variable;
 import de.topicmapslab.tmql4j.path.grammar.productions.PredicateInvocation;
 import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
@@ -72,10 +70,10 @@ public class UpdateClause extends ExpressionImpl {
 	 * the language-specific token representing the anchor
 	 */
 	private final Class<? extends IToken> anchor;
-	/**
-	 * the string-represented token representing the optional parameter
-	 */
-	private final String optionalType;
+//	/**
+//	 * the string-represented token representing the optional parameter
+//	 */
+	// private final String optionalType;
 
 	/**
 	 * the variable defining the context which should be updated
@@ -141,16 +139,18 @@ public class UpdateClause extends ExpressionImpl {
 		/*
 		 * extract optional type parameter
 		 */
-		if (indexOfOperator - indexOfAnchor == 2) {
-			if (getTmqlTokens().get(indexOfAnchor + 1).equals(Wildcard.class)) {
-				checkForExtensions(PreparedExpression.class, tmqlTokens.subList(indexOfAnchor + 1, indexOfAnchor + 2), tokens.subList(indexOfAnchor + 1, indexOfAnchor + 2), runtime);
-				optionalType = null;
-			} else {
-				optionalType = tokens.get(indexOfAnchor + 1);
-			}
-		} else {
-			optionalType = null;
+		if (indexOfOperator - indexOfAnchor >= 2) {
+			// if (getTmqlTokens().get(indexOfAnchor +
+			// 1).equals(Wildcard.class)) {
+			checkForExtensions(ValueExpression.class, tmqlTokens.subList(indexOfAnchor + 1, indexOfOperator), tokens.subList(indexOfAnchor + 1, indexOfOperator), runtime);
+			// optionalType = null;
+			// } else {
+			// optionalType = tokens.get(indexOfAnchor + 1);
+			// }
 		}
+		// else {
+		// optionalType = null;
+		// }
 
 		if (anchor.equals(Topics.class)) {
 			/*
@@ -177,7 +177,7 @@ public class UpdateClause extends ExpressionImpl {
 	 */
 	@Override
 	public boolean isValid() {
-		if (!getTmqlTokens().contains(Set.class) && !getTmqlTokens().contains(Add.class)&& !getTmqlTokens().contains(Remove.class)) {
+		if (!getTmqlTokens().contains(Set.class) && !getTmqlTokens().contains(Add.class) && !getTmqlTokens().contains(Remove.class)) {
 			return false;
 		}
 		return true;
@@ -190,12 +190,13 @@ public class UpdateClause extends ExpressionImpl {
 		return anchor;
 	}
 
-	/**
-	 * @return the optionalType
-	 */
-	public String getOptionalType() {
-		return optionalType;
-	}
+	//
+	// /**
+	// * @return the optionalType
+	// */
+	// public String getOptionalType() {
+	// return optionalType;
+	// }
 
 	/**
 	 * Returns the variable defining the context to modifiy
