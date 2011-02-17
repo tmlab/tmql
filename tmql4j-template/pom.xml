@@ -60,7 +60,7 @@
 					</supportedProjectTypes>
 					<manifestLocation>META-INF</manifestLocation>
 					<instructions>
-						<Bundle-Version>${osgi.version}</Bundle-Version>
+						<Bundle-Version>${qualified.osgi.version}</Bundle-Version>
 						<Export-Package>
 							de.topicmapslab.tmql4j.template.* 
 						</Export-Package>
