@@ -54,14 +54,4 @@ public class GroupByTest extends Tmql4JTestCase {
 
 		execute(query);
 	}
-
-	@Test
-	public void testname() throws Exception {
-		String query = "%prefix epg http://epg.topicmapslab.de/ FOR $t IN // epg:broadcast "
-				+ " RETURN { FOR $t2 IN // epg:broadcast [ . / epg:start_time == $t / epg:end_time ] RETURN { FOR $t3 IN // epg:broadcast [ . / epg:start_time == $t2 / epg:end_time ] RETURN $t >> traverse epg:broadcasted / tm:name [0], $t2 >> traverse epg:broadcasted / tm:name [0], $t3 >> traverse epg:broadcasted / tm:name [0] } }";
-		fromXtm("src/test/resources/entity-identity-test-after-production-identification.xtm");
-		
-		IResultSet<?> rs = execute(query);
-		System.out.println(rs);
-	}
 }
