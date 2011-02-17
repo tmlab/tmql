@@ -10,6 +10,8 @@ package de.topicmapslab.tmql4j.path.components.processor.runtime.module;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.FunctionRegistryImpl;
+import de.topicmapslab.tmql4j.path.grammar.functions.aggregate.MaxFunction;
+import de.topicmapslab.tmql4j.path.grammar.functions.aggregate.MinFunction;
 import de.topicmapslab.tmql4j.path.grammar.functions.sequences.ArrayFunction;
 import de.topicmapslab.tmql4j.path.grammar.functions.sequences.CompareFunction;
 import de.topicmapslab.tmql4j.path.grammar.functions.sequences.ConcatFunction;
@@ -88,7 +90,11 @@ public class FunctionRegistry extends FunctionRegistryImpl {
 		registerFunction(TopicsByItemIdentifier.IDENTIFIER, TopicsByItemIdentifier.class);
 		registerFunction(TopicsBySubjectIdentifier.IDENTIFIER, TopicsBySubjectIdentifier.class);
 		registerFunction(TopicsBySubjectLocator.IDENTIFIER, TopicsBySubjectLocator.class);
-
+		/*
+		 * aggregate functions
+		 */
+		registerFunction(MaxFunction.IDENTIFIER, MaxFunction.class);
+		registerFunction(MinFunction.IDENTIFIER, MinFunction.class);
 	}
 
 }

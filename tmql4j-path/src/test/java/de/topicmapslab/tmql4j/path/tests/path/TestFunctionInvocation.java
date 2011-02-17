@@ -618,4 +618,57 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		assertEquals("werden", set.get(6, 0));
 	}
 
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testMaxFunction() throws Exception {
+		Topic topic = createTopicByII("myType");
+		for (int i = 0; i < 100; i++) {
+			Topic t = createTopic();
+			t.addType(topic);
+			for (int j = 0; j < i; j++) {
+				t.createName("name" + j);
+			}
+		}
+
+		String query = null;
+		SimpleResultSet set = null;
+
+		query = " fn:max ( myType >> instances, fn:count ( . >> characteristics ))";
+		set = execute(query);
+		assertEquals(1, set.size());
+		assertEquals(1, set.get(0).size());
+		assertEquals(BigInteger.valueOf(99), set.get(0,0));
+	}
+	
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testMinFunction() throws Exception {
+		Topic topic = createTopicByII("myType");
+		for (int i = 0; i < 100; i++) {
+			Topic t = createTopic();
+			t.addType(topic);
+			for (int j = 0; j <= i; j++) {
+				t.createName("name" + j);
+			}
+		}
+
+		String query = null;
+		SimpleResultSet set = null;
+
+		query = " fn:min ( myType >> instances, fn:count ( . >> characteristics ))";
+		set = execute(query);
+		assertEquals(1, set.size());
+		assertEquals(1, set.get(0).size());
+		assertEquals(BigInteger.valueOf(1), set.get(0,0));
+	}
+
+
 }
