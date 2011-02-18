@@ -36,14 +36,12 @@ public class TestValueExpression extends Tmql4JTestCase {
 		Assert.assertEquals(1,set.size());
 		Assert.assertEquals(1,set.first().size());
 		Assert.assertEquals(true,set.get(0,0));		
-		Assert.assertEquals("{\"version\":1.0,\"seq\":[{\"t\":[{\"b\":true}]}]}", set.toJTMQR());
 		
 		query = prefix + " false  ";
 		set = execute(new TMQLQuery(topicMap, query));
 		Assert.assertEquals(1,set.size());
 		Assert.assertEquals(1,set.first().size());
 		Assert.assertEquals(false,set.get(0,0));
-		Assert.assertEquals("{\"version\":1.0,\"seq\":[{\"t\":[{\"b\":false}]}]}", set.toJTMQR());
 	}
 	
 	@Test
