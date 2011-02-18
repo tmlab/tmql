@@ -1,0 +1,1327 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Topic Maps
+      — Query Language</title>
+<style>
+body {
+  margin: 2em 10% 2em 5%;
+  font-family: sans-serif;
+  color: black;
+  background: white;
+  background-position: top left;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+
+
+:link { color: #00C; background: transparent }
+:visited { color: #609; background: transparent }
+:active { color: #C00; background: transparent }
+
+th, td { /* ns 4 */
+  font-family: sans-serif;
+}
+
+th {
+  text-align: left;
+}
+
+td {
+  vertical-align: top;
+}
+
+h1, h2, h3, h4, h5, h6 { text-align: left }
+/* background should be transparent, but WebTV has a bug */
+h1, h2, h3 { color: #005A9C; background: white }
+h1 { font: 170% Arial, sans-serif }
+h2 { font: 140% Arial, sans-serif }
+h3 { font: 120% Arial, sans-serif }
+h4 { font: bold 100% Arial, sans-serif }
+h5 { font: italic 100% Arial, sans-serif }
+h6 { font: small-caps 100% Arial, sans-serif }
+
+.hide { display: none }
+
+div.head { margin-bottom: 1em }
+div.head h1 { margin-top: 2em; clear: both }
+div.head table { margin-left: 2em; margin-top: 2em }
+div.head img { color: white; border: none } /* remove border from top image */
+
+p.copyright { font-size: small }
+p.copyright small { font-size: small }
+
+@media screen {  /* hide from IE3 */
+/*a[href]:hover { background: #ffa }*/
+}
+
+pre { margin-left: 2em }
+/*
+p {
+  margin-top: 0.6em;
+  margin-bottom: 0.6em;
+}
+*/
+dt, dd { margin-top: 0; margin-bottom: 0 } /* opera 3.50 */
+dt { font-weight: bold }
+dd p { margin-top: 0 }
+
+pre, code { font-family: monospace } /* navigator 4 requires this */
+
+ul.toc {
+  list-style: disc;		/* Mac NS has problem with 'none' */
+  list-style: none;
+}
+
+@media aural {  
+  h1, h2, h3 { stress: 20; richness: 90 }
+  .hide { speak: none }
+  p.copyright { volume: x-soft; speech-rate: x-fast }
+  dt { pause-before: 20% }
+  pre { speak-punctuation: code } 
+}
+
+.ednote {
+  color: red;
+  margin-top: 18pt;
+}
+
+.ednote p { margin-top: 0pt; }
+
+table.eg {
+  background-color: #DFD; /*#99ffff;*/
+}
+
+/* included from xmlspec.xsl */
+
+code           { font-family: monospace; }
+
+tt.code           { font-family: monospace;
+	            color: blue;
+	            background-color: lightgrey; }
+
+div.issue,
+div.note,
+div.notice     { margin-left: 2em; }
+
+div.constraint > * { margin-left: 2em; }
+div.constraint p.prefix { margin-left: 0em; }
+
+li p           { margin-top: 0.3em;
+                 margin-bottom: 0.3em; }
+
+div.issue p,
+div.note p,
+div.constraint p { margin-top: 0; }
+
+div.issue p.prefix,
+div.note p.prefix,
+div.constraint p.prefix { margin-bottom: 0 }
+
+pre.sql  { background-color: #efefef; color: green; border: 1px solid green; padding: 5px}
+pre.pe   { background-color: #efefef; color: red; border: 1px solid green; padding: 5px}
+pre.flwr { background-color: #efefef; color: blue; border: 1px solid green; padding: 5px}
+
+p             { padding-left: 5px; }
+
+.productions { margin: 10px; 
+               background-color: #efefef; 
+               font-family: sans-serif; 
+               border-collapse: collapse;
+               border-width: 1px;
+               border-style: solid;
+     	       padding: 5px;
+               }
+
+tt.code { background-color: #efefef; }
+
+tt.terminal  { font-weight: normal; }
+
+table.prod   { border-collapse: collapse;
+              margin: 0px;
+              padding: 0px;
+               }
+
+.toc         { font-family: sans-serif; }
+
+.todo         { color: orange; }
+.note         { color: black; }
+.semantics    { border-left: 2px solid black; padding-left: 10px; }
+.optimization { color: grey; }
+
+.convenience  { color: black;
+                background-color: #efefef; }
+.example      { color: green; }
+.rationale    { color: violet; }
+.tentative    { color: orange; }
+
+/*
+body {
+  background-image: url(http://www.w3.org/StyleSheets/TR/logo-NOTE);
+}
+*/
+
+</style>
+</head>
+<body>
+<p align="right"><b><font size="+2">ISO/IEC
+      JTC1/SC34</font></b></p>
+<P><A HREF="http://www.jtc1.org"><IMG SRC="images/isoiec.gif" WIDTH="130" HEIGHT="56" ALT="ISO/IEC"></A></P>
+<H2>ISO/IEC
+      JTC1/SC34</H2>
+<H2>Information Technology —</H2>
+<H2>Document Description and Processing Languages</H2>
+<TABLE>
+<TR>
+<th>Title: </th>
+<TD>Topic Maps
+      — Query Language</TD>
+</TR>
+<TR>
+<th>Source:</th>
+<TD>Lars Marius Garshol, Rani Pinchuk,
+	      
+            JTC1
+            / SC34</TD>
+</TR>
+<TR>
+<th>Project:</th>
+<TD>ISO 18048:
+            Topic Maps</TD>
+</TR>
+<TR>
+<th>Project editor:</th>
+<TD>Lars Marius Garshol, Rani Pinchuk</TD>
+</TR>
+<tr>
+<th>Status:</th>
+<td></td>
+</tr>
+<tr>
+<th>Action:</th>
+<td>For review</td>
+</tr>
+<tr>
+<th>Date:</th>
+<td>2010-03-24</td>
+</tr>
+<tr>
+<th>Summary:</th>
+<td></td>
+</tr>
+<tr>
+<th>Distribution:</th>
+<TD>SC34 and Liaisons</TD>
+</tr>
+<tr>
+<th>Refer to:</th>
+<td><a href="http://www.isotopicmaps.org/tmql/tmql.html2010-03-24/">http://www.isotopicmaps.org/tmql/tmql.html2010-03-24/</a></td>
+</tr>
+<tr>
+<th>Supercedes:</th>
+<td></td>
+</tr>
+</TABLE>
+<h1>Topic Maps
+      — Query Language</h1>
+<h2><a name="toc">Contents</a></h2>
+<table class="toc">
+<tr>
+<td>1</td>
+<td><a href="#scope">Scope</a></td>
+</tr>
+<tr>
+<td>2</td>
+<td><a href="#normative-references">Normative references</a></td>
+</tr>
+
+
+
+
+
+
+
+
+
+<tr>
+<td>2  </td>
+<td><a href="#id59189">Path language</a></td>
+</tr>
+<tr>
+<td>2.1  </td>
+<td><a href="#id59194">Path steps</a></td>
+</tr>
+<tr>
+<td>2.2  </td>
+<td><a href="#id59509">Association patterns</a></td>
+</tr>
+<tr>
+<td>2.3  </td>
+<td><a href="#id59560">Boolean expressions</a></td>
+</tr>
+<tr>
+<td>2.4  </td>
+<td><a href="#id59775">Value expressions</a></td>
+</tr>
+<tr>
+<td>2.4.1  </td>
+<td><a href="#id59781">General</a></td>
+</tr>
+<tr>
+<td>2.4.2  </td>
+<td><a href="#id59986">Literals</a></td>
+</tr>
+<tr>
+<td>2.4.3  </td>
+<td><a href="#id60457">Numeric expressions</a></td>
+</tr>
+<tr>
+<td>2.5  </td>
+<td><a href="#id60662">Axes</a></td>
+</tr>
+
+<tr>
+<td>3  </td>
+<td><a href="#id61114">Datatypes</a></td>
+</tr>
+
+<tr>
+<td>4  </td>
+<td><a href="#id61128">Functions</a></td>
+</tr>
+<tr>
+<td>4.1  </td>
+<td><a href="#id61133">General</a></td>
+</tr>
+<tr>
+<td>4.2  </td>
+<td><a href="#id61155">String functions</a></td>
+</tr>
+</table>
+
+
+
+<h2><a name="foreword">Foreword</a></h2>
+<p>ISO (the International Organization for Standardization) and
+    IEC (the International Electrotechnical Commission) form the
+    specialized system for worldwide standardization. National bodies
+    that are members of ISO or IEC participate in the development of
+    International Standards through technical committees established by
+    the respective organization to deal with particular fields of
+    technical activity. ISO and IEC technical committees collaborate in
+    fields of mutual interest. Other international organizations,
+    governmental and non-governmental, in liaison with ISO and IEC, also
+    take part in the work. In the field of information technology, ISO and
+    IEC have established a joint technical committee, ISO/IEC JTC 1.</p>
+<p>International Standards are drafted in accordance with the
+    rules given in the ISO/IEC Directives, Part 2.</p>
+<p>ISO/IEC 18048
+
+    was prepared by Joint Technical Committee
+    ISO/IEC JTC 1, Information Technology, Subcommittee SC 34, Document
+    Description and Processing Languages.</p>
+
+
+<h1>Topic Maps
+      — Query Language</h1>
+<h2>1 <a name="scope">Scope</a>
+</h2>
+
+<p>This is a very rough early draft, at the moment only covering the
+path language, since this is the part that is currently the most
+firm. The draft is currently not as formal as it should be, but at
+least it definitively defines the language as it stands at the
+moment.</p>
+
+
+
+
+<h2><a name="id59189">2  Path language</a></h2>
+
+
+<h3><a name="id59194">2.1  Path steps</a></h3>
+
+  
+<div class="productions"><table width="90%"><tr>
+<td width="5%">[0]</td>
+<td width="25%"><em><a name="expr">expr</a></em></td>
+<td width="5%">→</td>
+<td>
+<em><a href="#pathexpr">pathexpr</a></em> | <em><a href="#valueexpr">valueexpr</a></em>
+</td>
+</tr></table></div>
+
+<p>An expression can be either a path expression or a value
+expression.</p>
+
+<div class="productions"><table width="90%"><tr>
+<td width="5%">[1]</td>
+<td width="25%"><em><a name="pathexpr">pathexpr</a></em></td>
+<td width="5%">→</td>
+<td><table class="prod">
+<tr>
+<td></td>
+<td>
+<em><a href="#simpleexpr">simpleexpr</a></em> 
+        <em><a href="#pathstep">pathstep</a></em>
+      *
+	    </td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td>
+        <em><a href="#pathstep">pathstep</a></em>
+      +
+          </td>
+<td></td>
+</tr>
+</table></td>
+</tr></table></div>
+
+<p>A path expression must either start with an input value, optionally
+followed by a list of path steps, or it may consist of just a list of
+path steps. The output of each path step in the list is the input to
+the next path step. The output of the entire expression is the output
+of the last path step.</p>
+
+<div class="productions"><table width="90%"><tr>
+<td width="5%">[2]</td>
+<td width="25%"><em><a name="simpleexpr">simpleexpr</a></em></td>
+<td width="5%">→</td>
+<td>
+<em><a href="#variable">variable</a></em> | <em><a href="#topicref">topicref</a></em> | <tt class="terminal">'.'</tt>
+</td>
+</tr></table></div>
+
+<p>The input value is specified either as a variable, a topic
+reference, or as the special value <tt class="code">.</tt>, which refers to the
+context value. If no input value is specified, the topic map is used as
+the default input value.</p>
+
+<div class="productions"><table width="90%"><tr>
+<td width="5%">[3]</td>
+<td width="25%"><em><a name="pathstep">pathstep</a></em></td>
+<td width="5%">→</td>
+<td>
+<tt class="terminal">'/'</tt> <em><a href="#pathspec">pathspec</a></em> 
+      <em><a href="#filter">filter</a></em>
+    *
+	    </td>
+</tr></table></div>
+
+<p>A path step takes the input values, and for each value it produces
+a set of new values from the pathspec. This set of new values is
+filtered by each of the filters in turn. When a filter is evaluated
+the context value is set to the value currently being filtered. The
+output of the whole path step is the union of all the sets after
+filtering.</p>
+
+<div class="productions"><table width="90%"><tr>
+<td width="5%">[4]</td>
+<td width="25%"><em><a name="pathspec">pathspec</a></em></td>
+<td width="5%">→</td>
+<td><table class="prod">
+<tr>
+<td></td>
+<td>
+<em><a href="#axis">axis</a></em> <tt class="terminal">'::'</tt> <em><a href="#anyref">anyref</a></em>
+</td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<em><a href="#axis">axis</a></em> <tt class="terminal">'::'</tt>
+</td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><em><a href="#anyref">anyref</a></em></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><em><a href="#assocpattern">assocpattern</a></em></td>
+<td></td>
+</tr>
+</table></td>
+</tr></table></div>
+
+<p>When no axis is specified, the default axis is used. The part after
+the <tt class="code">::</tt> is known as the type filter. When this is omitted,
+it defaults to <tt class="code">tmdm:subject</tt>.</p>
+
+<p>For each input value the pathspec produces a new set of values as
+defined by the given axis. Formally, each axis is a function, and the
+axis produces a new set of values by calling that function with the
+input value as its single parameter.</p>
+
+<p>The type filter then removes those output values from the axis
+function which are not instances of the given type (including all
+values (such as, say, numbers or strings) which don't have any types
+at all).</p>
+
+<p>The assocpattern is explained further down.</p>
+
+<div class="productions"><table width="90%"><tr>
+<td width="5%">[5]</td>
+<td width="25%"><em><a name="filter">filter</a></em></td>
+<td width="5%">→</td>
+<td>
+<em><a href="#boolfilter">boolfilter</a></em> | <em><a href="#scopefilter">scopefilter</a></em>
+</td>
+</tr></table></div>
+
+<p>A filter can be of two types: either a boolean filter, or a special
+scope filter, which is really a shorthand boolean filter.</p>
+
+<div class="productions"><table width="90%"><tr>
+<td width="5%">[6]</td>
+<td width="25%"><em><a name="scopefilter">scopefilter</a></em></td>
+<td width="5%">→</td>
+<td>
+<tt class="terminal">'@'</tt> <em><a href="#anyref">anyref</a></em>
+</td>
+</tr></table></div>
+
+<p>The scope filter is a shorthand for <tt class="code">[ . / scope:: =
+<em><a href="#">anyref</a></em>]</tt>.</p>
+
+<div class="productions"><table width="90%"><tr>
+<td width="5%">[7]</td>
+<td width="25%"><em><a name="boolfilter">boolfilter</a></em></td>
+<td width="5%">→</td>
+<td>
+<tt class="terminal">'['</tt> <em><a href="#boolexpr">boolexpr</a></em> <tt class="terminal">']'</tt>
+</td>
+</tr></table></div>
+
+<p>The boolean expression is evaluated for each input value to be
+filtered (with that value set as the context value), and if the
+boolean expression evaluates to true the value is passed on by the
+filter. If it evalutes to false the value is rejected.</p>
+
+
+<h3><a name="id59509">2.2  Association patterns</a></h3>
+
+
+<div class="productions"><table width="90%"><tr>
+<td width="5%">[8]</td>
+<td width="25%"><em><a name="assocpattern">assocpattern</a></em></td>
+<td width="5%">→</td>
+<td>
+<em><a href="#anyref">anyref</a></em> <tt class="terminal">'('</tt> <em><a href="#anyref">anyref</a></em> <tt class="terminal">'-&gt;'</tt> <em><a href="#anyref">anyref</a></em> <tt class="terminal">')'</tt>
+</td>
+</tr></table></div>
+
+<p>The association pattern is a built-in operator which from a topic
+finds all its roles of the type given before the arrow. Those roles
+which appear in associations not of the type given before the
+parentheses are rejected. Then, for each role, <i>another</i> role in
+the same association, of the type given after the arrow, is found. The
+output is the topic playing this other role.</p>
+
+
+<h3><a name="id59560">2.3  Boolean expressions</a></h3>
+
+
+<div class="productions"><table width="90%">
+<tr>
+<td width="5%">[9]</td>
+<td width="25%"><em><a name="boolexpr">boolexpr</a></em></td>
+<td width="5%">→</td>
+<td>
+<em><a href="#opexpr">opexpr</a></em> | <em><a href="#notexpr">notexpr</a></em> | <em><a href="#expr">expr</a></em> | <em><a href="#parenthetic">parenthetic</a></em> | <em><a href="#compexpr">compexpr</a></em>
+</td>
+</tr>
+  <tr>
+<td width="5%">[10]</td>
+<td width="25%"><em><a name="opexpr">opexpr</a></em></td>
+<td width="5%">→</td>
+<td>
+<em><a href="#boolexpr">boolexpr</a></em> (<tt class="terminal">'and'</tt> | <tt class="terminal">'or'</tt>) <em><a href="#boolexpr">boolexpr</a></em>
+</td>
+</tr>
+  
+  <tr>
+<td width="5%">[11]</td>
+<td width="25%"><em><a name="notexpr">notexpr</a></em></td>
+<td width="5%">→</td>
+<td><table class="prod">
+<tr>
+<td></td>
+<td>
+<tt class="terminal">'not'</tt> <tt class="terminal">'('</tt> <em><a href="#boolexpr">boolexpr</a></em> <tt class="terminal">')'</tt>
+</td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<tt class="terminal">'not'</tt> <em><a href="#boolexpr">boolexpr</a></em>
+</td>
+<td></td>
+</tr>
+</table></td>
+</tr>
+  
+  <tr>
+<td width="5%">[12]</td>
+<td width="25%"><em><a name="parenthetic">parenthetic</a></em></td>
+<td width="5%">→</td>
+<td>
+<tt class="terminal">'('</tt> <em><a href="#boolexpr">boolexpr</a></em> <tt class="terminal">')'</tt>
+</td>
+</tr>
+</table></div>
+
+<p>The evaluation of boolean expressions is for the most part
+obvious. Operator precedence is as indicated by the grammar, and the
+<tt class="code">and</tt> operator binds more tightly than <tt class="code">or</tt>.</p>
+
+<div class="productions"><table width="90%">
+  <tr>
+<td width="5%">[13]</td>
+<td width="25%"><em><a name="compexpr">compexpr</a></em></td>
+<td width="5%">→</td>
+<td>
+<em><a href="#expr">expr</a></em> <em><a href="#comparator">comparator</a></em> <em><a href="#expr">expr</a></em>
+</td>
+</tr>
+
+  <tr>
+<td width="5%">[14]</td>
+<td width="25%"><em><a name="comparator">comparator</a></em></td>
+<td width="5%">→</td>
+<td>
+<tt class="terminal">'='</tt> | <tt class="terminal">'!='</tt> | <tt class="terminal">'&lt;'</tt> | <tt class="terminal">'&gt;'</tt> | <tt class="terminal">'&lt;='</tt> | <tt class="terminal">'&gt;='</tt>
+</td>
+</tr>
+</table></div>
+
+<p>Comparison expressions are true if there exists one value in the
+set produced by the left-hand expression and one value in the set
+produced by the right-hand expression such that the comparison
+operator evalutes to true for those two values.</p>
+
+<div class="ednote">
+<b>Ed. Note:</b>
+  <p>Work out comparison of objects of different types when the data
+  type clause has been written.</p>
+</div>
+
+
+<h3><a name="id59775">2.4  Value expressions</a></h3>
+
+
+<h4><a name="id59781">2.4.1  General</a></h4>
+
+
+<div class="productions"><table width="90%">
+  <tr>
+<td width="5%">[15]</td>
+<td width="25%"><em><a name="valueexpr">valueexpr</a></em></td>
+<td width="5%">→</td>
+<td>
+<em><a href="#literal">literal</a></em> | <em><a href="#funccall">funccall</a></em> | <em><a href="#variable">variable</a></em> | <em><a href="#topicref">topicref</a></em> | <em><a href="#setexpr">setexpr</a></em> | <em><a href="#numexpr">numexpr</a></em>
+</td>
+</tr>
+
+  <tr>
+<td width="5%">[16]</td>
+<td width="25%"><em><a name="funccall">funccall</a></em></td>
+<td width="5%">→</td>
+<td>
+<em><a href="#ident">ident</a></em> <tt class="terminal">'('</tt> <em><a href="#expr">expr</a></em> 
+	      (
+        <tt class="terminal">','</tt>
+        <em><a href="#expr">expr</a></em>
+      )*
+	     <tt class="terminal">')'</tt>
+</td>
+</tr>
+
+  <tr>
+<td width="5%">[17]</td>
+<td width="25%"><em><a name="anyref">anyref</a></em></td>
+<td width="5%">→</td>
+<td>
+<em><a href="#qname">qname</a></em> | <em><a href="#ident">ident</a></em> | <tt class="terminal">'*'</tt>
+</td>
+</tr>
+  
+  <tr>
+<td width="5%">[18]</td>
+<td width="25%"><em><a name="topicref">topicref</a></em></td>
+<td width="5%">→</td>
+<td>
+<em><a href="#qname">qname</a></em> | <em><a href="#ident">ident</a></em>
+</td>
+</tr>
+
+  <tr>
+<td width="5%">[19]</td>
+<td width="25%"><em><a name="setexpr">setexpr</a></em></td>
+<td width="5%">→</td>
+<td>
+<em><a href="#expr">expr</a></em> (<tt class="terminal">'union'</tt> | <tt class="terminal">'intersect'</tt> | <tt class="terminal">'minus'</tt>) <em><a href="#expr">expr</a></em>
+</td>
+</tr>
+</table></div>
+
+<div class="ednote">
+<b>Ed. Note:</b>
+  <p>Define this, too.</p>
+</div>
+
+<div class="productions"><table width="90%"><tr>
+<td width="5%">[20]</td>
+<td width="25%"><em><a name="variable">variable</a></em></td>
+<td width="5%">→</td>
+<td>
+<tt class="terminal">'$'</tt> <em><a href="#ident">ident</a></em>
+</td>
+</tr></table></div>
+
+<p>In the path language, all variables must be bound before the
+execution of the path expression.</p>
+  
+<div class="ednote">
+<b>Ed. Note:</b>
+  <p>Slicing?</p>
+
+  <p>Subject identifier reference? Subject locator reference?</p>
+
+  <p>Comments?</p>
+
+  <p>Numeric expressions?</p>
+
+  <p>Could &lt;&gt; be used as alternative not equals operator?</p>
+</div>
+
+
+<h4><a name="id59986">2.4.2  Literals</a></h4>
+
+
+<p>The syntax for literals is nearly exactly as defined in CTM, except
+that some constructs are not allowed in TMQL. The grammar is given
+below.</p>
+
+<div class="productions"><table width="90%">
+  <tr>
+<td width="5%">[21]</td>
+<td width="25%"><em><a name="literal">literal</a></em></td>
+<td width="5%">→</td>
+<td><table class="prod">
+<tr>
+<td></td>
+<td><em><a href="#iri-ref">iri-ref</a></em></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><em><a href="#number">number</a></em></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><em><a href="#date">date</a></em></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><em><a href="#date-time">date-time</a></em></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><em><a href="#string">string</a></em></td>
+<td></td>
+</tr>
+</table></td>
+</tr>
+
+  <tr>
+<td width="5%">[22]</td>
+<td width="25%"><em><a name="number">number</a></em></td>
+<td width="5%">→</td>
+<td>
+<em><a href="#integer">integer</a></em> | <em><a href="#decimal">decimal</a></em>
+</td>
+</tr>
+  <tr>
+<td width="5%">[23]</td>
+<td width="25%"><em><a name="integer">integer</a></em></td>
+<td width="5%">→</td>
+<td>
+        <em><a href="#sign">sign</a></em>
+      ?
+	     <tt class="terminal">[0-9]</tt>+
+          </td>
+</tr>
+  <tr>
+<td width="5%">[24]</td>
+<td width="25%"><em><a name="decimal">decimal</a></em></td>
+<td width="5%">→</td>
+<td>
+        <em><a href="#sign">sign</a></em>
+      ?
+	     (<tt class="terminal">[0-9]</tt>+
+           <tt class="terminal">'.'</tt> <tt class="terminal">[0-9]</tt>+
+           | <tt class="terminal">'.'</tt> <tt class="terminal">[0-9]</tt>+
+          )</td>
+</tr>
+
+  <tr>
+<td width="5%">[25]</td>
+<td width="25%"><em><a name="sign">sign</a></em></td>
+<td width="5%">→</td>
+<td>
+<tt class="terminal">'+'</tt> | <tt class="terminal">'-'</tt>
+</td>
+</tr>
+  <tr>
+<td width="5%">[26]</td>
+<td width="25%"><em><a name="date">date</a></em></td>
+<td width="5%">→</td>
+<td>
+<tt class="terminal">'-'</tt>?
+	     <tt class="terminal">[0-9]</tt> <tt class="terminal">[0-9]</tt> <tt class="terminal">[0-9]</tt> <tt class="terminal">[0-9]</tt> <tt class="terminal">[0-9]</tt>*
+	     <tt class="terminal">'-'</tt> (<tt class="terminal">'0'</tt> <tt class="terminal">[1-9]</tt> | <tt class="terminal">'1'</tt> <tt class="terminal">[1-2]</tt>) <tt class="terminal">'-'</tt> (<tt class="terminal">[1-2]</tt> <tt class="terminal">[0-9]</tt> | <tt class="terminal">'3'</tt> <tt class="terminal">[0-1]</tt>)</td>
+</tr>
+  <tr>
+<td width="5%">[27]</td>
+<td width="25%"><em><a name="date-time">date-time</a></em></td>
+<td width="5%">→</td>
+<td>
+<em><a href="#date">date</a></em> <tt class="terminal">'T'</tt> <tt class="terminal">[0-9]</tt> <tt class="terminal">[0-9]</tt> <tt class="terminal">':'</tt> <tt class="terminal">[0-9]</tt> <tt class="terminal">[0-9]</tt> <tt class="terminal">':'</tt> <tt class="terminal">[0-9]</tt> <tt class="terminal">[0-9]</tt> 
+	      (<tt class="terminal">'.'</tt><tt class="terminal">[0-9]</tt>+
+          )?
+	     
+	      (
+        <tt class="terminal">'Z'</tt> | (<tt class="terminal">'+'</tt> | <tt class="terminal">'-'</tt>) <tt class="terminal">[0-9]</tt> <tt class="terminal">[0-9]</tt> <tt class="terminal">':'</tt> <tt class="terminal">[0-9]</tt> <tt class="terminal">[0-9]</tt>
+      )?
+	    </td>
+</tr>
+  <tr>
+<td width="5%">[28]</td>
+<td width="25%"><em><a name="string">string</a></em></td>
+<td width="5%">→</td>
+<td>
+<em><a href="#quoted-string">quoted-string</a></em> | <em><a href="#triple-quoted-string">triple-quoted-string</a></em>
+</td>
+</tr>
+  <tr>
+<td width="5%">[29]</td>
+<td width="25%"><em><a name="quoted-string">quoted-string</a></em></td>
+<td width="5%">→</td>
+<td>
+<tt class="terminal">'"'</tt> 
+        <em><a href="#char">char</a></em>
+      *
+	     <tt class="terminal">'"'</tt>
+</td>
+</tr>
+  <tr>
+<td width="5%">[30]</td>
+<td width="25%"><em><a name="triple-quoted-string">triple-quoted-string</a></em></td>
+<td width="5%">→</td>
+<td>
+<tt class="terminal">'"""'</tt> 
+	      (
+        
+	      (
+          <tt class="terminal">'""'</tt> | <tt class="terminal">'"'</tt>
+        )?
+	    
+        <em><a href="#char">char</a></em>
+      )*
+	     <tt class="terminal">'"""'</tt>
+</td>
+</tr>
+  <tr>
+<td width="5%">[31]</td>
+<td width="25%"><em><a name="char">char</a></em></td>
+<td width="5%">→</td>
+<td>
+<tt class="terminal">[^"\]</tt> | <em><a href="#escape-sequence">escape-sequence</a></em>
+</td>
+</tr>
+</table></div>
+
+<p>The syntax and semantics of string escapes are exactly as specified
+in CTM, clause 3.4.2.</p>
+
+
+<h4><a name="id60457">2.4.3  Numeric expressions</a></h4>
+
+
+<div class="productions"><table width="90%">
+  <tr>
+<td width="5%">[32]</td>
+<td width="25%"><em><a name="addexpr">addexpr</a></em></td>
+<td width="5%">→</td>
+<td><table class="prod">
+<tr>
+<td></td>
+<td>
+<em><a href="#addexpr">addexpr</a></em> <tt class="terminal">'+'</tt> <em><a href="#mulexpr">mulexpr</a></em>
+</td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<em><a href="#addexpr">addexpr</a></em> <tt class="terminal">'-'</tt> <em><a href="#mulexpr">mulexpr</a></em>
+</td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><em><a href="#mulexpr">mulexpr</a></em></td>
+<td></td>
+</tr>
+</table></td>
+</tr>
+
+  <tr>
+<td width="5%">[33]</td>
+<td width="25%"><em><a name="mulexpr">mulexpr</a></em></td>
+<td width="5%">→</td>
+<td><table class="prod">
+<tr>
+<td></td>
+<td>
+<em><a href="#mulexpr">mulexpr</a></em> <tt class="terminal">'*'</tt> <em><a href="#unaryexpr">unaryexpr</a></em>
+</td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<em><a href="#mulexpr">mulexpr</a></em> <tt class="terminal">'div'</tt> <em><a href="#unaryexpr">unaryexpr</a></em>
+</td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<em><a href="#mulexpr">mulexpr</a></em> <tt class="terminal">'mod'</tt> <em><a href="#unaryexpr">unaryexpr</a></em>
+</td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><em><a href="#unexpr">unexpr</a></em></td>
+<td></td>
+</tr>
+</table></td>
+</tr>
+
+  <tr>
+<td width="5%">[34]</td>
+<td width="25%"><em><a name="unexpr">unexpr</a></em></td>
+<td width="5%">→</td>
+<td><table class="prod">
+<tr>
+<td></td>
+<td><em><a href="#expr">expr</a></em></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td>
+<tt class="terminal">'-'</tt> <em><a href="#expr">expr</a></em>
+</td>
+<td></td>
+</tr>
+</table></td>
+</tr>
+</table></div>
+
+<p>All numbers are floating-point numbers. The operators are as
+follows:</p>
+
+<ul>
+  <li><p>The <tt class="code">+</tt> operator performs addition.</p></li>
+  <li><p>The <tt class="code">-</tt> operator performs subtraction.</p></li>
+  <li><p>The <tt class="code">*</tt> operator performs multiplication.</p></li>
+  <li><p>The <tt class="code">div</tt> operator performs floating-point
+  division.</p></li>
+  <li><p>The <tt class="code">mod</tt> operator returns the remainder of a
+  truncating integer division.</p></li>
+</ul>
+
+<div class="ednote">
+<b>Ed. Note:</b>
+  <p>Modulo is harder than this, because of sign rules.</p>
+</div>
+
+<div class="ednote">
+<b>Ed. Note:</b>
+  <p>Type conversion!</p>
+</div>
+
+
+
+<h3><a name="id60662">2.5  Axes</a></h3>
+
+
+<div class="productions"><table width="90%"><tr>
+<td width="5%">[35]</td>
+<td width="25%"><em><a name="axis">axis</a></em></td>
+<td width="5%">→</td>
+<td><table class="prod">
+<tr>
+<td></td>
+<td><tt class="terminal">'default'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'topic'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'association'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'reifier'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'name'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'occurrence'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'role'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'subject-identifier'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'subject-locator'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'item-identifier'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'player'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'parent'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'type'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'instance'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'supertype'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'subtype'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'scope'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'variant'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'value'</tt></td>
+<td>  |</td>
+</tr>
+<tr>
+<td></td>
+<td><tt class="terminal">'datatype'</tt></td>
+<td></td>
+</tr>
+</table></td>
+</tr></table></div>
+
+<p>Formally, an axis is defined as a function of one parameter, which
+produces a set of values. The input parameter has a type, and input
+values which do not match this type always produce the empty set as
+output.</p>
+
+<table class="eg" width="100%"><tr><td><pre>topic(<em><a href="#">topicmap</a></em>)</pre></td></tr></table>
+
+<p>Returns all topics in the topic map.</p>
+
+<table class="eg" width="100%"><tr><td><pre>association(<em><a href="#">topicmap</a></em>)</pre></td></tr></table>
+
+<p>Returns all associations in the topic map.</p>
+
+<table class="eg" width="100%"><tr><td><pre>reifier(<em><a href="#">tmconstruct</a></em>)</pre></td></tr></table>
+
+<p>Returns the topic reifying the topic map construct.</p>
+
+<table class="eg" width="100%"><tr><td><pre>item-identifier(<em><a href="#">tmconstruct</a></em>)</pre></td></tr></table>
+
+<p>Returns all item identifiers of the topic map construct.</p>
+
+<table class="eg" width="100%"><tr><td><pre>subject-identifier(<em><a href="#">topic</a></em>)</pre></td></tr></table>
+
+<p>Returns all subject identifiers of the topic.</p>
+
+<table class="eg" width="100%"><tr><td><pre>subject-locator(<em><a href="#">topic</a></em>)</pre></td></tr></table>
+
+<p>Returns all subject locators of the topic.</p>
+
+<table class="eg" width="100%"><tr><td><pre>name(<em><a href="#">topic</a></em>)</pre></td></tr></table>
+
+<p>Returns all topic names of the topic.</p>
+
+<table class="eg" width="100%"><tr><td><pre>occurrence(<em><a href="#">topic</a></em>)</pre></td></tr></table>
+
+<p>Returns all occurrences of the topic.</p>
+
+<table class="eg" width="100%"><tr><td><pre>variant(<em><a href="#">topicname</a></em>)</pre></td></tr></table>
+
+<p>Returns all variants of the topic name.</p>
+
+<table class="eg" width="100%"><tr><td><pre>role(<em><a href="#">tmconstruct</a></em>)</pre></td></tr></table>
+
+<p>This is really a two different axes, unioned together. So the
+result of calling this function is the same as calling each individual
+function with the same name below and unioning the results together.</p>
+
+<table class="eg" width="100%"><tr><td><pre>role(<em><a href="#">topic</a></em>)</pre></td></tr></table>
+
+<p>Returns all association roles played by the topic.</p>
+
+<table class="eg" width="100%"><tr><td><pre>role(<em><a href="#">association</a></em>)</pre></td></tr></table>
+
+<p>Returns all the association roles in the association.</p>
+
+<table class="eg" width="100%"><tr><td><pre>parent(<em><a href="#">tmconstruct</a></em>)</pre></td></tr></table>
+
+<p>Returns the value of the [parent] property of the corresponding
+information item, if it has that property. If not, the empty set is
+returned.</p>
+
+<table class="eg" width="100%"><tr><td><pre>type(<em><a href="#">tmconstruct</a></em>)</pre></td></tr></table>
+
+<p>Returns all the topics of which the construct is an instance,
+including inferred types.</p>
+
+<table class="eg" width="100%"><tr><td><pre>direct-type(<em><a href="#">tmconstruct</a></em>)</pre></td></tr></table>
+
+<p>Returns all the topics which the topic map explicitly states that
+construct is an instance of.</p>
+
+<table class="eg" width="100%"><tr><td><pre>instance(<em><a href="#">topic</a></em>)</pre></td></tr></table>
+
+<p>Returns all topic map constructs which are instances of the given
+type, including inferred instances.</p>
+
+<table class="eg" width="100%"><tr><td><pre>direct-instance(<em><a href="#">topic</a></em>)</pre></td></tr></table>
+
+<p>Returns all topic map constructs which the topic map explicitly
+states are instances of the given type.</p>
+
+<table class="eg" width="100%"><tr><td><pre>supertype(<em><a href="#">topic</a></em>)</pre></td></tr></table>
+
+<p>Returns all supertypes of the given topic type.</p>
+
+<table class="eg" width="100%"><tr><td><pre>subtype(<em><a href="#">topic</a></em>)</pre></td></tr></table>
+
+<p>Returns all subtypes of the given topic type.</p>
+
+<table class="eg" width="100%"><tr><td><pre>scope(<em><a href="#">statement</a></em>)</pre></td></tr></table>
+
+<p>Returns all topics in the scope of the statement.</p>
+
+<table class="eg" width="100%"><tr><td><pre>datatype(<em><a href="#">statement</a></em>)</pre></td></tr></table>
+
+<p>Returns the datatype URI if the statement is an occurrence or
+variant. Otherwise returns nothing.</p>
+
+<table class="eg" width="100%"><tr><td><pre>default(<em><a href="#">tmconstruct</a></em>)</pre></td></tr></table>
+
+<p>This is really a set of different axes, unioned together. So the
+result of calling this function is the same as calling each individual
+function with the same name below and unioning the results together.</p>
+
+<table class="eg" width="100%"><tr><td><pre>default(<em><a href="#">topicmap</a></em>)</pre></td></tr></table>
+
+<p>Returns the union of <tt class="code">topic(topicmap)</tt> and
+<tt class="code">association(topicmap)</tt>.</p>
+
+<div class="ednote">
+<b>Ed. Note:</b>
+  <p>Is it better to leave out the associations here?</p>
+</div>
+
+<table class="eg" width="100%"><tr><td><pre>default(<em><a href="#">topic</a></em>)</pre></td></tr></table>
+
+<p>Returns the union of <tt class="code">name(topic)</tt>,
+<tt class="code">occurrence(topic)</tt>, and <tt class="code">role(topic)</tt>.</p>
+
+<div class="ednote">
+<b>Ed. Note:</b>
+  <p>Should this really include the roles? Is that actually a common
+  enough use case?</p>
+</div>
+
+<table class="eg" width="100%"><tr><td><pre>default(<em><a href="#">topicname</a></em>)</pre></td></tr></table>
+
+<p>Returns the same as <tt class="code">variant(topicname)</tt>.</p>
+
+<table class="eg" width="100%"><tr><td><pre>default(<em><a href="#">association</a></em>)</pre></td></tr></table>
+
+<p>Returns the same as <tt class="code">role(association)</tt>.</p>
+
+<table class="eg" width="100%"><tr><td><pre>default(<em><a href="#">role</a></em>)</pre></td></tr></table>
+
+<p>Returns the same as <tt class="code">player(role)</tt>.</p>
+
+
+
+
+<h2><a name="id61114">3  Datatypes</a></h2>
+
+
+<div class="ednote">
+<b>Ed. Note:</b>
+  <p>Must define these somehow.</p>
+</div>
+
+
+<h2><a name="id61128">4  Functions</a></h2>
+
+
+<h3><a name="id61133">4.1  General</a></h3>
+
+
+<p>This clause defines all the functions provided by this International Standard. However,
+implementations may optionally provide additional functions.</p>
+
+<div class="ednote">
+<b>Ed. Note:</b>
+  <p>Requirements on the names/namespaces of additional functions?</p>
+</div>
+
+
+<h3><a name="id61155">4.2  String functions</a></h3>
+
+
+<p><b>Function:</b> <i>string</i> <b>concat</b>(<i>string</i>, <i>string</i>)</p>
+
+<p>Returns the concatenation of the two strings.</p>
+
+<p><b>Function:</b> <i>boolean</i> <b>starts-with</b>(<i>string</i>, <i>string</i>)</p>
+
+<p>Returns true if the second argument is the beginning of the first
+argument, otherwise returns false.</p>
+
+<p><b>Function:</b> <i>boolean</i> <b>ends-with</b>(<i>string</i>, <i>string</i>)</p>
+
+<p>Returns true if the second argument is the last part of the first
+argument, otherwise returns false.</p>
+
+<p><b>Function:</b> <i>boolean</i> <b>contains</b>(<i>string</i>, <i>string</i>)</p>
+
+<p>Returns true if the second argument is a substring of the first
+argument, otherwise returns false.</p>
+
+<p><b>Function:</b> <i>string</i> <b>substring-before</b>(<i>string</i>, <i>string</i>)</p>
+
+<p>Finds the first occurrence of the second argument within the first
+argument, then returns the substring of the first argument from the
+beginning up to that occurrence. If the second argument cannot be
+found the empty string is returned.</p>
+
+<p><b>Function:</b> <i>string</i> <b>substring-after</b>(<i>string</i>, <i>string</i>)</p>
+
+<p>Finds the first occurrence of the second argument within the first
+argument, then returns the substring of the first argument from the
+end of the substring to the end of the string. If the second argument
+cannot be found the empty string is returned.</p>
+
+<p><b>Function:</b> <i>string</i> <b>substring</b>(<i>string</i>, <i>number</i>, <i>number</i>?)</p>
+
+<p>Returns the substring of the first argument starting with the
+character at the position given in the second argument and extending
+as many characters onwards as given in the third argument, or to the
+end of the string, whichever comes first. The third argument defaults
+to positive infinity.</p>
+
+<p>All indexing is zero-based.</p>
+
+<p><b>Function:</b> <i>number</i> <b>string-length</b>(<i>string</i>)</p>
+
+<p>Returns the number of Unicode characters in the string.</p>
+
+<table class="eg" width="100%"><tr><td><pre>
+normalize-space(str)
+translate(str, str, str)
+find(str, str)
+matches-regexp(str, str)
+  uses XML Schema regexps
+  boolean result
+extract-regexp(str, str)
+  returns the first substring which matched the regexp
+string(value)
+
+number(value)
+ceiling(float)    
+floor(float)        
+round(float)            
+
+boolean(value)
+
+count(resultset)
+topicmap()
+  returns the topic map set in the query context as the topic map
+</pre></td></tr></table>
+
+<div class="ednote">
+<b>Ed. Note:</b>
+  <p>Make sure that there is some way to filter so that one can
+  verify that an object is a topic name/an occurrence /whatever.
+  Probably do this via the type system.</p>
+</div>
+
+
+</body>
+</html>

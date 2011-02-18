@@ -1,0 +1,321 @@
+
+=== MaJorToM PlugIn ===
+
+The MaJorToM plugin of the tmql4j query engine provides a set of new functions only enable in the context of the MaJorToM Topic Maps Engine. The new functions supports spatial and temporal calculations and extraction of information.
+
+==== Best-Label Function ====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/best-label
+|*profile*|fn:best-label (i : topic-item) return string
+|*profile*|fn:best-label (i : topic-item, theme: topic-item) return string
+|*profile*|fn:best-label (i : topic-item, theme: topic-item, strict: boolean) return string
+|================
+
+================
+The first argument is the topic item, in which context the best label should be extracted. The second is optional and represents a theme of the scopes, a name should have. The third argument is also optional and represents the strict mode of the best-label function. If the value is 'true' and there is no scope with the given theme for any name item of the topic, the function will return nothing.
+================
+
+The 'best-label' function exists in three different versions differ in the number of arguments. The result of the function is a string literal or nothing which will be calculated by the following rules.
+
+1.	If the topic has no names, continue with 6 except the third argument is given and set to the value 'true'. In this case nothing will be returned.
+2.	The names with the TMDM default-name type will be preferred.
+3.	The names with the lowest number of themes in scope will be preferred. As default the unconstrained scope has the highest priority. If the second argument is given, the scopes containing this theme have the highest priority. If there is no scope with the theme and the third argument is given and set to value 'true' nothing will be returned.
+4.	The names with the lowest number of characters will be preferred. The empty string will be ignored.
+5.	The names with the lexicographically lowest value will be preferred.
+6.	The lexicographically lowest subject-identifier will be returned.
+7.	The lexicographically lowest subject-locator will be returned.
+8.	The lexicographically lowest item-identifier will be returned.
+9.	The id will be returned.
+
+==== Best-Identifier Function ====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/best-identifier
+|*profile*|fn:best-identifier (i : topic-item) return string
+|*profile*|fn:best-identifier (i : topic-item, b: prefixed ) return string
+|================
+
+The 'best-identifier' function returns the best identifier of the given topic item. The best identifier are calculated by the following rules.
+
+1.	If the topic has at least one subject-identifier, the shortest and lexicographically smallest IRI will be returned.
+2.	If the topic has at least one subject-locator, the shortest and lexicographically smallest IRI will be returned.
+3.	If the topic has at least one item-identifier, the shortest and lexicographically smallest IRI will be returned.
+4.	As fall-back the id will be returned.
+
+The optional boolean argument 'prefixed' indicates if the best identifier should prefixed with its type. If the argument is 'true' the following prefixes are used.
+
+[width="50%", cols="3,1"]
+|================
+|*type*|*prefix*
+|subject-identifier|si:
+|subject-locator|sl:
+|item-identifier|ii:
+|id|id:
+|================
+
+==== Coordinates-In-Distance Function ====
+
+[width="80%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/coordinates-in-distance
+|*profile*|fn:coordinates-in-distance (s : string , dist : decimal ) return tuple-sequence
+|*profile*|fn:coordinates-in-distance (lat : decimal, long : decimal , dist : decimal ) return tuple-sequence
+|================
+
+The function 'coordinates-in-distance' exists in two versions differ in the number of arguments. The result of the function will be a sequence of occurrences representing a WGS84 coordinate located nearby the given position. The WGS84 coordinate can be given as string literal matching the following pattern
+
+<latitude>';'<longitude>(';'<altitude>)?
+
+The coordinate can also be given by a latitude and longitude value. The last decimal argument represents the distance in meter between the occurrence value and the given coordinate as maximal value.
+
+==== Distance Function ====
+
+[width="80%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/distance
+|*profile*|fn:distance (s : string , s:string ) return decimal
+|*profile*|fn:distance (lat1 : decimal, long1 : decimal  , lat2 : decimal, long2 : decimal  ) return decimal
+|================
+
+The function 'distance' returns the distance between two WGS84 coordinates given by string literals or latitude and longitude values. The distance will be returned as decimal value measured in meters.
+
+==== Dates Function ====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/dates
+|*profile*|fn:dates ( ) return tuple-sequence
+|================
+
+The function 'dates' returns all occurrences representing a date-time value checked by the datatype 'xsd:dateTime'.
+
+==== Dates-After Function ====
+
+[width="80%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/dates-after
+|*profile*|fn:dates-after ( s : string ) return tuple-sequence
+|*profile*|fn:dates-after ( y : integer , m : integer , d : integer  ) return tuple-sequence
+|*profile*|fn:dates-after ( y : integer , m : integer , d : integer , h : integer , min : integer , s : integer ) return tuple-sequence
+|================
+
+The function 'dates-after' returns all occurrences representing a date-time value checked by the datatype 'xsd:dateTime' after a specific date. The date can be defined by a single string literal or as a set of integer values representing the year, month, day and optional the hour, the minute and the second.
+
+==== Dates-Before Function ====
+
+[width="90%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/dates-before
+|*profile*|fn:dates-before ( s : string ) return tuple-sequence
+|*profile*|fn:dates-before ( y : integer , m : integer , d : integer  ) return tuple-sequence
+|*profile*|fn:dates-before ( y : integer , m : integer , d : integer , h : integer , min : integer , s : integer ) return tuple-sequence
+|================
+
+The function 'dates-before' returns all occurrences representing a date-time value checked by the datatype 'xsd:dateTime' before a specific date. The date can be defined by a single string literal or as a set of integer values representing the year, month, day and optional the hour, the minute and the second.
+
+==== Dates-In-Range Function ====
+
+[width="100%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/dates-in-range
+|*profile*|fn:dates-in-range ( l : string , u : string ) return tuple-sequence
+|*profile*|fn:dates-in-range ( y1 : integer , m1 : integer , d1 : integer , y2 : integer , m2 : integer , d2 : integer  ) return tuple-sequence
+|*profile*|fn:dates-in-range ( y1 : integer , m1 : integer , d1 : integer , h1 : integer , min1 : integer , s1 : integer , y2 : integer , m2 : integer , d2 : integer , h2 : integer , min2 : integer , s2 : integer  ) return tuple-sequence
+|================
+
+The function 'dates-in-range' returns all occurrences representing a date-time value checked by the datatype 'xsd:dateTime' between two specific dates. The dates can be defined by a single string literal or as a set of integer values representing the year, month, day and optional the hour, the minute and the second.
+
+==== Get-Association-Types Function ====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/get-association-types
+|*profile*|fn:get-association-types ( ) return tuple-sequence
+|*profile*|fn:get-association-types ( b : transitive ) return tuple-sequence
+|================
+
+The function 'get-association-types' returns all association types of the topic map by using the provided indexes. If the boolean argument is given and set to 'true' the supertypes of the association types also contained within the result.
+
+==== Get-Topic-Types Function ====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/get-topic-types
+|*profile*|fn:get-topic-types ( ) return tuple-sequence
+|*profile*|fn:get-topic-types ( b : transitive ) return tuple-sequence
+|================
+
+The function 'get-topic-types' returns all topic types of the topic map by using the provided indexes. If the boolean argument is given and set to 'true' the supertypes of the topic types also contained within the result.
+
+==== Get-Name-Types Function ====
+
+[width="70%", cols="1,4"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/get-name-types
+|*profile*|fn:get-name-types ( ) return tuple-sequence
+|*profile*|fn:get-name-types ( b : transitive ) return tuple-sequence
+|*profile*|fn:get-name-types ( t : topic-type ) return tuple-sequence
+|*profile*|fn:get-name-types ( t : topic-type, b: withDuplicates ) return tuple-sequence
+|================
+
+The function 'get-name-types' returns all name types of the topic map by using the provided indexes. If the boolean argument is given and set to 'true' the supertypes of the name types also contained within the result. If the first argument is a topic, only the result only contains the type of names contained by at least instance of the given topic type. If the second boolean argument is missing or set to 'false', each name-type only returned one times.
+
+==== Get-Occurrence-Types Function ====
+
+[width="70%", cols="1,4"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/get-occurrence-types
+|*profile*|fn:get-occurrence-types ( ) return tuple-sequence
+|*profile*|fn:get-occurrence-types ( b : transitive ) return tuple-sequence
+|*profile*|fn:get-occurrence-types ( t : topic-type ) return tuple-sequence
+|*profile*|fn:get-occurrence-types ( t : topic-type, b: withDuplicates ) return tuple-sequence
+|================
+
+The function 'get-occurrence-types' returns all occurrence types of the topic map by using the provided indexes. If the boolean argument is given and set to 'true' the supertypes of the occurrence types also contained within the result. If the first argument is a topic, only the result only contains the type of occurrences contained by at least instance of the given topic type. If the second boolean argument is missing or set to 'false', each occurrence-type only returned one times.
+
+==== Get-Characteristic-Types Function ====
+
+[width="70%", cols="1,4"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/get-characteristic-types
+|*profile*|fn:get-characteristic-types ( ) return tuple-sequence
+|*profile*|fn:get-characteristic-types ( b : transitive ) return tuple-sequence
+|*profile*|fn:get-characteristic-types ( t : topic-type ) return tuple-sequence
+|*profile*|fn:get-characteristic-types ( t : topic-type, b: withDuplicates ) return tuple-sequence
+|================
+
+The function 'get-characteristic-types' returns all characteristic types of the topic map by using the provided indexes. If the boolean argument is given and set to 'true' the supertypes of the characteristic types also contained within the result. If the first argument is a topic, only the result only contains the type of characteristics contained by at least instance of the given topic type. If the second boolean argument is missing or set to 'false', each characteristic-type only returned one times.
+
+==== Get-Role-Types Function ====
+
+[width="70%", cols="1,4"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/get-role-types
+|*profile*|fn:get-role-types ( ) return tuple-sequence
+|*profile*|fn:get-role-types ( b : transitive ) return tuple-sequence
+|*profile*|fn:get-role-types ( t : association-type ) return tuple-sequence
+|*profile*|fn:get-role-types ( t : association-type, b: withDuplicates ) return tuple-sequence
+|================
+
+The function 'get-role-types' returns all role types of the topic map by using the provided indexes. If the boolean argument is given and set to 'true' the supertypes of the role types also contained within the result. If the first argument is a topic, only the result only contains the type of roles contained by at least instance of the given association type. If the second boolean argument is missing or set to 'false', each role-type only returned one times.
+
+==== Get-Supertypes Function ====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/get-supertypes
+|*profile*|fn:get-supertypes ( ) return tuple-sequence
+|*profile*|fn:get-supertypes ( t: topic-type ) return tuple-sequence
+|*profile*|fn:get-supertypes ( s: sequence ) return tuple-sequence
+|================
+
+The function 'get-supertypes' returns all topic types of the topic map acting as supertype. If the second argument is given, only the supertypes of the provided topics are returned.
+
+==== Get-Subtypes Function ====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/get-subtypes
+|*profile*|fn:get-subtypes ( ) return tuple-sequence
+|*profile*|fn:get-subtypes ( t: topic-type ) return tuple-sequence
+|*profile*|fn:get-subtypes ( s: sequence ) return tuple-sequence
+|================
+
+The function 'get-subtypes' returns all topic types of the topic map acting as subtype. If the second argument is given, only the subtypes of the provided topics are returned.
+
+==== Get-Null-Value Function ====
+
+[width="50%", cols="1,3"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/get-null-value
+|*profile*|fn:get-null-value ( ) return null
+|================
+
+The function can be used to add a 'null' value to the result set, for example as fall-back if any calculation may be invalid.
+
+==== Get-Topics-By-Name-Value Function ====
+
+[width="70%", cols="1,4"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/fn:get-topics-by-name-value
+|*profile*|fn:get-topics-by-name-value ( s: string ) return tuple-sequence
+|*profile*|fn:get-topics-by-name-value ( s: sequence ) return tuple-sequence
+|================
+
+The function returns all topics of the topic map which have at least one name with exactly one of the given values.
+
+[NOTE]
+This method with one argument is similar to the navigation '"value" << atomify tm:name << characteristics'.
+
+==== Get-Topics-By-Name-Regular-Expression Function ====
+
+[width="70%", cols="1,4"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/fn:get-topics-by-name-regular-expression
+|*profile*|fn:get-topics-by-name-regular-expression ( p: pattern ) return tuple-sequence
+|*profile*|fn:get-topics-by-name-regular-expression ( s: sequence ) return tuple-sequence
+|================
+
+The function returns all topics of the topic map which have at least one name with a value matching one of the given patterns.
+
+[NOTE]
+This method with one argument is similar to the navigation '"pattern" << ratomify tm:name << characteristics'.
+
+==== Get-Topics-By-Occurrence-Value Function ====
+
+[width="70%", cols="1,4"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/fn:get-topics-by-occurrence-value
+|*profile*|fn:get-topics-by-occurrence-value ( s: string ) return tuple-sequence
+|*profile*|fn:get-topics-by-occurrence-value ( s: sequence ) return tuple-sequence
+|================
+
+The function returns all topics of the topic map which have at least one occurrence with exactly one of the given values.
+
+[NOTE]
+This method with one argument is similar to the navigation '"value" << atomify tm:occurrence << characteristics'.
+
+==== Get-Topics-By-Occurrence-Regular-Expression Function ====
+
+[width="70%", cols="1,4"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/fn:get-topics-by-occurrence-regular-expression
+|*profile*|fn:get-topics-by-occurrence-regular-expression ( p: pattern ) return tuple-sequence
+|*profile*|fn:get-topics-by-occurrence-regular-expression ( s: sequence ) return tuple-sequence
+|================
+
+The function returns all topics of the topic map which have at least one occurrence with a value matching one of the given patterns.
+
+[NOTE]
+This method with one argument is similar to the navigation '"pattern" << ratomify tm:occurrence << characteristics'.
+
+==== Get-Topics-By-Characteristic-Value Function ====
+
+[width="70%", cols="1,4"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/fn:get-topics-by-characteristic-value
+|*profile*|fn:get-topics-by-characteristic-value ( s: string ) return tuple-sequence
+|*profile*|fn:get-topics-by-characteristic-value ( s: sequence ) return tuple-sequence
+|================
+
+The function returns all topics of the topic map which have at least one name or occurrence with exactly one of the given values.
+
+[NOTE]
+This method with one argument is similar to the navigation '"value" << atomify << characteristics'.
+
+==== Get-Topics-By-Characteristic-Regular-Expression Function ====
+
+[width="70%", cols="1,4"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/fn:get-topics-by-characteristic-regular-expression
+|*profile*|fn:get-topics-by-characteristic-regular-expression ( p: pattern ) return tuple-sequence
+|*profile*|fn:get-topics-by-characteristic-regular-expression ( s: sequence ) return tuple-sequence
+|================
+
+The function returns all topics of the topic map which have at least one name or occurrence with a value matching one of the given patterns.
+
+[NOTE]
+This method with one argument is similar to the navigation '"pattern" << ratomify << characteristics'.
