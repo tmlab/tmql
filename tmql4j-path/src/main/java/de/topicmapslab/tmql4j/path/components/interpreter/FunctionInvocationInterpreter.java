@@ -17,6 +17,7 @@ import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
+import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IFunction;
 import de.topicmapslab.tmql4j.path.grammar.productions.FunctionInvocation;
@@ -66,7 +67,6 @@ public class FunctionInvocationInterpreter extends ExpressionInterpreterImpl<Fun
 		 */
 		if (interpreter == null) {
 			Class<? extends IFunction> clazz = runtime.getLanguageContext().getFunctionRegistry().getFunction(identifier);
-
 			try {
 				/*
 				 * try to instantiate the responsible function interpreter

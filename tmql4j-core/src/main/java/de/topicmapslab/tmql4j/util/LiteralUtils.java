@@ -167,6 +167,19 @@ public class LiteralUtils {
 	public static final boolean isDateTime(final String literal) {
 		return dateTimePattern.matcher(literal).matches();
 	}
+	
+	/**
+	 * Method checks if the given string literal can be represented as boolean
+	 * literal.
+	 * 
+	 * @param literal
+	 *            the literal
+	 * @return <code>true</code> if the literal is a boolean literal,
+	 *         <code>false</code> otherwise.
+	 */
+	public static final boolean isBoolean(final String literal) {
+		return "true".equalsIgnoreCase(literal) || "false".equalsIgnoreCase(literal);
+	}
 
 	/**
 	 * Method checks if the given string literal can be represented as quoted

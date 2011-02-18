@@ -23,7 +23,7 @@ public class Function extends Token {
 		/*
 		 * check if method is a function
 		 */
-		return runtime.getLanguageContext().getFunctionRegistry().getFunction(literal) != null;
+		return literal.startsWith(getLiteral());
 	}
 
 	/**

@@ -48,6 +48,8 @@ public class TupleSerializer extends JsonSerializer<SimpleResult> {
 				jgen.writeStringField(IJtmQrKeys.STRING, result.toString());
 			}else if (result instanceof Construct){
 				writeConstruct(jgen, (Construct) result);
+			}else if (result instanceof Boolean){
+				jgen.writeBooleanField(IJtmQrKeys.BOOLEAN, Boolean.valueOf(result.toString()));
 			}
 			jgen.writeEndObject();
 		}

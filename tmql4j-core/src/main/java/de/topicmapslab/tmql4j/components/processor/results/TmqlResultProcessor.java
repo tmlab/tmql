@@ -111,6 +111,7 @@ public class TmqlResultProcessor implements IResultProcessor {
 			 */
 			if (resultSet instanceof ResultSet<?>) {
 				((ResultSet<?>) resultSet).setAlias(aliasIndex);
+				((ResultSet<?>) resultSet).setIndexes(columnAlias);
 			}
 			/*
 			 * iterate over query matches per tuple
@@ -207,5 +208,15 @@ public class TmqlResultProcessor implements IResultProcessor {
 			return Collections.emptyMap();
 		}
 		return aliasIndex;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public Map<Integer, String> getAliases() {
+		if ( columnAlias == null ){
+			Collections.emptyMap();
+		}
+		return columnAlias;
 	}
 }

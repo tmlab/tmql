@@ -10,6 +10,8 @@
  */
 package de.topicmapslab.tmql4j.components.processor.results.model;
 
+import java.util.Map;
+
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
@@ -97,5 +99,11 @@ public interface IResultProcessor {
 	 *         otherwise.
 	 */
 	public boolean isKnownAlias(final String alias);
+	
+	/**
+	 * Returns the aliases for the index set by the use of AS clauses
+	 * @return the alias
+	 */
+	public Map<Integer, String> getAliases();
 
 }

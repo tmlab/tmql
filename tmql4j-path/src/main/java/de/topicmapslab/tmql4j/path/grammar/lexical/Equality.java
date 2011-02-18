@@ -14,11 +14,13 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 public class Equality extends Token {
 
+	public static final String TOKEN = "==";
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "==";
+		return TOKEN;
 	}
 
 }

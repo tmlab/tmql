@@ -167,6 +167,10 @@ public class UseExpressionInterpreter extends ExpressionInterpreterImpl<UseExpre
 		 */
 		if (context.getOutputStream() != null) {
 			if (context.getContextBindings() != null) {
+				/*
+				 * set alias for serializer
+				 */
+				context.getContextBindings().setColumnAlias(context.getTmqlProcessor().getResultProcessor().getAliases());
 				JTMQRWriter.getJsonAsStream(context.getOutputStream(), context.getContextBindings());
 			} else {
 				JTMQRWriter.getJsonAsStream(context.getOutputStream(), QueryMatches.emptyMatches());

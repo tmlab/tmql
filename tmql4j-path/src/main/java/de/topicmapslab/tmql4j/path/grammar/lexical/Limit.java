@@ -14,11 +14,13 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 public class Limit extends Token {
 
+	public static final String TOKEN = "LIMIT";
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "LIMIT";
+		return TOKEN;
 	}
 
 }

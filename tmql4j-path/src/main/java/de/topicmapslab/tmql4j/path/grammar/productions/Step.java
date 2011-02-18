@@ -18,6 +18,9 @@ import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.path.components.navigation.NavigationRegistry;
+import de.topicmapslab.tmql4j.path.exception.NavigationException;
+import de.topicmapslab.tmql4j.path.exception.UnsupportedNavigationTypeException;
 import de.topicmapslab.tmql4j.path.grammar.lexical.MoveBackward;
 import de.topicmapslab.tmql4j.path.grammar.lexical.MoveForward;
 
@@ -57,9 +60,7 @@ public class Step extends ExpressionImpl {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
-	public Step(IExpression parent, List<Class<? extends IToken>> tmqlTokens,
-			List<String> tokens, ITMQLRuntime runtime)
-			throws TMQLInvalidSyntaxException, TMQLGeneratorException {
+	public Step(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 		setGrammarType(0);
 	}
@@ -71,9 +72,17 @@ public class Step extends ExpressionImpl {
 	public boolean isValid() {
 		if (getTmqlTokens().size() > 3) {
 			return false;
-		} else if (!getTmqlTokens().get(0).equals(MoveBackward.class)
-				&& !getTmqlTokens().get(0).equals(MoveForward.class)
-		) {
+		} else if (!getTmqlTokens().get(0).equals(MoveBackward.class) && !getTmqlTokens().get(0).equals(MoveForward.class)) {
+			return false;
+		} 
+		try{
+			/*
+			 * check if the axis is known
+			 */
+			NavigationRegistry.buildHandler().lookup(getTmqlTokens().get(1));
+		}catch(UnsupportedNavigationTypeException ex){
+			return false;
+		}catch(NavigationException ex){
 			return false;
 		}
 		return true;

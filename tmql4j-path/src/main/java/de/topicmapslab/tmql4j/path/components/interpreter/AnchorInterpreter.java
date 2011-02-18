@@ -193,6 +193,12 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 				else if (LiteralUtils.isInteger(anchor_)) {
 					return QueryMatches.asQueryMatchNS(runtime, LiteralUtils.asInteger(anchor_));
 				}
+				/*
+				 * handle as boolean?
+				 */
+				else if (LiteralUtils.isBoolean(anchor_)) {
+					return QueryMatches.asQueryMatchNS(runtime, Boolean.valueOf(anchor_));
+				}
 				return QueryMatches.asQueryMatch(runtime, QueryMatches.getNonScopedVariable(), LiteralUtils.asString(anchor_));
 			} catch (Exception ex) {
 				logger.warn("Cannot found element for given reference '" + anchor_ + "'!");

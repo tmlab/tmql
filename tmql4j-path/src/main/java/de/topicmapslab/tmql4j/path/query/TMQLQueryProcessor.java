@@ -45,7 +45,7 @@ public class TMQLQueryProcessor implements IQueryProcessor {
 		if (isValid(query)) {
 			return new TMQLQuery(topicMap, query);
 		}
-		throw new IllegalArgumentException("String represenation cannot convert to a TMQL query!");
+		throw new IllegalArgumentException("String represenation cannot convert to a TMQL query: " + query + "!");
 	}
 
 	/**

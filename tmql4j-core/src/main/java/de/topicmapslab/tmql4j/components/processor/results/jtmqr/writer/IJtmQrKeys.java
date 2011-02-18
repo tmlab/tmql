@@ -35,9 +35,37 @@ public interface IJtmQrKeys {
 	public static final String NUMBER = "n";
 	
 	/**
+	 * the JSON hash key for number of rows
+	 */
+	public static final String ROWS = "rows";
+	
+	/**
+	 * the JSON hash key for number of columns
+	 */
+	public static final String COLUMNS = "columns";
+	
+	/**
+	 * the JSON hash key for the aliases
+	 */
+	public static final String ALIASES = "aliases";
+	
+	/**
+	 * the JSON hash key for an alias
+	 */
+	public static final String ALIAS = "a";
+	/**
+	 * the JSON hash key for meta data
+	 */
+	public static final String METADATA = "metadata";
+	
+	/**
 	 * the JSON hash key for string values
 	 */
 	public static final String STRING = "s";
+	/**
+	 * the JSON hash key for boolean values
+	 */
+	public static final String BOOLEAN = "b";
 	
 	/**
 	 * the JSON hash key for items

@@ -14,11 +14,13 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 public class Order extends Token {
 
+	public static final String TOKEN = "ORDER";
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "ORDER";
+		return TOKEN;
 	}
 
 }

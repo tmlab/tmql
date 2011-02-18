@@ -237,7 +237,7 @@ public interface IResultSet<T extends IResult> extends Iterable<T> {
 	 *             transformation to other formats.
 	 */
 	public void toXTM(OutputStream os) throws UnsupportedOperationException;
-	
+
 	/**
 	 * Transform the query result to an CTM string.
 	 * 
@@ -258,7 +258,7 @@ public interface IResultSet<T extends IResult> extends Iterable<T> {
 	 *             transformation to other formats.
 	 */
 	public void toCTM(OutputStream os) throws UnsupportedOperationException;
-	
+
 	/**
 	 * Transform the query result to an JTMQR string.
 	 * 
@@ -279,9 +279,10 @@ public interface IResultSet<T extends IResult> extends Iterable<T> {
 	 *             transformation to other formats.
 	 */
 	public void toJTMQR(OutputStream os) throws UnsupportedOperationException;
-	
+
 	/**
-	 * Transform the query result to a topic map instance containing all topics and associations of the result set
+	 * Transform the query result to a topic map instance containing all topics
+	 * and associations of the result set
 	 * 
 	 * @return the topic map
 	 * @throws UnsupportedOperationException
@@ -289,4 +290,24 @@ public interface IResultSet<T extends IResult> extends Iterable<T> {
 	 *             transformation to topic map.
 	 */
 	public TopicMap toTopicMap() throws UnsupportedOperationException;
+
+	/**
+	 * Returns the alias for the given index or <code>null</code> if no alias is
+	 * set
+	 * 
+	 * @param index
+	 *            the index
+	 * @return the alias
+	 * @since 3.1.0
+	 */
+	public String getAlias(int index);
+
+	/**
+	 * Method checks if any alias is set
+	 * 
+	 * @return <code>true</code> if at least one alias is set,
+	 *         <code>false</code> otherwise
+	 * @since 3.1.0
+	 */
+	public boolean hasAlias();
 }
