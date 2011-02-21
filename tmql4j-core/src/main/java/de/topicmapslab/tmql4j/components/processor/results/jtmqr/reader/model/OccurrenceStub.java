@@ -10,8 +10,22 @@ import org.tmapi.core.Occurrence;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 
-public class OccurrenceStub implements Occurrence {
+public class OccurrenceStub extends CharacteristicStub implements Occurrence {
 
+	private Topic parent;
+	private String datatype;
+	
+	protected OccurrenceStub(Topic parent) {
+		this.parent = parent;
+		this.datatype = "http://www.w3.org/2001/XMLSchema#string";
+	}
+	
+	protected void _setDatatype(String datatype){
+		this.datatype = datatype;
+	}
+	
+	// --[ TMAPI methods ]-------------------------------------------------------
+	
 	@Override
 	public Topic getType() {
 		// TODO Auto-generated method stub

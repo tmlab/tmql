@@ -9,8 +9,21 @@ import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 
-public class RoleStub implements Role {
+public class RoleStub extends ReifieableStub implements Role {
 
+	private Association parent;
+	private Topic player;
+	
+	protected RoleStub(Association parent) {
+		this.parent = parent;
+	}
+	
+	protected void _setPlayer(Topic player){
+		this.player = player;
+	}
+	
+	// --[ TMAPI methods ]-------------------------------------------------------
+	
 	@Override
 	public Topic getReifier() {
 		// TODO Auto-generated method stub

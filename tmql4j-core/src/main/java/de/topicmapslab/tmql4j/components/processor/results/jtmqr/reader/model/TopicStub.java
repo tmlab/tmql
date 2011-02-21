@@ -1,6 +1,7 @@
 package de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.model;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,25 +24,40 @@ public class TopicStub implements Topic {
 	Set<Locator> subjectLocator;
 	Set<Locator> itemIdentifier;
 	
+	Set<Name> names;
+	Set<Occurrence> occurrences;
+	
 	protected TopicStub() {
+		
 		this.subjectIdentifier = new HashSet<Locator>();
 		this.subjectLocator = new HashSet<Locator>();
 		this.itemIdentifier = new HashSet<Locator>();
+		
+		this.names = Collections.emptySet();
+		this.occurrences = Collections.emptySet();
 	}
 	
-	protected void addSubjectIdentifier(String iri){
+	protected void _addSubjectIdentifier(String iri){
 		Locator l = new LocatorImpl(iri);
 		this.subjectIdentifier.add(l);
 	}
 	
-	protected void addSubjectLocator(String iri){
+	protected void _addSubjectLocator(String iri){
 		Locator l = new LocatorImpl(iri);
 		this.subjectLocator.add(l);
 	}
 	
-	protected void addItemIdentifier(String iri){
+	protected void _addItemIdentifier(String iri){
 		Locator l = new LocatorImpl(iri);
 		this.itemIdentifier.add(l);
+	}
+	
+	protected void _setNames(Set<Name> names){
+		this.names = names;
+	}
+	
+	protected void _setOccurrences(Set<Occurrence> occurrences){
+		this.occurrences = occurrences;
 	}
 	
 	

@@ -9,11 +9,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.codehaus.jackson.JsonParseException;
+import org.tmapi.core.Association;
 import org.tmapi.core.FactoryConfigurationException;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
+import org.tmapi.core.Role;
 import org.tmapi.core.TMAPIException;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
@@ -49,55 +53,63 @@ public class Test {
 		name.addTheme(theme1);
 		name.addTheme(theme2);
 		Variant variant1 = name.createVariant("variant value 1", theme3);
-		Variant variant2 = name.createVariant("variant value 2", theme4, theme5);
-		
-		name.setReifier(tm.createTopic());
+		variant1.setReifier(tm.createTopic());
+		Variant variant2 = name.createVariant("variant value 2", theme4,theme5);
+
+		Name name2 = topic.createName("name value 2");
+		name2.setReifier(tm.createTopic());
 		
 		Occurrence occ = topic.createOccurrence(type, "occurrence value");
 		occ.addTheme(theme1);
 		occ.addTheme(theme2);
 		
+		Occurrence occ2 = topic.createOccurrence(type, "occurrence value");
+		occ2.setValue(123456);
 
+		Topic assType = tm.createTopic();
+		Topic roleType1 = tm.createTopic();
+		Topic roleType2 = tm.createTopic();
+		
+		Topic player1 = tm.createTopic();
+		Topic player2 = tm.createTopic();
+		Topic player3 = tm.createTopic();
+		
+		Association ass = tm.createAssociation(assType);
+		Role role1 = ass.createRole(tm.createTopic(), tm.createTopic());
+		Role role2 = ass.createRole(tm.createTopic(), tm.createTopic());
+		role1.setReifier(tm.createTopic());
+
+		ass.addTheme(theme1);
+		ass.addTheme(theme2);
+		ass.setReifier(tm.createTopic());
+		
+		Association ass2 = tm.createAssociation(assType);
+		ass2.createRole( tm.createTopic(),  tm.createTopic() );
+		
 		SimpleResult result = new SimpleResult(resultSet);
-		result.add(name);
+		result.add(topic);
 		resultSet.addResult(result);
 		
-//		result = new SimpleResult(resultSet);
-//		result.add(occ);
-//		resultSet.addResult(result);
+		result = new SimpleResult(resultSet);
+		result.add(variant2);
+		resultSet.addResult(result);
+		
 //		
 //		result = new SimpleResult(resultSet);
-//		result.add(topic);
+//		result.add(ass2);
 //		resultSet.addResult(result);
-		
-		
-//		// create a number
-//		result = new SimpleResult(resultSet);
-//		result.add(3.1415);
-//		resultSet.addResult(result);
-//		
-//		// create a string
-//		result = new SimpleResult(resultSet);
-//		result.add("TEST STRING");
-//		resultSet.addResult(result);
-		
-		
-		
-		
+
+
 		File file = new File("/tmp/test.jtm");
 		if(file.exists())
 			file.delete();
-		
-		
-		
+
 		OutputStream out = new FileOutputStream(file);
 		resultSet.toJTMQR(out);
 		
 		InputStream in = new FileInputStream(file);
-		
-		IResultSet<?> r = new SimpleResultSet(tms, tm);
-		
-		JTMQRReader reader = new JTMQRReader(in, r);
+			
+		JTMQRReader reader = new JTMQRReader(in);
 		reader.readResultSet();
 		
 		resultSet.toJTMQR(System.out);

@@ -2,6 +2,7 @@ package de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.model;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.Set;
 
 import org.tmapi.core.Locator;
@@ -13,6 +14,35 @@ import org.tmapi.core.Variant;
 
 public class VariantStub implements Variant {
 
+	private Name parent;
+	private String value;
+	private Set<Topic> scope;
+	private Topic reifier;
+	private String datatype;
+	
+	protected VariantStub(Name parent) {
+		this.parent = parent;
+		this.scope = Collections.emptySet();
+	}
+		
+	protected void _setValue(String value){
+		this.value = value;
+	}
+	
+	protected void setScope(Set<Topic> scope){
+		this.scope = scope;
+	}
+	
+	protected void _setReifier(Topic reifier){
+		this.reifier = reifier;
+	}
+	
+	protected void _setDatatype(String datatype){
+		this.datatype = datatype;
+	}
+	
+	// --[ TMAPI methods ]----------------------------------------------------------------------
+	
 	@Override
 	public BigDecimal decimalValue() {
 		// TODO Auto-generated method stub

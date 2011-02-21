@@ -1,6 +1,7 @@
 package de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.model;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import org.tmapi.core.Locator;
@@ -10,29 +11,20 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.Variant;
 
-public class NameStub implements Name {
+public class NameStub extends CharacteristicStub implements Name {
 
 	private Topic parent;
-	private String value;
-	private Topic type;
-	private Set<Topic> scope;
+	private Set<Variant> variants;
+
 	
 	protected NameStub(Topic parent) {
 		this.parent = parent;
+		this.variants = Collections.emptySet();
 	}
-	
-	protected void _setValue(String value){
-		this.value = value;
+
+	protected void setVariants(Set<Variant> variants){
+		this.variants = variants;
 	}
-	
-	protected void _setType(Topic type){
-		this.type = type;
-	}
-	
-	protected void setScope(Set<Topic> scope){
-		this.scope = scope;
-	}
-	
 	
 	// --[ TMAPI methods ]------------------------------------------------------------------------
 	

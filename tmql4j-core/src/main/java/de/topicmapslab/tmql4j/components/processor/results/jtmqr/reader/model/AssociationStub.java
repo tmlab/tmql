@@ -1,5 +1,6 @@
 package de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.model;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.tmapi.core.Association;
@@ -9,8 +10,21 @@ import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 
-public class AssociationStub implements Association {
+public class AssociationStub extends ScopedStub implements Association {
 
+	
+	private Set<Role> roles;
+	
+	protected AssociationStub() {
+		this.roles = Collections.emptySet();
+	}
+	
+	protected void _setRoles(Set<Role> roles){
+		this.roles = roles;
+	}
+	
+	// --[ TMAPI methods ]-------------------------------------------------------
+	
 	@Override
 	public Topic getReifier() {
 		// TODO Auto-generated method stub
