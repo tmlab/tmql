@@ -14,11 +14,13 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 public class Not extends Token {
 
+	public static final String TOKEN = "NOT";
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "NOT";
+		return TOKEN;
 	}
 
 }

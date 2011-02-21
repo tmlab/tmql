@@ -72,6 +72,11 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 	private Map<String, String> origins;
 
 	/**
+	 * map to store alias of columns
+	 */
+	private Map<Integer, String> columnAlias;
+
+	/**
 	 * constructor to create a new empty instance
 	 * 
 	 * @param runtime
@@ -231,10 +236,10 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 		/*
 		 * add it self if necessary
 		 */
-		if ( !isEmpty()){
+		if (!isEmpty()) {
 			content.add(this);
 		}
-		
+
 		/*
 		 * create empty list for combinations
 		 */
@@ -254,17 +259,22 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 		this.matches.clear();
 		this.matches.addAll(tuples);
 		this.setOrigins(origins);
-		
+
 	}
-	
+
 	/**
 	 * Internal method to handle next iteration of combination
-	 * @param queryMatches the query matches for next iteration
-	 * @param tuple the tuple
-	 * @param origins the overall origins
-	 * @param tuples the overall tuples
+	 * 
+	 * @param queryMatches
+	 *            the query matches for next iteration
+	 * @param tuple
+	 *            the tuple
+	 * @param origins
+	 *            the overall origins
+	 * @param tuples
+	 *            the overall tuples
 	 */
-	private void addAll(Collection<QueryMatches> queryMatches, Map<String, Object> tuple, Map<String, String> origins, List<Map<String, Object>> tuples){		
+	private void addAll(Collection<QueryMatches> queryMatches, Map<String, Object> tuple, Map<String, String> origins, List<Map<String, Object>> tuples) {
 		/*
 		 * get one query match and clone existing set
 		 */
@@ -278,7 +288,7 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 		/*
 		 * iterate over tuples
 		 */
-		for ( Map<String, Object> thisTuple : queryMatch){
+		for (Map<String, Object> thisTuple : queryMatch) {
 			/*
 			 * get new tuple
 			 */
@@ -287,12 +297,12 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 			/*
 			 * do more iteration
 			 */
-			if ( queryMatches_.isEmpty()){
+			if (queryMatches_.isEmpty()) {
 				tuples.add(tuple_);
-			}else{
+			} else {
 				addAll(queryMatches_, tuple_, origins, tuples);
 			}
-		}		
+		}
 	}
 
 	/**
@@ -561,7 +571,7 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 				sequence.add(tuple.get(variable));
 			} else if (getOrigin(variable) != null) {
 				sequence.add(tuple.get(origins.get(variable)));
-			} 
+			}
 		}
 		return sequence;
 	}
@@ -694,7 +704,7 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 	 * 
 	 * @return an ordered list of variables
 	 */
-	public List<String> getOrderedKeys() {		
+	public List<String> getOrderedKeys() {
 		if (!isEmpty()) {
 			return CollectionsUtility.getOrderedKeys(getMatches().get(0));
 		}
@@ -1416,5 +1426,24 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 			matches.add(projection);
 		}
 		return matches;
+	}
+
+	/**
+	 * Setting the column alias before serialize to JTMQR
+	 * 
+	 * @param columnAlias
+	 *            the columnAlias to set
+	 */
+	public void setColumnAlias(Map<Integer, String> columnAlias) {
+		this.columnAlias = columnAlias;
+	}
+
+	/**
+	 * Getting the set aliases
+	 * 
+	 * @return the columnAlias
+	 */
+	public Map<Integer, String> getColumnAlias() {
+		return columnAlias;
 	}
 }

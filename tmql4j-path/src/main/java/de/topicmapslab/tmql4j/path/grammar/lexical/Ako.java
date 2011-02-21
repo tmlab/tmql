@@ -14,11 +14,13 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 public class Ako extends Token {
 
+	public static final String TOKEN = "AKO";
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "AKO";
+		return TOKEN;
 	}
 
 }

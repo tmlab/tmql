@@ -26,6 +26,25 @@ public class TestValueExpression extends Tmql4JTestCase {
 	}
 	
 	@Test
+	public void testBoolean() throws Exception {
+		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
+		String query = null;
+		SimpleResultSet set = null;
+
+		query = prefix + " true  ";
+		set = execute(new TMQLQuery(topicMap, query));
+		Assert.assertEquals(1,set.size());
+		Assert.assertEquals(1,set.first().size());
+		Assert.assertEquals(true,set.get(0,0));		
+		
+		query = prefix + " false  ";
+		set = execute(new TMQLQuery(topicMap, query));
+		Assert.assertEquals(1,set.size());
+		Assert.assertEquals(1,set.first().size());
+		Assert.assertEquals(false,set.get(0,0));
+	}
+	
+	@Test
 	public void testSign() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
 		String query = null;

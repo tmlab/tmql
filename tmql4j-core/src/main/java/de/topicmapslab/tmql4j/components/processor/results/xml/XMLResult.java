@@ -94,7 +94,7 @@ public class XMLResult extends ResultSet<XMLValue> {
 				/*
 				 * transform stream to string
 				 */
-				builder.append(value.toString());
+				builder.append(value.first().toString());
 				builder.append("\r\n");
 			}
 

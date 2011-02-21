@@ -66,7 +66,6 @@ public class FunctionInvocationInterpreter extends ExpressionInterpreterImpl<Fun
 		 */
 		if (interpreter == null) {
 			Class<? extends IFunction> clazz = runtime.getLanguageContext().getFunctionRegistry().getFunction(identifier);
-
 			try {
 				/*
 				 * try to instantiate the responsible function interpreter

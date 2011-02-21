@@ -81,7 +81,7 @@ public class FunctionInvocation extends ExpressionImpl {
 		/*
 		 * expects at lest one token beginning with a function identifier
 		 */
-		return !getTmqlTokens().isEmpty() && getTmqlTokens().get(0).equals(Function.class);
+		return !getTmqlTokens().isEmpty() && getTmqlTokens().get(0).equals(Function.class) && getRuntime().getLanguageContext().getFunctionRegistry().isKnownFunction(getTokens().get(0));
 	}
 
 }

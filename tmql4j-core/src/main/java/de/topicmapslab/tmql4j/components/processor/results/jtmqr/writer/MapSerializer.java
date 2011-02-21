@@ -2,8 +2,6 @@ package de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Map;
 
 import org.codehaus.jackson.JsonGenerator;
@@ -41,7 +39,7 @@ public class MapSerializer extends JsonSerializer<Map<?, ?>> {
 	public void serialize(Map<?, ?> tuple, JsonGenerator jgen, SerializerProvider provider) throws IOException {
 
 		jgen.writeStartObject();
-		jgen.writeFieldName("t");
+		jgen.writeFieldName(IJtmQrKeys.TUPLE);
 		jgen.writeStartArray();
 		{
 			for (final String key : CollectionsUtility.getOrderedKeys((Map<String, Object>) tuple)) {
@@ -50,23 +48,15 @@ public class MapSerializer extends JsonSerializer<Map<?, ?>> {
 				jgen.writeStartObject();
 
 				if (value instanceof String) {
-					jgen.writeStringField("s", value.toString());
+					jgen.writeStringField(IJtmQrKeys.STRING, value.toString());
 				} else if (value instanceof Construct) {
 					writeConstruct(jgen, (Construct) value);
-				} else if (value instanceof Long) {
-					jgen.writeNumberField("n", (Long) value);
-				} else if (value instanceof Integer) {
-					jgen.writeNumberField("n", (Integer) value);
-				} else if (value instanceof Double) {
-					jgen.writeNumberField("n", (Double) value);
-				} else if (value instanceof Float) {
-					jgen.writeNumberField("n", (Float) value);
-				} else if (value instanceof BigInteger) {
-					jgen.writeNumberField("n", ((BigInteger) value).longValue());
-				}else if (value instanceof BigDecimal) {
-					jgen.writeNumberField("n", ((BigDecimal) value).doubleValue());
-				}else {
-					jgen.writeStringField("s", value.toString());
+				} else if (value instanceof Number) {
+					jgen.writeObjectField(IJtmQrKeys.NUMBER, (Number) value);
+				} else if (value instanceof Boolean) {
+					jgen.writeBooleanField(IJtmQrKeys.BOOLEAN, Boolean.valueOf(value.toString()));
+				} else {
+					jgen.writeStringField(IJtmQrKeys.STRING, value.toString());
 				}
 				jgen.writeEndObject();
 			}

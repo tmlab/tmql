@@ -15,11 +15,13 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 public class Unique extends Token {
 
+	public static final String TOKEN = "UNIQUE";
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "UNIQUE";
+		return TOKEN;
 	}
 
 }

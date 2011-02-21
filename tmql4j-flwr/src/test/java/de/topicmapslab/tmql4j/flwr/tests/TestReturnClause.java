@@ -11,13 +11,20 @@ package de.topicmapslab.tmql4j.flwr.tests;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.junit.Test;
 import org.tmapi.core.Name;
 import org.tmapi.core.Topic;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import de.topicmapslab.tmql4j.components.processor.results.ctm.CTMResult;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
@@ -96,6 +103,64 @@ public class TestReturnClause extends Tmql4JTestCase {
 			assertEquals(1, r.size());
 			assertTrue(nodes.contains(r.first()));
 		}
+	}
+	
+	@Test
+	public void testToXml() throws Exception {		
+		XMLResult set;
+
+		Topic topic = createTopicBySI("myTopic");
+		Set<String> nodes = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			topic.createName("Name" + Integer.toString(i));
+			nodes.add("Name" + Integer.toString(i));
+		}
+		assertEquals(100, topic.getNames().size());
+		String query = "FOR $n IN // tm:subject >> characteristics RETURN <a> { $n >> atomify } </a>";
+		set = execute(query);
+		assertEquals(nodes.size(), set.size());		
+		/*
+		 * test with document
+		 */
+		Document doc = set.toXMLDocument();
+		NodeList roots = doc.getChildNodes();
+		assertEquals(1, roots.getLength());
+		Node root = roots.item(0);
+		assertEquals("xml-root", root.getNodeName());
+		NodeList as = root.getChildNodes();
+		int cnt = 0;
+		for ( int item = 0 ; item < as.getLength() ; item++ ){
+			Node a = as.item(item);
+			if ( "a".equalsIgnoreCase(a.getNodeName())){
+				cnt++;
+				String value = a.getTextContent().trim();
+				assertTrue(nodes.contains(value));
+			}
+		}
+		assertEquals(100, cnt);
+		
+		/*
+		 * test with output stream
+		 */
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+		set.toXML(os);
+		os.flush();
+		doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse( new ByteArrayInputStream(os.toByteArray()));
+		roots = doc.getChildNodes();
+		assertEquals(1, roots.getLength());
+		root = roots.item(0);
+		assertEquals("xml-root", root.getNodeName());
+		as = root.getChildNodes();
+		cnt = 0;
+		for ( int item = 0 ; item < as.getLength() ; item++ ){
+			Node a = as.item(item);
+			if ( "a".equalsIgnoreCase(a.getNodeName())){
+				cnt++;
+				String value = a.getTextContent().trim();
+				assertTrue(nodes.contains(value));
+			}
+		}
+		assertEquals(100, cnt);
 	}
 
 	@Test

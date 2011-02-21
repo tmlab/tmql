@@ -143,12 +143,12 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 							if (!optionals.isEmpty()) {
 								optional = (Construct) optionals.get(0);
 							}
-						}else if ( context.getCurrentTuple() != null || context.getCurrentTuple().containsKey(optional_)){
+						} else if (context.getCurrentTuple() != null || context.getCurrentTuple().containsKey(optional_)) {
 							optional = (Construct) context.getCurrentTuple().get(optional_);
 						}
-					} else if ( TmdmSubjectIdentifier.isTmdmName(optional_) || TmdmSubjectIdentifier.isTmdmOccurrence(optional_)){
+					} else if (TmdmSubjectIdentifier.isTmdmName(optional_) || TmdmSubjectIdentifier.isTmdmOccurrence(optional_)) {
 						optional = optional_;
-					}else{
+					} else {
 						optional = runtime.getConstructResolver().getConstructByIdentifier(context, optional_);
 					}
 					/*

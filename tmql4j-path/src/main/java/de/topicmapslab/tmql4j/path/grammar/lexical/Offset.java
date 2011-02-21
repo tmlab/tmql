@@ -14,11 +14,13 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 public class Offset extends Token {
 
+	public static final String TOKEN = "OFFSET";
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "OFFSET";
+		return TOKEN;
 	}
 
 }

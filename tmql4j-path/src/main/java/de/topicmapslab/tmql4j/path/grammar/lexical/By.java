@@ -14,11 +14,13 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 public class By extends Token {
 
+	public static final String TOKEN = "BY";
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "BY";
+		return TOKEN;
 	}
 
 }

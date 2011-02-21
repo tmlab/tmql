@@ -34,6 +34,18 @@ import de.topicmapslab.tmql4j.util.HashUtil;
 public class PreparedStatement implements IPreparedStatement {
 
 	/**
+	 * 
+	 */
+	private static final String ESCAPED_QUOTE = "\\\\\"";
+	/**
+	 * 
+	 */
+	private static final String TRIPLE_QUOTE = "\"\"\"";
+	/**
+	 * 
+	 */
+	private static final String QUOTE = "\"";
+	/**
 	 * exception message
 	 */
 	private static final String MISSING_INDEX_FOR_EXPRESSION = "Missing index for expression!";
@@ -487,8 +499,10 @@ public class PreparedStatement implements IPreparedStatement {
 				}
 				String replacement;
 				if (value instanceof Construct) {
-					replacement = "\"" + ((Construct) value).getId() + "\" << id";
-				} else {
+					replacement = QUOTE + ((Construct) value).getId() + "\" << id";
+				} else if ( value instanceof String ){
+					replacement = escape((String)value);
+				}else{
 					replacement = value.toString();
 				}
 				nonParametrizedQueryString = nonParametrizedQueryString.replaceFirst("\\?", replacement);
@@ -497,6 +511,20 @@ public class PreparedStatement implements IPreparedStatement {
 		return nonParametrizedQueryString;
 	}
 
+	/**
+	 * Internal method to escape a string value
+	 * @param value the value
+	 * @return the string
+	 */
+	private String escape(String value){
+		if ( value.contains(TRIPLE_QUOTE)){
+			return  TRIPLE_QUOTE +  value.replace(QUOTE, ESCAPED_QUOTE) + TRIPLE_QUOTE;
+		}else if ( value.contains(QUOTE)){
+			return TRIPLE_QUOTE + value + TRIPLE_QUOTE;
+		}
+		return QUOTE + value + QUOTE;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */

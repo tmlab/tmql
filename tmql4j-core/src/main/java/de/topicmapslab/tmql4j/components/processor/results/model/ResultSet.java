@@ -66,6 +66,10 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	 * the alias map
 	 */
 	private Map<String, Integer> alias;
+	/**
+	 * the alias by index
+	 */
+	private Map<Integer, String> indexes;
 
 	/**
 	 * base constructor to create a new instance
@@ -115,6 +119,16 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	 */
 	public void setAlias(Map<String, Integer> alias) {
 		this.alias = alias;
+	}
+
+	/**
+	 * Internal method to set the indexes
+	 * 
+	 * @param indexes
+	 *            the indexes to set
+	 */
+	public void setIndexes(Map<Integer, String> indexes) {
+		this.indexes = indexes;
 	}
 
 	/**
@@ -425,7 +439,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	public void toXTM(OutputStream os) throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("Current result set cannot be transformed to XTM.");
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -451,4 +465,20 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 		return topicMapSystem;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getAlias(int index) {
+		if ( indexes == null ){
+			return null;
+		}
+		return getAlias(index);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean hasAlias() {
+		return indexes != null && alias != null; 
+	}
 }

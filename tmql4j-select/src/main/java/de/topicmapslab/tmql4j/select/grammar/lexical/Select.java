@@ -14,11 +14,13 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 public class Select extends Token {
 
+	public static final String TOKEN = "SELECT";
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "SELECT";
+		return TOKEN;
 	}
 
 }
