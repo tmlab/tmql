@@ -135,5 +135,29 @@ public class PathQueryBuilder extends QueryBuilderImpl {
 		}
 		return path.toTmql();
 	}
+	
+	/**
+	  * {@inheritDoc}
+	  */
+	@Override
+	public PathQueryBuilder clone() throws CloneNotSupportedException {
+		PathQueryBuilder clone = new PathQueryBuilder();
+		if ( nav != null ){
+			clone.nav = nav.clone();
+			if ( !nav.getSteps().isEmpty()){
+				clone.step = nav.getSteps().get(0);				
+			}
+		}
+		if ( tup != null ){
+			clone.tup = tup.clone();
+		}
+		if ( fct != null ){
+			clone.fct = fct.clone();
+		}
+		if ( projection != null ){
+			clone.projection = projection.clone();
+		}		
+		return clone;
+	}
 
 }

@@ -60,4 +60,12 @@ public class Criterion implements ICriterion {
 	public String toTmql() throws InvalidModelException {
 		return value;
 	}
+	
+	/**
+	  * {@inheritDoc}
+	  */
+	@Override
+	public Criterion clone() throws CloneNotSupportedException {
+		return new Criterion(value);
+	}
 }

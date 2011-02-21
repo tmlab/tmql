@@ -21,7 +21,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.WhiteSpace;
  */
 public class Flwr implements IQueryPart {
 
-	private final Return return_;
+	private Return return_;
 	private List<For> fors;
 	private OrderBy orderBy;
 	private Limit limit;
@@ -36,6 +36,13 @@ public class Flwr implements IQueryPart {
 	 */
 	public Flwr(Return return_) {
 		this.return_ = return_;
+	}
+	
+	/**
+	 * empty constructor
+	 */
+	public Flwr() {
+		
 	}
 
 	/**
@@ -135,6 +142,7 @@ public class Flwr implements IQueryPart {
 	public void setWhere(Where where) {
 		this.where = where;
 	}
+	
 
 	/**
 	 * Remove the where clause form internal model
@@ -142,12 +150,23 @@ public class Flwr implements IQueryPart {
 	public void removeWhere() {
 		this.where = null;
 	}
+	
+	/**
+	 * Set the return clause
+	 * @param return_ the return_ to set
+	 */
+	public void setReturn(Return return_) {
+		this.return_ = return_;
+	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public String toTmql() throws InvalidModelException {
+		if ( return_ == null ){
+			throw new InvalidModelException("The return clause is mandatory but not set!");
+		}
 		StringBuilder builder = new StringBuilder();
 		/*
 		 * adding the for clauses
@@ -186,6 +205,33 @@ public class Flwr implements IQueryPart {
 		}
 		builder.append(return_.toTmql());
 		return builder.toString();
+	}
+	
+	/**
+	  * {@inheritDoc}
+	  */
+	@Override
+	public Flwr clone() throws CloneNotSupportedException {
+		Flwr clone = new Flwr();
+		if ( return_ != null ){
+			clone.setReturn(return_.clone());
+		}
+		for ( For for_ : getFors()){
+			clone.add(for_.clone());
+		}
+		if ( where != null ){
+			clone.setWhere(where.clone());
+		}
+		if ( orderBy != null ){
+			clone.setOrderBy(orderBy.clone());
+		}
+		if ( offset != null ){
+			clone.offset = offset.clone();
+		}
+		if ( limit != null ){
+			clone.limit = limit.clone();
+		}
+		return clone;
 	}
 
 }

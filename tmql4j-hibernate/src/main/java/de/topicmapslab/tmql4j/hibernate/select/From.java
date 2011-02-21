@@ -38,5 +38,13 @@ public class From implements IQueryPart {
 		builder.append(WhiteSpace.TOKEN);
 		return builder.toString();
 	}
+	
+	/**
+	  * {@inheritDoc}
+	  */
+	@Override
+	public From clone() throws CloneNotSupportedException {
+		return new From(content.clone());
+	}
 
 }

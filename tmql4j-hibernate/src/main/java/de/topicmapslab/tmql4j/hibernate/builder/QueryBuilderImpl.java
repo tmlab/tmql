@@ -29,5 +29,11 @@ public abstract class QueryBuilderImpl implements IQueryBuilder {
 	public IPreparedStatement toPreparedStatement(ITMQLRuntime runtime) {
 		return runtime.preparedStatement(toQueryString());
 	}
+	
+	/**
+	  * {@inheritDoc}
+	  */
+	@Override
+	public abstract IQueryBuilder clone() throws CloneNotSupportedException;
 
 }

@@ -76,4 +76,22 @@ public abstract class FunctionImpl implements IQueryPart {
 	 * @return the function name
 	 */
 	protected abstract String getFunctionName();
+	
+	/**
+	  * {@inheritDoc}
+	  */
+	@Override
+	public FunctionImpl clone() throws CloneNotSupportedException {
+		try{
+			FunctionImpl clone = getClass().newInstance();
+			for ( IQueryPart argument : getArguments()){
+				clone.addArgument(argument.clone());
+			}
+			return clone;
+		}catch(Exception e){
+			e.printStackTrace(System.err);
+			// IGNORE
+		}
+		return null;
+	}
 }

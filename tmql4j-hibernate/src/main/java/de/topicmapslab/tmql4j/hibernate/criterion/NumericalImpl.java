@@ -40,5 +40,21 @@ public abstract class NumericalImpl extends CriteriaImpl {
 			throw new InvalidModelException("At least two criteria are expected, but '" + size() + "' was found.");
 		}
 	}
+	
+	/**
+	  * {@inheritDoc}
+	  */
+	@Override
+	public NumericalImpl clone() throws CloneNotSupportedException {
+		try{
+			NumericalImpl clone = getClass().getConstructor(String.class).newInstance(token);
+			clone(clone);
+			return clone;
+		}catch(Exception e){
+			e.printStackTrace(System.err);
+			// IGNORE
+		}
+		return null;
+	}
 
 }

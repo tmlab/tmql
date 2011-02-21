@@ -44,5 +44,12 @@ public class For implements IQueryPart {
 		builder.append(WhiteSpace.TOKEN);
 		return builder.toString();
 	}
+	/**
+	  * {@inheritDoc}
+	  */
+	@Override
+	public For clone() throws CloneNotSupportedException {
+		return new For(variable, content.clone());
+	}
 
 }

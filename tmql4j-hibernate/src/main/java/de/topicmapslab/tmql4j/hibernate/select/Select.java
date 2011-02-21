@@ -227,5 +227,30 @@ public class Select implements IQueryPart {
 		}
 		return builder.toString();
 	}
+	
+	/**
+	  * {@inheritDoc}
+	  */
+	@Override
+	public Select clone() throws CloneNotSupportedException {
+		Select clone = new Select();
+		for (IQueryPart item : getSelects()) {
+			clone.add(item.clone());
+		}
+		if ( where != null ){
+			clone.where = where.clone();
+		}
+		if ( orderBy != null ){
+			clone.orderBy = orderBy.clone();
+		}
+		if ( offset != null ){
+			clone.offset = offset.clone();
+		}
+		if ( limit != null ){
+			clone.limit = limit.clone();
+		}
+		clone.setUnique(unique);
+		return clone;
+	}
 
 }

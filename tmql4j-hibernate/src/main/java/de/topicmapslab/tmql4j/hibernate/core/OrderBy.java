@@ -92,9 +92,21 @@ public class OrderBy implements IQueryPart {
 	}
 	
 	/**
+	  * {@inheritDoc}
+	  */
+	@Override
+	public	OrderBy clone() throws CloneNotSupportedException {
+		OrderBy clone = new OrderBy();
+		for ( OrderByPart part : getContent() ){			
+			clone.add(part.navigation.clone(), part.ascending);
+		}
+		return clone;
+	}
+	
+	/**
 	 * Inner class as order by part
 	 */
-	class OrderByPart{
+	class OrderByPart implements Cloneable{
 		Navigation navigation;
 		boolean ascending;
 		
@@ -119,6 +131,17 @@ public class OrderBy implements IQueryPart {
 			}
 			return false;
 		}
+		/**
+		  * {@inheritDoc}
+		  */
+		@Override
+		public OrderByPart clone() throws CloneNotSupportedException {
+			OrderByPart clone = new OrderByPart();
+			clone.navigation = navigation.clone();
+			clone.ascending = ascending;
+			return clone;
+		}
+		
 	}
 
 }

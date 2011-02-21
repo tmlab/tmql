@@ -33,4 +33,11 @@ public class Limit implements IQueryPart {
 		return de.topicmapslab.tmql4j.path.grammar.lexical.Limit.TOKEN + WhiteSpace.TOKEN + Long.toString(limit);
 	}
 
+	/**
+	  * {@inheritDoc}
+	  */
+	@Override
+	public Limit clone() throws CloneNotSupportedException {
+		return new Limit(limit);
+	}
 }

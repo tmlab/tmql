@@ -40,5 +40,21 @@ public abstract class ComparisonImpl extends CriteriaImpl {
 			throw new InvalidModelException("Exact two criteria are expected, but '" + size() + "' was found.");
 		}
 	}
+	
+	/**
+	  * {@inheritDoc}
+	  */
+	@Override
+	public ComparisonImpl clone() throws CloneNotSupportedException {
+		try{
+			ComparisonImpl clone = getClass().getConstructor(String.class).newInstance(token);
+			clone(clone);
+			return clone;
+		}catch(Exception e){
+			e.printStackTrace(System.err);
+			// IGNORE
+		}
+		return null;
+	}
 
 }
