@@ -47,7 +47,7 @@ public class ConstructReader {
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
 		
-			System.out.println("readTopic " + jParser.getCurrentLocation() + " " + token + " --> " + text);
+			//System.out.println("readTopic " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 
 			if(token.equals(JsonToken.END_OBJECT)){
 				
@@ -96,7 +96,7 @@ public class ConstructReader {
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
 		
-			System.out.println("readNames " + jParser.getCurrentLocation() + " " + token + " --> " + text);
+			//System.out.println("readNames " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 			
 			if(token.equals(JsonToken.START_OBJECT)){
 				Name name = readName(jParser, parent);
@@ -133,7 +133,7 @@ public class ConstructReader {
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
 		
-			System.out.println("readName " + jParser.getCurrentLocation() + " " + token + " --> " + text);
+			//System.out.println("readName " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 			
 			if(token.equals(JsonToken.END_OBJECT)){
 				
@@ -187,7 +187,7 @@ public class ConstructReader {
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
 		
-			System.out.println("readOccurrences " + jParser.getCurrentLocation() + " " + token + " --> " + text);
+			//System.out.println("readOccurrences " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 			
 			if(token.equals(JsonToken.START_OBJECT)){
 				Occurrence occurrence = readOccurrence(jParser, parent);
@@ -224,7 +224,7 @@ public class ConstructReader {
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
 		
-			System.out.println("readOccurrence " + jParser.getCurrentLocation() + " " + token + " --> " + text);
+			//System.out.println("readOccurrence " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 			
 			if(token.equals(JsonToken.END_OBJECT)){
 
@@ -252,6 +252,7 @@ public class ConstructReader {
 				}else if(text.equals("reifier")){
 					occurrence._setReifier(readTopicReference(jParser));
 				}else if(text.equals("datatype")){
+					token = jParser.nextToken();
 					occurrence._setDatatype(jParser.getText());
 				}
 			}
@@ -276,7 +277,7 @@ public class ConstructReader {
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
 		
-			System.out.println("readAssociation " + jParser.getCurrentLocation() + " " + token + " --> " + text);
+			//System.out.println("readAssociation " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 
 			if(token.equals(JsonToken.END_OBJECT)){
 
@@ -317,7 +318,7 @@ public class ConstructReader {
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
 		
-			System.out.println("readRoles " + jParser.getCurrentLocation() + " " + token + " --> " + text);
+			//System.out.println("readRoles " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 			
 			if(token.equals(JsonToken.START_OBJECT)){
 				Role role = readRole(jParser, parent);
@@ -354,7 +355,7 @@ public class ConstructReader {
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
 		
-			System.out.println("readRole " + jParser.getCurrentLocation() + " " + token + " --> " + text);
+			//System.out.println("readRole " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 			
 			if(token.equals(JsonToken.END_OBJECT)){
 				
@@ -403,7 +404,7 @@ public class ConstructReader {
 		String text = jParser.getText();
 		TopicStub topic = new TopicStub(); 
 		
-		System.out.println("readTopicReference " + jParser.getCurrentLocation() + " " + token + " --> " + text);
+		//System.out.println("readTopicReference " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 		
 		if(text.startsWith("ii:")){
 			topic._addItemIdentifier(text.substring(3));
@@ -435,7 +436,7 @@ public class ConstructReader {
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
 			
-			System.out.println("readScope " + jParser.getCurrentLocation() + " " + token + " --> " + text);
+			//System.out.println("readScope " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 			
 			if(token.equals(JsonToken.START_ARRAY)){
 				stack.push(State.ARRAY);
@@ -472,7 +473,7 @@ public class ConstructReader {
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
 			
-			System.out.println("readVariants " + jParser.getCurrentLocation() + " " + token + " --> " + text);
+			//System.out.println("readVariants " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 			
 			if(token.equals(JsonToken.END_ARRAY)){
 				
@@ -508,7 +509,7 @@ public class ConstructReader {
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
 			
-			System.out.println("readVariant " + jParser.getCurrentLocation() + " " + token + " --> " + text);
+			//System.out.println("readVariant " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 			
 			if(token.equals(JsonToken.END_OBJECT)){
 				
@@ -522,6 +523,7 @@ public class ConstructReader {
 				}else if(text.equals("value")){
 					variant._setValue(readValue(jParser));
 				}else if(text.equals("datatype")){
+					token = jParser.nextToken();
 					variant._setDatatype(jParser.getText());
 				}
 			}
@@ -542,7 +544,7 @@ public class ConstructReader {
 		JsonToken token = jParser.nextToken();
 		String text = jParser.getText();
 		
-		System.out.println("readValue " + jParser.getCurrentLocation() + " " + token + " --> " + text);
+		//System.out.println("readValue " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 		
 		return text;
 		

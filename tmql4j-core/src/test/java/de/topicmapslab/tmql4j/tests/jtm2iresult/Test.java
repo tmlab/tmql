@@ -87,17 +87,37 @@ public class Test {
 		ass2.createRole( tm.createTopic(),  tm.createTopic() );
 		
 		SimpleResult result = new SimpleResult(resultSet);
+		result.add("TESTSTRING");
+		resultSet.addResult(result);
+		
+		result = new SimpleResult(resultSet);
+		result.add(12456);
+		resultSet.addResult(result);
+		
+		result = new SimpleResult(resultSet);
 		result.add(topic);
 		resultSet.addResult(result);
 		
 		result = new SimpleResult(resultSet);
-		result.add(variant2);
+		result.add(name);
 		resultSet.addResult(result);
 		
-//		
-//		result = new SimpleResult(resultSet);
-//		result.add(ass2);
-//		resultSet.addResult(result);
+		result = new SimpleResult(resultSet);
+		result.add(variant1);
+		resultSet.addResult(result);
+		
+		result = new SimpleResult(resultSet);
+		result.add(occ2);
+		resultSet.addResult(result);
+		
+		result = new SimpleResult(resultSet);
+		result.add(ass);
+		resultSet.addResult(result);
+		
+		result = new SimpleResult(resultSet);
+		result.add(role1);
+		resultSet.addResult(result);
+
 
 
 		File file = new File("/tmp/test.jtm");
