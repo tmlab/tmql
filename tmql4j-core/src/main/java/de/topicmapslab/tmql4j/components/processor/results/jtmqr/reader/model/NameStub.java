@@ -11,123 +11,190 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.Variant;
 
+/**
+ * name implementation for jtmqr result set
+ * @author Christian Haß
+ *
+ */
 public class NameStub extends CharacteristicStub implements Name {
 
 	private Topic parent;
 	private Set<Variant> variants;
 
-	
+	/**
+	 * constructor
+	 * @param parent - the parent topic or <code>null</code>
+	 */
 	protected NameStub(Topic parent) {
 		this.parent = parent;
 		this.variants = Collections.emptySet();
 	}
 
+	/**
+	 * sets the variants of the name
+	 * @param variants - set of variants
+	 */
 	protected void setVariants(Set<Variant> variants){
 		this.variants = variants;
 	}
 	
 	// --[ TMAPI methods ]------------------------------------------------------------------------
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Topic getType() {
 		return this.type;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setType(Topic arg0) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void addItemIdentifier(Locator arg0) throws ModelConstraintException {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Set<Locator> getItemIdentifiers() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.itemIdentifier;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public TopicMap getTopicMap() {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void remove() {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void removeItemIdentifier(Locator arg0) {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void addTheme(Topic arg0) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Set<Topic> getScope() {
 		return this.scope;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void removeTheme(Topic arg0) {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Topic getReifier() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.reifier;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setReifier(Topic arg0) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Variant createVariant(String arg0, Topic... arg1) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Variant createVariant(String arg0, Collection<Topic> arg1) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Variant createVariant(Locator arg0, Topic... arg1) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Variant createVariant(Locator arg0, Collection<Topic> arg1) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Variant createVariant(String arg0, Locator arg1, Topic... arg2)	throws ModelConstraintException {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Variant createVariant(String arg0, Locator arg1,	Collection<Topic> arg2) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Topic getParent() {
 		if(this.parent != null)
@@ -135,17 +202,25 @@ public class NameStub extends CharacteristicStub implements Name {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getValue() {
 		return this.value;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Set<Variant> getVariants() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.variants;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setValue(String arg0) throws ModelConstraintException {
 		throw new UnsupportedOperationException();

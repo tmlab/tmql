@@ -10,201 +10,284 @@ import org.tmapi.core.Occurrence;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 
+import de.topicmapslab.majortom.core.LocatorImpl;
+
+/**
+ * occurrence implementation for JTMQR result set
+ * @author Christian Haß
+ *
+ */
 public class OccurrenceStub extends CharacteristicStub implements Occurrence {
 
 	private Topic parent;
-	private String datatype;
+	private Locator datatype;
 	
+	/**
+	 * constructor
+	 * @param parent - the parent topic or <code>null</code>
+	 */
 	protected OccurrenceStub(Topic parent) {
 		this.parent = parent;
-		this.datatype = "http://www.w3.org/2001/XMLSchema#string";
+		this.datatype = new LocatorImpl("http://www.w3.org/2001/XMLSchema#string");
 	}
 	
+	/**
+	 * sets the datatype
+	 * @param datatype - the datatype
+	 */
 	protected void _setDatatype(String datatype){
-		this.datatype = datatype;
+		this.datatype = new LocatorImpl(datatype);
 	}
 	
 	// --[ TMAPI methods ]-------------------------------------------------------
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Topic getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.type;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setType(Topic arg0) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void addItemIdentifier(Locator arg0) throws ModelConstraintException {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Set<Locator> getItemIdentifiers() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.itemIdentifier;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public TopicMap getTopicMap() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void remove() {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void removeItemIdentifier(Locator arg0) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public BigDecimal decimalValue() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public float floatValue() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Locator getDatatype() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.datatype;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.value;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int intValue() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public BigInteger integerValue() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Locator locatorValue() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public long longValue() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setValue(String arg0) throws ModelConstraintException {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setValue(Locator arg0) throws ModelConstraintException {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setValue(BigDecimal arg0) throws ModelConstraintException {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setValue(BigInteger arg0) throws ModelConstraintException {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setValue(long arg0) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setValue(float arg0) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setValue(int arg0) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void setValue(String arg0, Locator arg1)
-			throws ModelConstraintException {
-		// TODO Auto-generated method stub
-		
+	public void setValue(String arg0, Locator arg1)	throws ModelConstraintException {
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Topic getReifier() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.reifier;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setReifier(Topic arg0) throws ModelConstraintException {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void addTheme(Topic arg0) throws ModelConstraintException {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Set<Topic> getScope() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.scope;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void removeTheme(Topic arg0) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Topic getParent() {
-		// TODO Auto-generated method stub
-		return null;
+		if(this.parent != null)
+			return this.parent;
+		
+		throw new UnsupportedOperationException();
 	}
 
 	 

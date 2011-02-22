@@ -22,6 +22,10 @@ import org.tmapi.core.Variant;
  */
 public class ConstructReader {
 
+	/**
+	 * possible states
+	 * @author Christian Haß
+	 */
 	private enum State {
 		OBJECT, ARRAY
 	}
@@ -382,7 +386,6 @@ public class ConstructReader {
 		return role;
 	}
 		
-	
 	/**
 	 * reads a topic reference
 	 * @param jParser - the json parser pointing to the the correct position
@@ -463,8 +466,7 @@ public class ConstructReader {
 		Stack<State> stack = new Stack<ConstructReader.State>();
 		
 		Set<Variant> result = new HashSet<Variant>();
-		VariantStub currentVariant = new VariantStub(parent);
-		
+				
 		while (jParser.nextToken() != null) {
 			
 			JsonToken token = jParser.getCurrentToken();

@@ -9,97 +9,139 @@ import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 
+/**
+ * role implementation for jtmqr result set
+ * @author Christian Haß
+ *
+ */
 public class RoleStub extends ReifieableStub implements Role {
 
 	private Association parent;
 	private Topic player;
 	
+	/**
+	 * constructor
+	 * @param parent - the parent association or <code>null</code>
+	 */
 	protected RoleStub(Association parent) {
 		this.parent = parent;
 	}
 	
+	/**
+	 * sets the player
+	 * @param player - the player
+	 */
 	protected void _setPlayer(Topic player){
 		this.player = player;
 	}
 	
 	// --[ TMAPI methods ]-------------------------------------------------------
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Topic getReifier() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.reifier;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setReifier(Topic arg0) throws ModelConstraintException {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void addItemIdentifier(Locator arg0) throws ModelConstraintException {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Set<Locator> getItemIdentifiers() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.itemIdentifier;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public TopicMap getTopicMap() {
-		// TODO Auto-generated method stub
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void remove() {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void removeItemIdentifier(Locator arg0) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Topic getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.type;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setType(Topic arg0) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Association getParent() {
-		// TODO Auto-generated method stub
-		return null;
+		if(this.parent != null)
+			return this.parent;
+		
+		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Topic getPlayer() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.player;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setPlayer(Topic arg0) {
-		// TODO Auto-generated method stub
-		
+		throw new UnsupportedOperationException();
 	}
 
 }
