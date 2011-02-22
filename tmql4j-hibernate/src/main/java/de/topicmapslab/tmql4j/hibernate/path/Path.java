@@ -96,4 +96,20 @@ public class Path implements IQueryPart {
 		return content.toTmql();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Path clone() throws CloneNotSupportedException {
+		Path clone = new Path();
+		if (content instanceof FunctionImpl) {
+			clone.setContent((FunctionImpl) content.clone());
+		} else if (content instanceof Navigation) {
+			clone.setContent((Navigation) content.clone());
+		} else if (content instanceof Projection) {
+			clone.setContent((Projection) content.clone());
+		}
+		return clone;
+	}
+
 }

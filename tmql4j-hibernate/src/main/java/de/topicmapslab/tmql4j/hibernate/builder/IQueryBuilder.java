@@ -11,7 +11,7 @@ import de.topicmapslab.tmql4j.query.IQuery;
  * @author Sven Krosse
  * 
  */
-public interface IQueryBuilder {
+public interface IQueryBuilder extends  Cloneable {
 
 	/**
 	 * Returns the internal query as query
@@ -35,4 +35,9 @@ public interface IQueryBuilder {
 	 * @return the statement
 	 */
 	public IPreparedStatement toPreparedStatement(ITMQLRuntime runtime);
+	
+	/**
+	  * {@inheritDoc}
+	  */
+	public IQueryBuilder clone() throws CloneNotSupportedException;
 }

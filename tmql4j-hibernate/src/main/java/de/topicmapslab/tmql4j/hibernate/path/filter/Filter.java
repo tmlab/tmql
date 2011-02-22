@@ -56,5 +56,13 @@ public class Filter implements IQueryPart {
 	String getFilterPart(){
 		return criterion.toTmql();
 	}
+	
+	/**
+	  * {@inheritDoc}
+	  */
+	@Override
+	public Filter clone() throws CloneNotSupportedException {
+		return new Filter(criterion.clone());
+	}
 
 }

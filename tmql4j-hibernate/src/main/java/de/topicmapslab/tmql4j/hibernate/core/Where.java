@@ -33,5 +33,13 @@ public class Where implements IQueryPart {
 	public String toTmql() throws InvalidModelException {
 		return de.topicmapslab.tmql4j.path.grammar.lexical.Where.TOKEN + WhiteSpace.TOKEN + this.criterion.toTmql();
 	}
+	
+	/**
+	  * {@inheritDoc}
+	  */
+	@Override
+	public Where clone() throws CloneNotSupportedException {
+		return new Where(criterion.clone());
+	}
 
 }

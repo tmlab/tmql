@@ -93,4 +93,16 @@ public class Return implements IQueryPart {
 		return builder.toString();
 	}
 	
+	/**
+	  * {@inheritDoc}
+	  */
+	@Override
+	public Return clone() throws CloneNotSupportedException {
+		Return clone = new Return();
+		for ( IQueryPart item : getItems()){
+			clone.add(item.clone());
+		}
+		return clone;
+	}
+	
 }

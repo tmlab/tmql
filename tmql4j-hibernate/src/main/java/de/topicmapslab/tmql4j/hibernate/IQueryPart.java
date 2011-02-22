@@ -9,7 +9,7 @@ import de.topicmapslab.tmql4j.hibernate.exception.InvalidModelException;
  * @author Sven Krosse
  * 
  */
-public interface IQueryPart {
+public interface IQueryPart extends Cloneable{
 
 	/**
 	 * Method called to translate the object tree to a TMQL query
@@ -18,5 +18,10 @@ public interface IQueryPart {
 	 * @throws InvalidModelException thrown if internal structure is invalid
 	 */
 	String toTmql() throws InvalidModelException;
+	
+	/**
+	  * {@inheritDoc}
+	  */
+	public IQueryPart clone() throws CloneNotSupportedException;
 
 }

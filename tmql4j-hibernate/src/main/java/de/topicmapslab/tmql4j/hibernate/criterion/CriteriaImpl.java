@@ -102,4 +102,31 @@ public abstract class CriteriaImpl implements ICriteria {
 	 *             thrown if the state is invalid
 	 */
 	protected abstract void validate() throws InvalidModelException;
+	
+	/**
+	  * {@inheritDoc}
+	  */
+	@Override
+	public CriteriaImpl clone() throws CloneNotSupportedException {
+		try{
+			CriteriaImpl clone = getClass().newInstance();
+			clone(clone);
+			return clone;
+		}catch(Exception e){
+			e.printStackTrace(System.err);
+			// IGNORE
+		}
+		return null;
+	}
+	
+	/**
+	 * Internal method to clone the content
+	 * @param clone the target clone
+	 * @throws CloneNotSupportedException
+	 */
+	void clone(ICriteria clone) throws CloneNotSupportedException {
+		for ( ICriterion criterion : getCriteria()){
+			clone.add(criterion.clone());
+		}		
+	}
 }

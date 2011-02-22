@@ -33,4 +33,12 @@ public class Offset implements IQueryPart {
 		return de.topicmapslab.tmql4j.path.grammar.lexical.Offset.TOKEN + WhiteSpace.TOKEN + Long.toString(offset);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Offset clone() throws CloneNotSupportedException {
+		return new Offset(offset);
+	}
+
 }

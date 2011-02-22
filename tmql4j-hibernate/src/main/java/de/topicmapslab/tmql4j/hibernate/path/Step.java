@@ -13,7 +13,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.WhiteSpace;
 
 /**
  * @author Sven Krosse
- *
+ * 
  */
 public class Step implements IQueryPart {
 
@@ -21,20 +21,28 @@ public class Step implements IQueryPart {
 	private final boolean forward;
 	private final String optionalType;
 	private Filter filter;
-	
+
 	/**
 	 * constructor
-	 * @param axis the axis
-	 * @param forward boolean flag if navigation should be forward, otherwise it is backward.
+	 * 
+	 * @param axis
+	 *            the axis
+	 * @param forward
+	 *            boolean flag if navigation should be forward, otherwise it is backward.
 	 */
-	public Step(Class<? extends IToken> axis, final boolean forward ) {
+	public Step(Class<? extends IToken> axis, final boolean forward) {
 		this(axis, forward, null);
 	}
+
 	/**
-	 * constructor	 
-	 * @param axis the axis
-	 * @param forward boolean flag if navigation should be forward, otherwise it is backward.
-	 * @param optionalType the subject-identifier of the optional type or <code>null</code>
+	 * constructor
+	 * 
+	 * @param axis
+	 *            the axis
+	 * @param forward
+	 *            boolean flag if navigation should be forward, otherwise it is backward.
+	 * @param optionalType
+	 *            the subject-identifier of the optional type or <code>null</code>
 	 */
 	public Step(Class<? extends IToken> axis, final boolean forward, final String optionalType) {
 		this.axis = axis;
@@ -44,19 +52,21 @@ public class Step implements IQueryPart {
 
 	/**
 	 * Set a filter
-	 * @param filter the filter to set
+	 * 
+	 * @param filter
+	 *            the filter to set
 	 */
 	public void setFilter(Filter filter) {
 		this.filter = filter;
 	}
-	
+
 	/**
 	 * Removing the filter
 	 */
 	public void removeFilter() {
 		this.filter = null;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -64,7 +74,7 @@ public class Step implements IQueryPart {
 	public String toTmql() throws InvalidModelException {
 		StringBuilder builder = new StringBuilder();
 		builder.append(WhiteSpace.TOKEN);
-		builder.append(forward? MoveForward.TOKEN : MoveBackward.TOKEN);		
+		builder.append(forward ? MoveForward.TOKEN : MoveBackward.TOKEN);
 		builder.append(WhiteSpace.TOKEN);
 		try {
 			builder.append(axis.newInstance().getLiteral());
@@ -75,18 +85,30 @@ public class Step implements IQueryPart {
 		/*
 		 * add the optional type
 		 */
-		if ( optionalType != null ){
+		if (optionalType != null) {
 			builder.append(optionalType);
 			builder.append(WhiteSpace.TOKEN);
 		}
 		/*
 		 * add the filter
 		 */
-		if ( filter != null ){
+		if (filter != null) {
 			builder.append(filter.toTmql());
 			builder.append(WhiteSpace.TOKEN);
 		}
 		return builder.toString();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Step clone() throws CloneNotSupportedException {
+		Step clone = new Step(axis, forward, optionalType);
+		if (filter != null) {
+			clone.setFilter(filter.clone());
+		}
+		return clone;
 	}
 
 }

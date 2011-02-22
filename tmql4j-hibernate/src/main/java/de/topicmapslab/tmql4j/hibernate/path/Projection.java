@@ -78,5 +78,17 @@ public class Projection implements IQueryPart {
 		builder.append(WhiteSpace.TOKEN);
 		return builder.toString();
 	}
+	
+	/**
+	  * {@inheritDoc}
+	  */
+	@Override
+	public Projection clone() throws CloneNotSupportedException {
+		Projection clone = new Projection();
+		for ( IQueryPart part : getItems()){
+			clone.add(part.clone());
+		}
+		return clone;
+	}
 
 }
