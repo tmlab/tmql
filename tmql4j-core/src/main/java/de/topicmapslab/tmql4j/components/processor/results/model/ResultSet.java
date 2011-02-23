@@ -472,7 +472,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 		if ( indexes == null ){
 			return null;
 		}
-		return getAlias(index);
+		return indexes.get(index);
 	}
 	
 	/**

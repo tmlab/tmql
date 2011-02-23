@@ -53,12 +53,30 @@ public class TopicStub extends ConstructStub implements Topic {
 	}
 	
 	/**
+	 * adds a set of subject identifier
+	 * @param sis - set of subject identifier as strings
+	 */
+	protected void _setSubjectIdentifiers(Set<String> sis){
+		for(String si:sis)
+			_addSubjectIdentifier(si);
+	}
+	
+	/**
 	 * adds a subject locator
 	 * @param iri - the iri as string
 	 */
 	protected void _addSubjectLocator(String iri){
 		Locator l = new LocatorImpl(iri);
 		this.subjectLocator.add(l);
+	}
+	
+	/**
+	 * adds a set of subject locator
+	 * @param sis - set of subject locator as strings
+	 */
+	protected void _setSubjectLocators(Set<String> sis){
+		for(String si:sis)
+			_addSubjectLocator(si);
 	}
 	
 	/**
@@ -93,7 +111,7 @@ public class TopicStub extends ConstructStub implements Topic {
 	 */
 	@Override
 	public String getId() {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	/**
@@ -283,7 +301,7 @@ public class TopicStub extends ConstructStub implements Topic {
 	 */
 	@Override
 	public TopicMap getParent() {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	/**
@@ -382,4 +400,37 @@ public class TopicStub extends ConstructStub implements Topic {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		String out = "Topic{";
+		Set<Locator> set = getSubjectIdentifiers();
+		if (!set.isEmpty()) {
+			out += "si:" + set.iterator().next().toExternalForm();
+		} else {
+			set = getSubjectLocators();
+			if (!set.isEmpty()) {
+				out += "sl:" + set.iterator().next().toExternalForm();
+			} else {
+				set = getItemIdentifiers();
+				if (!set.isEmpty()) {
+					out += "ii:" + set.iterator().next().toExternalForm();
+				} else {
+					Set<Name> names = getNames();
+					if (!names.isEmpty()) {
+						out += "Name:" + names.iterator().next().getValue();
+					} else {
+						out += "id:" + getId();
+					}
+				}
+			}
+		}
+		return out + "}";
+	}
+
+	
+	
+	
 }

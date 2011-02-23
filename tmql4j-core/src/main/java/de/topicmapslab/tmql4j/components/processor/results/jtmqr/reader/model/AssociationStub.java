@@ -67,7 +67,7 @@ public class AssociationStub extends ScopedStub implements Association {
 	 */
 	@Override
 	public String getId() {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	/**
@@ -193,6 +193,19 @@ public class AssociationStub extends ScopedStub implements Association {
 				roles.add(r);
 
 		return roles;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		try {
+			Topic type = getType();
+			return "Association{Type:" + (type == null ? "null" : type.toString()) + ";Roles:" + getRoles().toString() + "}";
+		} catch (Exception e) {
+			return "Association{ID:" + getId() + "}";
+		}
 	}
 
 }

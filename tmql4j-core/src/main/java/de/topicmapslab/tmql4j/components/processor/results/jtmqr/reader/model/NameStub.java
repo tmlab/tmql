@@ -69,7 +69,7 @@ public class NameStub extends CharacteristicStub implements Name {
 	 */
 	@Override
 	public String getId() {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	/**
@@ -197,9 +197,7 @@ public class NameStub extends CharacteristicStub implements Name {
 	 */
 	@Override
 	public Topic getParent() {
-		if(this.parent != null)
-			return this.parent;
-		throw new UnsupportedOperationException();
+		return this.parent;
 	}
 
 	/**
@@ -226,4 +224,15 @@ public class NameStub extends CharacteristicStub implements Name {
 		throw new UnsupportedOperationException();
 	}
 
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		Topic type = getType();
+		return "Topic-Name{Parent:" + (getParent() == null ? "null" : getParent().toString()) + ";Type:" + (type == null ? "null" : type.toString())
+				+ ";Value:" + getValue() + "}";
+	}
+	
 }

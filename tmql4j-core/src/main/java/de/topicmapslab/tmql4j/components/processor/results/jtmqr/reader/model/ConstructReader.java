@@ -1,7 +1,9 @@
 package de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.model;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
@@ -70,11 +72,16 @@ public class ConstructReader {
 					topic._setNames(readNames(jParser, topic));
 				}else if(text.equals("occurrences")){
 					topic._setOccurrences(readOccurrences(jParser, topic));
+				}else if(text.equals("subject_identifiers")){
+					topic._setSubjectIdentifiers(readIdentifier(jParser));
+				}else if(text.equals("subject_locators")){
+					topic._setSubjectLocators(readIdentifier(jParser));
+				}else if(text.equals("item_identifiers")){
+					topic._setItemIdentifiers(readIdentifier(jParser));
 				}
 			}
 		}
-		
-		
+
 		return topic;
 	}
 	
@@ -94,7 +101,6 @@ public class ConstructReader {
 		while (jParser.nextToken() != null) {
 			
 			JsonToken token = jParser.getCurrentToken();
-			String text = jParser.getText();
 		
 			//System.out.println("readNames " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 			
@@ -185,7 +191,6 @@ public class ConstructReader {
 		while (jParser.nextToken() != null) {
 			
 			JsonToken token = jParser.getCurrentToken();
-			String text = jParser.getText();
 		
 			//System.out.println("readOccurrences " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 			
@@ -316,7 +321,6 @@ public class ConstructReader {
 		while (jParser.nextToken() != null) {
 			
 			JsonToken token = jParser.getCurrentToken();
-			String text = jParser.getText();
 		
 			//System.out.println("readRoles " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 			
@@ -471,7 +475,6 @@ public class ConstructReader {
 		while (jParser.nextToken() != null) {
 			
 			JsonToken token = jParser.getCurrentToken();
-			String text = jParser.getText();
 			
 			//System.out.println("readVariants " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 			
@@ -541,14 +544,72 @@ public class ConstructReader {
 	 */
 	public static String readValue(JsonParser jParser) throws JsonParseException, IOException{
 		
-		JsonToken token = jParser.nextToken();
 		String text = jParser.getText();
-		
 		//System.out.println("readValue " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 		
 		return text;
-		
 	}
+	
+	/**
+	 * reads a number if identifier
+	 * @param jParser - the json parser pointing to the the correct position
+	 * @return set of identifier as strings
+	 * @throws JsonParseException
+	 * @throws IOException
+	 */
+	public static Set<String> readIdentifier(JsonParser jParser) throws JsonParseException, IOException{
+		
+		Set<String> identifier = new HashSet<String>();
+		
+		while (jParser.nextToken() != null) {
+					
+			JsonToken token = jParser.getCurrentToken();
+			String text = jParser.getText();
+			
+			//System.out.println("readIdentifier " + jParser.getCurrentLocation() + " " + token + " --> " + text);
+			
+			if(token.equals(JsonToken.END_ARRAY))
+				return identifier;
+			
+			if(token.equals(JsonToken.VALUE_STRING))
+				identifier.add(text.substring(3));
+		}
+	
+		return identifier;
+	}
+	
+	
+	/**
+	 * reads the aliase from meta data
+	 * @param jParser
+	 * @return map of aliases and indexes 
+	 * @throws JsonParseException
+	 * @throws IOException
+	 */
+	public static Map<String, Integer> readAliases(JsonParser jParser) throws JsonParseException, IOException{
+		
+		Map<String, Integer> aliases = new HashMap<String, Integer>();
+		
+		int currendIndex = -1;
+
+		while (jParser.nextToken() != null) {
+					
+			JsonToken token = jParser.getCurrentToken();
+			String text = jParser.getText();
+
+			if(token.equals(JsonToken.END_OBJECT)){
+				return aliases;
+			}else if(token.equals(JsonToken.FIELD_NAME)){
+				currendIndex = Integer.parseInt(text);
+			}else if(token.equals(JsonToken.VALUE_STRING)){
+				if(text != null)
+					aliases.put(text, currendIndex);
+			}
+		}
+		
+		return aliases;
+	}
+	
 	
 	/**
 	 * creates a topic from an prefixed identifier, i.e. starting with si:, sl: or ii:
@@ -570,5 +631,7 @@ public class ConstructReader {
 		
 		return topic;
 	}
+	
+	
 	
 }

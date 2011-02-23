@@ -35,4 +35,13 @@ public abstract class ConstructStub {
 		this.itemIdentifier.add(l);
 	}
 	
+	/**
+	 * adds a set of item identifier
+	 * @param sis - set of item identifier as strings
+	 */
+	protected void _setItemIdentifiers(Set<String> sis){
+		for(String si:sis)
+			_addItemIdentifier(si);
+	}
+	
 }

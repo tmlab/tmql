@@ -2,24 +2,18 @@ package de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Stack;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
-import org.tmapi.core.Association;
-import org.tmapi.core.Name;
-import org.tmapi.core.Occurrence;
-import org.tmapi.core.Role;
-import org.tmapi.core.Topic;
-import org.tmapi.core.Variant;
 
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.model.ConstructReader;
+import de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.result.SimpleJtmqrResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
-import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResult;
-import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 
 /**
  * class which reads a JTMQR result into a TMQL result set
@@ -29,16 +23,6 @@ import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 public class JTMQRReader {
 
 	private JsonParser jParser;
-	private Stack<State> stack;
-	
-	
-	private Number currentNumber;
-	private String currentString;
-	private Object currentObject;
-	
-	private enum State{
-		NUMBER, STRING, OBJECT
-	}
 	
 	/**
 	 * constructor
@@ -49,8 +33,9 @@ public class JTMQRReader {
 	public JTMQRReader(InputStream in) throws JsonParseException, IOException {
 		JsonFactory jFactory = new JsonFactory();
 		this.jParser = jFactory.createJsonParser(in);
-		this.stack = new Stack<JTMQRReader.State>();
 	}
+	
+	
 	
 	/**
 	 * @return the {@link IResultSet} filled with the information from the input stream
@@ -60,101 +45,97 @@ public class JTMQRReader {
 	public IResultSet<IResult> readResultSet() throws JsonParseException, IOException{
 
 				
+		SimpleJtmqrResultSet resultSet = new SimpleJtmqrResultSet();
+		boolean first = true;
+		IResult result = resultSet.createResult();
+		
 		while (this.jParser.nextToken() != null) {
 			
 			JsonToken token = this.jParser.getCurrentToken();
 			String text = this.jParser.getText();
-
-			System.out.println("readResultSet " + token + " --> " + text);
 			
-			
-			if(!this.stack.isEmpty() && token.equals(JsonToken.VALUE_STRING) && this.stack.peek().equals(State.STRING)){
-				System.out.println("Found stirng value: " + text);
+			if(token.equals(JsonToken.FIELD_NAME)){
 				
-				this.currentString = text;
-				
-			}else if(!this.stack.isEmpty() && token.equals(JsonToken.VALUE_NUMBER_FLOAT) && this.stack.peek().equals(State.NUMBER)){
-				System.out.println("Found number value: " + text);
-				
-				this.currentNumber = Float.parseFloat(text);
-				
-			}else if(!this.stack.isEmpty()&& token.equals(JsonToken.VALUE_NUMBER_INT) && this.stack.peek().equals(State.NUMBER)){
-				System.out.println("Found number value: " + text);
-				
-				this.currentNumber = Integer.parseInt(text);
-			
-			}else if(token.equals(JsonToken.FIELD_NAME)){
-				
-				if(text.equals("t")){
+				if(text.equals("aliases")){
 					
-					System.out.println("NEW TOKEN");
+					// read column labels
+					Map<String, Integer> aliases = ConstructReader.readAliases(this.jParser);
+					Map<Integer, String> indexes = createIndexes(aliases);
 					
-					if(!this.stack.isEmpty()){
-						
+					resultSet.setAlias(aliases);
+					resultSet.setIndexes(indexes);
 					
-						
-						
+				}else if(text.equals("t")){
+					
+					// new token
+					
+					if(first){
+						first = false;
+					}else{
+						resultSet.addResult(result);
+						result = resultSet.createResult();
 					}
-					
-					
-					stack.clear(); // clear stack if new token
-					
-					
-					
-				}else if(text.equals("s") && this.stack.isEmpty()){
-					stack.push(State.STRING);
-					System.out.println("...set sate to string");
-					
-				}else if(text.equals("n") && this.stack.isEmpty()){
-					stack.push(State.NUMBER);
-					System.out.println("...set sate to number");
-				}else if(text.equals("i") && this.stack.isEmpty()){
-					stack.push(State.OBJECT);
-					System.out.println("...set sate to object");
-				
-				
-				
-					
-				}else if(text.equals("item_type") && this.stack.peek().equals(State.OBJECT)){
-					
+				}else if(text.equals("s")){
+
+					// read string result
 					token = this.jParser.nextToken();
 					text = this.jParser.getText();
+					result.add(text);
 					
+				}else if(text.equals("n")){
 
-					System.out.println("readResultSet " + token + " --> " + text);
+					// read number result
+					token = this.jParser.nextToken();
+					text = this.jParser.getText();
+
+					if(token.equals(JsonToken.VALUE_NUMBER_FLOAT)){
+						result.add(Double.parseDouble(text));
+					}else if(token.equals(JsonToken.VALUE_NUMBER_INT)){
+						result.add(Integer.parseInt(text));
+					}
 					
+				}else if(text.equals("item_type")){
+
+					// read object result
+					token = this.jParser.nextToken();
+					text = this.jParser.getText();
+
 					if(text.equals("topic")){
-						System.out.println("START READ TOPIC");
-						Topic topic = ConstructReader.readTopic(this.jParser);
-						
+						result.add(ConstructReader.readTopic(this.jParser));
 					}else if(text.equals("name")){
-
-						System.out.println("START READ NAME");
-						Name name = ConstructReader.readName(this.jParser, null);
-						
+						result.add(ConstructReader.readName(this.jParser, null));
 					}else if(text.equals("occurrence")){
-						
-						System.out.println("START READ OCCURRENCE");
-						Occurrence occurrence = ConstructReader.readOccurrence(this.jParser, null);
+						result.add(ConstructReader.readOccurrence(this.jParser, null));
 					}else if(text.equals("association")){
-						
-						System.out.println("START READ ASSOCIATION");
-						Association association = ConstructReader.readAssociation(this.jParser);
+						result.add(ConstructReader.readAssociation(this.jParser));
 					}else if(text.equals("role")){
-						
-						System.out.println("START READ ROLE");
-						Role role = ConstructReader.readRole(this.jParser, null);
+						result.add(ConstructReader.readRole(this.jParser, null));
 					}else if(text.equals("variant")){
-						
-						System.out.println("START READ VARIANT");
-						Variant variant = ConstructReader.readVariant(this.jParser, null);
+						result.add(ConstructReader.readVariant(this.jParser, null));
 					}
 				}
-			
 			}
 		}
+		
+		if(!first)
+			resultSet.addResult(result);
 
-		return null;
+		return resultSet;
 	}
 	
+	/**
+	 * creates an index from an alias
+	 * @param aliases - the alias
+	 * @return the index
+	 */
+	private Map<Integer, String> createIndexes(Map<String, Integer> aliases){
+	
+		Map<Integer, String> indexes = new HashMap<Integer, String>();
+		
+		for(Map.Entry<String, Integer>alias:aliases.entrySet())
+			indexes.put(alias.getValue(), alias.getKey());
+		
+		return indexes;
+	}
+
 }

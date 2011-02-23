@@ -66,7 +66,7 @@ public class RoleStub extends ReifieableStub implements Role {
 	 */
 	@Override
 	public String getId() {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	/**
@@ -122,10 +122,7 @@ public class RoleStub extends ReifieableStub implements Role {
 	 */
 	@Override
 	public Association getParent() {
-		if(this.parent != null)
-			return this.parent;
-		
-		throw new UnsupportedOperationException();
+		return this.parent;
 	}
 
 	/**
@@ -144,4 +141,18 @@ public class RoleStub extends ReifieableStub implements Role {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		try{
+		Topic type = getType();
+		Topic player = getPlayer();
+		return "Association-Role{Type:" + (type == null ? "null" : type.toString()) + ";Player:" + (player == null ? "null" : player.toString() + "}");
+		}catch (Exception e) {
+			return "Association-Role{Id:" + getId() +"}";
+		}
+	}
+	
 }

@@ -234,7 +234,7 @@ public class VariantStub extends ConstructStub implements Variant {
 	 */
 	@Override
 	public String getId() {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	/**
@@ -290,10 +290,7 @@ public class VariantStub extends ConstructStub implements Variant {
 	 */
 	@Override
 	public Name getParent() {
-		if(this.parent != null)
-			return this.parent;
-		
-		throw new UnsupportedOperationException();
+		return this.parent;
 	}
 
 	/**
@@ -302,6 +299,15 @@ public class VariantStub extends ConstructStub implements Variant {
 	@Override
 	public Set<Topic> getScope() {
 		return this.scope;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		return "Topic-Name-Variant{Parent:" + (getParent() == null ? "null" : getParent().toString()) + ";Value:" + getValue() + ";Datatype:"
+				+ getDatatype().toExternalForm() + "}";
 	}
 
 }

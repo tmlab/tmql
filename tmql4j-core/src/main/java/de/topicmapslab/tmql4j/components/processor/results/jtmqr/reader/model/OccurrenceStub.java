@@ -70,7 +70,7 @@ public class OccurrenceStub extends CharacteristicStub implements Occurrence {
 	 */
 	@Override
 	public String getId() {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	/**
@@ -291,5 +291,14 @@ public class OccurrenceStub extends CharacteristicStub implements Occurrence {
 	}
 
 	 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toString() {
+		Topic type = getType();
+		return "Occurrence{Parent:" + (getParent() == null ? "null" : getParent().toString()) + ";Type:" + (type == null ? "null" : type.toString())
+				+ ";Value:" + getValue() + ";Datatype:" + getDatatype().toExternalForm() + "}";
+	}
 	
 }
