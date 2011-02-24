@@ -163,7 +163,7 @@ public class FlwrQueryBuilder extends QueryBuilderImpl {
 		/*
 		 * order by
 		 */
-		if ( orderBy != null ){
+		if (orderBy != null) {
 			flwr.setOrderBy(orderBy);
 		}
 		/*
@@ -209,7 +209,7 @@ public class FlwrQueryBuilder extends QueryBuilderImpl {
 		/*
 		 * clone order by
 		 */
-		if ( orderBy != null ){
+		if (orderBy != null) {
 			clone.orderBy = orderBy.clone();
 		}
 		/*

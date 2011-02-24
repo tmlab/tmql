@@ -11,6 +11,7 @@
 package de.topicmapslab.tmql4j.components.processor.runtime;
 
 import java.io.OutputStream;
+import java.text.MessageFormat;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -45,7 +46,7 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 	/**
 	 * 
 	 */
-	private static final String GIVEN_QUERY_IS_NOT_A_TMQL_QUERY_OR_CANNOT_TRANSFORM_TO_TMQL = "Given query is not a TMQL query or cannot transform to TMQL.";
+	private static final String GIVEN_QUERY_IS_NOT_A_TMQL_QUERY_OR_CANNOT_TRANSFORM_TO_TMQL = "Given query is not a TMQL query or cannot transform to TMQL: {0}.";
 
 	/**
 	 * the logger
@@ -185,7 +186,7 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 			}
 		}
 		if (q == null) {
-			throw new TMQLRuntimeException(GIVEN_QUERY_IS_NOT_A_TMQL_QUERY_OR_CANNOT_TRANSFORM_TO_TMQL);
+			throw new TMQLRuntimeException(MessageFormat.format(GIVEN_QUERY_IS_NOT_A_TMQL_QUERY_OR_CANNOT_TRANSFORM_TO_TMQL, query));
 		}
 		run(q, parameters);
 		return q;
@@ -252,7 +253,7 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 			}
 		}
 		if (q == null) {
-			throw new TMQLRuntimeException(GIVEN_QUERY_IS_NOT_A_TMQL_QUERY_OR_CANNOT_TRANSFORM_TO_TMQL);
+			throw new TMQLRuntimeException(MessageFormat.format(GIVEN_QUERY_IS_NOT_A_TMQL_QUERY_OR_CANNOT_TRANSFORM_TO_TMQL, query));
 		}
 		run(q, stream, parameters);
 		return q;
@@ -325,7 +326,7 @@ public abstract class TmqlRuntimeImpl implements ITMQLRuntime {
 	public IPreparedStatement preparedStatement(String query) throws TMQLRuntimeException {
 		IQuery q = QueryFactory.getFactory().getTmqlQuery(null, query);
 		if (q == null) {
-			throw new TMQLRuntimeException(GIVEN_QUERY_IS_NOT_A_TMQL_QUERY_OR_CANNOT_TRANSFORM_TO_TMQL);
+			throw new TMQLRuntimeException(MessageFormat.format(GIVEN_QUERY_IS_NOT_A_TMQL_QUERY_OR_CANNOT_TRANSFORM_TO_TMQL, query));
 		}
 		return preparedStatement(q);
 	}

@@ -22,6 +22,7 @@ import org.tmapi.core.Construct;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.path.components.navigation.axis.AtomifyNavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.axis.CharacteristicsNavigationAxis;
+import de.topicmapslab.tmql4j.path.components.navigation.axis.DatatypeNavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.axis.IdNavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.axis.IndicatorsNavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.axis.InstancesNavigationAxis;
@@ -44,6 +45,7 @@ import de.topicmapslab.tmql4j.path.exception.NavigationException;
 import de.topicmapslab.tmql4j.path.exception.UnsupportedNavigationTypeException;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisAtomify;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisCharacteristics;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisDatatype;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisId;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisIndicators;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisInstances;
@@ -104,6 +106,7 @@ public class NavigationRegistry implements INavigationHandler {
 		axis.put(AxisTyped.class, TypedNavigationAxis.class);
 		axis.put(AxisId.class, IdNavigationAxis.class);
 		axis.put(AxisVariants.class, VariantsNavigationAxis.class);
+		axis.put(AxisDatatype.class, DatatypeNavigationAxis.class);
 	}
 
 	/**

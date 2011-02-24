@@ -138,7 +138,11 @@ public class RolesNavigationAxis extends BaseNavigationAxisImpl {
 				 * check association type
 				 */
 				if (association.getType().equals(topic)) {
-					set.addAll(association.getRoles());
+					if ( optional instanceof Topic ){
+						set.addAll(association.getRoles((Topic)optional));
+					}else{
+						set.addAll(association.getRoles());
+					}
 				}
 			}
 			return set;
@@ -152,7 +156,11 @@ public class RolesNavigationAxis extends BaseNavigationAxisImpl {
 			 * create new instance of tuple-sequence
 			 */
 			Collection<Object> set = new LinkedList<Object>();
-			set.addAll(association.getRoles());
+			if ( optional instanceof Topic ){
+				set.addAll(association.getRoles((Topic)optional));
+			}else{
+				set.addAll(association.getRoles());
+			}
 			return set;
 		}
 		throw new InvalidValueException();

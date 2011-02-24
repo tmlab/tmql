@@ -37,12 +37,12 @@ public class Flwr implements IQueryPart {
 	public Flwr(Return return_) {
 		this.return_ = return_;
 	}
-	
+
 	/**
 	 * empty constructor
 	 */
 	public Flwr() {
-		
+
 	}
 
 	/**
@@ -142,7 +142,6 @@ public class Flwr implements IQueryPart {
 	public void setWhere(Where where) {
 		this.where = where;
 	}
-	
 
 	/**
 	 * Remove the where clause form internal model
@@ -150,10 +149,12 @@ public class Flwr implements IQueryPart {
 	public void removeWhere() {
 		this.where = null;
 	}
-	
+
 	/**
 	 * Set the return clause
-	 * @param return_ the return_ to set
+	 * 
+	 * @param return_
+	 *            the return_ to set
 	 */
 	public void setReturn(Return return_) {
 		this.return_ = return_;
@@ -164,71 +165,71 @@ public class Flwr implements IQueryPart {
 	 */
 	@Override
 	public String toTmql() throws InvalidModelException {
-		if ( return_ == null ){
+		if (return_ == null) {
 			throw new InvalidModelException("The return clause is mandatory but not set!");
 		}
 		StringBuilder builder = new StringBuilder();
 		/*
 		 * adding the for clauses
 		 */
-		for ( For for_ : getFors()){
+		for (For for_ : getFors()) {
 			builder.append(for_.toTmql());
 			builder.append(WhiteSpace.TOKEN);
 		}
 		/*
 		 * set the where clause
 		 */
-		if ( where != null ){
+		if (where != null) {
 			builder.append(where.toTmql());
 			builder.append(WhiteSpace.TOKEN);
 		}
 		/*
 		 * set order by clause
 		 */
-		if ( orderBy != null ){
+		if (orderBy != null) {
 			builder.append(orderBy.toTmql());
 			builder.append(WhiteSpace.TOKEN);
 		}
 		/*
 		 * set offset clause
 		 */
-		if ( offset != null ){
+		if (offset != null) {
 			builder.append(offset.toTmql());
 			builder.append(WhiteSpace.TOKEN);
 		}
 		/*
 		 * set limit clause
 		 */
-		if ( limit != null ){
+		if (limit != null) {
 			builder.append(limit.toTmql());
 			builder.append(WhiteSpace.TOKEN);
 		}
 		builder.append(return_.toTmql());
 		return builder.toString();
 	}
-	
+
 	/**
-	  * {@inheritDoc}
-	  */
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Flwr clone() throws CloneNotSupportedException {
 		Flwr clone = new Flwr();
-		if ( return_ != null ){
+		if (return_ != null) {
 			clone.setReturn(return_.clone());
 		}
-		for ( For for_ : getFors()){
+		for (For for_ : getFors()) {
 			clone.add(for_.clone());
 		}
-		if ( where != null ){
+		if (where != null) {
 			clone.setWhere(where.clone());
 		}
-		if ( orderBy != null ){
+		if (orderBy != null) {
 			clone.setOrderBy(orderBy.clone());
 		}
-		if ( offset != null ){
+		if (offset != null) {
 			clone.offset = offset.clone();
 		}
-		if ( limit != null ){
+		if (limit != null) {
 			clone.limit = limit.clone();
 		}
 		return clone;
