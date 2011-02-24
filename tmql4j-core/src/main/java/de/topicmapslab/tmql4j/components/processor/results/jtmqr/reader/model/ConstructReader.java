@@ -538,6 +538,8 @@ public class ConstructReader {
 				}else if(text.equals("datatype")){
 					token = jParser.nextToken();
 					variant._setDatatype(jParser.getText());
+				}else if(text.equals("item_identifiers")){
+					variant._setItemIdentifiers(readIdentifier(jParser));
 				}
 			}
 		}
