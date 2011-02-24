@@ -263,6 +263,8 @@ public class ConstructReader {
 				}else if(text.equals("datatype")){
 					token = jParser.nextToken();
 					occurrence._setDatatype(jParser.getText());
+				}else if(text.equals("item_identifiers")){
+					occurrence._setItemIdentifiers(readIdentifier(jParser));
 				}
 			}
 		}

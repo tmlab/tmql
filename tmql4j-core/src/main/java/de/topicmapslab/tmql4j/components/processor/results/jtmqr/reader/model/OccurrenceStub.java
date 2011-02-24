@@ -284,10 +284,7 @@ public class OccurrenceStub extends CharacteristicStub implements Occurrence {
 	 */
 	@Override
 	public Topic getParent() {
-		if(this.parent != null)
-			return this.parent;
-		
-		throw new UnsupportedOperationException();
+		return this.parent;
 	}
 
 	 
