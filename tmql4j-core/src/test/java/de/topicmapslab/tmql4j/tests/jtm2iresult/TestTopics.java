@@ -15,8 +15,16 @@ import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResult;
 import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 
+/**
+ * class to test if topics are correctly created from an jtmqr result
+ * @author Christian Haß
+ *
+ */
 public class TestTopics extends AbstractTest {
 
+	/**
+	 * checks subject identifier
+	 */
 	@org.junit.Test
 	public void testSubjectIdentifier(){
 		
@@ -52,6 +60,9 @@ public class TestTopics extends AbstractTest {
 		assertTrue(locators.contains(si2));
 	}
 	
+	/**
+	 * checks subject locator
+	 */
 	@org.junit.Test
 	public void testSubjectLocator(){
 		
@@ -87,6 +98,9 @@ public class TestTopics extends AbstractTest {
 		assertTrue(locators.contains(sl2));
 	}
 	
+	/**
+	 * checks item identifier
+	 */
 	@org.junit.Test
 	public void testItemIdentifier(){
 		
@@ -122,6 +136,9 @@ public class TestTopics extends AbstractTest {
 		assertTrue(locators.contains(ii2));
 	}
 
+	/**
+	 * checks names
+	 */
 	@org.junit.Test
 	public void testName(){
 	
@@ -129,7 +146,7 @@ public class TestTopics extends AbstractTest {
 		ITopicMap map = getTopicMap();
 		
 		Topic topic = map.createTopic();
-		Name n = topic.createName(value);
+		topic.createName(value);
 		
 		SimpleResultSet inRS = createResultSet();
 		SimpleResult inR = new SimpleResult(inRS);
@@ -155,6 +172,9 @@ public class TestTopics extends AbstractTest {
 		
 	}
 	
+	/**
+	 * checks occurrences
+	 */
 	@org.junit.Test
 	public void testOccurrence(){
 	
@@ -162,7 +182,7 @@ public class TestTopics extends AbstractTest {
 		ITopicMap map = getTopicMap();
 		
 		Topic topic = map.createTopic();
-		Occurrence o = topic.createOccurrence(map.createTopic(),value);
+		topic.createOccurrence(map.createTopic(),value);
 		
 		SimpleResultSet inRS = createResultSet();
 		SimpleResult inR = new SimpleResult(inRS);

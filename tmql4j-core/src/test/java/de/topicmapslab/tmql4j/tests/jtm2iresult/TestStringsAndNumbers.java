@@ -12,9 +12,16 @@ import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 
 import static junit.framework.Assert.*;
 
+/**
+ * test class to test general handling from string and number results
+ * @author Christian
+ *
+ */
 public class TestStringsAndNumbers extends AbstractTest {
 
-
+	/**
+	 * checks a single string result
+	 */
 	@Test
 	public void testSingleStringResult(){
 		
@@ -34,6 +41,9 @@ public class TestStringsAndNumbers extends AbstractTest {
 		
 	}
 	
+	/**
+	 * checks a single double result
+	 */
 	@Test
 	public void testSingleDoubleResult(){
 	
@@ -52,6 +62,9 @@ public class TestStringsAndNumbers extends AbstractTest {
 		assertEquals(testDouble, outRS.get(0).get(0));
 	}
 	
+	/**
+	 * checks a single integer result
+	 */
 	@Test
 	public void testSingleIntegerResult(){
 	
@@ -70,6 +83,9 @@ public class TestStringsAndNumbers extends AbstractTest {
 		assertEquals(testInt, outRS.get(0).get(0));
 	}
 	
+	/**
+	 * checks a combined result
+	 */
 	@Test
 	public void testCombinationResult(){
 		
@@ -101,6 +117,9 @@ public class TestStringsAndNumbers extends AbstractTest {
 		assertEquals(testString, outRS.get(1).get(2));
 	}
 	
+	/**
+	 * checks the empty result set
+	 */
 	@Test
 	public void testEmptyResultSet(){
 		
@@ -109,6 +128,9 @@ public class TestStringsAndNumbers extends AbstractTest {
 		assertTrue(outRS.isEmpty());
 	}
 	
+	/**
+	 * checks an result set with an single empty result
+	 */
 	@Test
 	public void testEmptyResult(){
 		
@@ -124,6 +146,9 @@ public class TestStringsAndNumbers extends AbstractTest {
 		assertEquals(0, r.size());
 	}
 	
+	/**
+	 * checks aliasess
+	 */
 	@Test
 	public void testAlias(){
 

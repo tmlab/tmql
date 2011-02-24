@@ -95,6 +95,8 @@ public class ConstructReader {
 	 */
 	private static Set<Name> readNames(JsonParser jParser, Topic parent) throws JsonParseException, IOException{
 		
+		
+		
 		Stack<State> stack = new Stack<ConstructReader.State>();
 		Set<Name> result = new HashSet<Name>();
 		
@@ -102,7 +104,7 @@ public class ConstructReader {
 			
 			JsonToken token = jParser.getCurrentToken();
 		
-			//System.out.println("readNames " + jParser.getCurrentLocation() + " " + token + " --> " + text);
+			//System.out.println("readNames " + jParser.getCurrentLocation() + " " + token + " --> " + jParser.getText());
 			
 			if(token.equals(JsonToken.START_OBJECT)){
 				Name name = readName(jParser, parent);
@@ -130,7 +132,7 @@ public class ConstructReader {
 	 * @throws IOException
 	 */
 	public static Name readName(JsonParser jParser, Topic parent) throws JsonParseException, IOException{
-		
+				
 		Stack<State> stack = new Stack<ConstructReader.State>();
 		NameStub name = new NameStub(parent);
 		
@@ -168,6 +170,8 @@ public class ConstructReader {
 					name.setVariants(readVariants(jParser, name));
 				}else if(text.equals("reifier")){
 					name._setReifier(readTopicReference(jParser));
+				}else if(text.equals("item_identifiers")){
+					name._setItemIdentifiers(readIdentifier(jParser));
 				}
 			}
 		}
@@ -544,6 +548,7 @@ public class ConstructReader {
 	 */
 	public static String readValue(JsonParser jParser) throws JsonParseException, IOException{
 		
+		jParser.nextToken();
 		String text = jParser.getText();
 		//System.out.println("readValue " + jParser.getCurrentLocation() + " " + token + " --> " + text);
 		

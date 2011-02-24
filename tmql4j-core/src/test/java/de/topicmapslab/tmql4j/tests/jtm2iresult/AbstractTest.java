@@ -4,27 +4,27 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.junit.Before;
-import org.tmapi.core.FactoryConfigurationException;
-import org.tmapi.core.TMAPIException;
-import org.tmapi.core.TopicMapExistsException;
 import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
 
 import de.topicmapslab.majortom.model.core.ITopicMap;
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.JTMQRReader;
-import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
-import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.processor.runtime.TMQLRuntimeFactory;
-import de.topicmapslab.tmql4j.query.IQuery;
 
-
+/**
+ * abstract test class
+ * @author Christian Haß
+ *
+ */
 public abstract class AbstractTest {
 
 	private TopicMapSystem system;
 	private ITopicMap topicMap;
 
+	/**
+	 * constructor
+	 */
 	public AbstractTest() {
 		
 		try {
@@ -34,6 +34,9 @@ public abstract class AbstractTest {
 		}
 	}
 	
+	/**
+	 * runs before each test and creates an empty topic map
+	 */
 	@Before
 	public void beforeTest(){
 		try {
@@ -43,14 +46,25 @@ public abstract class AbstractTest {
 		}
 	}
 	
+	/**
+	 * @return the topic map
+	 */
 	protected ITopicMap getTopicMap(){
 		return this.topicMap;
 	}
 	
+	/**
+	 * @return an new and empty result set
+	 */
 	protected SimpleResultSet createResultSet(){
 		return new SimpleResultSet(this.system, this.topicMap);
 	}
 	
+	/**
+	 * convertes an simple tmql result set via jtmqr to an jtmqr-resultset
+	 * @param input - the simple result set
+	 * @return the jtmqr-resultset
+	 */
 	protected IResultSet<?> convert(SimpleResultSet input){
 		try {
 			String jtmqrString = input.toJTMQR();
