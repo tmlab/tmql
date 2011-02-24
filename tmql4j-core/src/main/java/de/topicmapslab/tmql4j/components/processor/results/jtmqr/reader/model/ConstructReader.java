@@ -392,6 +392,8 @@ public class ConstructReader {
 					role._setType(readTopicReference(jParser));
 				}else if(text.equals("reifier")){
 					role._setReifier(readTopicReference(jParser));
+				}else if(text.equals("item_identifiers")){
+					role._setItemIdentifiers(readIdentifier(jParser));
 				}
 			}
 		}
