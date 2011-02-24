@@ -155,7 +155,7 @@ public class AssociationStub extends ScopedStub implements Association {
 	 */
 	@Override
 	public TopicMap getParent() {
-		throw new UnsupportedOperationException();
+		return null;
 	}
 
 	/**

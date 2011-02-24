@@ -304,6 +304,8 @@ public class ConstructReader {
 					association._setReifier(readTopicReference(jParser));
 				}else if(text.equals("roles")){
 					association._setRoles(readRoles(jParser, association));
+				}else if(text.equals("item_identifiers")){
+					association._setItemIdentifiers(readIdentifier(jParser));
 				}
 			}
 		}
