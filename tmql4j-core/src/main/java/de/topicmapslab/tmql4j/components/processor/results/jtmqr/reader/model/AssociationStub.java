@@ -13,31 +13,34 @@ import org.tmapi.core.TopicMap;
 
 /**
  * association implementation for jtmqr result set
+ * 
  * @author Christian Haß
- *
+ * 
  */
 public class AssociationStub extends ScopedStub implements Association {
 
-	
 	private Set<Role> roles;
-	
+
 	/**
 	 * constructor
 	 */
 	protected AssociationStub() {
 		this.roles = Collections.emptySet();
 	}
-	
+
 	/**
 	 * adds the roles
-	 * @param roles - the roles
+	 * 
+	 * @param roles
+	 *            - the roles
 	 */
-	protected void _setRoles(Set<Role> roles){
+	protected void _setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
-	
-	// --[ TMAPI methods ]-------------------------------------------------------
-	
+
+	// --[ TMAPI methods
+	// ]-------------------------------------------------------
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -60,14 +63,6 @@ public class AssociationStub extends ScopedStub implements Association {
 	@Override
 	public void addItemIdentifier(Locator arg0) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getId() {
-		return null;
 	}
 
 	/**
@@ -163,12 +158,12 @@ public class AssociationStub extends ScopedStub implements Association {
 	 */
 	@Override
 	public Set<Topic> getRoleTypes() {
-		
+
 		Set<Topic> types = new HashSet<Topic>();
-		
-		for(Role r:this.roles)
+
+		for (Role r : this.roles) {
 			types.add(r.getType());
-		
+		}
 		return types;
 	}
 
@@ -185,16 +180,18 @@ public class AssociationStub extends ScopedStub implements Association {
 	 */
 	@Override
 	public Set<Role> getRoles(Topic arg0) {
-		
+
 		Set<Role> roles = new HashSet<Role>();
-		
-		for(Role r:this.roles)
-			if(r.getType().equals(arg0))
+
+		for (Role r : this.roles) {
+			if (r.getType().equals(arg0)) {
 				roles.add(r);
+			}
+		}
 
 		return roles;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */

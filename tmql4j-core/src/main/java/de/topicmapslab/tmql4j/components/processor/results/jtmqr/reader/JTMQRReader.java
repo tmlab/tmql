@@ -12,21 +12,25 @@ import org.codehaus.jackson.JsonToken;
 
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.model.ConstructReader;
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.result.SimpleJtmqrResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer.IJtmQrKeys;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 
 /**
  * class which reads a JTMQR result into a TMQL result set
+ * 
  * @author Christian Haß
- *
+ * 
  */
 public class JTMQRReader {
 
-	private JsonParser jParser;
-	
+	private final JsonParser jParser;
+
 	/**
 	 * constructor
-	 * @param in - the input stream
+	 * 
+	 * @param in
+	 *            - the input stream
 	 * @throws JsonParseException
 	 * @throws IOException
 	 */
@@ -34,107 +38,109 @@ public class JTMQRReader {
 		JsonFactory jFactory = new JsonFactory();
 		this.jParser = jFactory.createJsonParser(in);
 	}
-	
-	
-	
+
 	/**
-	 * @return the {@link IResultSet} filled with the information from the input stream
+	 * @return the {@link IResultSet} filled with the information from the input
+	 *         stream
 	 * @throws JsonParseException
 	 * @throws IOException
 	 */
-	public IResultSet<IResult> readResultSet() throws JsonParseException, IOException{
+	public IResultSet<IResult> readResultSet() throws JsonParseException, IOException {
 
-				
 		SimpleJtmqrResultSet resultSet = new SimpleJtmqrResultSet();
 		boolean first = true;
 		IResult result = resultSet.createResult();
-		
+
 		while (this.jParser.nextToken() != null) {
-			
+
 			JsonToken token = this.jParser.getCurrentToken();
 			String text = this.jParser.getText();
-			
-			if(token.equals(JsonToken.FIELD_NAME)){
-				
-				if(text.equals("aliases")){
-					
+
+			if (token.equals(JsonToken.FIELD_NAME)) {
+
+				if (text.equals(IJtmQrKeys.ALIASES)) {
+
 					// read column labels
 					Map<String, Integer> aliases = ConstructReader.readAliases(this.jParser);
 					Map<Integer, String> indexes = createIndexes(aliases);
-					
+
 					resultSet.setAlias(aliases);
 					resultSet.setIndexes(indexes);
-					
-				}else if(text.equals("t")){
-					
+
+				} else if (text.equals(IJtmQrKeys.TUPLE)) {
+
 					// new token
-					
-					if(first){
+
+					if (first) {
 						first = false;
-					}else{
+					} else {
 						resultSet.addResult(result);
 						result = resultSet.createResult();
 					}
-				}else if(text.equals("s")){
+				} else if (text.equals(IJtmQrKeys.STRING)) {
 
 					// read string result
 					token = this.jParser.nextToken();
 					text = this.jParser.getText();
 					result.add(text);
-					
-				}else if(text.equals("n")){
+
+				} else if (text.equals(IJtmQrKeys.NUMBER)) {
 
 					// read number result
 					token = this.jParser.nextToken();
 					text = this.jParser.getText();
 
-					if(token.equals(JsonToken.VALUE_NUMBER_FLOAT)){
+					if (token.equals(JsonToken.VALUE_NUMBER_FLOAT)) {
 						result.add(Double.parseDouble(text));
-					}else if(token.equals(JsonToken.VALUE_NUMBER_INT)){
+					} else if (token.equals(JsonToken.VALUE_NUMBER_INT)) {
 						result.add(Integer.parseInt(text));
 					}
-					
-				}else if(text.equals("item_type")){
+
+				} else if (text.equals(IJtmQrKeys.ITEM_TYPE)) {
 
 					// read object result
 					token = this.jParser.nextToken();
 					text = this.jParser.getText();
 
-					if(text.equals("topic")){
+					if (text.equals(IJtmQrKeys.TOPIC)) {
 						result.add(ConstructReader.readTopic(this.jParser));
-					}else if(text.equals("name")){
+					} else if (text.equals(IJtmQrKeys.NAME)) {
 						result.add(ConstructReader.readName(this.jParser, null));
-					}else if(text.equals("occurrence")){
+					} else if (text.equals(IJtmQrKeys.OCCURRENCE)) {
 						result.add(ConstructReader.readOccurrence(this.jParser, null));
-					}else if(text.equals("association")){
+					} else if (text.equals(IJtmQrKeys.ASSOCIATION)) {
 						result.add(ConstructReader.readAssociation(this.jParser));
-					}else if(text.equals("role")){
+					} else if (text.equals(IJtmQrKeys.ROLE)) {
 						result.add(ConstructReader.readRole(this.jParser, null));
-					}else if(text.equals("variant")){
+					} else if (text.equals(IJtmQrKeys.VARIANT)) {
 						result.add(ConstructReader.readVariant(this.jParser, null));
 					}
 				}
 			}
 		}
-		
-		if(!first)
+
+		if (!first) {
 			resultSet.addResult(result);
+		}
 
 		return resultSet;
 	}
-	
+
 	/**
 	 * creates an index from an alias
-	 * @param aliases - the alias
+	 * 
+	 * @param aliases
+	 *            - the alias
 	 * @return the index
 	 */
-	private Map<Integer, String> createIndexes(Map<String, Integer> aliases){
-	
+	private Map<Integer, String> createIndexes(Map<String, Integer> aliases) {
+
 		Map<Integer, String> indexes = new HashMap<Integer, String>();
-		
-		for(Map.Entry<String, Integer>alias:aliases.entrySet())
+
+		for (Map.Entry<String, Integer> alias : aliases.entrySet()) {
 			indexes.put(alias.getValue(), alias.getKey());
-		
+		}
+
 		return indexes;
 	}
 

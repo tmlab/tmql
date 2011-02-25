@@ -13,71 +13,82 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.core.Variant;
 
 import de.topicmapslab.majortom.core.LocatorImpl;
+import de.topicmapslab.tmql4j.util.LiteralUtils;
 
 /**
  * variant implementation for jtmqr result set
+ * 
  * @author Christian Haß
- *
+ * 
  */
 public class VariantStub extends ConstructStub implements Variant {
 
-	private Name parent;
+	private final Name parent;
 	private String value;
 	private Set<Topic> scope;
 	private Topic reifier;
 	private Locator datatype;
-	
+
 	/**
 	 * constructor
-	 * @param parent - the parent name or <code>null</code>
+	 * 
+	 * @param parent
+	 *            - the parent name or <code>null</code>
 	 */
 	protected VariantStub(Name parent) {
 		this.parent = parent;
 		this.scope = Collections.emptySet();
 		this.datatype = new LocatorImpl("http://www.w3.org/2001/XMLSchema#string");
 	}
-		
+
 	/**
 	 * sets the value
-	 * @param value - the value
+	 * 
+	 * @param value
+	 *            - the value
 	 */
-	protected void _setValue(String value){
+	protected void _setValue(String value) {
 		this.value = value;
 	}
-	
+
 	/**
 	 * sets the scope
-	 * @param scope - the scope
+	 * 
+	 * @param scope
+	 *            - the scope
 	 */
-	protected void setScope(Set<Topic> scope){
+	protected void setScope(Set<Topic> scope) {
 		this.scope = scope;
 	}
-	
+
 	/**
 	 * sets the reifier
-	 * @param reifier - the reifier
+	 * 
+	 * @param reifier
+	 *            - the reifier
 	 */
-	protected void _setReifier(Topic reifier){
+	protected void _setReifier(Topic reifier) {
 		this.reifier = reifier;
 	}
-	
+
 	/**
 	 * sets the datatype
+	 * 
 	 * @param datatype
 	 */
-	protected void _setDatatype(String datatype){
+	protected void _setDatatype(String datatype) {
 		this.datatype = new LocatorImpl(datatype);
 	}
-	
-	// --[ TMAPI methods ]----------------------------------------------------------------------
-	
+
+	// --[ TMAPI methods
+	// ]----------------------------------------------------------------------
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public BigDecimal decimalValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return LiteralUtils.asDecimal(getValue());
 	}
 
 	/**
@@ -85,8 +96,7 @@ public class VariantStub extends ConstructStub implements Variant {
 	 */
 	@Override
 	public float floatValue() {
-		// TODO Auto-generated method stub
-		return 0;
+		return LiteralUtils.asDouble(getValue()).floatValue();
 	}
 
 	/**
@@ -110,8 +120,7 @@ public class VariantStub extends ConstructStub implements Variant {
 	 */
 	@Override
 	public int intValue() {
-		// TODO Auto-generated method stub
-		return 0;
+		return LiteralUtils.asInteger(getValue()).intValue();
 	}
 
 	/**
@@ -119,8 +128,7 @@ public class VariantStub extends ConstructStub implements Variant {
 	 */
 	@Override
 	public BigInteger integerValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return LiteralUtils.asInteger(getValue());
 	}
 
 	/**
@@ -128,8 +136,7 @@ public class VariantStub extends ConstructStub implements Variant {
 	 */
 	@Override
 	public Locator locatorValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return new LocatorImpl(value);
 	}
 
 	/**
@@ -137,8 +144,7 @@ public class VariantStub extends ConstructStub implements Variant {
 	 */
 	@Override
 	public long longValue() {
-		// TODO Auto-generated method stub
-		return 0;
+		return LiteralUtils.asInteger(getValue()).longValue();
 	}
 
 	/**
@@ -201,7 +207,7 @@ public class VariantStub extends ConstructStub implements Variant {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setValue(String arg0, Locator arg1)	throws ModelConstraintException {
+	public void setValue(String arg0, Locator arg1) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -227,14 +233,6 @@ public class VariantStub extends ConstructStub implements Variant {
 	@Override
 	public void addItemIdentifier(Locator arg0) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getId() {
-		return null;
 	}
 
 	/**
@@ -300,14 +298,13 @@ public class VariantStub extends ConstructStub implements Variant {
 	public Set<Topic> getScope() {
 		return this.scope;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public String toString() {
-		return "Topic-Name-Variant{Parent:" + (getParent() == null ? "null" : getParent().toString()) + ";Value:" + getValue() + ";Datatype:"
-				+ getDatatype().toExternalForm() + "}";
+		return "Topic-Name-Variant{Parent:" + (getParent() == null ? "null" : getParent().toString()) + ";Value:" + getValue() + ";Datatype:" + getDatatype().toExternalForm() + "}";
 	}
 
 }

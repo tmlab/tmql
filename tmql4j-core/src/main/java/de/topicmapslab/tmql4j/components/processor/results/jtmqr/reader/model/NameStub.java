@@ -13,17 +13,20 @@ import org.tmapi.core.Variant;
 
 /**
  * name implementation for jtmqr result set
+ * 
  * @author Christian Haß
- *
+ * 
  */
 public class NameStub extends CharacteristicStub implements Name {
 
-	private Topic parent;
+	private final Topic parent;
 	private Set<Variant> variants;
 
 	/**
 	 * constructor
-	 * @param parent - the parent topic or <code>null</code>
+	 * 
+	 * @param parent
+	 *            - the parent topic or <code>null</code>
 	 */
 	protected NameStub(Topic parent) {
 		this.parent = parent;
@@ -32,14 +35,17 @@ public class NameStub extends CharacteristicStub implements Name {
 
 	/**
 	 * sets the variants of the name
-	 * @param variants - set of variants
+	 * 
+	 * @param variants
+	 *            - set of variants
 	 */
-	protected void setVariants(Set<Variant> variants){
+	protected void setVariants(Set<Variant> variants) {
 		this.variants = variants;
 	}
-	
-	// --[ TMAPI methods ]------------------------------------------------------------------------
-	
+
+	// --[ TMAPI methods
+	// ]------------------------------------------------------------------------
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -62,14 +68,6 @@ public class NameStub extends CharacteristicStub implements Name {
 	@Override
 	public void addItemIdentifier(Locator arg0) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getId() {
-		return null;
 	}
 
 	/**
@@ -180,7 +178,7 @@ public class NameStub extends CharacteristicStub implements Name {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Variant createVariant(String arg0, Locator arg1, Topic... arg2)	throws ModelConstraintException {
+	public Variant createVariant(String arg0, Locator arg1, Topic... arg2) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -188,7 +186,7 @@ public class NameStub extends CharacteristicStub implements Name {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Variant createVariant(String arg0, Locator arg1,	Collection<Topic> arg2) throws ModelConstraintException {
+	public Variant createVariant(String arg0, Locator arg1, Collection<Topic> arg2) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -224,15 +222,13 @@ public class NameStub extends CharacteristicStub implements Name {
 		throw new UnsupportedOperationException();
 	}
 
-	
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public String toString() {
 		Topic type = getType();
-		return "Topic-Name{Parent:" + (getParent() == null ? "null" : getParent().toString()) + ";Type:" + (type == null ? "null" : type.toString())
-				+ ";Value:" + getValue() + "}";
+		return "Topic-Name{Parent:" + (getParent() == null ? "null" : getParent().toString()) + ";Type:" + (type == null ? "null" : type.toString()) + ";Value:" + getValue() + "}";
 	}
-	
+
 }

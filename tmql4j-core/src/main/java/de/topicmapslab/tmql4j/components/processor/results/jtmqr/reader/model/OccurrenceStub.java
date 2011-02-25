@@ -14,33 +14,39 @@ import de.topicmapslab.majortom.core.LocatorImpl;
 
 /**
  * occurrence implementation for JTMQR result set
+ * 
  * @author Christian Haß
- *
+ * 
  */
 public class OccurrenceStub extends CharacteristicStub implements Occurrence {
 
-	private Topic parent;
+	private final Topic parent;
 	private Locator datatype;
-	
+
 	/**
 	 * constructor
-	 * @param parent - the parent topic or <code>null</code>
+	 * 
+	 * @param parent
+	 *            - the parent topic or <code>null</code>
 	 */
 	protected OccurrenceStub(Topic parent) {
 		this.parent = parent;
 		this.datatype = new LocatorImpl("http://www.w3.org/2001/XMLSchema#string");
 	}
-	
+
 	/**
 	 * sets the datatype
-	 * @param datatype - the datatype
+	 * 
+	 * @param datatype
+	 *            - the datatype
 	 */
-	protected void _setDatatype(String datatype){
+	protected void _setDatatype(String datatype) {
 		this.datatype = new LocatorImpl(datatype);
 	}
-	
-	// --[ TMAPI methods ]-------------------------------------------------------
-	
+
+	// --[ TMAPI methods
+	// ]-------------------------------------------------------
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -63,14 +69,6 @@ public class OccurrenceStub extends CharacteristicStub implements Occurrence {
 	@Override
 	public void addItemIdentifier(Locator arg0) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getId() {
-		return null;
 	}
 
 	/**
@@ -235,7 +233,7 @@ public class OccurrenceStub extends CharacteristicStub implements Occurrence {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setValue(String arg0, Locator arg1)	throws ModelConstraintException {
+	public void setValue(String arg0, Locator arg1) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -287,15 +285,14 @@ public class OccurrenceStub extends CharacteristicStub implements Occurrence {
 		return this.parent;
 	}
 
-	 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public String toString() {
 		Topic type = getType();
-		return "Occurrence{Parent:" + (getParent() == null ? "null" : getParent().toString()) + ";Type:" + (type == null ? "null" : type.toString())
-				+ ";Value:" + getValue() + ";Datatype:" + getDatatype().toExternalForm() + "}";
+		return "Occurrence{Parent:" + (getParent() == null ? "null" : getParent().toString()) + ";Type:" + (type == null ? "null" : type.toString()) + ";Value:" + getValue() + ";Datatype:"
+				+ getDatatype().toExternalForm() + "}";
 	}
-	
+
 }

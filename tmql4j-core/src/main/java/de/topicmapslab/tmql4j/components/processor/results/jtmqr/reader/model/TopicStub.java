@@ -20,99 +20,107 @@ import de.topicmapslab.majortom.core.LocatorImpl;
 
 /**
  * topic implementation for jtmqr result set
+ * 
  * @author Christian Haß
- *
+ * 
  */
 public class TopicStub extends ConstructStub implements Topic {
 
-	private Set<Locator> subjectIdentifier;
-	private Set<Locator> subjectLocator;
+	private final Set<Locator> subjectIdentifier;
+	private final Set<Locator> subjectLocator;
 	private Set<Topic> types;
 	private Set<Name> names;
 	private Set<Occurrence> occurrences;
-	
+
 	/**
 	 * constructor
 	 */
 	protected TopicStub() {
-		
+
 		this.subjectIdentifier = new HashSet<Locator>();
 		this.subjectLocator = new HashSet<Locator>();
 		this.types = Collections.emptySet();
 		this.names = Collections.emptySet();
 		this.occurrences = Collections.emptySet();
 	}
-	
+
 	/**
 	 * adds a subject identifier
-	 * @param iri - the iri as string
+	 * 
+	 * @param iri
+	 *            - the iri as string
 	 */
-	protected void _addSubjectIdentifier(String iri){
+	protected void _addSubjectIdentifier(String iri) {
 		Locator l = new LocatorImpl(iri);
 		this.subjectIdentifier.add(l);
 	}
-	
+
 	/**
 	 * adds a set of subject identifier
-	 * @param sis - set of subject identifier as strings
+	 * 
+	 * @param sis
+	 *            - set of subject identifier as strings
 	 */
-	protected void _setSubjectIdentifiers(Set<String> sis){
-		for(String si:sis)
+	protected void _setSubjectIdentifiers(Set<String> sis) {
+		for (String si : sis) {
 			_addSubjectIdentifier(si);
+		}
 	}
-	
+
 	/**
 	 * adds a subject locator
-	 * @param iri - the iri as string
+	 * 
+	 * @param iri
+	 *            - the iri as string
 	 */
-	protected void _addSubjectLocator(String iri){
+	protected void _addSubjectLocator(String iri) {
 		Locator l = new LocatorImpl(iri);
 		this.subjectLocator.add(l);
 	}
-	
+
 	/**
 	 * adds a set of subject locator
-	 * @param sis - set of subject locator as strings
+	 * 
+	 * @param sis
+	 *            - set of subject locator as strings
 	 */
-	protected void _setSubjectLocators(Set<String> sis){
-		for(String si:sis)
+	protected void _setSubjectLocators(Set<String> sis) {
+		for (String si : sis) {
 			_addSubjectLocator(si);
+		}
 	}
-	
+
 	/**
 	 * sets the types
-	 * @param types - the types
+	 * 
+	 * @param types
+	 *            - the types
 	 */
-	protected void _setTypes(Set<Topic> types){
+	protected void _setTypes(Set<Topic> types) {
 		this.types = types;
 	}
-	
+
 	/**
 	 * sets the name
-	 * @param names - the names
+	 * 
+	 * @param names
+	 *            - the names
 	 */
-	protected void _setNames(Set<Name> names){
+	protected void _setNames(Set<Name> names) {
 		this.names = names;
 	}
-	
+
 	/**
 	 * sets the occurrences
-	 * @param occurrences - the occurrences
+	 * 
+	 * @param occurrences
+	 *            - the occurrences
 	 */
-	protected void _setOccurrences(Set<Occurrence> occurrences){
+	protected void _setOccurrences(Set<Occurrence> occurrences) {
 		this.occurrences = occurrences;
 	}
-	
-	
+
 	// --[ TMAPI methods ]---------------------------------------
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getId() {
-		return null;
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -158,7 +166,7 @@ public class TopicStub extends ConstructStub implements Topic {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void addSubjectLocator(Locator arg0)	throws IdentityConstraintException, ModelConstraintException {
+	public void addSubjectLocator(Locator arg0) throws IdentityConstraintException, ModelConstraintException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -174,7 +182,7 @@ public class TopicStub extends ConstructStub implements Topic {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Name createName(String arg0, Topic... arg1)	throws ModelConstraintException {
+	public Name createName(String arg0, Topic... arg1) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -182,7 +190,7 @@ public class TopicStub extends ConstructStub implements Topic {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Name createName(String arg0, Collection<Topic> arg1)	throws ModelConstraintException {
+	public Name createName(String arg0, Collection<Topic> arg1) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -198,7 +206,7 @@ public class TopicStub extends ConstructStub implements Topic {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Name createName(Topic arg0, String arg1, Collection<Topic> arg2)	throws ModelConstraintException {
+	public Name createName(Topic arg0, String arg1, Collection<Topic> arg2) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -214,7 +222,7 @@ public class TopicStub extends ConstructStub implements Topic {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Occurrence createOccurrence(Topic arg0, String arg1,	Collection<Topic> arg2) throws ModelConstraintException {
+	public Occurrence createOccurrence(Topic arg0, String arg1, Collection<Topic> arg2) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -222,7 +230,7 @@ public class TopicStub extends ConstructStub implements Topic {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Occurrence createOccurrence(Topic arg0, Locator arg1, Topic... arg2)	throws ModelConstraintException {
+	public Occurrence createOccurrence(Topic arg0, Locator arg1, Topic... arg2) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -263,13 +271,15 @@ public class TopicStub extends ConstructStub implements Topic {
 	 */
 	@Override
 	public Set<Name> getNames(Topic arg0) {
-		
+
 		Set<Name> names = new HashSet<Name>();
-		
-		for(Name n:this.names)
-			if(n.getType().equals(arg0))
+
+		for (Name n : this.names) {
+			if (n.getType().equals(arg0)) {
 				names.add(n);
-		
+			}
+		}
+
 		return names;
 	}
 
@@ -286,13 +296,15 @@ public class TopicStub extends ConstructStub implements Topic {
 	 */
 	@Override
 	public Set<Occurrence> getOccurrences(Topic arg0) {
-		
+
 		Set<Occurrence> occurrences = new HashSet<Occurrence>();
-		
-		for(Occurrence o:this.occurrences)
-			if(o.getType().equals(arg0))
+
+		for (Occurrence o : this.occurrences) {
+			if (o.getType().equals(arg0)) {
 				occurrences.add(o);
-		
+			}
+		}
+
 		return occurrences;
 	}
 
@@ -430,7 +442,4 @@ public class TopicStub extends ConstructStub implements Topic {
 		return out + "}";
 	}
 
-	
-	
-	
 }

@@ -11,32 +11,38 @@ import org.tmapi.core.TopicMap;
 
 /**
  * role implementation for jtmqr result set
+ * 
  * @author Christian Haß
- *
+ * 
  */
 public class RoleStub extends ReifieableStub implements Role {
 
-	private Association parent;
+	private final Association parent;
 	private Topic player;
-	
+
 	/**
 	 * constructor
-	 * @param parent - the parent association or <code>null</code>
+	 * 
+	 * @param parent
+	 *            - the parent association or <code>null</code>
 	 */
 	protected RoleStub(Association parent) {
 		this.parent = parent;
 	}
-	
+
 	/**
 	 * sets the player
-	 * @param player - the player
+	 * 
+	 * @param player
+	 *            - the player
 	 */
-	protected void _setPlayer(Topic player){
+	protected void _setPlayer(Topic player) {
 		this.player = player;
 	}
-	
-	// --[ TMAPI methods ]-------------------------------------------------------
-	
+
+	// --[ TMAPI methods
+	// ]-------------------------------------------------------
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -59,14 +65,6 @@ public class RoleStub extends ReifieableStub implements Role {
 	@Override
 	public void addItemIdentifier(Locator arg0) throws ModelConstraintException {
 		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getId() {
-		return null;
 	}
 
 	/**
@@ -146,13 +144,13 @@ public class RoleStub extends ReifieableStub implements Role {
 	 */
 	@Override
 	public String toString() {
-		try{
-		Topic type = getType();
-		Topic player = getPlayer();
-		return "Association-Role{Type:" + (type == null ? "null" : type.toString()) + ";Player:" + (player == null ? "null" : player.toString() + "}");
-		}catch (Exception e) {
-			return "Association-Role{Id:" + getId() +"}";
+		try {
+			Topic type = getType();
+			Topic player = getPlayer();
+			return "Association-Role{Type:" + (type == null ? "null" : type.toString()) + ";Player:" + (player == null ? "null" : player.toString() + "}");
+		} catch (Exception e) {
+			return "Association-Role{Id:" + getId() + "}";
 		}
 	}
-	
+
 }
