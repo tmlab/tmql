@@ -14,8 +14,9 @@ import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 
 /**
  * abstract test class
+ * 
  * @author Christian Haß
- *
+ * 
  */
 public abstract class AbstractTest {
 
@@ -26,57 +27,59 @@ public abstract class AbstractTest {
 	 * constructor
 	 */
 	public AbstractTest() {
-		
+
 		try {
 			this.system = TopicMapSystemFactory.newInstance().newTopicMapSystem();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	/**
 	 * runs before each test and creates an empty topic map
 	 */
 	@Before
-	public void beforeTest(){
+	public void beforeTest() {
 		try {
-			this.topicMap = (ITopicMap)this.system.createTopicMap("http://test.tm");
+			this.topicMap = (ITopicMap) this.system.createTopicMap("http://test.tm");
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	/**
 	 * @return the topic map
 	 */
-	protected ITopicMap getTopicMap(){
+	protected ITopicMap getTopicMap() {
 		return this.topicMap;
 	}
-	
+
 	/**
 	 * @return an new and empty result set
 	 */
-	protected SimpleResultSet createResultSet(){
+	protected SimpleResultSet createResultSet() {
 		return new SimpleResultSet(this.system, this.topicMap);
 	}
-	
+
 	/**
 	 * convertes an simple tmql result set via jtmqr to an jtmqr-resultset
-	 * @param input - the simple result set
+	 * 
+	 * @param input
+	 *            - the simple result set
 	 * @return the jtmqr-resultset
 	 */
-	protected IResultSet<?> convert(SimpleResultSet input){
+	protected IResultSet<?> convert(SimpleResultSet input) {
 		try {
 			String jtmqrString = input.toJTMQR();
+			System.out.println(jtmqrString);
 			InputStream in = new ByteArrayInputStream(jtmqrString.getBytes());
-			
+
 			JTMQRReader reader = new JTMQRReader(in);
 			return reader.readResultSet();
-		
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
-		
+
 }

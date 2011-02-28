@@ -10,7 +10,7 @@ import org.tmapi.core.Occurrence;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 
-import de.topicmapslab.majortom.core.LocatorImpl;
+import de.topicmapslab.tmql4j.util.LiteralUtils;
 
 /**
  * occurrence implementation for JTMQR result set
@@ -31,7 +31,7 @@ public class OccurrenceStub extends CharacteristicStub implements Occurrence {
 	 */
 	protected OccurrenceStub(Topic parent) {
 		this.parent = parent;
-		this.datatype = new LocatorImpl("http://www.w3.org/2001/XMLSchema#string");
+		this.datatype = new LocatorStub("http://www.w3.org/2001/XMLSchema#string");
 	}
 
 	/**
@@ -41,7 +41,7 @@ public class OccurrenceStub extends CharacteristicStub implements Occurrence {
 	 *            - the datatype
 	 */
 	protected void _setDatatype(String datatype) {
-		this.datatype = new LocatorImpl(datatype);
+		this.datatype = new LocatorStub(datatype);
 	}
 
 	// --[ TMAPI methods
@@ -108,8 +108,7 @@ public class OccurrenceStub extends CharacteristicStub implements Occurrence {
 	 */
 	@Override
 	public BigDecimal decimalValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return LiteralUtils.asDecimal(getValue());
 	}
 
 	/**
@@ -117,8 +116,7 @@ public class OccurrenceStub extends CharacteristicStub implements Occurrence {
 	 */
 	@Override
 	public float floatValue() {
-		// TODO Auto-generated method stub
-		return 0;
+		return LiteralUtils.asDouble(getValue()).floatValue();
 	}
 
 	/**
@@ -142,8 +140,7 @@ public class OccurrenceStub extends CharacteristicStub implements Occurrence {
 	 */
 	@Override
 	public int intValue() {
-		// TODO Auto-generated method stub
-		return 0;
+		return LiteralUtils.asInteger(getValue()).intValue();
 	}
 
 	/**
@@ -151,8 +148,7 @@ public class OccurrenceStub extends CharacteristicStub implements Occurrence {
 	 */
 	@Override
 	public BigInteger integerValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return LiteralUtils.asInteger(getValue());
 	}
 
 	/**
@@ -160,8 +156,7 @@ public class OccurrenceStub extends CharacteristicStub implements Occurrence {
 	 */
 	@Override
 	public Locator locatorValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return new LocatorStub(getValue());
 	}
 
 	/**
@@ -169,8 +164,7 @@ public class OccurrenceStub extends CharacteristicStub implements Occurrence {
 	 */
 	@Override
 	public long longValue() {
-		// TODO Auto-generated method stub
-		return 0;
+		return LiteralUtils.asInteger(getValue()).longValue();
 	}
 
 	/**

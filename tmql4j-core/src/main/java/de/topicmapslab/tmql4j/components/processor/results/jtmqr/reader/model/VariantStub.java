@@ -2,17 +2,20 @@ package de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.model;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Set;
 
 import org.tmapi.core.Locator;
+import org.tmapi.core.MalformedIRIException;
 import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.Name;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.Variant;
 
-import de.topicmapslab.majortom.core.LocatorImpl;
+import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.util.LiteralUtils;
 
 /**
@@ -38,7 +41,7 @@ public class VariantStub extends ConstructStub implements Variant {
 	protected VariantStub(Name parent) {
 		this.parent = parent;
 		this.scope = Collections.emptySet();
-		this.datatype = new LocatorImpl("http://www.w3.org/2001/XMLSchema#string");
+		this.datatype = new LocatorStub("http://www.w3.org/2001/XMLSchema#string");
 	}
 
 	/**
@@ -77,7 +80,7 @@ public class VariantStub extends ConstructStub implements Variant {
 	 * @param datatype
 	 */
 	protected void _setDatatype(String datatype) {
-		this.datatype = new LocatorImpl(datatype);
+		this.datatype = new LocatorStub(datatype);
 	}
 
 	// --[ TMAPI methods
@@ -136,7 +139,27 @@ public class VariantStub extends ConstructStub implements Variant {
 	 */
 	@Override
 	public Locator locatorValue() {
-		return new LocatorImpl(value);
+		return new Locator() {
+
+			@Override
+			public String toExternalForm() {
+				try {
+					return new URI(getValue()).toASCIIString();
+				} catch (URISyntaxException e) {
+					throw new TMQLRuntimeException(e);
+				}
+			}
+
+			@Override
+			public Locator resolve(String value) throws MalformedIRIException {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public String getReference() {
+				return getValue();
+			}
+		};
 	}
 
 	/**

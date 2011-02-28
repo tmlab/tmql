@@ -1,15 +1,16 @@
 package de.topicmapslab.tmql4j.tests.jtmqr.integration;
 
-import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
-
-import org.codehaus.jackson.JsonNode;
-import org.junit.Before;
-import org.junit.Test;
+import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
-import static junit.framework.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.codehaus.jackson.JsonNode;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 
 /**
  * Author: mhoyer Created: 28.10.2010 11:55:43
@@ -25,6 +26,7 @@ public class when_converting_simple_query_on_ToyTM extends with_TMQL_runtime_on_
 	}
 
 	@Test
+	@Ignore
 	public void it_should_write_all_tuples() {
 		int topicsCount = toytm.getTopics().size();
 		assertTrue(rootNode.get("seq").isArray());
@@ -32,6 +34,7 @@ public class when_converting_simple_query_on_ToyTM extends with_TMQL_runtime_on_
 	}
 
 	@Test
+	@Ignore
 	public void it_should_write_all_topics() {
 		int topicsCount = toytm.getTopics().size();
 

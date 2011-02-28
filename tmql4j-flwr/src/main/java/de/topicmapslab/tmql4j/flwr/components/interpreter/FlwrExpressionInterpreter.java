@@ -29,6 +29,8 @@ import de.topicmapslab.tmql4j.flwr.grammar.productions.OffsetClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.OrderByClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.ReturnClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.WhereClause;
+import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Unique;
 
 /**
  * 
@@ -127,6 +129,12 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 			}
 			matches = results;
 		}
+		/*
+		 * unify if necessary
+		 */
+		if (ParserUtils.containsTokens(getTmqlTokens(), Unique.class)) {
+			matches = matches.unify();
+		}		
 		return interpretSelectionWindow(matches, limit, offset);
 	}
 

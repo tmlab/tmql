@@ -17,7 +17,7 @@ import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 import org.tmapi.core.Variant;
 
-import de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer.IJtmQrKeys;
+import de.topicmapslab.IJTMConstants;
 
 /**
  * class to read json stream
@@ -75,18 +75,20 @@ public class ConstructReader {
 
 			} else if (token.equals(JsonToken.FIELD_NAME)) {
 
-				if (text.equals(IJtmQrKeys.NAMES)) {
+				if (text.equals(IJTMConstants.NAMES)) {
 					topic._setNames(readNames(jParser, topic));
-				} else if (text.equals(IJtmQrKeys.OCCURRENCES)) {
+				} else if (text.equals(IJTMConstants.OCCURRENCES)) {
 					topic._setOccurrences(readOccurrences(jParser, topic));
-				} else if (text.equals(IJtmQrKeys.SUBJECT_IDENTIFIERS)) {
+				} else if (text.equals(IJTMConstants.SUBJECT_IDENTIFIERS)) {
 					topic._setSubjectIdentifiers(readIdentifier(jParser));
-				} else if (text.equals(IJtmQrKeys.SUBJECT_LOCATORS)) {
+				} else if (text.equals(IJTMConstants.SUBJECT_LOCATORS)) {
 					topic._setSubjectLocators(readIdentifier(jParser));
-				} else if (text.equals(IJtmQrKeys.ITEM_IDENTIFIERS)) {
+				} else if (text.equals(IJTMConstants.ITEM_IDENTIFIERS)) {
 					topic._setItemIdentifiers(readIdentifier(jParser));
-				} else if (text.equals(IJtmQrKeys.ID)) {
+				} else if (text.equals(IJTMConstants.ID)) {
 					topic._setId(readId(jParser));
+				} else if (text.equals(IJTMConstants.INSTANCE_OF)) {
+					topic._setTypes(readTypes(jParser));
 				}
 			}
 		}
@@ -135,6 +137,29 @@ public class ConstructReader {
 	}
 
 	/**
+	 * reads all types
+	 * 
+	 * @param jParser
+	 *            - the json parser pointing to the the correct position
+	 * @return the topics
+	 * @throws JsonParseException
+	 * @throws IOException
+	 */
+	public static Set<Topic> readTypes(JsonParser jParser) throws JsonParseException, IOException {
+		Set<Topic> topics = new HashSet<Topic>();
+
+		while (jParser.nextToken() != null) {
+			JsonToken token = jParser.getCurrentToken();
+			if (token.equals(JsonToken.VALUE_STRING)) {
+				topics.add(readTopicReference(jParser, false));
+			} else if (token.equals(JsonToken.END_ARRAY)) {
+				break;
+			}
+		}
+		return topics;
+	}
+
+	/**
 	 * reads a single name construct
 	 * 
 	 * @param jParser
@@ -175,19 +200,19 @@ public class ConstructReader {
 
 			} else if (token.equals(JsonToken.FIELD_NAME)) {
 
-				if (text.equals(IJtmQrKeys.VALUE)) {
+				if (text.equals(IJTMConstants.VALUE)) {
 					name._setValue(readValue(jParser));
-				} else if (text.equals(IJtmQrKeys.TYPE)) {
+				} else if (text.equals(IJTMConstants.TYPE)) {
 					name._setType(readTopicReference(jParser));
-				} else if (text.equals(IJtmQrKeys.SCOPE)) {
+				} else if (text.equals(IJTMConstants.SCOPE)) {
 					name._setScope(readScope(jParser));
-				} else if (text.equals(IJtmQrKeys.VARIANTS)) {
+				} else if (text.equals(IJTMConstants.VARIANTS)) {
 					name.setVariants(readVariants(jParser, name));
-				} else if (text.equals(IJtmQrKeys.REIFIER)) {
+				} else if (text.equals(IJTMConstants.REIFIER)) {
 					name._setReifier(readTopicReference(jParser));
-				} else if (text.equals(IJtmQrKeys.ITEM_IDENTIFIERS)) {
+				} else if (text.equals(IJTMConstants.ITEM_IDENTIFIERS)) {
 					name._setItemIdentifiers(readIdentifier(jParser));
-				} else if (text.equals(IJtmQrKeys.ID)) {
+				} else if (text.equals(IJTMConstants.ID)) {
 					name._setId(readId(jParser));
 				}
 			}
@@ -277,20 +302,20 @@ public class ConstructReader {
 
 			} else if (token.equals(JsonToken.FIELD_NAME)) {
 
-				if (text.equals(IJtmQrKeys.VALUE)) {
+				if (text.equals(IJTMConstants.VALUE)) {
 					occurrence._setValue(readValue(jParser));
-				} else if (text.equals(IJtmQrKeys.TYPE)) {
+				} else if (text.equals(IJTMConstants.TYPE)) {
 					occurrence._setType(readTopicReference(jParser));
-				} else if (text.equals(IJtmQrKeys.SCOPE)) {
+				} else if (text.equals(IJTMConstants.SCOPE)) {
 					occurrence._setScope(readScope(jParser));
-				} else if (text.equals(IJtmQrKeys.REIFIER)) {
+				} else if (text.equals(IJTMConstants.REIFIER)) {
 					occurrence._setReifier(readTopicReference(jParser));
-				} else if (text.equals(IJtmQrKeys.DATATYPE)) {
+				} else if (text.equals(IJTMConstants.DATATYPE)) {
 					token = jParser.nextToken();
 					occurrence._setDatatype(jParser.getText());
-				} else if (text.equals(IJtmQrKeys.ITEM_IDENTIFIERS)) {
+				} else if (text.equals(IJTMConstants.ITEM_IDENTIFIERS)) {
 					occurrence._setItemIdentifiers(readIdentifier(jParser));
-				} else if (text.equals(IJtmQrKeys.ID)) {
+				} else if (text.equals(IJTMConstants.ID)) {
 					occurrence._setId(readId(jParser));
 				}
 			}
@@ -326,17 +351,17 @@ public class ConstructReader {
 
 			} else if (token.equals(JsonToken.FIELD_NAME)) {
 
-				if (text.equals(IJtmQrKeys.TYPE)) {
+				if (text.equals(IJTMConstants.TYPE)) {
 					association._setType(readTopicReference(jParser));
-				} else if (text.equals(IJtmQrKeys.SCOPE)) {
+				} else if (text.equals(IJTMConstants.SCOPE)) {
 					association._setScope(readScope(jParser));
-				} else if (text.equals(IJtmQrKeys.REIFIER)) {
+				} else if (text.equals(IJTMConstants.REIFIER)) {
 					association._setReifier(readTopicReference(jParser));
-				} else if (text.equals(IJtmQrKeys.ROLES)) {
+				} else if (text.equals(IJTMConstants.ROLES)) {
 					association._setRoles(readRoles(jParser, association));
-				} else if (text.equals(IJtmQrKeys.ITEM_IDENTIFIERS)) {
+				} else if (text.equals(IJTMConstants.ITEM_IDENTIFIERS)) {
 					association._setItemIdentifiers(readIdentifier(jParser));
-				} else if (text.equals(IJtmQrKeys.ID)) {
+				} else if (text.equals(IJTMConstants.ID)) {
 					association._setId(readId(jParser));
 				}
 			}
@@ -426,15 +451,15 @@ public class ConstructReader {
 
 			} else if (token.equals(JsonToken.FIELD_NAME)) {
 
-				if (text.equals(IJtmQrKeys.PLAYER)) {
+				if (text.equals(IJTMConstants.PLAYER)) {
 					role._setPlayer(readTopicReference(jParser));
-				} else if (text.equals(IJtmQrKeys.TYPE)) {
+				} else if (text.equals(IJTMConstants.TYPE)) {
 					role._setType(readTopicReference(jParser));
-				} else if (text.equals(IJtmQrKeys.REIFIER)) {
+				} else if (text.equals(IJTMConstants.REIFIER)) {
 					role._setReifier(readTopicReference(jParser));
-				} else if (text.equals(IJtmQrKeys.ITEM_IDENTIFIERS)) {
+				} else if (text.equals(IJTMConstants.ITEM_IDENTIFIERS)) {
 					role._setItemIdentifiers(readIdentifier(jParser));
-				} else if (text.equals(IJtmQrKeys.ID)) {
+				} else if (text.equals(IJTMConstants.ID)) {
 					role._setId(readId(jParser));
 				}
 			}
@@ -453,8 +478,28 @@ public class ConstructReader {
 	 * @throws IOException
 	 */
 	public static Topic readTopicReference(JsonParser jParser) throws JsonParseException, IOException {
+		return readTopicReference(jParser, true);
+	}
 
-		JsonToken token = jParser.nextToken();
+	/**
+	 * reads a topic reference
+	 * 
+	 * @param jParser
+	 *            - the json parser pointing to the the correct position
+	 * @param nextToken
+	 *            flag if first the next token should fetched
+	 * @return the topic construct
+	 * @throws JsonParseException
+	 * @throws IOException
+	 */
+	public static Topic readTopicReference(JsonParser jParser, boolean nextToken) throws JsonParseException, IOException {
+
+		JsonToken token;
+		if (nextToken) {
+			token = jParser.nextToken();
+		} else {
+			token = jParser.getCurrentToken();
+		}
 
 		if (!token.equals(JsonToken.VALUE_STRING)) {
 			throw new RuntimeException("Unexpected token.");
@@ -466,11 +511,11 @@ public class ConstructReader {
 		// System.out.println("readTopicReference " +
 		// jParser.getCurrentLocation() + " " + token + " --> " + text);
 
-		if (text.startsWith(IJtmQrKeys.PREFIX_II)) {
+		if (text.startsWith(IJTMConstants.PREFIX_II)) {
 			topic._addItemIdentifier(text.substring(3));
-		} else if (text.startsWith(IJtmQrKeys.PREFIX_SI)) {
+		} else if (text.startsWith(IJTMConstants.PREFIX_SI)) {
 			topic._addSubjectIdentifier(text.substring(3));
-		} else if (text.startsWith(IJtmQrKeys.PREFIX_SL)) {
+		} else if (text.startsWith(IJTMConstants.PREFIX_SL)) {
 			topic._addSubjectLocator(text.substring(3));
 		} else {
 			throw new RuntimeException("Unable to specify identifier type");
@@ -588,18 +633,18 @@ public class ConstructReader {
 				return variant;
 
 			} else if (token.equals(JsonToken.FIELD_NAME)) {
-				if (text.equals(IJtmQrKeys.SCOPE)) {
+				if (text.equals(IJTMConstants.SCOPE)) {
 					variant.setScope(readScope(jParser));
-				} else if (text.equals(IJtmQrKeys.REIFIER)) {
+				} else if (text.equals(IJTMConstants.REIFIER)) {
 					variant._setReifier(readTopicReference(jParser));
-				} else if (text.equals(IJtmQrKeys.VALUE)) {
+				} else if (text.equals(IJTMConstants.VALUE)) {
 					variant._setValue(readValue(jParser));
-				} else if (text.equals(IJtmQrKeys.DATATYPE)) {
+				} else if (text.equals(IJTMConstants.DATATYPE)) {
 					token = jParser.nextToken();
 					variant._setDatatype(jParser.getText());
-				} else if (text.equals(IJtmQrKeys.ITEM_IDENTIFIERS)) {
+				} else if (text.equals(IJTMConstants.ITEM_IDENTIFIERS)) {
 					variant._setItemIdentifiers(readIdentifier(jParser));
-				} else if (text.equals(IJtmQrKeys.ID)) {
+				} else if (text.equals(IJTMConstants.ID)) {
 					variant._setId(readId(jParser));
 				}
 			}
@@ -724,11 +769,11 @@ public class ConstructReader {
 
 		TopicStub topic = new TopicStub();
 
-		if (prefixedIdentifier.startsWith(IJtmQrKeys.PREFIX_II)) {
+		if (prefixedIdentifier.startsWith(IJTMConstants.PREFIX_II)) {
 			topic._addItemIdentifier(prefixedIdentifier.substring(3));
-		} else if (prefixedIdentifier.startsWith(IJtmQrKeys.PREFIX_SI)) {
+		} else if (prefixedIdentifier.startsWith(IJTMConstants.PREFIX_SI)) {
 			topic._addSubjectIdentifier(prefixedIdentifier.substring(3));
-		} else if (prefixedIdentifier.startsWith(IJtmQrKeys.PREFIX_SL)) {
+		} else if (prefixedIdentifier.startsWith(IJTMConstants.PREFIX_SL)) {
 			topic._addSubjectLocator(prefixedIdentifier.substring(3));
 		} else {
 			throw new RuntimeException("Unable to specify identifier type");

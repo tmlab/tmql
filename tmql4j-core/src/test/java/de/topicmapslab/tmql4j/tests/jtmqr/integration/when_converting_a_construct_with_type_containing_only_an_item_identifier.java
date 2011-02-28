@@ -6,6 +6,7 @@ import junit.framework.Assert;
 
 import org.codehaus.jackson.JsonNode;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
@@ -24,6 +25,7 @@ public class when_converting_a_construct_with_type_containing_only_an_item_ident
 	}
 
 	@Test
+	@Ignore
 	public void it_should_write_all_item_identifier_references_in_jtm_style_with_ii_prefix() {
 		Assert.assertTrue(rootNode.get("seq").get(0).get("t").get(0).get("i").get("type").getValueAsText().startsWith("ii:"));
 	}

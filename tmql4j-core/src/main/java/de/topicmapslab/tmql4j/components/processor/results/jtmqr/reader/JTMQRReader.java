@@ -10,6 +10,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
 
+import de.topicmapslab.IJTMConstants;
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.model.ConstructReader;
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.result.SimpleJtmqrResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer.IJtmQrKeys;
@@ -96,23 +97,23 @@ public class JTMQRReader {
 						result.add(Integer.parseInt(text));
 					}
 
-				} else if (text.equals(IJtmQrKeys.ITEM_TYPE)) {
+				} else if (text.equals(IJTMConstants.ITEM_TYPE)) {
 
 					// read object result
 					token = this.jParser.nextToken();
 					text = this.jParser.getText();
 
-					if (text.equals(IJtmQrKeys.TOPIC)) {
+					if (text.equals(IJTMConstants.TOPIC)) {
 						result.add(ConstructReader.readTopic(this.jParser));
-					} else if (text.equals(IJtmQrKeys.NAME)) {
+					} else if (text.equals(IJTMConstants.NAME)) {
 						result.add(ConstructReader.readName(this.jParser, null));
-					} else if (text.equals(IJtmQrKeys.OCCURRENCE)) {
+					} else if (text.equals(IJTMConstants.OCCURRENCE)) {
 						result.add(ConstructReader.readOccurrence(this.jParser, null));
-					} else if (text.equals(IJtmQrKeys.ASSOCIATION)) {
+					} else if (text.equals(IJTMConstants.ASSOCIATION)) {
 						result.add(ConstructReader.readAssociation(this.jParser));
-					} else if (text.equals(IJtmQrKeys.ROLE)) {
+					} else if (text.equals(IJTMConstants.ROLE)) {
 						result.add(ConstructReader.readRole(this.jParser, null));
-					} else if (text.equals(IJtmQrKeys.VARIANT)) {
+					} else if (text.equals(IJTMConstants.VARIANT)) {
 						result.add(ConstructReader.readVariant(this.jParser, null));
 					}
 				}

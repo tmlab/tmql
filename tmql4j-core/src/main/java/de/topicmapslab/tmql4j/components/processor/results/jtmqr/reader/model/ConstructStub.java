@@ -6,8 +6,6 @@ import java.util.Set;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
 
-import de.topicmapslab.majortom.core.LocatorImpl;
-
 /**
  * abstract construct stub
  * 
@@ -36,7 +34,7 @@ public abstract class ConstructStub implements Construct {
 	 *            - the iri as string
 	 */
 	protected void _addItemIdentifier(String iri) {
-		Locator l = new LocatorImpl(iri);
+		Locator l = new LocatorStub(iri);
 		this.itemIdentifier.add(l);
 	}
 

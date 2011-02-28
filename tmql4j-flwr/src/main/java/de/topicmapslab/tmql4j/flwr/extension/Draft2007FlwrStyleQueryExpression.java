@@ -49,6 +49,7 @@ import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Limit;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Offset;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Unique;
 
 /**
  * @author Sven Krosse
@@ -67,6 +68,7 @@ public class Draft2007FlwrStyleQueryExpression implements ILanguageExtension {
 		tokens.register(Return.class);
 		tokens.register(XmlEndTag.class);
 		tokens.register(XmlStartTag.class);
+		tokens.register(Unique.class);
 
 		IInterpreterRegistry interpreterRegistry = runtime.getLanguageContext().getInterpreterRegistry();
 

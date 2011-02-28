@@ -62,10 +62,6 @@ public class TestResultSet {
 
 		TopicMap copy = resultSet.toTopicMap();
 		assertEquals(100, copy.getTopics().size());
-		
-		resultSet.toCTM(System.out);
-		resultSet.toXTM(System.out);
-		resultSet.toJTMQR(System.out);
 	}
 
 }

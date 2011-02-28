@@ -16,8 +16,6 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.TopicInUseException;
 import org.tmapi.core.TopicMap;
 
-import de.topicmapslab.majortom.core.LocatorImpl;
-
 /**
  * topic implementation for jtmqr result set
  * 
@@ -51,7 +49,7 @@ public class TopicStub extends ConstructStub implements Topic {
 	 *            - the iri as string
 	 */
 	protected void _addSubjectIdentifier(String iri) {
-		Locator l = new LocatorImpl(iri);
+		Locator l = new LocatorStub(iri);
 		this.subjectIdentifier.add(l);
 	}
 
@@ -74,7 +72,7 @@ public class TopicStub extends ConstructStub implements Topic {
 	 *            - the iri as string
 	 */
 	protected void _addSubjectLocator(String iri) {
-		Locator l = new LocatorImpl(iri);
+		Locator l = new LocatorStub(iri);
 		this.subjectLocator.add(l);
 	}
 

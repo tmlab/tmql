@@ -10,6 +10,7 @@ import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.tmapi.core.Construct;
 
+import de.topicmapslab.JTMVersion;
 import de.topicmapslab.JTMWriter;
 import de.topicmapslab.tmql4j.util.CollectionsUtility;
 
@@ -52,7 +53,7 @@ public class MapSerializer extends JsonSerializer<Map<?, ?>> {
 				} else if (value instanceof Construct) {
 					writeConstruct(jgen, (Construct) value);
 				} else if (value instanceof Number) {
-					jgen.writeObjectField(IJtmQrKeys.NUMBER, (Number) value);
+					jgen.writeObjectField(IJtmQrKeys.NUMBER, value);
 				} else if (value instanceof Boolean) {
 					jgen.writeBooleanField(IJtmQrKeys.BOOLEAN, Boolean.valueOf(value.toString()));
 				} else {
@@ -77,7 +78,7 @@ public class MapSerializer extends JsonSerializer<Map<?, ?>> {
 	private void writeConstruct(JsonGenerator jgen, Construct construct) throws IOException {
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 		JTMWriter jtmWriter = new JTMWriter(buffer);
-		jtmWriter.write(construct).flush();
+		jtmWriter.write(construct, JTMVersion.JTM_1_1).flush();
 
 		jgen.writeRaw("\"i\":" + buffer.toString());
 	}

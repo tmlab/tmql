@@ -26,7 +26,7 @@ import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
-import de.topicmapslab.tmql4j.select.grammar.lexical.Unique;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Unique;
 import de.topicmapslab.tmql4j.select.grammar.productions.FromClause;
 import de.topicmapslab.tmql4j.select.grammar.productions.GroupByClause;
 import de.topicmapslab.tmql4j.select.grammar.productions.LimitClause;
@@ -134,7 +134,7 @@ public class SelectExpressionInterpreter extends ExpressionInterpreterImpl<Selec
 		/*
 		 * remove non valid content defined by from-clause
 		 */
-		if (fromResults != null ) {
+		if (fromResults != null) {
 			/*
 			 * create new temporary sequence to store cleared matches
 			 */
@@ -169,7 +169,7 @@ public class SelectExpressionInterpreter extends ExpressionInterpreterImpl<Selec
 		/*
 		 * interpret group-by if exists
 		 */
-		if (containsExpressionsType(GroupByClause.class)){
+		if (containsExpressionsType(GroupByClause.class)) {
 			newContext.setContextBindings(matches);
 			matches = getInterpretersFilteredByEypressionType(runtime, GroupByClause.class).get(0).interpret(runtime, newContext, optionalArguments);
 		}
@@ -180,7 +180,7 @@ public class SelectExpressionInterpreter extends ExpressionInterpreterImpl<Selec
 		if (ParserUtils.containsTokens(getTmqlTokens(), Unique.class)) {
 			matches = matches.unify();
 		}
-		
+
 		/*
 		 * reduce query-matches to selection window
 		 */
@@ -349,7 +349,7 @@ public class SelectExpressionInterpreter extends ExpressionInterpreterImpl<Selec
 		 */
 		if (!containsExpressionsType(SelectClause.class)) {
 			throw new TMQLRuntimeException("Invalid structure. not select clause.");
-		}		
+		}
 		/*
 		 * extract the select clause
 		 */
@@ -394,30 +394,33 @@ public class SelectExpressionInterpreter extends ExpressionInterpreterImpl<Selec
 
 	/**
 	 * Utility method to create a binding context for where-clause execution
-	 * @param runtime the runtime
-	 * @param fromBindings the from bindings
+	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param fromBindings
+	 *            the from bindings
 	 * @return the generated context
 	 */
-	private QueryMatches getBindingsContext(ITMQLRuntime runtime, QueryMatches fromBindings){
-		if ( fromBindings == null ){
+	private QueryMatches getBindingsContext(ITMQLRuntime runtime, QueryMatches fromBindings) {
+		if (fromBindings == null) {
 			return null;
 		}
-		
+
 		QueryMatches context = new QueryMatches(runtime);
 		/*
 		 * iterate over all possible values
 		 */
-		for ( Object value : fromBindings.getPossibleValuesForVariable()){
+		for (Object value : fromBindings.getPossibleValuesForVariable()) {
 			/*
 			 * iterate over all keys
 			 */
 			Map<String, Object> tuple = HashUtil.getHashMap();
-			for ( String key : getExpression().getExpressionFilteredByType(WhereClause.class).get(0).getVariables()){
+			for (String key : getExpression().getExpressionFilteredByType(WhereClause.class).get(0).getVariables()) {
 				tuple.put(key, value);
 			}
 			context.add(tuple);
 		}
 		return context;
 	}
-	
+
 }

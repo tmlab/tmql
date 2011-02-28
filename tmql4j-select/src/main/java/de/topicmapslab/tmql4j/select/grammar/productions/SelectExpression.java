@@ -25,10 +25,10 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Group;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Limit;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Offset;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Order;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Unique;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Where;
 import de.topicmapslab.tmql4j.select.grammar.lexical.From;
 import de.topicmapslab.tmql4j.select.grammar.lexical.Select;
-import de.topicmapslab.tmql4j.select.grammar.lexical.Unique;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -65,10 +65,7 @@ public class SelectExpression extends ExpressionImpl {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
-	public SelectExpression(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public SelectExpression(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
 		/*
@@ -76,58 +73,49 @@ public class SelectExpression extends ExpressionImpl {
 		 */
 		IParserUtilsCallback callback = new IParserUtilsCallback() {
 			@Override
-			public void newToken(List<Class<? extends IToken>> tmqlTokens,
-					List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException,
-					TMQLInvalidSyntaxException {
+			public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
 				Class<? extends IToken> token = tmqlTokens.get(0);
 				/*
 				 * is keyword SELECT
 				 */
 				if (token.equals(Select.class)) {
-					checkForExtensions(SelectClause.class, tmqlTokens, tokens,
-							runtime);
+					checkForExtensions(SelectClause.class, tmqlTokens, tokens, runtime);
 				}
 				/*
 				 * is keyword FROM
 				 */
 				else if (token.equals(From.class)) {
-					checkForExtensions(FromClause.class, tmqlTokens, tokens,
-							runtime);
+					checkForExtensions(FromClause.class, tmqlTokens, tokens, runtime);
 				}
 				/*
 				 * is keyword WHERE
 				 */
 				else if (token.equals(Where.class)) {
-					checkForExtensions(WhereClause.class, tmqlTokens, tokens,
-							runtime);
+					checkForExtensions(WhereClause.class, tmqlTokens, tokens, runtime);
 				}
 				/*
 				 * is keyword GROUP
 				 */
 				else if (token.equals(Group.class)) {
-					checkForExtensions(GroupByClause.class, tmqlTokens, tokens,
-							runtime);
+					checkForExtensions(GroupByClause.class, tmqlTokens, tokens, runtime);
 				}
 				/*
 				 * is keyword ORDER
 				 */
 				else if (token.equals(Order.class)) {
-					checkForExtensions(OrderByClause.class, tmqlTokens, tokens,
-							runtime);
+					checkForExtensions(OrderByClause.class, tmqlTokens, tokens, runtime);
 				}
 				/*
 				 * is keyword OFFSET
 				 */
 				else if (token.equals(Offset.class)) {
-					checkForExtensions(OffsetClause.class, tmqlTokens, tokens,
-							runtime);
+					checkForExtensions(OffsetClause.class, tmqlTokens, tokens, runtime);
 				}
 				/*
 				 * is keyword LIMIT
 				 */
 				else if (token.equals(Limit.class)) {
-					checkForExtensions(LimitClause.class, tmqlTokens, tokens,
-							runtime);
+					checkForExtensions(LimitClause.class, tmqlTokens, tokens, runtime);
 				}
 				/*
 				 * is keyword UNIQUE

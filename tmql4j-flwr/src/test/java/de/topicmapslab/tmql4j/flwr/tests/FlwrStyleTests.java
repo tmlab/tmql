@@ -17,7 +17,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * 
  */
 @RunWith(Suite.class)
-@SuiteClasses({TestForClause.class, TestOrderByClause.class, TestReturnClause.class, TestWhereClause.class})
+@SuiteClasses({TestForClause.class, TestOrderByClause.class, TestReturnClause.class, TestWhereClause.class, TestAlias.class, TestGroupByClause.class, TestOffsetLimitClause.class, TestPreparedStatement.class, TestUniqueClause.class})
 public class FlwrStyleTests {
 
 }

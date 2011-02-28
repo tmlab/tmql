@@ -28,6 +28,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Group;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Limit;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Offset;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Order;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Unique;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Where;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
@@ -115,6 +116,12 @@ public class FlwrExpression extends ExpressionImpl {
 					checkForExtensions(LimitClause.class, tmqlTokens, tokens, runtime);
 				}
 				/*
+				 * is keyword UNIQUE
+				 */
+				else if (token.equals(Unique.class)) {
+					// NOTHING TO DO HERE
+				}
+				/*
 				 * is keyword RETURN or XML start-tag
 				 */
 				else if (token.equals(Return.class) || token.equals(XmlStartTag.class)) {
@@ -133,6 +140,7 @@ public class FlwrExpression extends ExpressionImpl {
 		delimers.add(Order.class);
 		delimers.add(Offset.class);
 		delimers.add(Limit.class);
+		delimers.add(Unique.class);
 		delimers.add(Return.class);
 
 		/*
