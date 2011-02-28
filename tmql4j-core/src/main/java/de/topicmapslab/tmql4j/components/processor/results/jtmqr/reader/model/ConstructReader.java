@@ -717,7 +717,7 @@ public class ConstructReader {
 			}
 
 			if (token.equals(JsonToken.VALUE_STRING)) {
-				identifier.add(text.substring(3));
+				identifier.add(text);
 			}
 		}
 
