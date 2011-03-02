@@ -90,7 +90,7 @@ The function 'distance' returns the distance between two WGS84 coordinates given
 |*profile*|fn:dates ( ) return tuple-sequence
 |================
 
-The function 'dates' returns all occurrences representing a date-time value checked by the datatype 'xsd:dateTime'.
+The function 'dates' returns all occurrences representing a date-time value checked by the datatype 'xsd:dateTime' or 'xsd:date' .
 
 ==== Dates-After Function ====
 
@@ -102,7 +102,7 @@ The function 'dates' returns all occurrences representing a date-time value chec
 |*profile*|fn:dates-after ( y : integer , m : integer , d : integer , h : integer , min : integer , s : integer ) return tuple-sequence
 |================
 
-The function 'dates-after' returns all occurrences representing a date-time value checked by the datatype 'xsd:dateTime' after a specific date. The date can be defined by a single string literal or as a set of integer values representing the year, month, day and optional the hour, the minute and the second.
+The function 'dates-after' returns all occurrences representing a date-time value checked by the datatype 'xsd:dateTime' or 'xsd:date'  after a specific date. The date can be defined by a single string literal or as a set of integer values representing the year, month, day and optional the hour, the minute and the second.
 
 ==== Dates-Before Function ====
 
@@ -114,7 +114,7 @@ The function 'dates-after' returns all occurrences representing a date-time valu
 |*profile*|fn:dates-before ( y : integer , m : integer , d : integer , h : integer , min : integer , s : integer ) return tuple-sequence
 |================
 
-The function 'dates-before' returns all occurrences representing a date-time value checked by the datatype 'xsd:dateTime' before a specific date. The date can be defined by a single string literal or as a set of integer values representing the year, month, day and optional the hour, the minute and the second.
+The function 'dates-before' returns all occurrences representing a date-time value checked by the datatype 'xsd:dateTime' or 'xsd:date'  before a specific date. The date can be defined by a single string literal or as a set of integer values representing the year, month, day and optional the hour, the minute and the second.
 
 ==== Dates-In-Range Function ====
 
@@ -126,7 +126,7 @@ The function 'dates-before' returns all occurrences representing a date-time val
 |*profile*|fn:dates-in-range ( y1 : integer , m1 : integer , d1 : integer , h1 : integer , min1 : integer , s1 : integer , y2 : integer , m2 : integer , d2 : integer , h2 : integer , min2 : integer , s2 : integer  ) return tuple-sequence
 |================
 
-The function 'dates-in-range' returns all occurrences representing a date-time value checked by the datatype 'xsd:dateTime' between two specific dates. The dates can be defined by a single string literal or as a set of integer values representing the year, month, day and optional the hour, the minute and the second.
+The function 'dates-in-range' returns all occurrences representing a date-time value checked by the datatype 'xsd:dateTime' or 'xsd:date' between two specific dates. The dates can be defined by a single string literal or as a set of integer values representing the year, month, day and optional the hour, the minute and the second.
 
 ==== Get-Association-Types Function ====
 

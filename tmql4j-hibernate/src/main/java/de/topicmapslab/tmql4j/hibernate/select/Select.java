@@ -14,8 +14,8 @@ import de.topicmapslab.tmql4j.hibernate.core.OrderBy;
 import de.topicmapslab.tmql4j.hibernate.core.Where;
 import de.topicmapslab.tmql4j.hibernate.exception.InvalidModelException;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Comma;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Unique;
 import de.topicmapslab.tmql4j.path.grammar.lexical.WhiteSpace;
-import de.topicmapslab.tmql4j.select.grammar.lexical.Unique;
 
 /**
  * @author Sven Krosse
@@ -221,32 +221,32 @@ public class Select implements IQueryPart {
 		/*
 		 * add unique
 		 */
-		if ( unique){
+		if (unique) {
 			builder.append(Unique.TOKEN);
 			builder.append(WhiteSpace.TOKEN);
 		}
 		return builder.toString();
 	}
-	
+
 	/**
-	  * {@inheritDoc}
-	  */
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Select clone() throws CloneNotSupportedException {
 		Select clone = new Select();
 		for (IQueryPart item : getSelects()) {
 			clone.add(item.clone());
 		}
-		if ( where != null ){
+		if (where != null) {
 			clone.where = where.clone();
 		}
-		if ( orderBy != null ){
+		if (orderBy != null) {
 			clone.orderBy = orderBy.clone();
 		}
-		if ( offset != null ){
+		if (offset != null) {
 			clone.offset = offset.clone();
 		}
-		if ( limit != null ){
+		if (limit != null) {
 			clone.limit = limit.clone();
 		}
 		clone.setUnique(unique);

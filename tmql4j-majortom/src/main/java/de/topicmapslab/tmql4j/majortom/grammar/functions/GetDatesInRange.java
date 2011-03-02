@@ -12,6 +12,7 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.Set;
 
 import org.tmapi.core.TopicMap;
 
@@ -66,7 +67,9 @@ public class GetDatesInRange extends FunctionImpl {
 				if (!index.isOpen()) {
 					index.open();
 				}
-				for (ICharacteristics c : index.getCharacteristics(topicMap.createLocator(XmlSchemeDatatypes.XSD_DATETIME))) {
+				Set<ICharacteristics> set = HashUtil.getHashSet(index.getCharacteristics(topicMap.createLocator(XmlSchemeDatatypes.XSD_DATE)));
+				set.addAll(index.getCharacteristics(topicMap.createLocator(XmlSchemeDatatypes.XSD_DATETIME)));
+				for (ICharacteristics c : set) {
 					Calendar v = ((IOccurrence) c).dateTimeValue();
 					if (v.after(calendars[0]) && v.before(calendars[1])) {
 						Map<String, Object> result = HashUtil.getHashMap();

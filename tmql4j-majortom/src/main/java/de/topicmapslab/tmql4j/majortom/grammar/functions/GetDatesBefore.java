@@ -12,6 +12,7 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.Set;
 
 import org.tmapi.core.TopicMap;
 
@@ -66,7 +67,9 @@ public class GetDatesBefore extends FunctionImpl {
 				if (!index.isOpen()) {
 					index.open();
 				}
-				for (ICharacteristics c : index.getCharacteristics(topicMap.createLocator(XmlSchemeDatatypes.XSD_DATETIME))) {
+				Set<ICharacteristics> set = HashUtil.getHashSet(index.getCharacteristics(topicMap.createLocator(XmlSchemeDatatypes.XSD_DATE)));
+				set.addAll(index.getCharacteristics(topicMap.createLocator(XmlSchemeDatatypes.XSD_DATETIME)));
+				for (ICharacteristics c : set) {
 					if (((IOccurrence) c).dateTimeValue().before(calendar)) {
 						Map<String, Object> result = HashUtil.getHashMap();
 						result.put(QueryMatches.getNonScopedVariable(), c);

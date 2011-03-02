@@ -123,7 +123,8 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 		 */
 		if (containsExpressionsType(GroupByClause.class)) {
 			newContext.setContextBindings(matches);
-			QueryMatches results = getInterpretersFilteredByEypressionType(runtime, GroupByClause.class).get(0).interpret(runtime, newContext, optionalArguments);
+			QueryMatches results = getInterpretersFilteredByEypressionType(runtime, GroupByClause.class).get(0).interpret(runtime, newContext,
+					optionalArguments);
 			if (results.isEmpty()) {
 				return QueryMatches.emptyMatches();
 			}
@@ -134,29 +135,25 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 		 */
 		if (ParserUtils.containsTokens(getTmqlTokens(), Unique.class)) {
 			matches = matches.unify();
-		}		
+		}
 		return interpretSelectionWindow(matches, limit, offset);
 	}
 
 	/**
-	 * The method is called to interpret the given sub-expression by using the
-	 * given runtime. The interpretation will call the sub-expression if the
-	 * given expression isn't a leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the given runtime. The interpretation will
+	 * call the sub-expression if the given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
-	 * The interpretation will transform the value on top of the stack and put
-	 * its results also on top.
+	 * The interpretation will transform the value on top of the stack and put its results also on top.
 	 * </p>
 	 * 
 	 * @param runtime
-	 *            the runtime which contains all necessary information for
-	 *            querying process
+	 *            the runtime which contains all necessary information for querying process
 	 * @param context
 	 *            the current querying context
 	 * @param optionalArguments
 	 *            optional arguments
-	 * @return the query matches containing the results of the interpretation of
-	 *         the sub-expression
+	 * @return the query matches containing the results of the interpretation of the sub-expression
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
@@ -179,24 +176,20 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 	}
 
 	/**
-	 * The method is called to interpret the given sub-expression by using the
-	 * given runtime. The interpretation will call the sub-expression if the
-	 * given expression isn't a leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the given runtime. The interpretation will
+	 * call the sub-expression if the given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
-	 * The interpretation will transform the value on top of the stack and put
-	 * its results also on top.
+	 * The interpretation will transform the value on top of the stack and put its results also on top.
 	 * </p>
 	 * 
 	 * @param runtime
-	 *            the runtime which contains all necessary information for
-	 *            querying process
+	 *            the runtime which contains all necessary information for querying process
 	 * @param context
 	 *            the current querying context
 	 * @param optionalArguments
 	 *            optional arguments
-	 * @return the query matches containing the results of the interpretation of
-	 *         the sub-expression
+	 * @return the query matches containing the results of the interpretation of the sub-expression
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
@@ -214,8 +207,7 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 		IExpressionInterpreter<ReturnClause> returnClauseInterpreter = getInterpretersFilteredByEypressionType(runtime, ReturnClause.class).get(0);
 
 		/*
-		 * check if return-clause is dependent from variables and results is not
-		 * empty
+		 * check if return-clause is dependent from variables and results is not empty
 		 */
 		for (IExpressionInterpreter<ForClause> interpreter : getInterpretersFilteredByEypressionType(runtime, ForClause.class)) {
 			if (context.getContextBindings().getPossibleValuesForVariable(interpreter.getTokens().get(1)).isEmpty()) {
@@ -230,24 +222,20 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 	}
 
 	/**
-	 * The method is called to interpret the given sub-expression by using the
-	 * given runtime. The interpretation will call the sub-expression if the
-	 * given expression isn't a leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the given runtime. The interpretation will
+	 * call the sub-expression if the given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
-	 * The interpretation will transform the value on top of the stack and put
-	 * its results also on top.
+	 * The interpretation will transform the value on top of the stack and put its results also on top.
 	 * </p>
 	 * 
 	 * @param runtime
-	 *            the runtime which contains all necessary information for
-	 *            querying process
+	 *            the runtime which contains all necessary information for querying process
 	 * @param context
 	 *            the current querying context
 	 * @param optionalArguments
 	 *            optional arguments
-	 * @return the query matches containing the results of the interpretation of
-	 *         the sub-expression
+	 * @return the query matches containing the results of the interpretation of the sub-expression
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
@@ -278,8 +266,7 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 					 */
 					for (Entry<String, Object> entry : tuple.entrySet()) {
 						/*
-						 * check if possible bindings of the where-clause are
-						 * contained by the for-clauses-bindings
+						 * check if possible bindings of the where-clause are contained by the for-clauses-bindings
 						 */
 						if (context.getContextBindings().getOrderedKeys().contains(entry.getKey())) {
 							satisfy = context.getContextBindings().getPossibleValuesForVariable(entry.getKey()).contains(entry.getValue());
@@ -300,24 +287,20 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 	}
 
 	/**
-	 * The method is called to interpret the given sub-expression by using the
-	 * given runtime. The interpretation will call the sub-expression if the
-	 * given expression isn't a leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the given runtime. The interpretation will
+	 * call the sub-expression if the given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
-	 * The interpretation will transform the value on top of the stack and put
-	 * its results also on top.
+	 * The interpretation will transform the value on top of the stack and put its results also on top.
 	 * </p>
 	 * 
 	 * @param runtime
-	 *            the runtime which contains all necessary information for
-	 *            querying process
+	 *            the runtime which contains all necessary information for querying process
 	 * @param context
 	 *            the current querying context
 	 * @param optionalArguments
 	 *            optional arguments
-	 * @return the query matches containing the results of the interpretation of
-	 *         the sub-expression
+	 * @return the query matches containing the results of the interpretation of the sub-expression
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
@@ -326,13 +309,12 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 		 * Cache to store all possible bindings of contained variables
 		 */
 		QueryMatches[] bindings = extractArguments(runtime, ForClause.class, context, optionalArguments);
-		return new QueryMatches(runtime, bindings);		
+		return new QueryMatches(runtime, bindings);
 	}
 
 	/**
-	 * Internal method to interpret the contained limit-clause if exists. The
-	 * limit-clause define the number of maximum results contained in the
-	 * overall results of this select-expression.
+	 * Internal method to interpret the contained limit-clause if exists. The limit-clause define the number of maximum
+	 * results contained in the overall results of this select-expression.
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
@@ -340,8 +322,7 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 	 *            the current querying context
 	 * @param optionalArguments
 	 *            optional arguments
-	 * @return the limit defined by the limit-clause or -1 if limit-clause is
-	 *         missing.
+	 * @return the limit defined by the limit-clause or -1 if limit-clause is missing.
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
@@ -351,10 +332,8 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 	}
 
 	/**
-	 * Internal method to interpret the contained offset-clause if exists. The
-	 * offset-clause define the first index of the selection window which will
-	 * be used to extract the value from the overall results of this
-	 * select-expression.
+	 * Internal method to interpret the contained offset-clause if exists. The offset-clause define the first index of
+	 * the selection window which will be used to extract the value from the overall results of this select-expression.
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
@@ -362,8 +341,7 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 	 *            the current querying context
 	 * @param optionalArguments
 	 *            optional arguments
-	 * @return the offset defined by the offset-clause or 0 if offset-clause is
-	 *         missing.
+	 * @return the offset defined by the offset-clause or 0 if offset-clause is missing.
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
@@ -373,8 +351,8 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 	}
 
 	/**
-	 * Internal method to extract the selection window from the over all results
-	 * defined by the limit- and offset-clause.
+	 * Internal method to extract the selection window from the over all results defined by the limit- and
+	 * offset-clause.
 	 * 
 	 * @param matches
 	 *            the over all results of the select-clause
@@ -382,8 +360,7 @@ public class FlwrExpressionInterpreter extends ExpressionInterpreterImpl<FlwrExp
 	 *            the limit value defined by limit-clause
 	 * @param offset
 	 *            the offset value defined by offset-clause
-	 * @return the new matches containing only the tuples of the selection
-	 *         window
+	 * @return the new matches containing only the tuples of the selection window
 	 * @throws TMQLRuntimeException
 	 *             thrown if indexes are invalid
 	 */
