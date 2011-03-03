@@ -10,7 +10,7 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonToken;
 
-import de.topicmapslab.IJTMConstants;
+import de.topicmapslab.jtm.writer.IJTMConstants;
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.model.ConstructReader;
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.result.SimpleJtmqrResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer.IJtmQrKeys;

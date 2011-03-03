@@ -10,8 +10,8 @@ import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.tmapi.core.Construct;
 
-import de.topicmapslab.JTMVersion;
-import de.topicmapslab.JTMWriter;
+import de.topicmapslab.jtm.writer.JTMVersion;
+import de.topicmapslab.jtm.writer.JTMWriter;
 import de.topicmapslab.tmql4j.util.CollectionsUtility;
 
 /**
