@@ -1,0 +1,204 @@
+=== Navigation concept ===
+
+In relation to the topic maps reference model ( TMRM ) a topic map is represented as a abstract bidirectional graph of construct nodes. Each node support a number of defined axis to navigated to a related note. This concept is similar to the XPath navigation of XML documents except the difference of a tree-structure as a special graph.
+
+The navigations concept of TMQL realize a navigation throw the abstract bidirectional graph of a topic map. The current draft supports a set of predefined axis on the canonical level which can be used to navigate in forward or in backward direction. Each axis support a set of construct types which can be used as start point of the navigation step represented by the current axis. Some axes support an optional type filter to control the navigation step in different ways.
+
+The syntax of a navigation expression looks like the following production.
+
+----------------------------------	
+1:	NAVIGATION	::=	STEP [ NAVIGATION ]
+2:	STEP 		::=	DIRECTION AXIS [TOPIC-REF]
+3:	DIRECTION 	::= << | >>
+----------------------------------
+
+The following 12 section describes each axis as stand-alone construct. By combine the axis the user can navigate to each node of the topic map. There are no isolated nodes which cannot be access by a navigation.
+
+==== The indicators axis ====
+
+The 'indicators' axis represents the relationship between a topic item and its subject-identifiers. It does not support any optional type arguments and can be navigated in both directions.
+
+If the current node is a topic item the forward navigation returns all subject-identifiers of the current topic item as locator objects.
+
+If the current node is a string literal the backward navigation returns the topic represented by this subject-identifier or an empty set if there is no topic contained.
+
+[NOTE]
+There is a shortcut definition contained by the non-canonical level based on the CTM syntax. The shortcut '~' returns the topic item represented by the following literal used as subject-identifier.
+
+==== The locators axis ====
+
+The 'locators' axis represents the relationship between a topic item and its subject-locators. It does not support any optional type arguments and can be navigated in both directions.
+
+If the current node is a topic item the forward navigation returns all subject-locators of the current topic item as locator objects.
+
+If the current node is a string literal the backward navigation returns the topic represented by this subject-locator or an empty set if there is no topic contained.
+
+[NOTE]
+There is a shortcut definition contained by the non-canonical level based on the CTM syntax. The shortcut '=' returns the topic item represented by the following literal used as subject-locator.
+
+==== The item axis ====
+
+The 'item' axis represents the relationship between a topic item and its item-identifier. It does not support any optional type arguments and can be navigate in both directions.
+
+If the current node is a construct the forward navigation returns one item-identifier of the current construct. In relation to the TMQL meta model, a construct only contains one item-identifier. If the number of item-identifiers is more than one, one of them will be selected at random.
+
+If the current node is a string literal the backward navigation returns the construct represented by this item-identifier or an empty set if there is no construct contained.
+
+[NOTE]
+There is a shortcut definition contained by the non-canonical level based on the CTM syntax. The shortcut '^' returns the construct represented by the following literal used as item-identifier.
+
+==== The id axis ====
+
+The 'id' axis represents the relationship between a topic map construct and its id. It does not support any optional type arguments and can be navigate in both directions.
+
+If the current node is a construct the forward navigation returns the id of the current construct.
+
+If the current node is a string literal the backward navigation returns the construct represented by this id or an empty set if there is no construct contained.
+
+==== The typed axis ====
+
+The 'typed' axis represents the relationship between typed constructs and the topic type. It does not support any optional type arguments and can be navigated in both directions.
+
+If the current node is a typed construct the forward navigation returns the topic type of this construct.
+
+If the current node is a topic type the backward navigation returns all typed constructs being of this type.
+
+==== The types axis ====
+
+The 'types' axis represents the relationship between topic types and its instances. It does not support any optional type arguments and can be navigated in both directions.
+
+If the current node is a topic item the forward navigation returns all topic types of the current topic.
+
+[NOTE]
+There is an 'instances' axis defined on the non-canonical level. If the current node is a topic item the backward navigation returns all topic types of the current topic, too.
+
+[NOTE]
+All type-instance associations handle transitive or not in relation to the pragma-definition. If the type relation handled transitive, the navigation returns all types of the whole type hierarchy, which means if A is an instance of B and B is a subtype of C than B and C are types of A.
+
+If the current node is a topic type the backward navigation returns all instances of the current topic type.
+
+[NOTE]
+There is an 'instances' axis defined on the non-canonical level. If the current node is a topic types the forward navigation returns all topic items which are instances of the current topic type.
+
+[NOTE]
+As root navigation there is an shortcut definition based on the non-canonical level. The shortcut '//' returns all instances of the topic type defined by the following topic reference.
+
+[NOTE]
+All type-instance associations handle transitive or not in relation to the pragma-definition. If the instance relation handled transitive, the navigation returns all instances of the whole type hierarchy, which means if A is an instance of B and B is a subtype of C than A is an instance of C.
+
+==== The supertypes axis ====
+
+The 'supertypes' axis represents the relationship between topic types and its supertypes. It does not support any optional type arguments and can be navigated in both directions.
+
+If the current node is a topic type the forward navigation returns all topic types acts as supertypes of the current topic type.
+
+[NOTE]
+There is an 'subtypes' axis defined on the non-canonical level. If the current node is a topic type the backward navigation returns all topic types acts as supertypes of the current topic, too.
+
+[NOTE]
+All supertype-subtype associations handle transitive or not in relation to the pragma-definition. If the supertype relation handled transitive, the navigation returns all supertypes of the whole type hierarchy, which means if A is a subtype of B and B is a subtype of C than B and C are supertypes of A.
+
+If the current node is a topic type the backward navigation returns all topic types acts as subtypes of the current topic type.
+
+[NOTE]
+There is an 'subtypes' axis defined on the non-canonical level. If the current node is a topic types the forward navigation returns all topic types acts as subtypes of the current topic type.
+
+[NOTE]
+All supertype-subtype associations handle transitive or not in relation to the pragma-definition. If the subtype relation handled transitive, the navigation returns all subtypes of the whole type hierarchy, which means if A is a subtype of B and B is a subtype of C than A and B are subtypes of C.
+
+==== The characteristics axis ====
+
+The 'characteristics' axis represents the relationship between a topic item and its characteristics ( merged concept of names and occurrences ). The axis supports a optional type in both directions.
+
+If the current node is a topic item the forward navigation returns all characteristic items of the current topic item. If the optional type is used only characteristics of the specified type will be returned.
+
+[NOTE]
+There are special predefined topic references to identify the TMDM 'name-type' and 'occurrence-type' as optional type arguments of the characteristics axis. The topic reference 'tm:name' used as optional type argument of the 'characteristics' axis will return all characteristics which represent a name item in the meaning of the TMDM. The topic reference 'tm:occurrence' used as optional type argument of the 'characteristics' axis will return all characteristics which represent an occurrence item in the meaning of the TMDM.
+
+If the current node is a characteristics item the backward navigation returns the topic item related to this characteristics item. If the optional type is used only topic items being an instance of the specified type will be returned.
+
+==== The atomify axis ====
+
+The 'atomify' axis represents the relationship between a characteristics or locator object and its literal. The axis does not support any optional type argument and can be navigated in both directions.
+
+If the current node is a characteristics item the forward navigation returns the literal representing the value of the characteristics item. The literal will be interpreted in relation to the datatype of the characteristics item and will be casted automatically. If the current node is a locator object the forward navigation returns the string literal representing the IRI of this locator object.
+
+[NOTE]
+If a characteristic or locator item compared with a literal it will be transformed to an atomic automatically.
+
+[NOTE]
+There is a shortcut definition as a part of the non-canonical level representing the combination of the 'characteristics' and 'atomify' axis. The shortcut '/' returns the literals of all characteristics of the topic item addressed by the current node. Please note that the optional type can not be left out by using this shortcut, it is obligatory .
+
+If the current node is a string literal the backward navigation returns all characteristic items or locator items using exactly this literal as value.
+
+[NOTE]
+There is a shortcut definition as a part of the non-canonical level representing the combination of the 'characteristics' and 'atomify' axis. The shortcut '\' returns all topics related to at least one characteristics or locators represented by there literal. Please note that the optional type can not be left out by using this shortcut, it is obligatory .
+
+==== The ratomify axis ====
+
+The 'ratomify' axis is a special variant of the 'atomify' axis. In contrast to the 'atomify' axis, the left hand literal will be interpreted as an regular expression. The axis does not support any optional type argument and can be navigated in both directions.
+
+If the current node is a characteristics item the forward navigation returns the literal representing the value of the characteristics item similar to the 'atomify' axis. The literal will be interpreted in relation to the datatype of the characteristics item and will be casted automatically. If the current node is a locator object the forward navigation returns the string literal representing the IRI of this locator object.
+
+[NOTE]
+If a characteristic or locator item compared with a literal it will be transformed to an atomic  automatically.
+
+If the current node is a string literal the backward navigation returns all characteristic items or locator items using a literal matching the given literal interpreted as regular expression.
+
+==== The players axis ====
+
+The 'players' axis represents the relationship between an association item and its players. The optional type argument is supported in both directions.
+
+If the current node is an association item the forward navigation returns all topic items being a player of the current association item. If the optional type is used only the topic items being the player of the role type specified by the optional type will be returned. If the current node is a topic type, at first all association items of the topic type will be extracted.
+
+[NOTE]
+There is a shortcut contained by the non-canonical level. The shortcut '->' returns all players of the association item specified by the current node. The optional type can be used similar to the canonical production.
+
+If the current node is a topic item the backward navigation returns all association items played by the topic item. If the optional type is used only the association items will returned using the topic item as a player of the role typed by the optional type.
+
+[NOTE]
+There is a shortcut contained by the non-canonical level. The shortcut '<-' returns all associations played by the topic item specified by the current node. The optional type can be used similar to the canonical production.
+
+==== The roles axis ====
+
+The 'roles' axis represents the relationship between an association item and its role types. The optional type argument only support for backward navigations.
+
+If the current node is an association item the forward navigation returns all topic types acts as role types of the association. If the current node is a topic type, at first all association items of the topic type will be extracted.
+
+If the current node is a topic type the backward navigation returns all association items using the topic type as a role type. The optional type has no relevance.
+
+[NOTE]
+In addition to the current draft some implementations of the query language supporting an optional type argument. If the optional type is used the backward navigation only returns association items of the defined association type.
+
+==== The traverse axis ====
+
+The 'traverse' axis represents the relationship between topic items, playing the same association items. The type argument can be used in both directions.
+
+If the current node is a topic item the forward navigation returns all topic items connected the current node by playing at least one association item with it. If the optional type is used only topic items connected through an association item of the optional type are returned.
+
+[NOTE]
+There is a shortcut definition contained by the non-canonical level. The shortcut '<->' returns all connected topic items. The optional type can be used in the same way like the canonical production.
+
+[NOTE]
+The result can contains a topic item multiple times, if it is connected through more than one association item.
+
+If the current node is an association item the backward navigation returns all association items connected by using the same playing topic item. The optional type has no relevance.
+
+[NOTE]
+The result can contains an association item multiple times, if it is connected through more than one topic item.
+
+==== The scope axis ====
+
+The 'scope' represents the relationship between an association item or an characteristic item and its scoping topics. The optional type is not supported.
+
+If the current node is an association item or an characteristic item the forward navigation returns all themes of the scope of that constructs.
+
+If the current node is a topic item the backward navigation returns all association items and characteristic items containing the topic item as one theme of their scope.
+
+==== The reifier axis ====
+
+The 'reifier' represents the relationship between an association item or an characteristic item and its reifying topic item. The optional type has no relevance.
+
+If the current node is an association item or an characteristic item the forward navigation returns the topic item used as reifier of the current construct.
+
+If the current node is a topic item the backward navigation returns the association item or characteristic item using the topic item as reifier.
