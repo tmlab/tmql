@@ -88,8 +88,8 @@ public abstract class AggregateFunctionImpl extends FunctionImpl {
 		 * calculate values
 		 */
 		Context newContext = new Context(context);
-		newContext.setCurrentTuple(null);
-		newContext.setContextBindings(null);
+//		newContext.setCurrentTuple(null);
+//		newContext.setContextBindings(null);
 		for (Object node : nodes) {
 			newContext.setCurrentNode(node);
 			QueryMatches results = interpreter.interpret(runtime, newContext);
