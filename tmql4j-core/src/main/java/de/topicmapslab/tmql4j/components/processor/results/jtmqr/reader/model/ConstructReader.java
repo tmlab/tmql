@@ -17,7 +17,7 @@ import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 import org.tmapi.core.Variant;
 
-import de.topicmapslab.IJTMConstants;
+import de.topicmapslab.jtm.writer.IJTMConstants;
 
 /**
  * class to read json stream
