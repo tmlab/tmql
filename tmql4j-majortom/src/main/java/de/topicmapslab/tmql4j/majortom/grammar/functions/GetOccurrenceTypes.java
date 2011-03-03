@@ -59,7 +59,9 @@ public class GetOccurrenceTypes extends FunctionImpl {
 				Object duplicates = tuple.get("$1");
 				if (param0 instanceof ITopic) {
 					ITopic type = (ITopic) param0;
-					Set<List<Topic>> occurrenceTypes = HashUtil.getHashSet();
+					Set<List<Topic>> occurrenceTypesByInstance = HashUtil.getHashSet();
+					Set<Topic> occurrenceTypesByType = HashUtil.getHashSet();
+					boolean duplicate = duplicates != null && Boolean.parseBoolean(duplicates.toString());
 					/*
 					 * get instances
 					 */
@@ -70,22 +72,28 @@ public class GetOccurrenceTypes extends FunctionImpl {
 						 */
 						for (Occurrence o : t.getOccurrences()) {
 							Topic ty = o.getType();
-							if (duplicates != null && Boolean.parseBoolean(duplicates.toString())) {
+							if (duplicate) {
 								list.add(ty);
-							} else if (!list.contains(ty)) {
-								list.add(ty);
+							} else {
+								occurrenceTypesByType.add(ty);
 							}
 						}
-						if (!occurrenceTypes.contains(list)) {
-							occurrenceTypes.add(list);
+						if (!occurrenceTypesByInstance.contains(list)) {
+							occurrenceTypesByInstance.add(list);
 						}
 					}
 					/*
 					 * set results
 					 */
-					for (List<Topic> rt : occurrenceTypes) {
+					if (duplicate) {
+						for (List<Topic> rt : occurrenceTypesByInstance) {
+							Map<String, Object> t = HashUtil.getHashMap();
+							t.put("$0", rt);
+							results.add(t);
+						}
+					}else{
 						Map<String, Object> t = HashUtil.getHashMap();
-						t.put("$0", rt);
+						t.put("$0", occurrenceTypesByType);
 						results.add(t);
 					}
 				}

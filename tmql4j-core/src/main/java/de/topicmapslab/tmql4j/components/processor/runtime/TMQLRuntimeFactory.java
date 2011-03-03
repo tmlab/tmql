@@ -31,8 +31,8 @@ public class TMQLRuntimeFactory {
 	/**
 	 * the Logger
 	 */
-	private Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
-	
+	private final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
+
 	/**
 	 * private hidden constructor
 	 */
@@ -64,9 +64,9 @@ public class TMQLRuntimeFactory {
 			}
 		} catch (Throwable t) {
 			// we do nothing, cause we are not in an OSGi environment
-			logger.warn("No Osgi Bundle found");
+			logger.info("No Osgi Bundle found");
 		}
-		
+
 		ServiceLoader<ITMQLRuntime> loader = ServiceLoader.load(ITMQLRuntime.class, TMQLRuntimeFactory.class.getClassLoader());
 		Iterator<ITMQLRuntime> iterator = loader.iterator();
 		if (iterator.hasNext()) {
@@ -114,7 +114,7 @@ public class TMQLRuntimeFactory {
 			// we do nothing, cause we are not in an OSGi environment
 			logger.info("No Osgi Bundle found");
 		}
-		
+
 		ServiceLoader<ITMQLRuntime> loader = ServiceLoader.load(ITMQLRuntime.class, TMQLRuntimeFactory.class.getClassLoader());
 		Iterator<ITMQLRuntime> iterator = loader.iterator();
 		while (iterator.hasNext()) {

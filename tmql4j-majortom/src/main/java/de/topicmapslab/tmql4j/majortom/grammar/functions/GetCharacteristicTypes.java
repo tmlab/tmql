@@ -59,7 +59,9 @@ public class GetCharacteristicTypes extends FunctionImpl {
 				Object duplicates = tuple.get("$1");
 				if (param0 instanceof ITopic) {
 					ITopic type = (ITopic) param0;
-					Set<List<Topic>> characteristicTypes = HashUtil.getHashSet();
+					Set<List<Topic>> characteristicsTypesByInstance = HashUtil.getHashSet();
+					Set<Topic> characteristicsTypesByType = HashUtil.getHashSet();
+					boolean duplicate = duplicates != null && Boolean.parseBoolean(duplicates.toString());
 					/*
 					 * get instances
 					 */
@@ -70,22 +72,31 @@ public class GetCharacteristicTypes extends FunctionImpl {
 						 */
 						for (ICharacteristics c : ((ITopic) t).getCharacteristics()) {
 							Topic ty = c.getType();
-							if (duplicates != null && Boolean.parseBoolean(duplicates.toString())) {
+							if (duplicate) {
 								list.add(ty);
-							} else if (!list.contains(ty)) {
-								list.add(ty);
+							} else {
+								characteristicsTypesByType.add(ty);
 							}
 						}
-						if (!characteristicTypes.contains(list)) {
-							characteristicTypes.add(list);
+						if (!characteristicsTypesByInstance.contains(list)) {
+							characteristicsTypesByInstance.add(list);
 						}
 					}
 					/*
 					 * set results
 					 */
-					for (List<Topic> rt : characteristicTypes) {
+					/*
+					 * set results
+					 */
+					if (duplicate) {
+						for (List<Topic> rt : characteristicsTypesByInstance) {
+							Map<String, Object> t = HashUtil.getHashMap();
+							t.put("$0", rt);
+							results.add(t);
+						}
+					}else{
 						Map<String, Object> t = HashUtil.getHashMap();
-						t.put("$0", rt);
+						t.put("$0", characteristicsTypesByType);
 						results.add(t);
 					}
 				}

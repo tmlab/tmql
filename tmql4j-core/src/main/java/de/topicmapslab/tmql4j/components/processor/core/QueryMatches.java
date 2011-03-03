@@ -1411,7 +1411,9 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 						/*
 						 * add value if not already contained
 						 */
-						values.add(value);
+						if (!values.contains(value)) {
+							values.add(value);
+						}
 					}
 
 				}

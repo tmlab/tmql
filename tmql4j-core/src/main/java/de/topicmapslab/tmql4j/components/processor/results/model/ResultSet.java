@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
@@ -134,6 +135,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void addResults(Collection<T> results) {
 		for (T result : results) {
 			addResult(result);
@@ -143,6 +145,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void addResults(T... results) {
 		for (T result : results) {
 			addResult(result);
@@ -152,6 +155,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Class<? extends T> getResultClass() {
 		return clazz;
 	}
@@ -159,6 +163,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Iterator<T> iterator() {
 		return results.iterator();
 	}
@@ -166,6 +171,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public T first() throws NoSuchElementException {
 		iterator = results.iterator();
 		return iterator.next();
@@ -174,6 +180,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public T next() throws NoSuchElementException {
 		return iterator.next();
 	}
@@ -181,6 +188,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public T last() throws NoSuchElementException {
 		try {
 			return this.results.get(results.size() - 1);
@@ -192,6 +200,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public void addResult(IResult result) {
 		this.results.add((T) result);
@@ -200,6 +209,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int size() {
 		return results.size();
 	}
@@ -207,6 +217,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isEmpty() {
 		return size() == 0;
 	}
@@ -218,6 +229,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	 * 
 	 * @return the string representation of the result set
 	 */
+	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("{\r\n");
@@ -251,6 +263,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public synchronized void clear() {
 		this.results.clear();
 		this.iterator = this.results.iterator();
@@ -259,6 +272,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List<T> getResults() {
 		return results;
 	}
@@ -266,6 +280,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public T get(int index) {
 		if (getResults().size() <= index) {
 			throw new IndexOutOfBoundsException("Result set does not contains an element at position '" + index + "'.");
@@ -276,6 +291,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <R extends Object> R get(int rowIndex, int colIndex) {
 		T result = get(rowIndex);
@@ -285,6 +301,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isNullValue(int rowIndex, int colIndex) {
 		Object obj = get(rowIndex, colIndex);
 		return obj == null;
@@ -293,6 +310,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <R extends Object> R get(int rowIndex, String alias) {
 		IResult result = get(rowIndex);
@@ -302,6 +320,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isNullValue(int rowIndex, String alias) {
 		Object obj = get(rowIndex, alias);
 		return obj == null;
@@ -317,6 +336,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	public static ResultSet<?> emptyResultSet() {
 		if (emptyResultSet == null) {
 			emptyResultSet = new ResultSet<IResult>(null, null) {
+				@Override
 				public String getResultType() {
 					return ResultType.TMAPI.name();
 				}
@@ -324,6 +344,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 				/**
 				 * {@inheritDoc}
 				 */
+				@Override
 				public void addResult(IResult result) {
 					throw new UnsupportedOperationException("Unmodifiable result set does not supports method add.");
 				}
@@ -331,6 +352,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 				/**
 				 * {@inheritDoc}
 				 */
+				@Override
 				public void addResults(Collection<IResult> results) {
 					throw new UnsupportedOperationException("Unmodifiable result set does not supports method add.");
 				}
@@ -338,6 +360,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 				/**
 				 * {@inheritDoc}
 				 */
+				@Override
 				public void addResults(IResult... results) {
 					throw new UnsupportedOperationException("Unmodifiable result set does not supports method add.");
 				}
@@ -345,6 +368,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 				/**
 				 * {@inheritDoc}
 				 */
+				@Override
 				public Class<? extends IResult> getResultClass() {
 					return IResult.class;
 				}
@@ -352,6 +376,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 				/**
 				 * {@inheritDoc}
 				 */
+				@Override
 				public void unify() {
 					// NOTHING TO DO
 				}
@@ -359,6 +384,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 				/**
 				 * {@inheritDoc}
 				 */
+				@Override
 				public boolean isNullValue(int rowIndex, int colIndex) {
 					return false;
 				}
@@ -366,8 +392,17 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 				/**
 				 * {@inheritDoc}
 				 */
+				@Override
 				public IResult createResult() {
 					throw new UnsupportedOperationException("Unmodifiable result set does not supports creation of new results.");
+				}
+
+				/**
+				 * {@inheritDoc}
+				 */
+				@Override
+				public java.util.Set<String> getAliases() {
+					return Collections.emptySet();
 				}
 			};
 		}
@@ -377,6 +412,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void unify() {
 		List<T> results = HashUtil.getList();
 		for (T result : getResults()) {
@@ -401,6 +437,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toCTM() throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("Current result set cannot be transformed to CTM.");
 	}
@@ -408,6 +445,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void toCTM(OutputStream os) throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("Current result set cannot be transformed to CTM.");
 	}
@@ -415,6 +453,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toJTMQR() throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("Current result set cannot be transformed to JTMQR.");
 	}
@@ -422,6 +461,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void toJTMQR(OutputStream os) throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("Current result set cannot be transformed to JTMQR.");
 	}
@@ -429,6 +469,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toXTM() throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("Current result set cannot be transformed to XTM.");
 	}
@@ -436,6 +477,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void toXTM(OutputStream os) throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("Current result set cannot be transformed to XTM.");
 	}
@@ -443,6 +485,7 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public TopicMap toTopicMap() throws UnsupportedOperationException {
 		throw new UnsupportedOperationException("Current result set cannot be transformed to a topic map.");
 	}
@@ -468,17 +511,41 @@ public abstract class ResultSet<T extends IResult> implements IResultSet<T> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getAlias(int index) {
-		if ( indexes == null ){
+		if (indexes == null) {
 			return null;
 		}
 		return indexes.get(index);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
+	public int getIndex(String alias) {
+		if (alias == null || !this.alias.containsKey(alias)) {
+			return -1;
+		}
+		return this.alias.get(alias);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean hasAlias() {
-		return indexes != null && alias != null; 
+		return indexes != null && alias != null;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Set<String> getAliases() {
+		if (hasAlias()) {
+			return alias.keySet();
+		}
+		return Collections.emptySet();
 	}
 }

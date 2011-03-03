@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.tmapi.core.TopicMap;
 
@@ -290,6 +291,25 @@ public interface IResultSet<T extends IResult> extends Iterable<T> {
 	 *             transformation to topic map.
 	 */
 	public TopicMap toTopicMap() throws UnsupportedOperationException;
+
+	/**
+	 * Returns all aliases or an empty set
+	 * 
+	 * @return the aliases
+	 * @since 3.1.0
+	 */
+	public Set<String> getAliases();
+
+	/**
+	 * Returns the index for the given alias or <code>null</code> if no index is
+	 * set
+	 * 
+	 * @param alias
+	 *            the alias
+	 * @return the index
+	 * @since 3.1.0
+	 */
+	public int getIndex(String alias);
 
 	/**
 	 * Returns the alias for the given index or <code>null</code> if no alias is

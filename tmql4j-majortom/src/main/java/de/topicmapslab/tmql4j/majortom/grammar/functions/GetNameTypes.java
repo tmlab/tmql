@@ -59,7 +59,9 @@ public class GetNameTypes extends FunctionImpl {
 				Object duplicates = tuple.get("$1");
 				if (param0 instanceof ITopic) {
 					ITopic type = (ITopic) param0;
-					Set<List<Topic>> nameTypes = HashUtil.getHashSet();
+					Set<List<Topic>> nameTypesByInstance = HashUtil.getHashSet();
+					Set<Topic> nameTypesByType = HashUtil.getHashSet();
+					boolean duplicate = duplicates != null && Boolean.parseBoolean(duplicates.toString());
 					/*
 					 * get instances
 					 */
@@ -70,31 +72,36 @@ public class GetNameTypes extends FunctionImpl {
 						 */
 						for (Name n : t.getNames()) {
 							Topic ty = n.getType();
-							if (duplicates != null && Boolean.parseBoolean(duplicates.toString())) {
+							if (duplicate) {
 								list.add(ty);
-							} else if (!list.contains(ty)) {
-								list.add(ty);
+							} else {
+								nameTypesByType.add(ty);
 							}
 						}
-						if (!nameTypes.contains(list)) {
-							nameTypes.add(list);
+						if (!nameTypesByInstance.contains(list)) {
+							nameTypesByInstance.add(list);
 						}
 					}
 					/*
 					 * set results
 					 */
-					for (List<Topic> rt : nameTypes) {
+					if (duplicate) {
+						for (List<Topic> rt : nameTypesByInstance) {
+							Map<String, Object> t = HashUtil.getHashMap();
+							t.put("$0", rt);
+							results.add(t);
+						}
+					}else{
 						Map<String, Object> t = HashUtil.getHashMap();
-						t.put("$0", rt);
+						t.put("$0", nameTypesByType);
 						results.add(t);
 					}
 				}
 				/*
 				 * second argument is boolean argument
 				 */
-				else if ( param0 != null && Boolean.parseBoolean(param0.toString())){
-					return QueryMatches.asQueryMatchNS(runtime, getTransitiveIndex(context.getQuery().getTopicMap())
-							.getNameTypes());
+				else if (param0 != null && Boolean.parseBoolean(param0.toString())) {
+					return QueryMatches.asQueryMatchNS(runtime, getTransitiveIndex(context.getQuery().getTopicMap()).getNameTypes());
 				}
 			}
 			return results;
@@ -116,15 +123,16 @@ public class GetNameTypes extends FunctionImpl {
 	public boolean isExpectedNumberOfParameters(long numberOfParameters) {
 		return numberOfParameters == 0 || numberOfParameters == 1 || numberOfParameters == 2;
 	}
-	
+
 	/**
 	 * Internal method to get the transitive index
-	 * @param topicMap the topic map
+	 * 
+	 * @param topicMap
+	 *            the topic map
 	 * @return the transitive index
 	 */
-	private ITransitiveTypeInstanceIndex getTransitiveIndex(TopicMap topicMap){
-		ITransitiveTypeInstanceIndex index = topicMap.getIndex(
-				ITransitiveTypeInstanceIndex.class);
+	private ITransitiveTypeInstanceIndex getTransitiveIndex(TopicMap topicMap) {
+		ITransitiveTypeInstanceIndex index = topicMap.getIndex(ITransitiveTypeInstanceIndex.class);
 		if (!index.isOpen()) {
 			index.open();
 		}
