@@ -67,8 +67,7 @@ public class TMQLTokenizer {
 		/*
 		 * call method to tokenize
 		 */
-		// tokenize();
-		newTokenize();
+		newTokenize(this.origin, this.tokens);
 
 		this.iterator = this.tokens.iterator();
 	}
@@ -98,9 +97,10 @@ public class TMQLTokenizer {
 	/**
 	 * Internal method to tokenize
 	 */
-	private final void newTokenize() {
+	private final void newTokenize(final String origin, final List<String> tokens) {
 		StringBuilder buffer = new StringBuilder();
 		boolean isProtected = false;
+		boolean isCtmMode = false;
 		String protectionPattern = "";
 		for (int index = 0; index < origin.length(); index++) {
 			char c = origin.charAt(index);
@@ -117,7 +117,7 @@ public class TMQLTokenizer {
 			/*
 			 * check escaping symbol
 			 */
-			if (c == '\\' && isProtected) {
+			if (c == '\\' && isProtected && !isCtmMode) {
 				/*
 				 * next character is missing
 				 */
@@ -141,7 +141,7 @@ public class TMQLTokenizer {
 			/*
 			 * is end of protection
 			 */
-			if (isProtected && currentPattern.endsWith(protectionPattern)) {
+			if (isProtected && currentPattern.endsWith(protectionPattern) && !isCtmMode) {
 				/*
 				 * special handling for XML end
 				 */
@@ -186,15 +186,31 @@ public class TMQLTokenizer {
 				continue;
 			}
 			/*
-			 * is single quoted string
+			 * is CTM pattern
 			 */
-			if (currentPattern.endsWith("'''")) {
-				String content = buffer.toString().trim();
-				if (content.length() > 3) {
-					tokens.add(content.substring(0, content.length() - 3));
+			if ("'''".endsWith(currentPattern)) {
+				/*
+				 * is not in CTM mode
+				 */
+				if (!isCtmMode) {
+					if (!buffer.toString().isEmpty()) {
+						tokens.add(buffer.toString().trim());
+						buffer = new StringBuilder();
+					}
+					isCtmMode = true;
 				}
-				tokens.add("'''");
-				buffer = new StringBuilder();
+				/*
+				 * is in CTM mode
+				 */
+				else {
+
+					String content = buffer.toString();
+					tokens.add(content.substring(0, content.length() - 3));
+					tokens.add("'''");
+
+					buffer = new StringBuilder();
+					isCtmMode = false;
+				}
 			}
 			/*
 			 * beginning of new protection?
@@ -250,6 +266,12 @@ public class TMQLTokenizer {
 		 */
 		if (buffer.toString().length() != 0) {
 			tokens.add(buffer.toString().trim());
+		}
+	}
+
+	private List<String> tokenizeCtmContent(String subString) {
+		for (int index = 0; index < subString.length(); index++) {
+
 		}
 	}
 

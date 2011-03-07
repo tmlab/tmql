@@ -123,6 +123,17 @@ public final class TmqlScreener {
 				// NOTHING TO DO
 			}
 		}
+		int bracketBefore = string.lastIndexOf('<', index);
+		int bracketAfter = string.indexOf('>', index);
+		if (bracketBefore != -1 && bracketAfter != -1) {
+			String candidate = string.substring(bracketBefore + 1, bracketAfter);
+			try {
+				new URL(candidate);
+				return true;
+			} catch (MalformedURLException e) {
+				// NOTHING TO DO
+			}
+		}
 		return false;
 	}
 

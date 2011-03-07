@@ -371,40 +371,10 @@ public class TmqlQueryTransformer {
 	 */
 	private static String transformPatterns(final ITMQLRuntime runtime,
 			final String token) {
+		if ( isProtected(runtime, token)){
+			return token;
+		}
 		String cleaned = new String(token);
-
-		/*
-		 * protect strings
-		 */
-		if (token.length() > 2 && token.startsWith("\"")
-				&& token.endsWith("\"")) {
-			return token;
-		}
-
-		/*
-		 * check protected strings with data-type
-		 */
-		if (token.length() > 2 && token.startsWith("\"")
-				&& token.contains("^^")) {
-			return token;
-		}
-		
-		/*
-		 * check protected data-type
-		 */
-		if (token.length() > 2 
-				&& token.contains("^^")) {
-			return token;
-		}
-
-		/*
-		 * save time and dateTime
-		 */
-		if (LiteralUtils.isDate(token) || LiteralUtils.isTime(token)
-				|| LiteralUtils.isDateTime(token)) {
-			return token;
-		}
-
 		/*
 		 * isolate patterns using white-spaces
 		 */
@@ -431,23 +401,55 @@ public class TmqlQueryTransformer {
 	private static boolean isProtected(final ITMQLRuntime runtime,
 			final String token) {
 
-		String uri = token;
+		/*
+		 * protect strings
+		 */
+		if (token.length() > 2 && token.startsWith("\"")
+				&& token.endsWith("\"")) {
+			return true;
+		}
+
+		/*
+		 * check protected strings with data-type
+		 */
+		if (token.length() > 2 && token.startsWith("\"")
+				&& token.contains("^^")) {
+			return true;
+		}
+				
+		/*
+		 * check protected data-type
+		 */
+		if (token.length() > 2 
+				&& token.contains("^^")) {
+			return true;
+		}
+
+		/*
+		 * save time and dateTime
+		 */
+		if (LiteralUtils.isDate(token) || LiteralUtils.isTime(token)
+				|| LiteralUtils.isDateTime(token)) {
+			return true;
+		}
 		/*
 		 * If token starts with < and ends with > and do not contain any
 		 * whitespace characters than it will be detect as URI or XML
 		 */
 		if (token.startsWith("<") && token.endsWith(">")) {
 			return true;
-		} else if (token.startsWith("\"") && token.endsWith("\"")) {
-			return true;
-		} else if (patterns.contains(token.trim())) {
+		} 
+		/*
+		 * is any known pattern
+		 */
+		if (patterns.contains(token.trim())) {
 			return true;
 		}
 		/*
 		 * Check if given token is an absolute URI
 		 */
 		try {
-			new URI(uri);
+			new URI(token);
 			return true;
 		} catch (URISyntaxException e) {
 			// non absolute URI
@@ -466,7 +468,7 @@ public class TmqlQueryTransformer {
 		 * try to replace all QNames
 		 */
 		StringTokenizer tokenizer = new StringTokenizer(token, ":");
-		uri = new String();
+		String uri = new String();
 		while (tokenizer.hasMoreTokens()) {
 			String tok = tokenizer.nextToken();
 			if (handler.isKnownPrefix(tok)) {
