@@ -11,11 +11,13 @@ package de.topicmapslab.tmql4j.path.tests.path;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Test;
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
+import org.tmapi.core.DatatypeAware;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
@@ -27,6 +29,8 @@ import org.tmapi.core.Typed;
 import org.tmapi.core.Variant;
 
 import de.topicmapslab.majortom.model.core.IVariant;
+import de.topicmapslab.majortom.model.index.ILiteralIndex;
+import de.topicmapslab.majortom.model.namespace.Namespaces;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 import de.topicmapslab.tmql4j.path.tests.Tmql4JTestCase;
@@ -58,8 +62,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Topic) r.first());
 		}
 
-		for (int i = 0; i < topics.length; i++) {
-			assertTrue(result.contains(topics[i]));
+		for (Topic topic : topics) {
+			assertTrue(result.contains(topic));
 		}
 	}
 
@@ -84,8 +88,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Topic) r.first());
 		}
 
-		for (int i = 0; i < topics.length; i++) {
-			assertTrue(result.contains(topics[i]));
+		for (Topic topic2 : topics) {
+			assertTrue(result.contains(topic2));
 		}
 	}
 
@@ -110,8 +114,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Topic) r.first());
 		}
 
-		for (int i = 0; i < topics.length; i++) {
-			assertTrue(result.contains(topics[i]));
+		for (Topic topic2 : topics) {
+			assertTrue(result.contains(topic2));
 		}
 	}
 
@@ -136,8 +140,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Topic) r.first());
 		}
 
-		for (int i = 0; i < topics.length; i++) {
-			assertTrue(result.contains(topics[i]));
+		for (Topic topic2 : topics) {
+			assertTrue(result.contains(topic2));
 		}
 	}
 
@@ -162,8 +166,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Topic) r.first());
 		}
 
-		for (int i = 0; i < topics.length; i++) {
-			assertTrue(result.contains(topics[i]));
+		for (Topic topic2 : topics) {
+			assertTrue(result.contains(topic2));
 		}
 	}
 
@@ -242,8 +246,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Topic) r.first());
 		}
 
-		for (int i = 0; i < topics.length; i++) {
-			assertTrue(result.contains(topics[i]));
+		for (Topic topic2 : topics) {
+			assertTrue(result.contains(topic2));
 		}
 	}
 
@@ -268,8 +272,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Topic) r.first());
 		}
 
-		for (int i = 0; i < topics.length; i++) {
-			assertTrue(result.contains(topics[i]));
+		for (Topic topic2 : topics) {
+			assertTrue(result.contains(topic2));
 		}
 	}
 
@@ -294,8 +298,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Topic) r.first());
 		}
 
-		for (int i = 0; i < topics.length; i++) {
-			assertTrue(result.contains(topics[i]));
+		for (Topic topic2 : topics) {
+			assertTrue(result.contains(topic2));
 		}
 	}
 
@@ -320,8 +324,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Topic) r.first());
 		}
 
-		for (int i = 0; i < topics.length; i++) {
-			assertTrue(result.contains(topics[i]));
+		for (Topic topic2 : topics) {
+			assertTrue(result.contains(topic2));
 		}
 	}
 
@@ -346,8 +350,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Topic) r.first());
 		}
 
-		for (int i = 0; i < topics.length; i++) {
-			assertTrue(result.contains(topics[i]));
+		for (Topic topic2 : topics) {
+			assertTrue(result.contains(topic2));
 		}
 	}
 
@@ -372,18 +376,18 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Topic) r.first());
 		}
 
-		for (int i = 0; i < topics.length; i++) {
-			assertTrue(result.contains(topics[i]));
+		for (Topic topic2 : topics) {
+			assertTrue(result.contains(topic2));
 		}
 	}
-	
+
 	@Test
 	public void testPlayersAxisForRole() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
-		
-		Association a = createAssociation(topic);		
+
+		Association a = createAssociation(topic);
 		Topic player = createTopic();
-		Role r = a.createRole(createTopic(),player);
+		Role r = a.createRole(createTopic(), player);
 		String query = null;
 		SimpleResultSet set = null;
 
@@ -409,8 +413,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		SimpleResultSet set = null;
 
 		query = "myTopic >> players myType";
-		set = execute(query);		
-		assertEquals(topics.length*2, set.size());
+		set = execute(query);
+		assertEquals(topics.length * 2, set.size());
 
 		Set<Topic> result = HashUtil.getHashSet();
 		for (IResult r : set.getResults()) {
@@ -418,8 +422,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Topic) r.first());
 		}
 
-		for (int i = 0; i < topics.length; i++) {
-			assertTrue(result.contains(topics[i]));
+		for (Topic topic2 : topics) {
+			assertTrue(result.contains(topic2));
 		}
 	}
 
@@ -444,8 +448,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Role) r.first());
 		}
 
-		for (int i = 0; i < roles.length; i++) {
-			assertTrue(result.contains(roles[i]));
+		for (Role role : roles) {
+			assertTrue(result.contains(role));
 		}
 	}
 
@@ -472,11 +476,11 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Role) r.first());
 		}
 
-		for (int i = 0; i < roles.length; i++) {
-			assertTrue(result.contains(roles[i]));
+		for (Role role : roles) {
+			assertTrue(result.contains(role));
 		}
 	}
-	
+
 	@Test
 	public void testRoleTypesAxis() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
@@ -500,8 +504,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Topic) r.first());
 		}
 
-		for (int i = 0; i < types.length; i++) {
-			assertTrue(result.contains(types[i]));
+		for (Topic type : types) {
+			assertTrue(result.contains(type));
 		}
 	}
 
@@ -526,8 +530,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Association) r.first());
 		}
 
-		for (int i = 0; i < associations.length; i++) {
-			assertTrue(result.contains(associations[i]));
+		for (Association association : associations) {
+			assertTrue(result.contains(association));
 		}
 	}
 
@@ -554,8 +558,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Role) r.first());
 		}
 
-		for (int i = 0; i < roles.length; i++) {
-			assertTrue(result.contains(roles[i]));
+		for (Role role : roles) {
+			assertTrue(result.contains(role));
 		}
 	}
 
@@ -580,8 +584,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Association) r.first());
 		}
 
-		for (int i = 0; i < associations.length; i++) {
-			assertTrue(result.contains(associations[i]));
+		for (Association association : associations) {
+			assertTrue(result.contains(association));
 		}
 	}
 
@@ -608,8 +612,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Association) r.first());
 		}
 
-		for (int i = 0; i < associations.length; i++) {
-			assertTrue(result.contains(associations[i]));
+		for (Association association : associations) {
+			assertTrue(result.contains(association));
 		}
 	}
 
@@ -636,8 +640,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Topic) r.first());
 		}
 
-		for (int i = 0; i < topics.length; i++) {
-			assertTrue(result.contains(topics[i]));
+		for (Topic topic2 : topics) {
+			assertTrue(result.contains(topic2));
 		}
 	}
 
@@ -668,8 +672,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Topic) r.first());
 		}
 
-		for (int i = 0; i < topics.length; i++) {
-			assertTrue(result.contains(topics[i]));
+		for (Topic topic2 : topics) {
+			assertTrue(result.contains(topic2));
 		}
 	}
 
@@ -698,8 +702,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Association) r.first());
 		}
 
-		for (int i = 0; i < associations.length; i++) {
-			assertTrue(result.contains(associations[i]));
+		for (Association association : associations) {
+			assertTrue(result.contains(association));
 		}
 	}
 
@@ -733,8 +737,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Association) r.first());
 		}
 
-		for (int i = 0; i < associations.length; i++) {
-			assertTrue(result.contains(associations[i]));
+		for (Association association : associations) {
+			assertTrue(result.contains(association));
 		}
 	}
 
@@ -762,8 +766,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Construct) r.first());
 		}
 
-		for (int i = 0; i < constructs.length; i++) {
-			assertTrue(result.contains(constructs[i]));
+		for (Construct construct : constructs) {
+			assertTrue(result.contains(construct));
 		}
 	}
 
@@ -794,8 +798,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Construct) r.first());
 		}
 
-		for (int i = 0; i < constructs.length; i++) {
-			assertTrue(result.contains(constructs[i]));
+		for (Construct construct : constructs) {
+			assertTrue(result.contains(construct));
 		}
 
 		query = "myTopic >> characteristics theOtherType";
@@ -825,8 +829,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Name) r.first());
 		}
 
-		for (int i = 0; i < names.length; i++) {
-			assertTrue(result.contains(names[i]));
+		for (Name name : names) {
+			assertTrue(result.contains(name));
 		}
 	}
 
@@ -852,8 +856,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Occurrence) r.first());
 		}
 
-		for (int i = 0; i < occurrences.length; i++) {
-			assertTrue(result.contains(occurrences[i]));
+		for (Occurrence occurrence : occurrences) {
+			assertTrue(result.contains(occurrence));
 		}
 	}
 
@@ -872,8 +876,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		query = "myTopic >> characteristics << characteristics";
 		set = execute(query);
 		assertEquals(200, set.size());
-		for ( IResult r : set){
-			assertEquals(1,r.size());
+		for (IResult r : set) {
+			assertEquals(1, r.size());
 			assertEquals(topic, r.first());
 		}
 	}
@@ -894,8 +898,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		query = "myTopic >> characteristics << characteristics theType";
 		set = execute(query);
 		assertEquals(200, set.size());
-		for ( IResult r : set){
-			assertEquals(1,r.size());
+		for (IResult r : set) {
+			assertEquals(1, r.size());
 			assertEquals(topic, r.first());
 		}
 	}
@@ -922,8 +926,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Topic) r.first());
 		}
 
-		for (int i = 0; i < topics.length; i++) {
-			assertTrue(result.contains(topics[i]));
+		for (Topic topic2 : topics) {
+			assertTrue(result.contains(topic2));
 		}
 	}
 
@@ -956,8 +960,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Scoped) r.first());
 		}
 
-		for (int i = 0; i < scopeds.length; i++) {
-			assertTrue(result.contains(scopeds[i]));
+		for (Scoped scoped : scopeds) {
+			assertTrue(result.contains(scoped));
 		}
 	}
 
@@ -982,8 +986,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Locator) r.first());
 		}
 
-		for (int i = 0; i < locators.length; i++) {
-			assertTrue(result.contains(locators[i]));
+		for (Locator locator : locators) {
+			assertTrue(result.contains(locator));
 		}
 	}
 
@@ -1021,8 +1025,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Locator) r.first());
 		}
 
-		for (int i = 0; i < locators.length; i++) {
-			assertTrue(result.contains(locators[i]));
+		for (Locator locator : locators) {
+			assertTrue(result.contains(locator));
 		}
 	}
 
@@ -1060,8 +1064,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Locator) r.first());
 		}
 
-		for (int i = 0; i < locators.length; i++) {
-			assertTrue(result.contains(locators[i]));
+		for (Locator locator : locators) {
+			assertTrue(result.contains(locator));
 		}
 	}
 
@@ -1176,8 +1180,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((Topic) r.first());
 		}
 
-		for (int i = 0; i < topics.length; i++) {
-			assertTrue(result.contains(topics[i]));
+		for (Topic topic2 : topics) {
+			assertTrue(result.contains(topic2));
 		}
 
 		/*
@@ -1212,8 +1216,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((String) r.first());
 		}
 
-		for (int i = 0; i < locators.length; i++) {
-			assertTrue(result.contains(locators[i].getReference()));
+		for (Locator locator : locators) {
+			assertTrue(result.contains(locator.getReference()));
 		}
 	}
 
@@ -1239,8 +1243,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((String) r.first());
 		}
 
-		for (int i = 0; i < names.length; i++) {
-			assertTrue(result.contains(names[i].getValue()));
+		for (Name name : names) {
+			assertTrue(result.contains(name.getValue()));
 		}
 	}
 
@@ -1266,8 +1270,8 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			result.add((String) r.first());
 		}
 
-		for (int i = 0; i < occurrences.length; i++) {
-			assertTrue(result.contains(occurrences[i].getValue()));
+		for (Occurrence occurrence : occurrences) {
+			assertTrue(result.contains(occurrence.getValue()));
 		}
 	}
 
@@ -1422,7 +1426,7 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		assertEquals(1, set.first().size());
 		assertEquals(id, set.first().first());
 	}
-	
+
 	@Test
 	public void testVariantsAxis() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
@@ -1433,41 +1437,111 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		query = "\"" + name.getId() + "\" << id >> variants";
 		set = execute(query);
 		assertEquals(0, set.size());
-		
+
 		Set<Variant> variants = HashUtil.getHashSet();
-		for ( int i = 0 ; i < 100 ; i ++){
+		for (int i = 0; i < 100; i++) {
 			variants.add(name.createVariant("Var" + i, createTopic()));
 		}
 		query = "\"" + name.getId() + "\" << id >> variants";
 		set = execute(query);
 		assertEquals(variants.size(), set.size());
-		for ( IResult r : set ){
+		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertTrue(r.get(0) instanceof IVariant);
 			assertTrue(variants.contains(r.first()));
 		}
-		
-		for (Variant v : variants){
+
+		for (Variant v : variants) {
 			query = "\"" + v.getId() + "\" << id << variants";
 			set = execute(query);
 			assertEquals(1, set.size());
 			assertEquals(1, set.first().size());
 			assertEquals(name, set.first().first());
 		}
-		
+
 		createTopicBySI("otherNameType");
 		Topic nt = createTopicBySI("nameType");
 		name.setType(nt);
-		for (Variant v : variants){
+		for (Variant v : variants) {
 			query = "\"" + v.getId() + "\" << id << variants otherNameType";
 			set = execute(query);
 			assertEquals(0, set.size());
-			
+
 			query = "\"" + v.getId() + "\" << id << variants nameType";
 			set = execute(query);
 			assertEquals(1, set.size());
 			assertEquals(1, set.first().size());
 			assertEquals(name, set.first().first());
+		}
+	}
+
+	@Test
+	public void testDatatypeAxis() throws Exception {
+		Topic topic = createTopicBySI("myTopic");
+		Name n = topic.createName("Name");
+		Locator xsdString = topicMap.createLocator(Namespaces.XSD.STRING);
+		Locator xsdInt = topicMap.createLocator(Namespaces.XSD.INT);
+		Set<DatatypeAware> strings = new HashSet<DatatypeAware>();
+		Set<DatatypeAware> ints = new HashSet<DatatypeAware>();
+
+		for (int i = 0; i < 100; i++) {
+			if (i % 4 == 0) {
+				strings.add(topic.createOccurrence(createTopic(), "Value" + i, xsdString));
+			} else if (i % 4 == 1) {
+				ints.add(topic.createOccurrence(createTopic(), Integer.toString(i), xsdInt));
+			} else if (i % 4 == 2) {
+				strings.add(n.createVariant("Variant" + i, xsdString, createTopic()));
+			} else if (i % 4 == 3) {
+				ints.add(n.createVariant(Integer.toString(i), xsdInt, createTopic()));
+			}
+		}
+
+		assertEquals(50, topic.getOccurrences().size());
+		assertEquals(50, n.getVariants().size());
+
+		ILiteralIndex index = topicMap.getIndex(ILiteralIndex.class);
+		index.open();
+
+		assertEquals(50, index.getDatatypeAwares(xsdInt).size());
+		assertEquals(50, index.getDatatypeAwares(xsdString).size());
+
+		String query = null;
+		SimpleResultSet set = null;
+		/*
+		 * test forward
+		 */
+		for (DatatypeAware d : strings) {
+			query = "\"" + d.getId() + "\" << id >> datatype >> atomify ";
+			set = execute(query);
+			assertEquals(1, set.size());
+			assertEquals(1, set.first().size());
+			assertEquals(Namespaces.XSD.STRING, set.get(0, 0));
+		}
+		for (DatatypeAware d : ints) {
+			query = "\"" + d.getId() + "\" << id >> datatype >> atomify ";
+			set = execute(query);
+			assertEquals(1, set.size());
+			assertEquals(1, set.first().size());
+			assertEquals(Namespaces.XSD.INT, set.get(0, 0));
+		}
+		/*
+		 * test backward
+		 */
+		query = "\"" + Namespaces.XSD.STRING + "\" << datatype";
+		set = execute(query);
+		assertEquals(50, set.size());
+		for (IResult r : set) {
+			assertEquals(1, r.size());
+			assertTrue(strings.contains(r.first()));
+
+		}
+
+		query = "\"" + Namespaces.XSD.INT + "\" << datatype";
+		set = execute(query);
+		assertEquals(50, set.size());
+		for (IResult r : set) {
+			assertEquals(1, r.size());
+			assertTrue(ints.contains(r.first()));
 		}
 	}
 

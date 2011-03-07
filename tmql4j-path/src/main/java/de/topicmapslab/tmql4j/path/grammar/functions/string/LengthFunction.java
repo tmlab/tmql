@@ -19,7 +19,6 @@ import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.functions.FunctionImpl;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
@@ -48,7 +47,8 @@ public class LengthFunction extends FunctionImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public de.topicmapslab.tmql4j.components.processor.core.QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
+	public de.topicmapslab.tmql4j.components.processor.core.QueryMatches interpret(ITMQLRuntime runtime, IContext context,
+			IExpressionInterpreter<?> caller) {
 
 		QueryMatches results = new QueryMatches(runtime);
 
@@ -58,22 +58,22 @@ public class LengthFunction extends FunctionImpl {
 		QueryMatches parameters = getParameters(runtime, context, caller);
 
 		/*
-		 * check count of variables
-		 */
-		if (!isExpectedNumberOfParameters(parameters.getOrderedKeys().size())) {
-			throw new TMQLRuntimeException(getItemIdentifier() + "() requieres 1 parameters.");
-		}
-
-		/*
 		 * iterate over parameters
 		 */
 		for (Map<String, Object> tuple : parameters) {
 			Object sequence = tuple.get("$0");
+
 			Map<String, Object> result = HashUtil.getHashMap();
+			/*
+			 * no result
+			 */
+			if (sequence == null) {
+				result.put(QueryMatches.getNonScopedVariable(), BigInteger.valueOf(0));
+			}
 			/*
 			 * check if value is a sequence
 			 */
-			if (sequence instanceof Collection<?>) {
+			else if (sequence instanceof Collection<?>) {
 				List<BigInteger> lengths = HashUtil.getList();
 				/*
 				 * add length of each string to a new sequence

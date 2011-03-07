@@ -21,6 +21,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Asc;
 import de.topicmapslab.tmql4j.path.grammar.lexical.At;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisAtomify;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisCharacteristics;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisDatatype;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisId;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisIndicators;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisInstances;
@@ -112,8 +113,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Where;
 import de.topicmapslab.tmql4j.path.grammar.lexical.WhiteSpace;
 
 /**
- * Class to handle all tokens of different languages extensions and the core
- * implementation.
+ * Class to handle all tokens of different languages extensions and the core implementation.
  * 
  * @author Sven Krosse
  * @email krosse@informatik.uni-leipzig.de
@@ -141,6 +141,7 @@ public class TokenRegistry extends TokenRegistryImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected void initialize() {
 		/*
 		 * add all predefined language tokens of the TMQL core
@@ -154,6 +155,7 @@ public class TokenRegistry extends TokenRegistryImpl {
 			register(At.class);
 			register(AxisAtomify.class);
 			register(AxisCharacteristics.class);
+			register(AxisDatatype.class);
 			register(AxisIndicators.class);
 			register(AxisInstances.class);
 			register(AxisId.class);
