@@ -178,7 +178,7 @@ public class TMQLTokenizer {
 						continue;
 					}
 				}
-				if (!buffer.toString().isEmpty()) {
+				if (buffer.length() != 0) {
 					tokens.add(buffer.toString().trim());
 					buffer = new StringBuilder();
 				}
@@ -234,7 +234,7 @@ public class TMQLTokenizer {
 				 */
 				else if ("'".equalsIgnoreCase(currentPattern)) {
 					/*
-					 * is XML if next char is not '
+					 * is string if next char is not ' ( CTM token: ''' )
 					 */
 					if (origin.length() > index + 1 && !"'".equalsIgnoreCase(String.valueOf(origin.charAt(index + 1)))) {
 						isProtected = true;
@@ -250,5 +250,5 @@ public class TMQLTokenizer {
 			tokens.add(buffer.toString().trim());
 		}
 	}
-	
+
 }

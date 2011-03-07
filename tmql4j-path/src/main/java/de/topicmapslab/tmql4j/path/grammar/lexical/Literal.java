@@ -23,7 +23,6 @@ public class Literal extends Token {
 	public boolean isToken(final ITMQLRuntime runtime, final String literal) {
 		return LiteralUtils.isString(literal) || LiteralUtils.isDecimal(literal) || LiteralUtils.isInteger(literal) || LiteralUtils.isDateTime(literal) || LiteralUtils.isTime(literal)
 				|| LiteralUtils.isDate(literal) || LiteralUtils.isBoolean(literal);
-		// literal.matches("\".*\"") || literal.matches("\"\"\".*\"\"\"");
 	}
 
 	/**

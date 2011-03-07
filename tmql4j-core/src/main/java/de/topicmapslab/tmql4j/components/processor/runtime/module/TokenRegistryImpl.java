@@ -8,7 +8,8 @@
  */
 package de.topicmapslab.tmql4j.components.processor.runtime.module;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.model.ITokenRegistry;
@@ -17,7 +18,6 @@ import de.topicmapslab.tmql4j.exception.TMQLInitializationException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.lexical.Pragma;
 import de.topicmapslab.tmql4j.grammar.lexical.Wildcard;
-import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Registry class to handle all tokens of different languages extensions and the
@@ -36,11 +36,11 @@ public abstract class TokenRegistryImpl implements ITokenRegistry {
 	/**
 	 * a token type store
 	 */
-	private final Set<Class<? extends IToken>> tokenClasses = HashUtil.getHashSet();
+	private final List<Class<? extends IToken>> tokenClasses = new ArrayList<Class<? extends IToken>>();
 	/**
 	 * the token store
 	 */
-	private final Set<IToken> tokens = HashUtil.getHashSet();
+	private final List<IToken> tokens = new ArrayList<IToken>();
 
 	/**
 	 * constructor
@@ -61,6 +61,7 @@ public abstract class TokenRegistryImpl implements ITokenRegistry {
 	 * 
 	 * {@inheritDoc}
 	 */
+	@Override
 	public final void register(final Class<? extends IToken> tokenClass) throws TMQLExtensionRegistryException {
 		try {
 			register(tokenClass.newInstance());
@@ -78,6 +79,7 @@ public abstract class TokenRegistryImpl implements ITokenRegistry {
 	 *            the token to add
 	 * 
 	 */
+	@Override
 	public final void register(final IToken token) {
 		if (!tokenClasses.contains(token.getClass())) {
 			tokenClasses.add(token.getClass());
@@ -89,6 +91,7 @@ public abstract class TokenRegistryImpl implements ITokenRegistry {
 	 * 
 	 * {@inheritDoc}
 	 */
+	@Override
 	public final IToken getTokenByLiteral(final String literal) {
 		/*
 		 * iterate over tokens
@@ -114,6 +117,7 @@ public abstract class TokenRegistryImpl implements ITokenRegistry {
 	 * 
 	 * {@inheritDoc}
 	 */
+	@Override
 	public final Class<? extends IToken> getTokenClassByLiteral(final String literal) {
 		return getTokenByLiteral(literal).getClass();
 	}

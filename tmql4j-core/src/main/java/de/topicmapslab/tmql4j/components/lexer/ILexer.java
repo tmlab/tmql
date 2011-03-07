@@ -48,7 +48,7 @@ public interface ILexer {
 	 * 
 	 * @return a new iterator instance
 	 */
-	Iterator<Class<? extends IToken>> getTmqlTokenIterator();	
+	Iterator<Class<? extends IToken>> getTmqlTokenIterator();
 
 	/**
 	 * Method returns a new iterator to iterate over the list of
