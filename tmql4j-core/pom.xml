@@ -146,6 +146,20 @@
 			<artifactId>ctm-writer</artifactId>
 			<version>1.0.9-SNAPSHOT</version>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>ontopia-engine</artifactId>
+					<groupId>net.ontopia</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>ontopia-mio</artifactId>
+					<groupId>net.ontopia</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>tinytim</artifactId>
+					<groupId>org.tinytim</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>

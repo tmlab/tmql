@@ -99,12 +99,6 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>de.topicmapslab</groupId>
-			<artifactId>ctm-writer</artifactId>
-			<version>1.0.9-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.8.2</version>

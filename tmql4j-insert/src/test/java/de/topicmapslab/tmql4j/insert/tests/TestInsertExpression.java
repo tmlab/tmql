@@ -35,8 +35,8 @@ public class TestInsertExpression extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = " INSERT ''' " + subjectIdentifier + ". '''";
-		set = execute(new TMQLQuery(topicMap,query));
+		query = " INSERT ''' " + subjectIdentifier + " . '''";
+		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(1L, set.first().first());
@@ -55,9 +55,9 @@ public class TestInsertExpression extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = " INSERT ''' " + base + "myType ( " + base + "myType : "
-				+ base + "myTopic ) '''";
-		set = execute(new TMQLQuery(topicMap,query));
+		query = " INSERT ''' " + base + "myType ( " + base + "myType : " + base
+				+ "myTopic ) '''";
+		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(3L, set.first().first());
@@ -66,6 +66,18 @@ public class TestInsertExpression extends Tmql4JTestCase {
 		assertEquals(1, topic.getRolesPlayed(type).size());
 		assertEquals(type, topic.getRolesPlayed(type).iterator().next()
 				.getParent().getType());
+	}
+
+	@Test
+	public void testInsertFailingIRIs() throws Exception {
+		String queries[] = {
+				"INSERT '''<http://maiana.topicmapslab.de/u/peter/tm/archiv-ostpreussen/#haus> - \"some name\" . '''",
+				"INSERT '''<http://en.wikipedia.org/wiki/Munich_(district)> - \"some name\" . ''' " };
+
+		for (String q : queries) {
+			execute(new TMQLQuery(topicMap, q));
+		}
+
 	}
 
 }

@@ -126,42 +126,5 @@
 			<version>1.2.0-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>de.topicmapslab</groupId>
-			<artifactId>ctm-writer</artifactId>
-			<version>1.0.9-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.tmapix</groupId>
-			<artifactId>tmapix-io</artifactId>
-			<version>1.0.1-SNAPSHOT</version>
-			<exclusions>
-				<exclusion>
-					<artifactId>slf4j-jdk14</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>slf4j-log4j</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>slf4j-api</artifactId>
-					<groupId>org.slf4j</groupId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.tmapi</groupId>
-					<artifactId>tmapi</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>net.ontopia</groupId>
-					<artifactId>ontopia-mio</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.tinytim</groupId>
-					<artifactId>tinytim</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 	</dependencies>
 </project>
