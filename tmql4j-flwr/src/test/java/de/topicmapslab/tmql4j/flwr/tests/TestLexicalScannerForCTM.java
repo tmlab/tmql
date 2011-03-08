@@ -16,6 +16,8 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.BracketAngleOpen;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Dot;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Element;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Isa;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Literal;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Minus;
 import de.topicmapslab.tmql4j.path.grammar.lexical.TripleQuote;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Variable;
 import de.topicmapslab.tmql4j.path.query.TMQLQuery;
@@ -66,6 +68,64 @@ public class TestLexicalScannerForCTM extends Tmql4JTestCase {
 		
 		assertEquals(TripleQuote.class, lexer.getTmqlTokens().get(10));
 		assertEquals("'''", lexer.getTokens().get(10));
+	}
+	
+	@org.junit.Test
+	public void testLexicalScanner2() throws Exception {
+		TMQLQuery query = new TMQLQuery(topicMap, "RETURN '''<http://en.wikipedia.org/wiki/Munich_(district)> - \"some name\" . '''");
+		query.beforeQuery(runtime);
+		TMQLLexer lexer = new TMQLLexer(runtime, query);
+		lexer.execute();
+		assertEquals(7, lexer.getTmqlTokens().size());
+		assertEquals(Return.class, lexer.getTmqlTokens().get(0));
+		assertEquals(Return.TOKEN, lexer.getTokens().get(0));
+		
+		assertEquals(TripleQuote.class, lexer.getTmqlTokens().get(1));
+		assertEquals("'''", lexer.getTokens().get(1));
+		
+		assertEquals(Element.class, lexer.getTmqlTokens().get(2));
+		assertEquals("<http://en.wikipedia.org/wiki/Munich_(district)>", lexer.getTokens().get(2));
+		
+		assertEquals(Minus.class, lexer.getTmqlTokens().get(3));
+		assertEquals(Minus.TOKEN, lexer.getTokens().get(3));
+		
+		assertEquals(Literal.class, lexer.getTmqlTokens().get(4));
+		assertEquals("\"some name\"", lexer.getTokens().get(4));
+		
+		assertEquals(Dot.class, lexer.getTmqlTokens().get(5));
+		assertEquals(".", lexer.getTokens().get(5));
+		
+		assertEquals(TripleQuote.class, lexer.getTmqlTokens().get(6));
+		assertEquals("'''", lexer.getTokens().get(6));
+	}
+	
+	@org.junit.Test
+	public void testLexicalScanner3() throws Exception {
+		TMQLQuery query = new TMQLQuery(topicMap, "RETURN '''<http://maiana.topicmapslab.de/u/peter/tm/archiv-ostpreussen/#haus> - \"some name\" . '''");
+		query.beforeQuery(runtime);
+		TMQLLexer lexer = new TMQLLexer(runtime, query);
+		lexer.execute();
+		assertEquals(7, lexer.getTmqlTokens().size());
+		assertEquals(Return.class, lexer.getTmqlTokens().get(0));
+		assertEquals(Return.TOKEN, lexer.getTokens().get(0));
+		
+		assertEquals(TripleQuote.class, lexer.getTmqlTokens().get(1));
+		assertEquals("'''", lexer.getTokens().get(1));
+		
+		assertEquals(Element.class, lexer.getTmqlTokens().get(2));
+		assertEquals("<http://maiana.topicmapslab.de/u/peter/tm/archiv-ostpreussen/#haus>", lexer.getTokens().get(2));
+		
+		assertEquals(Minus.class, lexer.getTmqlTokens().get(3));
+		assertEquals(Minus.TOKEN, lexer.getTokens().get(3));
+		
+		assertEquals(Literal.class, lexer.getTmqlTokens().get(4));
+		assertEquals("\"some name\"", lexer.getTokens().get(4));
+		
+		assertEquals(Dot.class, lexer.getTmqlTokens().get(5));
+		assertEquals(".", lexer.getTokens().get(5));
+		
+		assertEquals(TripleQuote.class, lexer.getTmqlTokens().get(6));
+		assertEquals("'''", lexer.getTokens().get(6));
 	}
 	
 }
