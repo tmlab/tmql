@@ -135,9 +135,13 @@ public abstract class Tmql4JTestCase {
 	 *            the supertype
 	 */
 	protected void addSupertype(Topic type, Topic supertype) {
+		// if (type instanceof ITopic) {
+		// ((ITopic) type).addSupertype(supertype);
+		// } else {
 		Association association = createAssociation(topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_SUPERTYPE_SUBTYPE_ASSOCIATION)));
 		association.createRole(topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_SUPERTYPE_ROLE_TYPE)), supertype);
 		association.createRole(topicMap.createTopicBySubjectIdentifier(topicMap.createLocator(TmdmSubjectIdentifier.TMDM_SUBTYPE_ROLE_TYPE)), type);
+		// }
 	}
 
 	@SuppressWarnings("unchecked")

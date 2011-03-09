@@ -19,6 +19,7 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.index.TypeInstanceIndex;
 
+import de.topicmapslab.tmql4j.util.HashUtil;
 import de.topicmapslab.tmql4j.path.components.navigation.BaseNavigationAxisImpl;
 import de.topicmapslab.tmql4j.path.components.navigation.model.ITypeHierarchyNavigationAxis;
 import de.topicmapslab.tmql4j.path.exception.InvalidValueException;
@@ -192,7 +193,7 @@ public class SupertypesNavigationAxis extends BaseNavigationAxisImpl implements 
 			boolean newAdded = true;
 			while (newAdded) {
 				newAdded = false;
-				for (Topic t : subset) {
+				for (Topic t : HashUtil.getHashSet(subset)) {
 					Collection<Topic> cache = new HashSet<Topic>();
 					for (Association association : associations) {
 						Collection<Role> roles = null;
@@ -237,7 +238,7 @@ public class SupertypesNavigationAxis extends BaseNavigationAxisImpl implements 
 		}
 		return set;
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */

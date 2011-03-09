@@ -107,8 +107,7 @@ public class TmqlQueryTransformer {
 	 *            the string representation of the TMQL Query
 	 * @return the transformed string representation of the TMQL Query
 	 */
-	public static final String transform(final ITMQLRuntime runtime,
-			final String query) {
+	public static final String transform(final ITMQLRuntime runtime, final String query) {
 		StringBuffer buffer = new StringBuffer();
 
 		/*
@@ -193,34 +192,29 @@ public class TmqlQueryTransformer {
 	 * @param token
 	 *            the token to transform
 	 */
-	private static String uriProtectionAlgorithm(final ITMQLRuntime runtime,
-			final String token) {
+	private static String uriProtectionAlgorithm(final ITMQLRuntime runtime, final String token) {
 		String cleaned = new String(token);
 
 		/*
 		 * check if token is %prefix or %pragma
 		 */
-		if (token.equalsIgnoreCase("%prefix")
-				|| token.equalsIgnoreCase("%pragma")) {
+		if (token.equalsIgnoreCase("%prefix") || token.equalsIgnoreCase("%pragma")) {
 			return token;
 		}
 		/*
 		 * check if token is a string
 		 */
-		else if (token.length() > 2 && token.startsWith("\"")
-				&& token.endsWith("\"") && token.charAt(1) != '"'
-				&& token.charAt(token.length() - 2) != '"') {
+		else if (token.length() > 2 && token.startsWith("\"") && token.endsWith("\"") && token.charAt(1) != '"' && token.charAt(token.length() - 2) != '"') {
 			return token;
 		}
 
 		/*
 		 * check protected strings with data-type
 		 */
-		if (token.length() > 2 && token.startsWith("\"")
-				&& token.contains("^^")) {
+		if (token.length() > 2 && token.startsWith("\"") && token.contains("^^")) {
 			return token;
 		}
-		
+
 		/*
 		 * check protected data-type
 		 */
@@ -231,10 +225,7 @@ public class TmqlQueryTransformer {
 		/*
 		 * save time and dateTime
 		 */
-		if (LiteralUtils.isDate(token) || LiteralUtils.isTime(token)
-				|| LiteralUtils.isDateTime(token)
-				|| LiteralUtils.isInteger(token)
-				|| LiteralUtils.isDecimal(token)) {
+		if (LiteralUtils.isDate(token) || LiteralUtils.isTime(token) || LiteralUtils.isDateTime(token) || LiteralUtils.isInteger(token) || LiteralUtils.isDecimal(token)) {
 			return token;
 		}
 		/*
@@ -252,24 +243,21 @@ public class TmqlQueryTransformer {
 			/*
 			 * changing windows size iterative
 			 */
-			for (int windowStart = 0; windowStart + windowSize <= token
-					.length(); windowStart++) {
+			for (int windowStart = 0; windowStart + windowSize <= token.length(); windowStart++) {
 				/*
 				 * extract IRI candidate
 				 */
-				String candidate = cleaned.substring(windowStart, windowSize
-						+ windowStart);
+				String candidate = cleaned.substring(windowStart, windowSize + windowStart);
 				/*
 				 * check if token is protected ( XML, IRI, string )
 				 */
-				if (isProtected(runtime, candidate)) {
+				if (isProtected(runtime, candidate, true)) {
 					String tmp = "";
 					/*
 					 * method add cleaned token before detected candidate
 					 */
 					if (windowStart > 0) {
-						tmp += uriProtectionAlgorithm(runtime,
-								cleaned.substring(0, windowStart));
+						tmp += uriProtectionAlgorithm(runtime, cleaned.substring(0, windowStart));
 					}
 					tmp += WHITESPACE;
 					tmp += candidate;
@@ -278,8 +266,7 @@ public class TmqlQueryTransformer {
 					 * method add cleaned token after detected candidate
 					 */
 					if (windowStart + windowSize < cleaned.length()) {
-						tmp += uriProtectionAlgorithm(runtime,
-								cleaned.substring(windowStart + windowSize));
+						tmp += uriProtectionAlgorithm(runtime, cleaned.substring(windowStart + windowSize));
 					}
 					return tmp;
 
@@ -304,8 +291,7 @@ public class TmqlQueryTransformer {
 	 * @param token
 	 *            the token to transform
 	 */
-	private static String transformSecure(final ITMQLRuntime runtime,
-			final String token) {
+	private static String transformSecure(final ITMQLRuntime runtime, final String token) {
 		String cleaned = new String(token);
 		/*
 		 * iterate over tokens
@@ -369,9 +355,8 @@ public class TmqlQueryTransformer {
 	 * @param token
 	 *            the token to transform
 	 */
-	private static String transformPatterns(final ITMQLRuntime runtime,
-			final String token) {
-		if ( isProtected(runtime, token)){
+	private static String transformPatterns(final ITMQLRuntime runtime, final String token) {
+		if (isProtected(runtime, token, false)) {
 			return token;
 		}
 		String cleaned = new String(token);
@@ -379,8 +364,7 @@ public class TmqlQueryTransformer {
 		 * isolate patterns using white-spaces
 		 */
 		for (String pattern : patterns) {
-			String tmp = cleaned.replaceAll("\\" + pattern, WHITESPACE + "\\"
-					+ pattern + WHITESPACE);
+			String tmp = cleaned.replaceAll("\\" + pattern, WHITESPACE + "\\" + pattern + WHITESPACE);
 			cleaned = tmp;
 		}
 
@@ -395,41 +379,39 @@ public class TmqlQueryTransformer {
 	 *            the TMQL4J runtime
 	 * @param token
 	 *            the token to check
+	 * @param doUriProtection
+	 *            <code>true</code> if URIs should be protected,
+	 *            <code>false</code> otherwise
 	 * @return <code>true</code> if given token is an absolute or relative URI
 	 *         or a XML node, <code>false</code> otherwise
 	 */
-	private static boolean isProtected(final ITMQLRuntime runtime,
-			final String token) {
+	private static boolean isProtected(final ITMQLRuntime runtime, final String token, boolean doUriProtection) {
 
 		/*
 		 * protect strings
 		 */
-		if (token.length() > 2 && token.startsWith("\"")
-				&& token.endsWith("\"")) {
+		if (token.length() > 2 && token.startsWith("\"") && token.endsWith("\"")) {
 			return true;
 		}
 
 		/*
 		 * check protected strings with data-type
 		 */
-		if (token.length() > 2 && token.startsWith("\"")
-				&& token.contains("^^")) {
+		if (token.length() > 2 && token.startsWith("\"") && token.contains("^^")) {
 			return true;
 		}
-				
+
 		/*
 		 * check protected data-type
 		 */
-		if (token.length() > 2 
-				&& token.contains("^^")) {
+		if (token.length() > 2 && token.contains("^^")) {
 			return true;
 		}
 
 		/*
 		 * save time and dateTime
 		 */
-		if (LiteralUtils.isDate(token) || LiteralUtils.isTime(token)
-				|| LiteralUtils.isDateTime(token)) {
+		if (LiteralUtils.isDate(token) || LiteralUtils.isTime(token) || LiteralUtils.isDateTime(token)) {
 			return true;
 		}
 		/*
@@ -438,54 +420,56 @@ public class TmqlQueryTransformer {
 		 */
 		if (token.startsWith("<") && token.endsWith(">")) {
 			return true;
-		} 
+		}
 		/*
 		 * is any known pattern
 		 */
 		if (patterns.contains(token.trim())) {
 			return true;
 		}
-		/*
-		 * Check if given token is an absolute URI
-		 */
-		try {
-			new URI(token);
-			return true;
-		} catch (URISyntaxException e) {
-			// non absolute URI
-		}
-
-		PrefixHandler handler = runtime.getLanguageContext().getPrefixHandler();
-		/*
-		 * Check if given token is a known shortcut, for example tm:name,
-		 * tm:subject or tm:occurrence
-		 */
-		if (handler.isKnownSystemIdentifier(token)) {
-			return true;
-		}
-
-		/*
-		 * try to replace all QNames
-		 */
-		StringTokenizer tokenizer = new StringTokenizer(token, ":");
-		String uri = new String();
-		while (tokenizer.hasMoreTokens()) {
-			String tok = tokenizer.nextToken();
-			if (handler.isKnownPrefix(tok)) {
-				uri += handler.getPrefix(tok);
-			} else {
-				uri += tok + (tokenizer.hasMoreTokens() ? ":" : "");
+		if (doUriProtection) {
+			/*
+			 * Check if given token is an absolute URI
+			 */
+			try {
+				new URI(token);
+				return true;
+			} catch (URISyntaxException e) {
+				// non absolute URI
 			}
-		}
 
-		/*
-		 * Check if given token is an relative URI
-		 */
-		try {
-			new URI(uri);
-			return true;
-		} catch (URISyntaxException e) {
-			// non relative URI
+			PrefixHandler handler = runtime.getLanguageContext().getPrefixHandler();
+			/*
+			 * Check if given token is a known shortcut, for example tm:name,
+			 * tm:subject or tm:occurrence
+			 */
+			if (handler.isKnownSystemIdentifier(token)) {
+				return true;
+			}
+
+			/*
+			 * try to replace all QNames
+			 */
+			StringTokenizer tokenizer = new StringTokenizer(token, ":");
+			String uri = new String();
+			while (tokenizer.hasMoreTokens()) {
+				String tok = tokenizer.nextToken();
+				if (handler.isKnownPrefix(tok)) {
+					uri += handler.getPrefix(tok);
+				} else {
+					uri += tok + (tokenizer.hasMoreTokens() ? ":" : "");
+				}
+			}
+
+			/*
+			 * Check if given token is an relative URI
+			 */
+			try {
+				new URI(uri);
+				return true;
+			} catch (URISyntaxException e) {
+				// non relative URI
+			}
 		}
 
 		/*

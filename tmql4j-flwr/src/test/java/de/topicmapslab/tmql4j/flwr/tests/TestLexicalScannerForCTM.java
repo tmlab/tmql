@@ -10,14 +10,21 @@ package de.topicmapslab.tmql4j.flwr.tests;
 
 import static junit.framework.Assert.assertEquals;
 import de.topicmapslab.tmql4j.components.lexer.TMQLLexer;
+import de.topicmapslab.tmql4j.flwr.grammar.lexical.For;
 import de.topicmapslab.tmql4j.flwr.grammar.lexical.Return;
+import de.topicmapslab.tmql4j.flwr.grammar.lexical.XmlEndTag;
+import de.topicmapslab.tmql4j.flwr.grammar.lexical.XmlStartTag;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketAngleClose;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketAngleOpen;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Dot;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Element;
+import de.topicmapslab.tmql4j.path.grammar.lexical.In;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Isa;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Literal;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Minus;
+import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisAtomifyMoveForward;
+import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisInstances;
+import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisTypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.TripleQuote;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Variable;
 import de.topicmapslab.tmql4j.path.query.TMQLQuery;
@@ -126,6 +133,87 @@ public class TestLexicalScannerForCTM extends Tmql4JTestCase {
 		
 		assertEquals(TripleQuote.class, lexer.getTmqlTokens().get(6));
 		assertEquals("'''", lexer.getTokens().get(6));
+	}
+	
+	@org.junit.Test
+	public void testLexicalScannerFroXML() throws Exception {
+		TMQLQuery query = new TMQLQuery(topicMap, "RETURN <letters>{FOR $l IN // tml:letter RETURN <letter>{$l / tm:name}</letter>}</letters>");
+		query.beforeQuery(runtime);
+		TMQLLexer lexer = new TMQLLexer(runtime, query);
+		lexer.execute();
+		assertEquals(18, lexer.getTmqlTokens().size());
+		int i = 0;
+		assertEquals(Return.class, lexer.getTmqlTokens().get(i));
+		assertEquals(Return.TOKEN, lexer.getTokens().get(i));
+		i++;
+		
+		assertEquals(XmlStartTag.class, lexer.getTmqlTokens().get(i));
+		assertEquals("<letters>", lexer.getTokens().get(i));
+		i++;
+		
+		assertEquals(BracketAngleOpen.class, lexer.getTmqlTokens().get(i));
+		assertEquals("{", lexer.getTokens().get(i));
+		i++;
+		
+		assertEquals(For.class, lexer.getTmqlTokens().get(i));
+		assertEquals(For.TOKEN, lexer.getTokens().get(i));
+		i++;
+		
+		assertEquals(Variable.class, lexer.getTmqlTokens().get(i));
+		assertEquals("$l", lexer.getTokens().get(i));
+		i++;
+		
+		assertEquals(In.class, lexer.getTmqlTokens().get(i));
+		assertEquals(In.TOKEN, lexer.getTokens().get(i));
+		i++;
+		
+		assertEquals(ShortcutAxisInstances.class, lexer.getTmqlTokens().get(i));
+		assertEquals("//", lexer.getTokens().get(i));
+		i++;
+		
+		assertEquals(Element.class, lexer.getTmqlTokens().get(i));
+		assertEquals("tml:letter", lexer.getTokens().get(i));
+		i++;
+		
+		assertEquals(Return.class, lexer.getTmqlTokens().get(i));
+		assertEquals(Return.TOKEN, lexer.getTokens().get(i));
+		i++;
+		
+		assertEquals(XmlStartTag.class, lexer.getTmqlTokens().get(i));
+		assertEquals("<letter>", lexer.getTokens().get(i));
+		i++;
+		
+		assertEquals(BracketAngleOpen.class, lexer.getTmqlTokens().get(i));
+		assertEquals("{", lexer.getTokens().get(i));
+		i++;
+		
+		assertEquals(Variable.class, lexer.getTmqlTokens().get(i));
+		assertEquals("$l", lexer.getTokens().get(i));
+		i++;
+		
+		assertEquals(ShortcutAxisAtomifyMoveForward.class, lexer.getTmqlTokens().get(i));
+		assertEquals("/", lexer.getTokens().get(i));
+		i++;
+		
+		assertEquals(Element.class, lexer.getTmqlTokens().get(i));
+		assertEquals("tm:name", lexer.getTokens().get(i));
+		i++;
+		
+		assertEquals(BracketAngleClose.class, lexer.getTmqlTokens().get(i));
+		assertEquals("}", lexer.getTokens().get(i));
+		i++;
+		
+		assertEquals(XmlEndTag.class, lexer.getTmqlTokens().get(i));
+		assertEquals("</letter>", lexer.getTokens().get(i));
+		i++;
+		
+		assertEquals(BracketAngleClose.class, lexer.getTmqlTokens().get(i));
+		assertEquals("}", lexer.getTokens().get(i));
+		i++;
+		
+		assertEquals(XmlEndTag.class, lexer.getTmqlTokens().get(i));
+		assertEquals("</letters>", lexer.getTokens().get(i));
+		i++;
 	}
 	
 }

@@ -30,13 +30,30 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  */
 public class TMQLTokenizer {
 
-	private static Set<Character> nonXmlMarger = HashUtil.getHashSet();
+	private static Set<Character> restrictedCharsAfterXMLStart = HashUtil.getHashSet();
+	private static Set<Character> restrictedCharsBeforeXMLEnd = HashUtil.getHashSet();
+	private static Set<Character> restrictedCharsAfterXMLEnd = HashUtil.getHashSet();
 	static {
-		nonXmlMarger.add('-');
-		nonXmlMarger.add('<');
-		nonXmlMarger.add('=');
-		nonXmlMarger.add('>');
-		nonXmlMarger.add(' ');
+		/*
+		 * following characters may not stand after an XML start token '<'
+		 */
+		restrictedCharsAfterXMLStart.add(' ');
+		restrictedCharsAfterXMLStart.add('-');
+		restrictedCharsAfterXMLStart.add('=');
+		restrictedCharsAfterXMLStart.add('<');
+		/*
+		 * following characters may not stand before an XML end token '>'
+		 */
+		restrictedCharsBeforeXMLEnd.add('-');
+		restrictedCharsBeforeXMLEnd.add(' ');
+		restrictedCharsBeforeXMLEnd.add('>');
+		/*
+		 * following characters may not stand after an XML end token '>'
+		 */
+		restrictedCharsAfterXMLEnd.add('=');
+		restrictedCharsAfterXMLEnd.add('>');
+		restrictedCharsAfterXMLEnd.add('-');
+		restrictedCharsAfterXMLEnd.add('<');
 	}
 
 	/**
@@ -149,7 +166,7 @@ public class TMQLTokenizer {
 					/*
 					 * is embed content axis
 					 */
-					if (origin.length() > index + 1 && !nonXmlMarger.contains(origin.charAt(index + 1)) && !nonXmlMarger.contains(origin.charAt(index - 1))) {
+					if (origin.length() > index + 1 && (restrictedCharsAfterXMLEnd.contains(origin.charAt(index + 1)) || restrictedCharsBeforeXMLEnd.contains(origin.charAt(index - 1)))) {
 						continue;
 					}
 				}
@@ -214,7 +231,7 @@ public class TMQLTokenizer {
 					/*
 					 * is XML if next char is not <
 					 */
-					if (origin.length() > index + 1 && !nonXmlMarger.contains(origin.charAt(index + 1))) {
+					if (origin.length() > index + 1 && !restrictedCharsAfterXMLStart.contains(origin.charAt(index + 1))) {
 						isProtected = true;
 						protectionPattern = ">";
 					}

@@ -193,6 +193,7 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 		} catch (TMQLRuntimeException ex) {
 			throw ex;
 		} catch (Exception ex) {
+			ex.printStackTrace(System.err);
 			return QueryMatches.emptyMatches();
 		}
 	}
