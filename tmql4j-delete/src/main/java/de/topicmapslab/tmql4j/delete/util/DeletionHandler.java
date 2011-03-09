@@ -26,6 +26,7 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.components.navigation.NavigationRegistry;
 import de.topicmapslab.tmql4j.path.components.navigation.model.INavigationAxis;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisPlayers;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisRoleTypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisRoles;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisScope;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisSupertypes;
@@ -187,6 +188,12 @@ public class DeletionHandler {
 		} else if (match instanceof Collection<?>) {
 			Set<String> ids = HashUtil.getHashSet();
 			for (Object obj : (Collection<?>) match) {
+				/*
+				 * ignore already deleted constructs
+				 */
+				if ( obj instanceof Construct && ids.contains(((Construct)obj).getId())){
+					continue;
+				}
 				ids.addAll(delete(topicMap, obj, cascade));
 			}
 			return ids;
@@ -236,7 +243,7 @@ public class DeletionHandler {
 				 * delete all associations played by the topic
 				 */
 				for (Object obj : axis.navigateBackward(topic)) {
-					ids.addAll(deleteAssociation(topicMap, (Association) obj, cascade));
+					ids.addAll(deleteAssociation(topicMap, ((Role) obj).getParent(), cascade));
 				}
 				axis = handler.lookup(AxisTypes.class);
 				axis.setTopicMap(topicMap);
@@ -255,7 +262,7 @@ public class DeletionHandler {
 					ids.addAll(deleteTopic(topicMap, (Topic) obj, cascade));
 				}
 
-				axis = handler.lookup(AxisRoles.class);
+				axis = handler.lookup(AxisRoleTypes.class);
 				axis.setTopicMap(topicMap);
 				/*
 				 * delete all associations which used the topic as role-type

@@ -24,6 +24,7 @@ import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.path.grammar.lexical.All;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Delete;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Element;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Function;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Where;
 
 /**
@@ -125,7 +126,7 @@ public class DeleteExpression extends ExpressionImpl {
 		} else if (!getTmqlTokens().get(0).equals(Delete.class)) {
 			return false;
 		}
-		return  getTmqlTokens().get(1).equals(Cascade.class) || getTmqlTokens().get(1).equals(Element.class) || getTmqlTokens().get(1).equals(Wildcard.class)  || ParserUtils.containsTokens(getTmqlTokens(), Where.class);
+		return  getTmqlTokens().get(1).equals(Cascade.class) || getTmqlTokens().get(1).equals(Function.class) || getTmqlTokens().get(1).equals(Element.class) || getTmqlTokens().get(1).equals(Wildcard.class)  || ParserUtils.containsTokens(getTmqlTokens(), Where.class);
 	}
 
 }

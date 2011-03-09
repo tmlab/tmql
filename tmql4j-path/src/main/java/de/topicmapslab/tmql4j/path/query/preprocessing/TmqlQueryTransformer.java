@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 import de.topicmapslab.tmql4j.components.lexer.TMQLTokenizer;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.runtime.module.PrefixHandler;
+import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisInstances;
 import de.topicmapslab.tmql4j.util.HashUtil;
 import de.topicmapslab.tmql4j.util.LiteralUtils;
 
@@ -170,8 +171,8 @@ public class TmqlQueryTransformer {
 			 * the pattern // will be detect as URI but at the beginning they
 			 * represent the type-instance-association
 			 */
-			if (t.startsWith("//")) {
-				tmp += "//" + WHITESPACE;
+			if (t.startsWith(ShortcutAxisInstances.TOKEN)) {
+				tmp += ShortcutAxisInstances.TOKEN + WHITESPACE;
 				t = t.substring(2);
 			}
 			tmp += uriProtectionAlgorithm(runtime, t);
