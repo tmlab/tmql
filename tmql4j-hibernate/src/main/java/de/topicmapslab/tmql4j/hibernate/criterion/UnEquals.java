@@ -9,7 +9,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Unequals;
  * @author Sven Krosse
  * 
  */
-public class UnEquals extends ComparisonImpl {
+public class UnEquals extends BinaryOperationImpl {
 
 	/**
 	 * constructor

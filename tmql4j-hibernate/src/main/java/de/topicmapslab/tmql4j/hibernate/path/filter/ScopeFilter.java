@@ -39,4 +39,12 @@ public class ScopeFilter extends Filter {
 		return builder.toString();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Filter clone() throws CloneNotSupportedException {
+		return new ScopeFilter(subjectIdentifier);
+	}
+
 }

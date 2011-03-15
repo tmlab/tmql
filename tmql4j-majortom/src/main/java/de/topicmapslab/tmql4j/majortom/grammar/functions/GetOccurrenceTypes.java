@@ -88,21 +88,20 @@ public class GetOccurrenceTypes extends FunctionImpl {
 					if (duplicate) {
 						for (List<Topic> rt : occurrenceTypesByInstance) {
 							Map<String, Object> t = HashUtil.getHashMap();
-							t.put("$0", rt);
+							t.put(QueryMatches.getNonScopedVariable(), rt);
 							results.add(t);
 						}
-					}else{
+					} else {
 						Map<String, Object> t = HashUtil.getHashMap();
-						t.put("$0", occurrenceTypesByType);
+						t.put(QueryMatches.getNonScopedVariable(), occurrenceTypesByType);
 						results.add(t);
 					}
 				}
 				/*
 				 * second argument is boolean argument
 				 */
-				else if ( param0 != null && Boolean.parseBoolean(param0.toString())){
-					return QueryMatches.asQueryMatchNS(runtime, getTransitiveIndex(context.getQuery().getTopicMap())
-							.getOccurrenceTypes());
+				else if (param0 != null && Boolean.parseBoolean(param0.toString())) {
+					return QueryMatches.asQueryMatchNS(runtime, getTransitiveIndex(context.getQuery().getTopicMap()).getOccurrenceTypes());
 				}
 			}
 			return results;
@@ -124,15 +123,16 @@ public class GetOccurrenceTypes extends FunctionImpl {
 	public boolean isExpectedNumberOfParameters(long numberOfParameters) {
 		return numberOfParameters == 0 || numberOfParameters == 1 || numberOfParameters == 2;
 	}
-	
+
 	/**
 	 * Internal method to get the transitive index
-	 * @param topicMap the topic map
+	 * 
+	 * @param topicMap
+	 *            the topic map
 	 * @return the transitive index
 	 */
-	private ITransitiveTypeInstanceIndex getTransitiveIndex(TopicMap topicMap){
-		ITransitiveTypeInstanceIndex index = topicMap.getIndex(
-				ITransitiveTypeInstanceIndex.class);
+	private ITransitiveTypeInstanceIndex getTransitiveIndex(TopicMap topicMap) {
+		ITransitiveTypeInstanceIndex index = topicMap.getIndex(ITransitiveTypeInstanceIndex.class);
 		if (!index.isOpen()) {
 			index.open();
 		}

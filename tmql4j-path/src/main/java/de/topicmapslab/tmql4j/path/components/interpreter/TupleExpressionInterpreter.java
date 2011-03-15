@@ -87,18 +87,15 @@ public class TupleExpressionInterpreter extends ExpressionInterpreterImpl<TupleE
 	}
 
 	/**
-	 * The method is called to interpret the given sub-expression by using the
-	 * given runtime. The interpretation will call the sub-expression if the
-	 * given expression isn't a leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the given runtime. The interpretation will
+	 * call the sub-expression if the given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
-	 * The interpretation will transform the value on top of the stack and put
-	 * its results also on top.
+	 * The interpretation will transform the value on top of the stack and put its results also on top.
 	 * </p>
 	 * 
 	 * @param runtime
-	 *            the runtime which contains all necessary information for
-	 *            querying process
+	 *            the runtime which contains all necessary information for querying process
 	 * @param context
 	 *            the current querying context
 	 * @param optionalArguments
@@ -107,13 +104,15 @@ public class TupleExpressionInterpreter extends ExpressionInterpreterImpl<TupleE
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private QueryMatches interpretAliasValueExpression(final ITMQLRuntime runtime, final IContext context, final Object... optionalArguments) throws TMQLRuntimeException {
+	private QueryMatches interpretAliasValueExpression(final ITMQLRuntime runtime, final IContext context, final Object... optionalArguments)
+			throws TMQLRuntimeException {
 		List<Future<Object>> tasks = new LinkedList<Future<Object>>();
 		ThreadPoolExecutor threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 4);
 
 		final List<String> variables = getVariables();
 
-		final List<IExpressionInterpreter<AliasValueExpression>> interpreters = getInterpretersFilteredByEypressionType(runtime, AliasValueExpression.class);
+		final List<IExpressionInterpreter<AliasValueExpression>> interpreters = getInterpretersFilteredByEypressionType(runtime,
+				AliasValueExpression.class);
 		int index = 0;
 		for (final IExpressionInterpreter<AliasValueExpression> interpreter : interpreters) {
 			final int index_ = index;
@@ -149,6 +148,16 @@ public class TupleExpressionInterpreter extends ExpressionInterpreterImpl<TupleE
 						 */
 						else if (keys.contains(variable)) {
 							List<Object> possibleValuesForVariable = result.getPossibleValuesForVariable(variable);
+							return possibleValuesForVariable.size() == 1 ? possibleValuesForVariable.get(0) : possibleValuesForVariable;
+						}
+						/*
+						 * is index variable
+						 */
+						/*
+						 * contains value stuff $0
+						 */
+						else if (keys.contains("$0")) {
+							List<Object> possibleValuesForVariable = result.getPossibleValuesForVariable("$0");
 							return possibleValuesForVariable.size() == 1 ? possibleValuesForVariable.get(0) : possibleValuesForVariable;
 						}
 						/*
@@ -207,18 +216,15 @@ public class TupleExpressionInterpreter extends ExpressionInterpreterImpl<TupleE
 	}
 
 	/**
-	 * The method is called to interpret the given sub-expression by using the
-	 * given runtime. The interpretation will call the sub-expression if the
-	 * given expression isn't a leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the given runtime. The interpretation will
+	 * call the sub-expression if the given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
-	 * The interpretation will transform the value on top of the stack and put
-	 * its results also on top.
+	 * The interpretation will transform the value on top of the stack and put its results also on top.
 	 * </p>
 	 * 
 	 * @param runtime
-	 *            the runtime which contains all necessary information for
-	 *            querying process
+	 *            the runtime which contains all necessary information for querying process
 	 * @param context
 	 *            the current querying context
 	 * @param optionalArguments

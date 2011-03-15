@@ -25,6 +25,7 @@ import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.components.navigation.NavigationRegistry;
 import de.topicmapslab.tmql4j.path.components.navigation.model.INavigationAxis;
 import de.topicmapslab.tmql4j.path.components.navigation.model.ITypeHierarchyNavigationAxis;
+import de.topicmapslab.tmql4j.path.exception.NavigationException;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.MoveForward;
 import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisInstances;
@@ -192,9 +193,11 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 			return QueryMatches.asQueryMatchNS(runtime, navigationResults.toArray());
 		} catch (TMQLRuntimeException ex) {
 			throw ex;
-		} catch (Exception ex) {
-			ex.printStackTrace(System.err);
-			return QueryMatches.emptyMatches();
+		} catch(NavigationException e){
+			logger.warn("The following navigation error occured!", e);
+			return new QueryMatches(runtime);
+		}catch (Exception ex) {			
+			throw new TMQLRuntimeException("An error occured during runtime!", ex);
 		}
 	}
 }

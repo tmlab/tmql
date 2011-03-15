@@ -7,15 +7,15 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Plus;
 
 /**
  * @author Sven
- *
+ * 
  */
-public class Addition extends NumericalImpl {
+public class Addition extends BinaryOperationImpl {
 
 	/**
 	 * constructor
 	 */
 	public Addition() {
-		super(Plus.TOKEN);		
+		super(Plus.TOKEN);
 	}
 
 }

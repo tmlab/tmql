@@ -9,7 +9,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Star;
  * @author Sven
  * 
  */
-public class Multiplication extends NumericalImpl {
+public class Multiplication extends BinaryOperationImpl {
 
 	/**
 	 * constructor

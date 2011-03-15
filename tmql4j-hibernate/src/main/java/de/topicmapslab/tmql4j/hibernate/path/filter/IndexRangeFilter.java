@@ -33,8 +33,15 @@ public class IndexRangeFilter extends Filter {
 	 */
 	@Override
 	String getFilterPart() {
-		return Long.toString(from) + IHibernateConstants.WHITESPACE + DoubleDot.TOKEN + IHibernateConstants.WHITESPACE
-				+ Long.toString(to);
+		return Long.toString(from) + IHibernateConstants.WHITESPACE + DoubleDot.TOKEN + IHibernateConstants.WHITESPACE + Long.toString(to);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Filter clone() throws CloneNotSupportedException {
+		return new IndexRangeFilter(from, to);
 	}
 
 }

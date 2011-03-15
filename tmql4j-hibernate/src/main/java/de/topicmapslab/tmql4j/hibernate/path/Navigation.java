@@ -135,17 +135,17 @@ public class Navigation implements IQueryPart {
 		}
 		return builder.toString();
 	}
-	
+
 	/**
-	  * {@inheritDoc}
-	  */
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Navigation clone() throws CloneNotSupportedException {
 		Navigation clone = new Navigation(anchor);
-		for ( Step step : getSteps()){
+		for (Step step : getSteps()) {
 			clone.addStep(step.clone());
 		}
-		if ( projection != null ){
+		if (projection != null) {
 			clone.setProjection(projection.clone());
 		}
 		return clone;

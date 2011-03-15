@@ -9,7 +9,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Minus;
  * @author Sven
  * 
  */
-public class Subtraction extends NumericalImpl {
+public class Subtraction extends BinaryOperationImpl {
 
 	/**
 	 * constructor

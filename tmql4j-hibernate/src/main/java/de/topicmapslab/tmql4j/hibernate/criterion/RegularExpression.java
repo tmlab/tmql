@@ -7,7 +7,7 @@ package de.topicmapslab.tmql4j.hibernate.criterion;
  * @author Sven Krosse
  * 
  */
-public class RegularExpression extends ComparisonImpl {
+public class RegularExpression extends BinaryOperationImpl {
 
 	/**
 	 * constructor

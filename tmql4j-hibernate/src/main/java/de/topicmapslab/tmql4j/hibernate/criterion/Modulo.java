@@ -7,7 +7,7 @@ package de.topicmapslab.tmql4j.hibernate.criterion;
  * @author Sven
  * 
  */
-public class Modulo extends NumericalImpl {
+public class Modulo extends BinaryOperationImpl {
 
 	/**
 	 * constructor

@@ -32,4 +32,12 @@ public class TypeFilter extends Filter {
 		return ShortcutAxisTypes.TOKEN + IHibernateConstants.WHITESPACE + subjectIdentifier;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public TypeFilter clone() throws CloneNotSupportedException {
+		return new TypeFilter(subjectIdentifier);
+	}
+
 }

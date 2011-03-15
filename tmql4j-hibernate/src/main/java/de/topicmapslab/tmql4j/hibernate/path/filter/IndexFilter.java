@@ -29,4 +29,12 @@ public class IndexFilter extends Filter {
 		return Long.toString(number);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Filter clone() throws CloneNotSupportedException {
+		return new IndexFilter(number);
+	}
+
 }

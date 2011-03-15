@@ -7,7 +7,7 @@ package de.topicmapslab.tmql4j.hibernate.criterion;
  * @author Sven Krosse
  * 
  */
-public class LowerEquals extends ComparisonImpl {
+public class LowerEquals extends BinaryOperationImpl {
 
 	/**
 	 * constructor

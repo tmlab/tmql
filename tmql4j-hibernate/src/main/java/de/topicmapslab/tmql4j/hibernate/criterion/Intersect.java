@@ -7,13 +7,13 @@ package de.topicmapslab.tmql4j.hibernate.criterion;
  * @author Sven Krosse
  * 
  */
-public class LowerThan extends BinaryOperationImpl {
+public class Intersect extends BinaryOperationImpl {
 
 	/**
 	 * constructor
 	 */
-	public LowerThan() {
-		super(de.topicmapslab.tmql4j.path.grammar.lexical.LowerThan.TOKEN);
+	public Intersect() {
+		super(de.topicmapslab.tmql4j.path.grammar.lexical.Intersect.TOKEN);
 	}
 
 }

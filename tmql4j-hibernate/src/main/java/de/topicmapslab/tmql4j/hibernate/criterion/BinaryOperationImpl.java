@@ -9,9 +9,9 @@ import de.topicmapslab.tmql4j.hibernate.exception.InvalidModelException;
  * @author Sven Krosse
  * 
  */
-public abstract class NumericalImpl extends CriteriaImpl {
+public abstract class BinaryOperationImpl extends CriteriaImpl {
 
-	private final String token;
+	private String token;
 
 	/**
 	 * constructor
@@ -19,7 +19,7 @@ public abstract class NumericalImpl extends CriteriaImpl {
 	 * @param token
 	 *            the token
 	 */
-	public NumericalImpl(final String token) {
+	public BinaryOperationImpl(final String token) {
 		this.token = token;
 	}
 
@@ -36,25 +36,24 @@ public abstract class NumericalImpl extends CriteriaImpl {
 	 */
 	@Override
 	protected void validate() throws InvalidModelException {
-		if (size() < 2) {
-			throw new InvalidModelException("At least two criteria are expected, but '" + size() + "' was found.");
+		if (size() != 2) {
+			throw new InvalidModelException("Exact two criteria are expected, but '" + size() + "' was found.");
 		}
 	}
-	
+
 	/**
-	  * {@inheritDoc}
-	  */
+	 * {@inheritDoc}
+	 */
 	@Override
-	public NumericalImpl clone() throws CloneNotSupportedException {
-		try{
-			NumericalImpl clone = getClass().getConstructor(String.class).newInstance(token);
+	public BinaryOperationImpl clone() throws CloneNotSupportedException {
+		try {
+			BinaryOperationImpl clone = getClass().getConstructor().newInstance();
+			clone.token = token;
 			clone(clone);
 			return clone;
-		}catch(Exception e){
-			e.printStackTrace(System.err);
-			// IGNORE
+		} catch (Exception e) {
+			throw new InvalidModelException(e);
 		}
-		return null;
 	}
 
 }

@@ -40,18 +40,16 @@ public class GetRoleTypes extends FunctionImpl {
 	/**
 	 * {@inheritDoc}
 	 */
-	public QueryMatches interpret(ITMQLRuntime runtime, IContext context,
-			IExpressionInterpreter<?> caller) {
-		
-		ITypeInstanceIndex index = context.getQuery().getTopicMap().getIndex(
-				ITypeInstanceIndex.class);
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
+
+		ITypeInstanceIndex index = context.getQuery().getTopicMap().getIndex(ITypeInstanceIndex.class);
 		if (!index.isOpen()) {
 			index.open();
 		}
 		/*
 		 * has arguments ?
 		 */
-		if ( caller.containsExpressionsType(Parameters.class)){
+		if (caller.containsExpressionsType(Parameters.class)) {
 			QueryMatches results = new QueryMatches(runtime);
 			QueryMatches parameters = getParameters(runtime, context, caller);
 			/*
@@ -60,70 +58,68 @@ public class GetRoleTypes extends FunctionImpl {
 			for (Map<String, Object> tuple : parameters) {
 				Object param0 = tuple.get("$0");
 				Object duplicates = tuple.get("$1");
-				if ( param0 instanceof ITopic ){
+				if (param0 instanceof ITopic) {
 					ITopic type = (ITopic) param0;
 					Set<List<Topic>> roleTypes = HashUtil.getHashSet();
 					/*
 					 * get instances
 					 */
-					for ( Association a : index.getAssociations(type)){						
+					for (Association a : index.getAssociations(type)) {
 						List<Topic> list = new ArrayList<Topic>();
 						/*
 						 * get role types with duplicates
 						 */
-						if ( duplicates != null && Boolean.parseBoolean(duplicates.toString())){
-							for ( Role r : a.getRoles()){
+						if (duplicates != null && Boolean.parseBoolean(duplicates.toString())) {
+							for (Role r : a.getRoles()) {
 								list.add(r.getType());
 							}
 						}
 						/*
 						 * each role-type only one times
 						 */
-						else{
+						else {
 							list.addAll(a.getRoleTypes());
 						}
-						if ( !roleTypes.contains(list)){
+						if (!roleTypes.contains(list)) {
 							roleTypes.add(list);
 						}
 					}
 					/*
 					 * set results
 					 */
-					for ( List<Topic> rt : roleTypes){
-						Map<String, Object> t = HashUtil.getHashMap();						
-						t.put("$0", rt);
+					for (List<Topic> rt : roleTypes) {
+						Map<String, Object> t = HashUtil.getHashMap();
+						t.put(QueryMatches.getNonScopedVariable(), rt);
 						results.add(t);
 					}
 				}
 				/*
 				 * second argument is boolean argument
 				 */
-				else if ( param0 != null && Boolean.parseBoolean(param0.toString())){
-					return QueryMatches.asQueryMatchNS(runtime, getTransitiveIndex(context.getQuery().getTopicMap())
-							.getRoleTypes());
+				else if (param0 != null && Boolean.parseBoolean(param0.toString())) {
+					return QueryMatches.asQueryMatchNS(runtime, getTransitiveIndex(context.getQuery().getTopicMap()).getRoleTypes());
 				}
 			}
 			return results;
 		}
-		return QueryMatches.asQueryMatchNS(runtime, index
-				.getRoleTypes());
+		return QueryMatches.asQueryMatchNS(runtime, index.getRoleTypes());
 
 	}
-	
+
 	/**
 	 * Internal method to get the transitive index
-	 * @param topicMap the topic map
+	 * 
+	 * @param topicMap
+	 *            the topic map
 	 * @return the transitive index
 	 */
-	private ITransitiveTypeInstanceIndex getTransitiveIndex(TopicMap topicMap){
-		ITransitiveTypeInstanceIndex index = topicMap.getIndex(
-				ITransitiveTypeInstanceIndex.class);
+	private ITransitiveTypeInstanceIndex getTransitiveIndex(TopicMap topicMap) {
+		ITransitiveTypeInstanceIndex index = topicMap.getIndex(ITransitiveTypeInstanceIndex.class);
 		if (!index.isOpen()) {
 			index.open();
 		}
 		return index;
 	}
-	
 
 	/**
 	 * {@inheritDoc}

@@ -15,11 +15,13 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 public class Substraction extends Token {
 
+	public static final String TOKEN = "MINUS";
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "MINUS";
+		return TOKEN;
 	}
 
 }

@@ -13,7 +13,7 @@
         <osgi.version>3.1.0</osgi.version>
         <qualified.osgi.version>${osgi.version}.${maven.build.timestamp}</qualified.osgi.version>
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
-    </properties>
+	</properties>
 	
 	<build>
 		<extensions>

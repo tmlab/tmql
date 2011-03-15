@@ -30,8 +30,15 @@ public class SupertypeFilter extends Filter {
 	 */
 	@Override
 	String getFilterPart() {
-		return Dot.TOKEN + IHibernateConstants.WHITESPACE + Ako.TOKEN + IHibernateConstants.WHITESPACE
-				+ subjectIdentifier;
+		return Dot.TOKEN + IHibernateConstants.WHITESPACE + Ako.TOKEN + IHibernateConstants.WHITESPACE + subjectIdentifier;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SupertypeFilter clone() throws CloneNotSupportedException {
+		return new SupertypeFilter(subjectIdentifier);
 	}
 
 }

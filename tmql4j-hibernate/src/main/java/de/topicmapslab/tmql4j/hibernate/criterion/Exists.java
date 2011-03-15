@@ -4,13 +4,14 @@
 package de.topicmapslab.tmql4j.hibernate.criterion;
 
 import de.topicmapslab.tmql4j.hibernate.IQueryPart;
-import de.topicmapslab.tmql4j.hibernate.core.NonInterpreted;
 
 /**
  * @author Sven Krosse
  * 
  */
 public class Exists extends Criterion {
+
+	private final IQueryPart part;
 
 	/**
 	 * Constructor
@@ -19,15 +20,16 @@ public class Exists extends Criterion {
 	 *            the query part
 	 */
 	public Exists(IQueryPart part) {
-		super(part.toTmql());
+		super(part);
+		this.part = part;
 	}
-	
+
 	/**
-	  * {@inheritDoc}
-	  */
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Exists clone() throws CloneNotSupportedException {
-		return new Exists(new NonInterpreted(toTmql()));
+		return new Exists(this.part.clone());
 	}
 
 }

@@ -9,7 +9,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Percent;
  * @author Sven
  * 
  */
-public class Division extends NumericalImpl {
+public class Division extends BinaryOperationImpl {
 
 	/**
 	 * constructor

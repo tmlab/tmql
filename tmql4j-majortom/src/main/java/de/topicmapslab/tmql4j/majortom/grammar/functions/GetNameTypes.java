@@ -88,12 +88,12 @@ public class GetNameTypes extends FunctionImpl {
 					if (duplicate) {
 						for (List<Topic> rt : nameTypesByInstance) {
 							Map<String, Object> t = HashUtil.getHashMap();
-							t.put("$0", rt);
+							t.put(QueryMatches.getNonScopedVariable(), rt);
 							results.add(t);
 						}
-					}else{
+					} else {
 						Map<String, Object> t = HashUtil.getHashMap();
-						t.put("$0", nameTypesByType);
+						t.put(QueryMatches.getNonScopedVariable(), nameTypesByType);
 						results.add(t);
 					}
 				}
