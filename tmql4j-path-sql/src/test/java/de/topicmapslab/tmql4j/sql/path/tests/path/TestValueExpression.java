@@ -8,7 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 import de.topicmapslab.tmql4j.path.query.TMQLQuery;
 import de.topicmapslab.tmql4j.sql.path.tests.Tmql4JTestCase;
 
@@ -18,7 +18,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 	public void testUndef() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 
 		query = prefix + " undef  ";
 		set = execute(new TMQLQuery(topicMap, query));
@@ -26,10 +26,29 @@ public class TestValueExpression extends Tmql4JTestCase {
 	}
 	
 	@Test
+	public void testBoolean() throws Exception {
+		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
+		String query = null;
+		SimpleResultSet set = null;
+
+		query = prefix + " true  ";
+		set = execute(new TMQLQuery(topicMap, query));
+		Assert.assertEquals(1,set.size());
+		Assert.assertEquals(1,set.first().size());
+		Assert.assertEquals(true,set.get(0,0));		
+		
+		query = prefix + " false  ";
+		set = execute(new TMQLQuery(topicMap, query));
+		Assert.assertEquals(1,set.size());
+		Assert.assertEquals(1,set.first().size());
+		Assert.assertEquals(false,set.get(0,0));
+	}
+	
+	@Test
 	public void testSign() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 
 		query = prefix + " -1 * 1  ";
 		set = execute(new TMQLQuery(topicMap,query));
@@ -62,7 +81,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 	public void testAddition() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 
 		query = prefix + " 1 + 2 ";
 		set = execute(new TMQLQuery(topicMap,query));
@@ -134,7 +153,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 	public void testSubtraction() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 
 		query = prefix + " 1 - 2 ";
 		set = execute(new TMQLQuery(topicMap,query));
@@ -194,7 +213,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 	public void testMultiplication() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 
 		query = prefix + " 1 * 2 ";
 		set = execute(new TMQLQuery(topicMap,query));
@@ -222,7 +241,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 			Assert.fail();
 		}
 
-		query = prefix + " -20 * 20 ";
+		query = prefix + " - 20 * 20 ";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -253,9 +272,9 @@ public class TestValueExpression extends Tmql4JTestCase {
 	public void testDivision() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 
-		query = prefix + " 1.0 % 2.0 ";
+		query = prefix + " 1 % 2 ";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();
@@ -268,7 +287,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 			Assert.fail();
 		}
 
-		query = prefix + " 20.0 % 20.0 ";
+		query = prefix + " 20 % 20 ";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -281,7 +300,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 			Assert.fail();
 		}
 
-		query = prefix + " -20.0 % 20.0 ";
+		query = prefix + " - 20 % 20 ";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -313,15 +332,13 @@ public class TestValueExpression extends Tmql4JTestCase {
 
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 
 		query = prefix + " 1 mod 2 ";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();
-		if (o instanceof BigInteger) {
-			Assert.assertEquals(1, ((BigInteger) o).longValue());
-		} else if (o instanceof BigDecimal) {
+		if (o instanceof BigDecimal) {
 			Assert.assertEquals(1, ((BigDecimal) o).longValue());
 		} else if (o instanceof Collection<?>) {
 			Assert.assertEquals(1, ((BigDecimal) ((Collection<?>) o).iterator()
@@ -334,9 +351,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
-		if (o instanceof BigInteger) {
-			Assert.assertEquals(0, ((BigInteger) o).longValue());
-		}else if (o instanceof BigDecimal) {
+		if (o instanceof BigDecimal) {
 			Assert.assertEquals(0, ((BigDecimal) o).doubleValue(), 0);
 		} else if (o instanceof Collection<?>) {
 			Assert.assertEquals(0, ((BigDecimal) ((Collection<?>) o).iterator()
@@ -350,7 +365,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 	public void testLowerThan() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 
 		query = prefix + " 1 < 2 ";
 		set = execute(new TMQLQuery(topicMap,query));
@@ -383,7 +398,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 	public void testLowerEquals() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 
 		query = prefix + " 1 <= 2 ";
 		set = execute(new TMQLQuery(topicMap,query));
@@ -416,7 +431,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 	public void testGreaterThan() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 
 		query = prefix + " 10 > 2 ";
 		set = execute(new TMQLQuery(topicMap,query));
@@ -431,7 +446,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 			Assert.fail();
 		}
 
-		query = prefix + " \"C\" > \"B\" ";
+		query = prefix + " \"a\" > \"B\" ";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -449,7 +464,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 	public void testGreaterEquals() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 
 		query = prefix + " 10 >= 2 ";
 		set = execute(new TMQLQuery(topicMap,query));
@@ -464,7 +479,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 			Assert.fail();
 		}
 
-		query = prefix + " \"C\" >= \"B\" ";
+		query = prefix + " \"a\" >= \"B\" ";
 		set = execute(new TMQLQuery(topicMap,query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -482,7 +497,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 	public void testMatchesRegExp() throws Exception {
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 
 		query = prefix + " \"aaaa\" =~ \".*a.*\" ";
 		set = execute(new TMQLQuery(topicMap,query));
@@ -503,7 +518,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		Topic t = createTopicBySI("myTopic");		
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 
 		query = prefix + " // tm:subject [ 1 == 1 ]";
 		set = execute(new TMQLQuery(topicMap,query));
@@ -531,7 +546,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		Topic t = createTopicBySI("myTopic");
 		final String prefix = "%prefix o http://psi.ontopedia.net/ ";
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 
 		query = prefix + " // tm:subject [ 1 != 2 ]";
 		set = execute(new TMQLQuery(topicMap,query));

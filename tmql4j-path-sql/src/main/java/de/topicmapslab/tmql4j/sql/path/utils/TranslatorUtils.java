@@ -34,6 +34,28 @@ public class TranslatorUtils {
 	private static final String SELECTION = "id_topic";
 
 	/**
+	 * Utility method to select a locator by its reference and returns the alias of the locators FROM part
+	 * @param definition the definition, the selection should add to
+	 * @param reference the reference
+	 * @return the alias of locators FROM part
+	 */
+	public static final String addLocatorSelection(final ISqlDefinition definition, final String reference){
+		/*
+		 * add from parts
+		 */
+		IFromPart locators = new FromPart(TABLE_LOCATORS, definition.getAlias(), true);
+		definition.addFromPart(locators);
+		/*
+		 * add condition
+		 */
+		definition.add(MessageFormat.format(CONDITION_REFERENCE, locators.getAlias(), reference));
+		/*
+		 * return alias of locator id
+		 */
+		return locators.getAlias();
+	}
+	
+	/**
 	 * Utility method create a SQL definition to select a topic by subject
 	 * identifier
 	 * 
@@ -105,6 +127,8 @@ public class TranslatorUtils {
 		}
 	}
 
+	
+	
 	/**
 	 * Utility method to add the optional type matching to the SQL definition if
 	 * necessary

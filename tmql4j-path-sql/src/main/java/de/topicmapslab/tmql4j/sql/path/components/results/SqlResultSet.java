@@ -8,14 +8,27 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.results;
 
-import de.topicmapslab.tmql4j.components.processor.results.IResult;
-import de.topicmapslab.tmql4j.components.results.SimpleResultSet;
+import org.tmapi.core.TopicMap;
+import org.tmapi.core.TopicMapSystem;
+
+import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
+import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 
 /**
  * @author Sven Krosse
  * 
  */
 public class SqlResultSet extends SimpleResultSet {
+
+	/**
+	 * constructor
+	 * @param topicMapSystem the topic map system
+	 * @param topicMap the topic map
+	 */
+	public SqlResultSet(TopicMapSystem topicMapSystem, TopicMap topicMap) {
+		super(topicMapSystem, topicMap);
+	}
+	
 
 	/**
 	 * Modify the value at the given position.

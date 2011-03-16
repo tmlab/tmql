@@ -30,9 +30,9 @@ import de.topicmapslab.majortom.model.core.IName;
 import de.topicmapslab.majortom.model.core.ITopic;
 import de.topicmapslab.majortom.model.core.ITopicMap;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
-import de.topicmapslab.tmql4j.components.processor.results.IResult;
+import de.topicmapslab.tmql4j.components.processor.results.TmqlResultProcessor;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.components.results.TmqlResultProcessor;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.query.IQuery;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
@@ -119,7 +119,7 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 			/*
 			 * create new instance of result set
 			 */
-			SqlResultSet resultSet = new SqlResultSet();
+			SqlResultSet resultSet = new SqlResultSet(getRuntime().getTopicMapSystem(), query.getTopicMap());
 			resultSet.setAlias(getAliasIndex());
 			Map<String, List<Index>> indexes = HashUtil.getHashMap();
 			Set<String> ids = HashUtil.getHashSet();

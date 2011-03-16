@@ -16,8 +16,8 @@ import java.util.Set;
 import org.junit.Test;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.tmql4j.components.processor.results.IResult;
-import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
+import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 import de.topicmapslab.tmql4j.sql.path.tests.Tmql4JTestCase;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
@@ -30,11 +30,11 @@ public class TestContent extends Tmql4JTestCase {
 	@Test
 	public void testIntersection() throws Exception {
 		String query;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 		Topic topic = createTopicBySI("myType");
 		Topic other = createTopicBySI("other");
 		Set<Topic> topics = HashUtil.getHashSet();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 100; i++) {
 			Topic t = createTopic();
 			if (i % 2 == 0) {
 				t.addType(topic);
@@ -58,17 +58,41 @@ public class TestContent extends Tmql4JTestCase {
 			assertEquals(1, r.size());
 			assertTrue(topics.contains(r.first()));
 		}
+		
+		query = " { // other INTERSECT // myType }";
+		set = execute(query);
+		assertEquals(topics.size(), set.size());
+		for (IResult r : set) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+		
+		query = " // other INTERSECT { // myType }";
+		set = execute(query);
+		assertEquals(topics.size(), set.size());
+		for (IResult r : set) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+		
+		query = " { // other } INTERSECT { // myType }";
+		set = execute(query);
+		assertEquals(topics.size(), set.size());
+		for (IResult r : set) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
 	}
 
 	@Test
 	public void testIntersectionChain() throws Exception {
 		String query;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 		Topic topic = createTopicBySI("myType");
 		Topic other = createTopicBySI("other");
 		Topic another = createTopicBySI("another");
 		Set<Topic> topics = HashUtil.getHashSet();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 100; i++) {
 			Topic t = createTopic();
 			if (i % 3 == 0) {
 				t.addType(topic);
@@ -134,11 +158,11 @@ public class TestContent extends Tmql4JTestCase {
 	@Test
 	public void testUnion() throws Exception {
 		String query;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 		Topic topic = createTopicBySI("myType");
 		Topic other = createTopicBySI("other");
 		Set<Topic> topics = HashUtil.getHashSet();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 100; i++) {
 			Topic t = createTopic();
 			if (i % 2 == 0) {
 				t.addType(topic);
@@ -168,12 +192,12 @@ public class TestContent extends Tmql4JTestCase {
 	@Test
 	public void testUnionChain() throws Exception {
 		String query;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 		Topic topic = createTopicBySI("myType");
 		Topic other = createTopicBySI("other");
 		Topic another = createTopicBySI("another");
 		Set<Topic> topics = HashUtil.getHashSet();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 100; i++) {
 			Topic t = createTopic();
 			if (i % 3 == 0) {
 				t.addType(topic);
@@ -237,11 +261,11 @@ public class TestContent extends Tmql4JTestCase {
 	@Test
 	public void testMinus() throws Exception {
 		String query;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 		Topic topic = createTopicBySI("myType");
 		Topic other = createTopicBySI("other");
 		Set<Topic> topics = HashUtil.getHashSet();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 100; i++) {
 			Topic t = createTopic();
 			if (i % 2 == 0) {
 				t.addType(topic);
@@ -268,12 +292,12 @@ public class TestContent extends Tmql4JTestCase {
 	@Test
 	public void testMinusChain() throws Exception {
 		String query;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 		Topic topic = createTopicBySI("myType");
 		Topic other = createTopicBySI("other");
 		Topic another = createTopicBySI("another");
 		Set<Topic> topics = HashUtil.getHashSet();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 100; i++) {
 			Topic t = createTopic();
 			if (i % 3 == 0) {
 				t.addType(topic);
@@ -298,15 +322,27 @@ public class TestContent extends Tmql4JTestCase {
 			assertEquals(1, r.size());
 			assertTrue(topics.contains(r.first()));
 		}		
+		
+		/*
+		 * second part will be interpret first 
+		 * ( // other UNION // myType )
+		 */
+		query = " // another MINUS { // other UNION // myType }";
+		set = execute(query);
+		assertEquals(topics.size(), set.size());
+		for (IResult r : set) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}	
 	}
 	
 	@Test
 	public void testIfThenElseClause() throws Exception {
 		String query;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 		Topic topic = createTopicBySI("myType");		
 		Set<String> values = HashUtil.getHashSet();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 100; i++) {
 			Topic t = createTopic();
 			t.addType(topic);
 			if (i % 2 == 0) {
@@ -326,7 +362,7 @@ public class TestContent extends Tmql4JTestCase {
 		values.add("Missing");
 		query = " // myType ( IF ( fn:count( . / tm:name ) > 0 ) THEN . / tm:name ELSE \"Missing\" ) ";
 		set = execute(query);
-		assertEquals(10, set.size());
+		assertEquals(100, set.size());
 		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertTrue(values.contains(r.first()));
@@ -335,7 +371,7 @@ public class TestContent extends Tmql4JTestCase {
 		values.add("Missing");
 		query = " // myType ( . / tm:name || \"Missing\" ) ";
 		set = execute(query);
-		assertEquals(10, set.size());
+		assertEquals(100, set.size());
 		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertTrue(values.contains(r.first()));

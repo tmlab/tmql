@@ -21,7 +21,7 @@ import de.topicmapslab.majortom.database.jdbc.core.SqlDialect;
 import de.topicmapslab.majortom.database.store.JdbcTopicMapStore;
 import de.topicmapslab.majortom.database.store.JdbcTopicMapStoreProperty;
 import de.topicmapslab.majortom.store.TopicMapStoreProperty;
-import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.components.processor.runtime.TMQLRuntimeFactory;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;

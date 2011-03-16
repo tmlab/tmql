@@ -31,7 +31,7 @@ public class PlayersAxisTranslator extends AxisTranslatorImpl {
 	static final String FORWARD_SELECTION = "id_player";
 	static final String BACKWARD_SELECTION = "id_parent";
 	static final String TABLE = "roles";
-	static final String FORWARD_CONDITION_ASSOCIATION = "{0} = {1}.id_parent";
+	static final String FORWARD_CONDITION_ROLE = "{0} = {1}.id";
 	static final String FORWARD_CONDITION_TOPIC = "{0} = {1}.id_type";
 	static final String PARENT_CONDITION = "{0}.id = {1}.id_parent";
 	static final String BACKWARD_CONDITION = "{0} = {1}.id_player";
@@ -71,7 +71,7 @@ public class PlayersAxisTranslator extends AxisTranslatorImpl {
 			/*
 			 * append condition
 			 */
-			result.add(MessageFormat.format(FORWARD_CONDITION_ASSOCIATION, selection.getSelection(), fromPart.getAlias()));
+			result.add(MessageFormat.format(FORWARD_CONDITION_ROLE, selection.getSelection(), fromPart.getAlias()));
 		}
 		/*
 		 * add new selection
@@ -82,7 +82,7 @@ public class PlayersAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add optional type argument if necessary
 		 */
-		TranslatorUtils.addOptionalTypeArgument(runtime, context, optionalType, definition, TYPE, fromPart.getAlias());
+		TranslatorUtils.addOptionalTopicTypeArgument(runtime, context, optionalType, definition, FORWARD_SELECTION, fromPart.getAlias());
 		return result;
 	}
 

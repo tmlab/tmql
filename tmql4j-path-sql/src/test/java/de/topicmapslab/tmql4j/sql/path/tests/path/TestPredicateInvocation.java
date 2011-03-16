@@ -10,8 +10,8 @@ import org.junit.Test;
 import org.tmapi.core.Association;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.tmql4j.components.processor.results.IResult;
-import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
+import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 import de.topicmapslab.tmql4j.sql.path.tests.Tmql4JTestCase;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
@@ -37,7 +37,7 @@ public class TestPredicateInvocation extends Tmql4JTestCase {
 			assocaition.createRole(createTopic(), createTopic());
 		}
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 		Set<Topic> result = null;
 
 		query = " // tm:subject [ myTopic ( roleType : . ) ]";
@@ -73,7 +73,7 @@ public class TestPredicateInvocation extends Tmql4JTestCase {
 			}
 		}
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 		Set<Topic> result = null;
 
 		query = " // tm:subject [ myTopic ( roleType : . , ...) ]";
@@ -96,13 +96,13 @@ public class TestPredicateInvocation extends Tmql4JTestCase {
 	public void testAkoPredicateInvocation(){		
 		Topic supertype = createTopicBySI("mySupertype");
 		Set<Topic> topics = HashUtil.getHashSet();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 100; i++) {
 			Topic t = createTopic();
 			topics.add(t);
 			addSupertype(t, supertype);
 		}
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 
 		query = "// tm:subject [ tm:subclass-of ( tm:subclass : . , tm:superclass : mySupertype ) ]";
 		set = execute(query);
@@ -119,13 +119,13 @@ public class TestPredicateInvocation extends Tmql4JTestCase {
 	public void testAkoPredicateInvocationNCL(){		
 		Topic supertype = createTopicBySI("mySupertype");
 		Set<Topic> topics = HashUtil.getHashSet();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 100; i++) {
 			Topic t = createTopic();
 			topics.add(t);
 			addSupertype(t, supertype);
 		}
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 
 		query = "// tm:subject [ . AKO mySupertype ]";
 		set = execute(query);
@@ -143,13 +143,13 @@ public class TestPredicateInvocation extends Tmql4JTestCase {
 	public void testIsaPredicateInvocation(){		
 		Topic type = createTopicBySI("myType");
 		Set<Topic> topics = HashUtil.getHashSet();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 100; i++) {
 			Topic t = createTopic();
 			topics.add(t);
 			t.addType(type);
 		}
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 
 		query = "// tm:subject [ tm:type-instance ( tm:instance : . , tm:type : myType ) ]";
 		set = execute(query);
@@ -166,13 +166,13 @@ public class TestPredicateInvocation extends Tmql4JTestCase {
 	public void testIsaPredicateInvocationNCL(){		
 		Topic type = createTopicBySI("myType");
 		Set<Topic> topics = HashUtil.getHashSet();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 100; i++) {
 			Topic t = createTopic();
 			topics.add(t);
 			t.addType(type);
 		}
 		String query = null;
-		IResultSet<?> set = null;
+		SimpleResultSet set = null;
 
 		query = "// tm:subject [ . ISA myType ]";
 		set = execute(query);

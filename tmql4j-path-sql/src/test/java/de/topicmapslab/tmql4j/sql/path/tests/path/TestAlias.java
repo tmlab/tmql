@@ -17,17 +17,16 @@ import org.junit.Test;
 import org.tmapi.core.Name;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.tmql4j.components.processor.results.IResult;
-import de.topicmapslab.tmql4j.components.processor.results.IResultSet;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 import de.topicmapslab.tmql4j.query.IQuery;
-import de.topicmapslab.tmql4j.sql.path.tests.Tmql4JTestCase;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * @author Sven Krosse
  * 
  */
-public class TestAlias extends Tmql4JTestCase {
+public class TestAlias extends de.topicmapslab.tmql4j.sql.path.tests.Tmql4JTestCase {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testError() throws Exception {

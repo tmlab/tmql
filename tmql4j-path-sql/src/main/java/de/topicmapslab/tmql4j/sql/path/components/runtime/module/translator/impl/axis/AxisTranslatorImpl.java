@@ -17,6 +17,7 @@ import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisAtomify;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisCharacteristics;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisDatatype;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisId;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisIndicators;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisInstances;
@@ -105,6 +106,7 @@ public abstract class AxisTranslatorImpl extends TmqlSqlTranslatorImpl<Step> {
 	static {
 		translators.put(AxisAtomify.class, new AtomifyAxisTranslator());
 		translators.put(AxisCharacteristics.class, new CharacteristicsAxisTranslator());
+		translators.put(AxisDatatype.class, new DatatypeAxisTranslator());
 		translators.put(AxisId.class, new IdAxisTranslator());
 		translators.put(AxisIndicators.class, new IndicatorsAxisTranslator());
 		translators.put(AxisInstances.class, new InstancesAxisTranslator());

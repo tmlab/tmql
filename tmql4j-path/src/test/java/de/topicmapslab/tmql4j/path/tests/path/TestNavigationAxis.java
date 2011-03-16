@@ -1478,6 +1478,7 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 	@Test
 	public void testDatatypeAxis() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
+		Topic type = createTopicBySI("myType");
 		Name n = topic.createName("Name");
 		Locator xsdString = topicMap.createLocator(Namespaces.XSD.STRING);
 		Locator xsdInt = topicMap.createLocator(Namespaces.XSD.INT);
@@ -1486,9 +1487,9 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 
 		for (int i = 0; i < 100; i++) {
 			if (i % 4 == 0) {
-				strings.add(topic.createOccurrence(createTopic(), "Value" + i, xsdString));
+				strings.add(topic.createOccurrence(type, "Value" + i, xsdString));
 			} else if (i % 4 == 1) {
-				ints.add(topic.createOccurrence(createTopic(), Integer.toString(i), xsdInt));
+				ints.add(topic.createOccurrence(type, Integer.toString(i), xsdInt));
 			} else if (i % 4 == 2) {
 				strings.add(n.createVariant("Variant" + i, xsdString, createTopic()));
 			} else if (i % 4 == 3) {
@@ -1539,6 +1540,26 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		query = "\"" + Namespaces.XSD.INT + "\" << datatype";
 		set = execute(query);
 		assertEquals(50, set.size());
+		for (IResult r : set) {
+			assertEquals(1, r.size());
+			assertTrue(ints.contains(r.first()));
+		}
+		
+		/*
+		 * test backward with type
+		 */
+		query = "\"" + Namespaces.XSD.STRING + "\" << datatype myType";
+		set = execute(query);
+		assertEquals(25, set.size());
+		for (IResult r : set) {
+			assertEquals(1, r.size());
+			assertTrue(strings.contains(r.first()));
+
+		}
+
+		query = "\"" + Namespaces.XSD.INT + "\" << datatype myType";
+		set = execute(query);
+		assertEquals(25, set.size());
 		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertTrue(ints.contains(r.first()));

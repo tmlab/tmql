@@ -8,7 +8,7 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.results;
 
-import de.topicmapslab.tmql4j.components.results.SimpleResult;
+import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResult;
 
 /**
  * @author Sven Krosse
