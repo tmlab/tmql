@@ -25,10 +25,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.tmapi.core.Construct;
 import org.tmapi.core.Scoped;
+import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.interpreter.IExpressionInterpreter;
@@ -41,6 +39,7 @@ import de.topicmapslab.tmql4j.path.components.navigation.NavigationRegistry;
 import de.topicmapslab.tmql4j.path.components.navigation.model.INavigationAxis;
 import de.topicmapslab.tmql4j.path.exception.NavigationException;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTypes;
+import de.topicmapslab.tmql4j.path.grammar.productions.Anchor;
 import de.topicmapslab.tmql4j.path.grammar.productions.BooleanExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix;
 import de.topicmapslab.tmql4j.util.HashUtil;
@@ -72,12 +71,8 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPostfix> {
-
-	/**
-	 * the Logger
-	 */
-	private Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
+public class FilterPostfixInterpreter extends
+		ExpressionInterpreterImpl<FilterPostfix> {
 
 	/**
 	 * base constructor to create a new instance
@@ -93,42 +88,44 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context,
+			Object... optionalArguments) throws TMQLRuntimeException {
 		switch (getGrammarTypeOfExpression()) {
+		/*
+		 * is boolean-expression
+		 */
+		case TYPE_BOOLEAN_EXPRESSION: {
+			return interpretBooleanExpression(runtime, context,
+					optionalArguments);
+		}
 			/*
-			 * is boolean-expression
+			 * is @ anchor or [ @ anchor]
 			 */
-			case TYPE_BOOLEAN_EXPRESSION: {
-				return interpretBooleanExpression(runtime, context, optionalArguments);
-			}
-				/*
-				 * is @ anchor or [ @ anchor]
-				 */
-			case TYPE_SHORTCUT_SCOPE_FILTER:
-			case TYPE_SCOPE_FILTER: {
-				return interpreScopeFilter(runtime, context, optionalArguments);
-			}
-				/*
-				 * is // anchor or [ ^ anchor]
-				 */
-			case TYPE_SHORTCUT_TYPE_FILTER:
-			case TYPE_TYPE_FILTER: {
-				return interpretTypesAnchor(runtime, context, optionalArguments);
-			}
-				/*
-				 * is [integer] or [$# == #integer]
-				 */
-			case TYPE_SHORTCUT_INDEX_FILTER:
-			case TYPE_INDEX_FILTER: {
-				return interpretIntegerIndex(runtime, context, optionalArguments);
-			}
-				/*
-				 * is [integer .. integer] or [#integer <= $# & $# < #integer]
-				 */
-			case TYPE_BOUNDS_FILTER:
-			case TYPE_SHORTCUT_BOUNDS_FILTER: {
-				return interpretIntegerBounds(runtime, context, optionalArguments);
-			}
+		case TYPE_SHORTCUT_SCOPE_FILTER:
+		case TYPE_SCOPE_FILTER: {
+			return interpreScopeFilter(runtime, context, optionalArguments);
+		}
+			/*
+			 * is // anchor or [ ^ anchor]
+			 */
+		case TYPE_SHORTCUT_TYPE_FILTER:
+		case TYPE_TYPE_FILTER: {
+			return interpretTypesAnchor(runtime, context, optionalArguments);
+		}
+			/*
+			 * is [integer] or [$# == #integer]
+			 */
+		case TYPE_SHORTCUT_INDEX_FILTER:
+		case TYPE_INDEX_FILTER: {
+			return interpretIntegerIndex(runtime, context, optionalArguments);
+		}
+			/*
+			 * is [integer .. integer] or [#integer <= $# & $# < #integer]
+			 */
+		case TYPE_BOUNDS_FILTER:
+		case TYPE_SHORTCUT_BOUNDS_FILTER: {
+			return interpretIntegerBounds(runtime, context, optionalArguments);
+		}
 		}
 		return QueryMatches.emptyMatches();
 	}
@@ -154,7 +151,9 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private QueryMatches interpretBooleanExpression(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+	private QueryMatches interpretBooleanExpression(ITMQLRuntime runtime,
+			IContext context, Object... optionalArguments)
+			throws TMQLRuntimeException {
 		/*
 		 * return empty matches if context is empty
 		 */
@@ -164,7 +163,8 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 		/*
 		 * Extract Boolean-expression
 		 */
-		IExpressionInterpreter<BooleanExpression> ex = getInterpretersFilteredByEypressionType(runtime, BooleanExpression.class).get(0);
+		IExpressionInterpreter<BooleanExpression> ex = getInterpretersFilteredByEypressionType(
+				runtime, BooleanExpression.class).get(0);
 		/*
 		 * Iterate over all tuple of current sequence
 		 */
@@ -176,7 +176,8 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 			Map<String, Object> filteredTuple = HashUtil.getHashMap();
 
 			for (final String variable : storedMatches.getOrderedKeys()) {
-				Object object = storedMatches.getMatches().get(index).get(variable);
+				Object object = storedMatches.getMatches().get(index)
+						.get(variable);
 				List<Object> results = HashUtil.getList();
 				Context newContext = new Context(context);
 				newContext.setCurrentIndexInSequence(index);
@@ -193,7 +194,8 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 						/*
 						 * check boolean expression
 						 */
-						QueryMatches iteration = ex.interpret(runtime, newContext, optionalArguments);
+						QueryMatches iteration = ex.interpret(runtime,
+								newContext, optionalArguments);
 						if (!iteration.isEmpty()) {
 							results.add(object_);
 						}
@@ -207,7 +209,8 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 					/*
 					 * check boolean expression
 					 */
-					QueryMatches iteration = ex.interpret(runtime, newContext, optionalArguments);
+					QueryMatches iteration = ex.interpret(runtime, newContext,
+							optionalArguments);
 					if (!iteration.isEmpty()) {
 						results.add(object);
 					}
@@ -217,7 +220,8 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 				 * check if tuple-sequence is not empty
 				 */
 				if (!results.isEmpty()) {
-					filteredTuple.put(variable, results.size() == 1 ? results.get(0) : results);
+					filteredTuple.put(variable,
+							results.size() == 1 ? results.get(0) : results);
 				}
 			}
 			/*
@@ -251,48 +255,42 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private QueryMatches interpretTypesAnchor(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+	private QueryMatches interpretTypesAnchor(ITMQLRuntime runtime,
+			IContext context, Object... optionalArguments)
+			throws TMQLRuntimeException {
 		/*
-		 * Extract value of anchor specified the type to match
+		 * extract theme
 		 */
-		String anchor = null;
-		/*
-		 * is // anchor
-		 */
-		if (getGrammarTypeOfExpression() == TYPE_SHORTCUT_TYPE_FILTER) {
-			anchor = getTokens().get(1);
-		}
-		/*
-		 * is [ ^ anchor ]
-		 */
-		else {
-			anchor = getTokens().get(2);
-		}
-
-		/*
-		 * Try to resolve item of current topic map
-		 */
-		Construct construct = runtime.getConstructResolver().getConstructByIdentifier(context, anchor);
-		if (construct == null) {
-			logger.warn("Cannot interpret given anchor '" + anchor + "'.");
+		QueryMatches matches = extractArguments(runtime, Anchor.class, 0,
+				context, optionalArguments);
+		if (matches.isEmpty()) {
 			return QueryMatches.emptyMatches();
 		}
-
+		/*
+		 * check if type is a topic
+		 */
+		Object anchor = matches.getFirstValue();
+		if (!(anchor instanceof Topic)) {
+			return QueryMatches.emptyMatches();
+		}
+		Topic type = (Topic) anchor;
 		/*
 		 * Iterate over all values of tuple sequence and match to resolved type
 		 */
 		if (context.getContextBindings() != null) {
 			try {
-				INavigationAxis axis = NavigationRegistry.buildHandler().lookup(AxisTypes.class);
+				INavigationAxis axis = NavigationRegistry.buildHandler()
+						.lookup(AxisTypes.class);
 				List<Object> values = HashUtil.getList();
 				/*
 				 * iterate over all values of non-scoped variable
 				 */
-				for (Object object : context.getContextBindings().getPossibleValuesForVariable()) {
+				for (Object object : context.getContextBindings()
+						.getPossibleValuesForVariable()) {
 					/*
 					 * check if value is a topic and a type of the current item
 					 */
-					if (axis.navigateForward(object).contains(construct)) {
+					if (axis.navigateForward(object).contains(type)) {
 						values.add(object);
 					}
 				}
@@ -326,33 +324,25 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private QueryMatches interpreScopeFilter(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+	private QueryMatches interpreScopeFilter(ITMQLRuntime runtime,
+			IContext context, Object... optionalArguments)
+			throws TMQLRuntimeException {
 		/*
-		 * Extract value of anchor specified the type to match
+		 * extract theme
 		 */
-		String anchor = null;
-		/*
-		 * is @ anchor
-		 */
-		if (getGrammarTypeOfExpression() == TYPE_SHORTCUT_SCOPE_FILTER) {
-			anchor = getTokens().get(1);
-		}
-		/*
-		 * is [ @ anchor ]
-		 */
-		else {
-			anchor = getTokens().get(2);
-		}
-
-		/*
-		 * Try to resolve item of current topic map
-		 */
-		Construct construct = runtime.getConstructResolver().getConstructByIdentifier(context, anchor);
-		if (construct == null) {
-			logger.warn("Cannot interpret given anchor '" + anchor + "'.");
+		QueryMatches matches = extractArguments(runtime, Anchor.class, 0,
+				context, optionalArguments);
+		if (matches.isEmpty()) {
 			return QueryMatches.emptyMatches();
 		}
-
+		/*
+		 * check if theme is a topic
+		 */
+		Object anchor = matches.getFirstValue();
+		if (!(anchor instanceof Topic)) {
+			return QueryMatches.emptyMatches();
+		}
+		Topic theme = (Topic) anchor;
 		/*
 		 * Iterate over all values of tuple sequence and match to resolved type
 		 */
@@ -361,12 +351,14 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 			/*
 			 * iterate over all values of non-scoped variable
 			 */
-			for (Object object : context.getContextBindings().getPossibleValuesForVariable()) {
+			for (Object object : context.getContextBindings()
+					.getPossibleValuesForVariable()) {
 				/*
 				 * check if value is a scoped item and the scope contains the
 				 * given theme
 				 */
-				if (object instanceof Scoped && ((Scoped) object).getScope().contains(construct)) {
+				if (object instanceof Scoped
+						&& ((Scoped) object).getScope().contains(theme)) {
 					values.add(object);
 				}
 			}
@@ -396,7 +388,9 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private QueryMatches interpretIntegerIndex(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+	private QueryMatches interpretIntegerIndex(ITMQLRuntime runtime,
+			IContext context, Object... optionalArguments)
+			throws TMQLRuntimeException {
 		int index = -1;
 		/*
 		 * extract index by grammar type
@@ -438,7 +432,9 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 	 * @throws TMQLRuntimeException
 	 *             thrown if interpretation fails
 	 */
-	private QueryMatches interpretIntegerBounds(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
+	private QueryMatches interpretIntegerBounds(ITMQLRuntime runtime,
+			IContext context, Object... optionalArguments)
+			throws TMQLRuntimeException {
 
 		int upper = -1;
 		int lower = -1;

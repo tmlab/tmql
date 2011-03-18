@@ -132,7 +132,11 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 					return QueryMatches.asQueryMatchNS(runtime, context.getCurrentIndexInSequence());
 				}
 				return QueryMatches.emptyMatches();
-			} else if (context.getContextBindings() != null) {
+			} 
+			/*
+			 * check context binding for anchor
+			 */
+			if (context.getContextBindings() != null) {
 				/*
 				 * save binding as tuple
 				 */
@@ -150,9 +154,16 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 						return QueryMatches.asQueryMatchNS(runtime, possibleValuesForVariable.toArray());
 					}
 				}
-			} else if (context.getCurrentTuple() != null && context.getCurrentTuple().containsKey(variable)) {
+			} 
+			/*
+			 * check current tuple for anchor
+			 */
+			if (context.getCurrentTuple() != null && context.getCurrentTuple().containsKey(variable)) {
 				return QueryMatches.asQueryMatchNS(runtime, context.getCurrentTuple().get(variable));
 			}
+			/*
+			 * check system variables
+			 */
 			Object value = getSystemReference(runtime, context, variable);
 			if (value != null) {
 				return QueryMatches.asQueryMatchNS(runtime, value);

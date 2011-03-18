@@ -129,10 +129,13 @@ public class FilterPostfix extends ExpressionImpl {
 		 */
 		if (tmqlTokens.get(0).equals(ShortcutAxisInstances.class)) {
 			setGrammarType(TYPE_SHORTCUT_TYPE_FILTER);
+			checkForExtensions(Anchor.class, tmqlTokens.subList(1,2), tokens.subList(1,2), runtime);
 		} else if (tmqlTokens.get(0).equals(Scope.class)) {
 			setGrammarType(TYPE_SHORTCUT_SCOPE_FILTER);
+			checkForExtensions(Anchor.class, tmqlTokens.subList(1,2), tokens.subList(1,2), runtime);
 		} else if (tmqlTokens.get(1).equals(Scope.class)) {
 			setGrammarType(TYPE_SCOPE_FILTER);
+			checkForExtensions(Anchor.class, tmqlTokens.subList(2,3), tokens.subList(2,3), runtime);
 		} else if (tmqlTokens.get(0).equals(BracketSquareOpen.class) && tmqlTokens.get(tmqlTokens.size() - 1).equals(BracketSquareClose.class)) {
 			/*
 			 * is [#integer]
@@ -150,6 +153,7 @@ public class FilterPostfix extends ExpressionImpl {
 			 */
 			else if (tmqlTokens.get(1).equals(ShortcutAxisTypes.class)) {
 				setGrammarType(TYPE_TYPE_FILTER);
+				checkForExtensions(Anchor.class, tmqlTokens.subList(2,3), tokens.subList(2,3), runtime);
 			} else if (tmqlTokens.size() == 5) {
 				/*
 				 * is [#integer .. #integer]
