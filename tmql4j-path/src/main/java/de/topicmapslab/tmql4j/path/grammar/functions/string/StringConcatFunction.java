@@ -10,6 +10,7 @@
  */
 package de.topicmapslab.tmql4j.path.grammar.functions.string;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,7 @@ import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.path.grammar.functions.FunctionImpl;
-import de.topicmapslab.tmql4j.util.HashUtil;
+import de.topicmapslab.tmql4j.util.LiteralUtils;
 
 /**
  * Special implementation of an {@link IFunctionInvocationInterpreter}.
@@ -37,8 +38,7 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class StringConcatFunction extends
-		FunctionImpl {
+public class StringConcatFunction extends FunctionImpl {
 
 	/**
 	 * 
@@ -48,9 +48,8 @@ public class StringConcatFunction extends
 	/**
 	 * {@inheritDoc}
 	 */
-	public de.topicmapslab.tmql4j.components.processor.core.QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
-		QueryMatches results = new QueryMatches(runtime);
-
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context,
+			IExpressionInterpreter<?> caller) {
 		/*
 		 * extract arguments
 		 */
@@ -67,62 +66,63 @@ public class StringConcatFunction extends
 		/*
 		 * iterate over parameters
 		 */
+		List<String> list = new ArrayList<String>();
 		for (Map<String, Object> tuple : parameters) {
-			Object s = tuple.get("$0");
-			Object b = tuple.get("$1");
-			List<String> seq = HashUtil.getList();
-			/*
-			 * check if 2nd argument is a sequence
-			 */
-			if (b instanceof Collection<?>) {
-				/*
-				 * check if 1st is a sequence
-				 */
-				if (s instanceof Collection<?>) {
-					/*
-					 * add all possible combinations
-					 */
-					for (Object oS : (Collection<?>) s) {
-						for (Object oB : (Collection<?>) b) {
-							seq.add(oS.toString() + oB.toString());
-						}
-					}
-				} else {
-					/*
-					 * add all possible combinations
-					 */
-					for (Object oB : (Collection<?>) b) {
-						seq.add(s.toString() + oB.toString());
-					}
-				}
-			}
-			/*
-			 * check if 1st is a sequence
-			 */
-			else if (s instanceof Collection<?>) {
-				/*
-				 * add all possible combinations
-				 */
-				for (Object oS : (Collection<?>) s) {
-					seq.add(oS.toString() + b.toString());
-
-				}
-			} else {
-				/*
-				 * add the combination of the two strings
-				 */
-				seq.add(s.toString() + b.toString());
-			}
-
-			Map<String, Object> result = HashUtil.getHashMap();
-			/*
-			 * extract singleton value
-			 */
-			result.put(QueryMatches.getNonScopedVariable(),
-					seq.size() == 1 ? seq.iterator().next() : seq);
-			results.add(result);
+			addResults(tuple, "", list, 0);
 		}
-		return results;
+		/*
+		 * add all results
+		 */
+		return QueryMatches.asQueryMatchNS(runtime, list.toArray());
+	}
+
+	/**
+	 * Internal method to add next part to result strings or add the string to
+	 * results
+	 * 
+	 * @param tuple
+	 *            the tuple of values
+	 * @param current
+	 *            the current string
+	 * @param results
+	 *            the results
+	 * @param currentIndex
+	 *            the current index
+	 */
+	private void addResults(final Map<String, Object> tuple,
+			final String current, final List<String> results, int currentIndex) {
+		/*
+		 * generate variable of current index
+		 */
+		final String variable = "$" + currentIndex;
+		/*
+		 * more parts of string available
+		 */
+		if (tuple.containsKey(variable)) {
+			Object value = tuple.get(variable);
+			/*
+			 * is collection
+			 */
+			if (value instanceof Collection<?>) {
+				for (Object val : (Collection<?>) value) {
+					String newString = current + LiteralUtils.asString(val);
+					addResults(tuple, newString, results, currentIndex + 1);
+				}
+			}
+			/*
+			 * is anything else
+			 */
+			else {
+				String newString = current + LiteralUtils.asString(value);
+				addResults(tuple, newString, results, currentIndex + 1);
+			}
+		}
+		/*
+		 * no more parts available
+		 */
+		else {
+			results.add(current);
+		}
 	}
 
 	/**
@@ -136,6 +136,6 @@ public class StringConcatFunction extends
 	 * {@inheritDoc}
 	 */
 	public boolean isExpectedNumberOfParameters(long numberOfParameters) {
-		return numberOfParameters == 2;
+		return numberOfParameters >= 2;
 	}
 }

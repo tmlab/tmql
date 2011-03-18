@@ -18,6 +18,7 @@ import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundClose;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundOpen;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Function;
 
@@ -81,7 +82,7 @@ public class FunctionInvocation extends ExpressionImpl {
 		/*
 		 * expects at lest one token beginning with a function identifier
 		 */
-		return !getTmqlTokens().isEmpty() && getTmqlTokens().get(0).equals(Function.class) && getRuntime().getLanguageContext().getFunctionRegistry().isKnownFunction(getTokens().get(0));
+		return getTmqlTokens().size() >= 3 && getTmqlTokens().get(1).equals(BracketRoundOpen.class) && getTmqlTokens().get(getTmqlTokens().size()-1).equals(BracketRoundClose.class) && getTmqlTokens().get(0).equals(Function.class) && getRuntime().getLanguageContext().getFunctionRegistry().isKnownFunction(getTokens().get(0));
 	}
 
 }

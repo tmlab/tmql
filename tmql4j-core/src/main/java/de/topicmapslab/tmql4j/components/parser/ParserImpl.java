@@ -10,6 +10,8 @@
  */
 package de.topicmapslab.tmql4j.components.parser;
 
+import java.text.MessageFormat;
+
 import de.topicmapslab.tmql4j.components.lexer.ILexer;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLException;
@@ -27,7 +29,10 @@ import de.topicmapslab.tmql4j.query.IQuery;
  * 
  */
 public abstract class ParserImpl implements IParser {
-
+	/**
+	 * exception message
+	 */
+	private static final String THE_QUERY_CONTAINS_FORBIDDEN_EXPRESSION = "The query contains a {0} which is a forbidden expression!";
 	/**
 	 * the parsing result
 	 */
@@ -61,7 +66,7 @@ public abstract class ParserImpl implements IParser {
 		try {
 			tree = getParserTreeInstance(runtime, lexer.getQuery(), lexer);
 			if (!tree.isValid(runtime, lexer.getQuery())) {
-				throw new TMQLParserException("Parser tree is invalid, at least one expression are not allowed.");
+				throw new TMQLParserException(MessageFormat.format(THE_QUERY_CONTAINS_FORBIDDEN_EXPRESSION, tree.root().getClass().getSimpleName()));
 			}
 		} catch (TMQLParserException e) {
 			throw e;

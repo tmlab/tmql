@@ -56,7 +56,7 @@ public class PreparedStatement implements IPreparedStatement {
 	/**
 	 * exception message
 	 */
-	private static final String THE_QUERY_CONTAINS_FORBIDDEN_EXPRESSION = "The query contains forbidden expression!";
+	private static final String THE_QUERY_CONTAINS_FORBIDDEN_EXPRESSION = "The query contains a {0} which is a forbidden expression!";
 	/**
 	 * exception message
 	 */
@@ -365,7 +365,7 @@ public class PreparedStatement implements IPreparedStatement {
 		 * check if the tree does not contains forbidden expression
 		 */
 		if (!tree.isValid(runtime, query)) {
-			throw new TMQLRuntimeException(THE_QUERY_CONTAINS_FORBIDDEN_EXPRESSION);
+			throw new TMQLRuntimeException(MessageFormat.format(THE_QUERY_CONTAINS_FORBIDDEN_EXPRESSION, tree.root().getClass().getSimpleName()));
 		}
 		/*
 		 * check if topic map is set

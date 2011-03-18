@@ -8,6 +8,8 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -78,6 +80,35 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first().equals("This is a string."));
+		
+		query = "fn:string-concat ( \"This \" , \"is \", \"a \", \"string.\" ) ";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertTrue(set.first().first().equals("This is a string."));
+		
+		Topic t = createTopicBySI("myTopic");
+		Topic type1 = createTopicBySI("myType");
+		Topic type2 = createTopicBySI("myOtherType");
+		t.createName(type1,"V1");
+		t.createName(type1,"V2");
+		t.createName(type2,"V3");
+		t.createName(type2,"V4");
+		
+		List<String> values = new ArrayList<String>();
+		values.add("V1, V3");
+		values.add("V1, V4");
+		values.add("V2, V3");
+		values.add("V2, V4");
+		
+		query = "myTopic ( fn:string-concat ( . >> characteristics myType , \", \", . >> characteristics myOtherType ) )";
+		set = execute(new TMQLQuery(topicMap, query));
+		System.out.println(set);
+		assertEquals(4, set.size());
+		for ( IResult r : set){
+			assertEquals(1, r.size());
+			assertTrue(values.contains(r.first()));
+		}
 	}
 
 	@Test

@@ -18,6 +18,8 @@ import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundClose;
+import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundOpen;
 
 /**
  * Special implementation of {@link ExpressionImpl} representing a
@@ -68,7 +70,7 @@ public class ProjectionPostfix extends ExpressionImpl {
 	 */
 	@Override
 	public boolean isValid() {
-		return !getTmqlTokens().isEmpty();
+		return getTmqlTokens().size() >= 2 && getTmqlTokens().get(0).equals(BracketRoundOpen.class) && getTmqlTokens().get(getTmqlTokens().size()-1).equals(BracketRoundClose.class);
 	}
 
 }
