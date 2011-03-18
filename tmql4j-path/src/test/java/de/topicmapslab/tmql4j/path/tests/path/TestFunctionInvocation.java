@@ -103,7 +103,6 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		
 		query = "myTopic ( fn:string-concat ( . >> characteristics myType , \", \", . >> characteristics myOtherType ) )";
 		set = execute(new TMQLQuery(topicMap, query));
-		System.out.println(set);
 		assertEquals(4, set.size());
 		for ( IResult r : set){
 			assertEquals(1, r.size());

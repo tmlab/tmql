@@ -6,6 +6,8 @@ import static junit.framework.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -16,6 +18,7 @@ import org.tmapi.core.Occurrence;
 import org.tmapi.core.Topic;
 import org.tmapi.core.Variant;
 
+import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
@@ -498,6 +501,40 @@ public class FunctionCallTest extends Tmql4JTestCase {
 		assertEquals(1, set.first().size());
 		assertTrue(set.first().first() instanceof String);
 		assertEquals(o.getValue() + "si:", set.first().first());
+		
+		query = "concat ( \"This is \", \"a string.\" ) ";
+		set = execute(query);
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertTrue(set.first().first().equals("This is a string."));
+		
+		query = "concat ( \"This \" , \"is \", \"a \", \"string.\" ) ";
+		set = execute(query);
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertTrue(set.first().first().equals("This is a string."));
+		
+		Topic t = createTopicBySI("myTopic");
+		Topic type1 = createTopicBySI("myType");
+		Topic type2 = createTopicBySI("myOtherType");
+		t.createName(type1,"V1");
+		t.createName(type1,"V2");
+		t.createName(type2,"V3");
+		t.createName(type2,"V4");
+		
+		List<String> values = new ArrayList<String>();
+		values.add("V1, V3");
+		values.add("V1, V4");
+		values.add("V2, V3");
+		values.add("V2, V4");
+		
+		query = "concat ( myTopic / myType , \", \", myTopic / myOtherType )";
+		set = execute(query);
+		assertEquals(4, set.size());
+		for ( IResult r : set){
+			assertEquals(1, r.size());
+			assertTrue(values.contains(r.first()));
+		}
 
 	}
 
