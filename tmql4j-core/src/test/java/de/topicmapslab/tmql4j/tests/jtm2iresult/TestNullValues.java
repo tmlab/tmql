@@ -4,6 +4,8 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
+import java.math.BigDecimal;
+
 import org.junit.Test;
 
 import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
@@ -43,7 +45,7 @@ public class TestNullValues extends AbstractTest {
 		SimpleResultSet inRS = createResultSet();
 		SimpleResult inR = new SimpleResult(inRS);
 
-		double testDouble = 3.1415;
+		BigDecimal testDouble = BigDecimal.valueOf(3.1415D);
 
 		inR.add((Object) null);
 		inR.add(testDouble);

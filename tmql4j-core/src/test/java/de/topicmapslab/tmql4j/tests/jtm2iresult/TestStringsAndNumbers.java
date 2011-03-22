@@ -4,6 +4,8 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,7 +55,7 @@ public class TestStringsAndNumbers extends AbstractTest {
 		SimpleResultSet inRS = createResultSet();
 		SimpleResult inR = new SimpleResult(inRS);
 
-		double testDouble = 3.1415;
+		BigDecimal testDouble = BigDecimal.valueOf(3.1415D);
 
 		inR.add(testDouble);
 		inRS.addResult(inR);
@@ -74,7 +76,7 @@ public class TestStringsAndNumbers extends AbstractTest {
 		SimpleResultSet inRS = createResultSet();
 		SimpleResult inR = new SimpleResult(inRS);
 
-		int testInt = 666;
+		BigInteger testInt = BigInteger.valueOf(666);
 
 		inR.add(testInt);
 		inRS.addResult(inR);
@@ -93,8 +95,8 @@ public class TestStringsAndNumbers extends AbstractTest {
 	public void testCombinationResult() {
 
 		String testString = "Test String";
-		double testDouble = 3.1415;
-		int testInt = 666;
+		BigDecimal testDouble = BigDecimal.valueOf(3.1415D);
+		BigInteger testInt = BigInteger.valueOf(666);
 
 		SimpleResultSet inRS = createResultSet();
 		SimpleResult inR = new SimpleResult(inRS);

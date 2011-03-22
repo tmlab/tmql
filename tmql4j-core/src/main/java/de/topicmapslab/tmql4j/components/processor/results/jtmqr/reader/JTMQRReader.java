@@ -2,6 +2,8 @@ package de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -136,12 +138,11 @@ public class JTMQRReader {
 
 			// read number result
 			JsonToken token = this.jParser.nextToken();
-			text = this.jParser.getText();
 
 			if (token.equals(JsonToken.VALUE_NUMBER_FLOAT)) {
-				result.add(Double.parseDouble(text));
+				result.add(BigDecimal.valueOf(jParser.getDoubleValue()));
 			} else if (token.equals(JsonToken.VALUE_NUMBER_INT)) {
-				result.add(Integer.parseInt(text));
+				result.add(BigInteger.valueOf(jParser.getLongValue()));
 			}
 
 		} else if (text.equals(IJTMConstants.ITEM_TYPE)) {
