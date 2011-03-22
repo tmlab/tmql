@@ -10,7 +10,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.tmapi.core.Locator;
 
+import de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.model.LocatorStub;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResult;
@@ -43,6 +45,28 @@ public class TestStringsAndNumbers extends AbstractTest {
 		assertFalse(outRS.isEmpty());
 
 		assertEquals(testString, outRS.get(0).get(0));
+
+	}
+
+	/**
+	 * checks a single locator result
+	 */
+	@Test
+	public void testLocator() {
+
+		SimpleResultSet inRS = createResultSet();
+		SimpleResult inR = new SimpleResult(inRS);
+
+		Locator loc = new LocatorStub("http://psi.example.org");
+
+		inR.add(loc);
+		inRS.addResult(inR);
+
+		IResultSet<?> outRS = convert(inRS);
+
+		assertFalse(outRS.isEmpty());
+
+		assertEquals(loc, outRS.get(0).get(0));
 
 	}
 

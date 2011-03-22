@@ -8,6 +8,7 @@ import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.tmapi.core.Construct;
+import org.tmapi.core.Locator;
 
 import de.topicmapslab.jtm.writer.JTMVersion;
 import de.topicmapslab.jtm.writer.JTMWriter;
@@ -51,6 +52,8 @@ public class TupleSerializer extends JsonSerializer<SimpleResult> {
 				writeConstruct(jgen, (Construct) result);
 			} else if (result instanceof Boolean) {
 				jgen.writeBooleanField(IJtmQrKeys.BOOLEAN, Boolean.valueOf(result.toString()));
+			} else if (result instanceof Locator) {
+				jgen.writeStringField(IJtmQrKeys.LOCATOR, ((Locator) result).getReference());
 			}
 			jgen.writeEndObject();
 		}

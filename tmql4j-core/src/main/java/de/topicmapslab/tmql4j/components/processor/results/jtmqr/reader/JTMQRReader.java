@@ -14,6 +14,7 @@ import org.codehaus.jackson.JsonToken;
 
 import de.topicmapslab.jtm.writer.IJTMConstants;
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.model.ConstructReader;
+import de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.model.LocatorStub;
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.result.SimpleJtmqrResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer.IJtmQrKeys;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
@@ -127,6 +128,13 @@ public class JTMQRReader {
 			this.jParser.nextToken();
 			text = this.jParser.getText();
 			result.add(text);
+
+		} else if (text.equals(IJtmQrKeys.LOCATOR)) {
+
+			// read string result
+			this.jParser.nextToken();
+			text = this.jParser.getText();
+			result.add(new LocatorStub(text));
 
 		} else if (text.equals(IJtmQrKeys.BOOLEAN)) {
 

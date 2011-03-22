@@ -66,6 +66,10 @@ public interface IJtmQrKeys {
 	 * the JSON hash key for boolean values
 	 */
 	public static final String BOOLEAN = "b";
+	/**
+	 * the JSON hash key for locator values
+	 */
+	public static final String LOCATOR = "l";
 
 	/**
 	 * the JSON hash key for items
