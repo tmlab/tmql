@@ -10,6 +10,7 @@
  */
 package de.topicmapslab.tmql4j.path.components.interpreter;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -88,36 +89,36 @@ public class BooleanPrimitiveInterpreter extends ExpressionInterpreterImpl<Boole
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		switch (getGrammarTypeOfExpression()) {
-		/*
-		 * is cramped-boolean expression
-		 */
-		case BooleanPrimitive.TYPE_BOOLEAN_EXPRESSION: {
-			return interpretCrampedBooleanExpression(runtime, context, optionalArguments);
-		}
 			/*
-			 * is not-expression
+			 * is cramped-boolean expression
 			 */
-		case BooleanPrimitive.TYPE_NOT_EXPRESSION: {
-			return interpretNotExpression(runtime, context, optionalArguments);
-		}
-			/*
-			 * is for-all-clause
-			 */
-		case BooleanPrimitive.TYPE_EVERY_CLAUSE: {
-			return interpretForAllExpression(runtime, context, optionalArguments);
-		}
-			/*
-			 * is exists-clause
-			 */
-		case BooleanPrimitive.TYPE_EXISTS_CLAUSE: {
-			return interpretExsistsExpression(runtime, context, optionalArguments);
-		}
-			/*
-			 * is scoped-expression
-			 */
-		case BooleanPrimitive.TYPE_SCOPED_EXPRESSION: {
-			return interpretScopedExpression(runtime, context, optionalArguments);
-		}
+			case BooleanPrimitive.TYPE_BOOLEAN_EXPRESSION: {
+				return interpretCrampedBooleanExpression(runtime, context, optionalArguments);
+			}
+				/*
+				 * is not-expression
+				 */
+			case BooleanPrimitive.TYPE_NOT_EXPRESSION: {
+				return interpretNotExpression(runtime, context, optionalArguments);
+			}
+				/*
+				 * is for-all-clause
+				 */
+			case BooleanPrimitive.TYPE_EVERY_CLAUSE: {
+				return interpretForAllExpression(runtime, context, optionalArguments);
+			}
+				/*
+				 * is exists-clause
+				 */
+			case BooleanPrimitive.TYPE_EXISTS_CLAUSE: {
+				return interpretExsistsExpression(runtime, context, optionalArguments);
+			}
+				/*
+				 * is scoped-expression
+				 */
+			case BooleanPrimitive.TYPE_SCOPED_EXPRESSION: {
+				return interpretScopedExpression(runtime, context, optionalArguments);
+			}
 		}
 		return QueryMatches.emptyMatches();
 	}
@@ -220,39 +221,51 @@ public class BooleanPrimitiveInterpreter extends ExpressionInterpreterImpl<Boole
 		 */
 		else {
 			Set<QueryMatches> matches = HashUtil.getHashSet();
-			/*
-			 * iterate over all variables
-			 */
-			for (final String variable : getVariables()) {
-				/*
-				 * add possible variable bindings
-				 */
-				QueryMatches match = new QueryMatches(runtime);
-				// match.convertToTuples((Set<Object>) new
-				// BooleanPrimitiveVariableBindingOptimizer(runtime).optimize(ex,
-				// variable), variable);
-				match.convertToTuples(context.getQuery().getTopicMap().getTopics(), variable);
-				matches.add(match);
-			}
-
-			/*
-			 * iterate over all possible variable bindings
-			 */
-			for (Map<String, Object> tuple : new QueryMatches(runtime, matches)) {
-				if (results.getMatches().contains(tuple)) {
-					continue;
+			List<String> variables = getVariables();
+			if (variables.isEmpty()) {
+				for ( Map<String, Object> tuple :results){
+					Map<String, Object> tuple_ = HashUtil.getHashMap();
+					for (Entry<String,Object> entry : tuple.entrySet()){
+						if ( entry.getValue() instanceof Boolean ){
+							tuple_.put(entry.getKey(), !((Boolean)entry.getValue()).booleanValue());
+						}else{
+							tuple_.put(entry.getKey(), entry.getValue());
+						}
+					}
+					negation.add(tuple_);
 				}
+			} else {
 				/*
-				 * push new set on the top of the stack and set @_
+				 * iterate over all variables
 				 */
-				newContext = new Context(context);
-				newContext.setCurrentTuple(tuple);
+				for (final String variable : variables) {
+					/*
+					 * add possible variable bindings
+					 */
+					QueryMatches match = new QueryMatches(runtime);
+					match.convertToTuples(context.getQuery().getTopicMap().getTopics(), variable);
+					matches.add(match);
+				}
+
 				/*
-				 * call sub-expression
+				 * iterate over all possible variable bindings
 				 */
-				QueryMatches set = ex.interpret(runtime, newContext, optionalArguments);
-				if (!set.isEmpty()) {
-					negation.add(set);
+				for (Map<String, Object> tuple : new QueryMatches(runtime, matches)) {
+					if (results.getMatches().contains(tuple)) {
+						continue;
+					}
+					/*
+					 * push new set on the top of the stack and set @_
+					 */
+					newContext = new Context(context);
+					newContext.setCurrentTuple(tuple);
+					/*
+					 * call sub-expression
+					 */
+					QueryMatches set = ex.interpret(runtime, newContext, optionalArguments);
+					if (!set.isEmpty()) {
+						negation.add(set);
+					}
 				}
 			}
 		}

@@ -275,6 +275,9 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 	 *            the overall tuples
 	 */
 	private void addAll(Collection<QueryMatches> queryMatches, Map<String, Object> tuple, Map<String, String> origins, List<Map<String, Object>> tuples) {
+		if (queryMatches.isEmpty()) {
+			return;
+		}
 		/*
 		 * get one query match and clone existing set
 		 */
@@ -1170,7 +1173,19 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 				if (v2 == null) {
 					return ascending ? 1 : -1;
 				}
-				int com = v1.toString().compareTo(v2.toString());
+				int com;
+				/*
+				 * is a number
+				 */
+				if (v1 instanceof Number && v2 instanceof Number) {
+					com = (int) Math.round(((Number) v1).doubleValue() - ((Number) v1).doubleValue());
+				}
+				/*
+				 * is anything else
+				 */
+				else {
+					com = v1.toString().compareTo(v2.toString());
+				}
 				return ascending ? com : com * -1;
 			}
 		});
@@ -1263,6 +1278,23 @@ public class QueryMatches implements Iterable<Map<String, Object>> {
 		}
 		Map<String, Object> tuple = get(0);
 		return tuple.get(variable);
+	}
+
+	/**
+	 * Method checks if the given value is contained by at least one tuple
+	 * 
+	 * @param value
+	 *            the value
+	 * @return <code>true</code> if at least one tuple contains this value,
+	 *         <code>false</code> otherwise
+	 */
+	public boolean contains(Object value) {
+		for (Map<String, Object> tuple : getMatches()) {
+			if (tuple.values().contains(value)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

@@ -32,4 +32,14 @@ public class MinFunction extends FunctionImpl {
 		return de.topicmapslab.tmql4j.path.grammar.functions.aggregate.MinFunction.IDENTIFIER;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public MinFunction clone() throws CloneNotSupportedException {
+		IQueryPart context = getArguments().get(0).clone();
+		IQueryPart condition = getArguments().get(1).clone();
+		return new MinFunction(context, condition);
+	}
+
 }

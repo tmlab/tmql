@@ -31,6 +31,7 @@ import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.xml.XMLResult;
+import de.topicmapslab.tmql4j.path.query.TMQLQuery;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -49,6 +50,35 @@ public class TestReturnClause extends Tmql4JTestCase {
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(topic, set.first().first());
+	}
+	
+	@Test
+	public void testBoolean() throws Exception {
+		String query;
+		SimpleResultSet set = null;
+		query = "RETURN fn:compare( " + Integer.toString(0) + ", " + Integer.toString(0) + ") AND fn:compare( " + Integer.toString(1) + ", " + Integer.toString(0) + ")";
+		set = execute(new TMQLQuery(topicMap, query));		
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(false, set.first().first());
+		
+		query = "RETURN fn:compare( " + Integer.toString(0) + ", " + Integer.toString(0) + ") OR fn:compare( " + Integer.toString(1) + ", " + Integer.toString(0) + ")";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(true, set.first().first());
+		
+		query = "RETURN NOT fn:compare( " + Integer.toString(0) + ", " + Integer.toString(0) + ")";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(false, set.first().first());
+		
+		query = "RETURN NOT fn:compare( " + Integer.toString(0) + ", " + Integer.toString(1) + ")";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(true, set.first().first());
 	}
 
 	@Test

@@ -20,6 +20,7 @@ import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
+import de.topicmapslab.tmql4j.path.grammar.lexical.And;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Asc;
 import de.topicmapslab.tmql4j.path.grammar.lexical.At;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Desc;
@@ -33,6 +34,8 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.LowerEquals;
 import de.topicmapslab.tmql4j.path.grammar.lexical.LowerThan;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Minus;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Modulo;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Not;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Or;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Percent;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Plus;
 import de.topicmapslab.tmql4j.path.grammar.lexical.RegularExpression;
@@ -90,6 +93,11 @@ public class ValueExpression extends ExpressionImpl {
 	 * grammar type of value-expression containing a content-expression
 	 */
 	public static final int TYPE_CONTENT = 3;
+
+	/**
+	 * grammar type of value-expression containing a boolean-expression
+	 */
+	public static final int TYPE_BOOLEAN = 4;
 	/**
 	 * index of the detected operator if grammar type is
 	 * {@link ValueExpression#TYPE_INFIX_OPERATOR} or
@@ -120,6 +128,7 @@ public class ValueExpression extends ExpressionImpl {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
+	@SuppressWarnings("unchecked")
 	public ValueExpression(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
@@ -152,11 +161,31 @@ public class ValueExpression extends ExpressionImpl {
 					indexOfOperator = index;
 				}
 				/*
+				 * has boolean operator
+				 */
+				else if (ParserUtils.containsTokens(tmqlTokens, Or.class, And.class, Not.class)) {
+					checkForExtensions(BooleanExpression.class, tmqlTokens, tokens, runtime);
+					setGrammarType(TYPE_BOOLEAN);
+				}
+				/*
 				 * is function invocation
 				 */
 				else if (tmqlTokens.get(0).equals(Function.class)) {
 					setGrammarType(TYPE_FUNCTION_INVOCATION);
-					checkForExtensions(FunctionInvocation.class, tmqlTokens, tokens, runtime);
+					/*
+					 * set internal flag of ASC or DESC
+					 */
+					if (tmqlTokens.get(tmqlTokens.size() - 1).equals(Asc.class) || tmqlTokens.get(tmqlTokens.size() - 1).equals(Desc.class)) {
+						ascOrDescOrdering = true;
+					}
+					/*
+					 * add function
+					 */
+					if (ascOrDescOrdering) {
+						checkForExtensions(FunctionInvocation.class, tmqlTokens.subList(0, tmqlTokens.size() - 1), tokens.subList(0, tokens.size() - 1), runtime);
+					} else {
+						checkForExtensions(FunctionInvocation.class, tmqlTokens, tokens, runtime);
+					}
 				}
 				/*
 				 * is exists-clause

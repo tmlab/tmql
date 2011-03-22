@@ -29,4 +29,13 @@ public class CountFunction extends FunctionImpl {
 		return de.topicmapslab.tmql4j.path.grammar.functions.sequences.CountFunction.IDENTIFIER;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public CountFunction clone() throws CloneNotSupportedException {
+		IQueryPart argument = getArguments().get(0).clone();
+		return new CountFunction(argument);
+	}
+
 }

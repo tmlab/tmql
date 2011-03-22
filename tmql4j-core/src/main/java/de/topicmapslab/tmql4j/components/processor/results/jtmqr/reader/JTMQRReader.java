@@ -49,82 +49,122 @@ public class JTMQRReader {
 	public IResultSet<IResult> readResultSet() throws JsonParseException, IOException {
 
 		SimpleJtmqrResultSet resultSet = new SimpleJtmqrResultSet();
-		boolean first = true;
-		IResult result = resultSet.createResult();
+		IResult result = null;
 
+		JsonToken lastToken = null;
 		while (this.jParser.nextToken() != null) {
 
 			JsonToken token = this.jParser.getCurrentToken();
 			String text = this.jParser.getText();
 
+			/*
+			 * is name field
+			 */
 			if (token.equals(JsonToken.FIELD_NAME)) {
-
-				if (text.equals(IJtmQrKeys.ALIASES)) {
-
-					// read column labels
-					Map<String, Integer> aliases = ConstructReader.readAliases(this.jParser);
-					Map<Integer, String> indexes = createIndexes(aliases);
-
-					resultSet.setAlias(aliases);
-					resultSet.setIndexes(indexes);
-
-				} else if (text.equals(IJtmQrKeys.TUPLE)) {
-
-					// new token
-
-					if (first) {
-						first = false;
-					} else {
-						resultSet.addResult(result);
-						result = resultSet.createResult();
-					}
-				} else if (text.equals(IJtmQrKeys.STRING)) {
-
-					// read string result
-					token = this.jParser.nextToken();
-					text = this.jParser.getText();
-					result.add(text);
-
-				} else if (text.equals(IJtmQrKeys.NUMBER)) {
-
-					// read number result
-					token = this.jParser.nextToken();
-					text = this.jParser.getText();
-
-					if (token.equals(JsonToken.VALUE_NUMBER_FLOAT)) {
-						result.add(Double.parseDouble(text));
-					} else if (token.equals(JsonToken.VALUE_NUMBER_INT)) {
-						result.add(Integer.parseInt(text));
-					}
-
-				} else if (text.equals(IJTMConstants.ITEM_TYPE)) {
-
-					// read object result
-					token = this.jParser.nextToken();
-					text = this.jParser.getText();
-
-					if (text.equals(IJTMConstants.TOPIC)) {
-						result.add(ConstructReader.readTopic(this.jParser));
-					} else if (text.equals(IJTMConstants.NAME)) {
-						result.add(ConstructReader.readName(this.jParser, null));
-					} else if (text.equals(IJTMConstants.OCCURRENCE)) {
-						result.add(ConstructReader.readOccurrence(this.jParser, null));
-					} else if (text.equals(IJTMConstants.ASSOCIATION)) {
-						result.add(ConstructReader.readAssociation(this.jParser));
-					} else if (text.equals(IJTMConstants.ROLE)) {
-						result.add(ConstructReader.readRole(this.jParser, null));
-					} else if (text.equals(IJTMConstants.VARIANT)) {
-						result.add(ConstructReader.readVariant(this.jParser, null));
-					}
-				}
+				result = handleField(resultSet, result, text);
 			}
+			/*
+			 * check if is a null item '{}' in tuple mode
+			 */
+			else if (result != null && JsonToken.START_OBJECT.equals(lastToken) && token.equals(JsonToken.END_OBJECT)) {
+				handleNullField(resultSet, result);
+			}
+			lastToken = token;
 		}
 
-		if (!first) {
+		if (result != null) {
 			resultSet.addResult(result);
 		}
 
 		return resultSet;
+	}
+
+	/**
+	 * Method called to handle <code>null</code> values
+	 * 
+	 * @param resultSet
+	 *            the result set
+	 * @param result
+	 *            the result
+	 */
+	protected void handleNullField(SimpleJtmqrResultSet resultSet, IResult result) {
+		result.add((Object) null);
+	}
+
+	/**
+	 * Internal method to handle a field of the JSON result
+	 * 
+	 * @param resultSet
+	 *            the result set
+	 * @param result
+	 *            the result
+	 * @param text
+	 *            the text
+	 * @return the modified result
+	 * @throws JsonParseException
+	 * @throws IOException
+	 */
+	protected IResult handleField(SimpleJtmqrResultSet resultSet, IResult result, String text) throws JsonParseException, IOException {
+		if (text.equals(IJtmQrKeys.ALIASES)) {
+			// read column labels
+			Map<String, Integer> aliases = ConstructReader.readAliases(this.jParser);
+			Map<Integer, String> indexes = createIndexes(aliases);
+
+			resultSet.setAlias(aliases);
+			resultSet.setIndexes(indexes);
+
+		} else if (text.equals(IJtmQrKeys.TUPLE)) {
+			// new token
+			if (result != null) {
+				resultSet.addResult(result);
+			}
+			result = resultSet.createResult();
+		} else if (text.equals(IJtmQrKeys.STRING)) {
+
+			// read string result
+			this.jParser.nextToken();
+			text = this.jParser.getText();
+			result.add(text);
+
+		} else if (text.equals(IJtmQrKeys.BOOLEAN)) {
+
+			// read string result
+			this.jParser.nextToken();
+			result.add(this.jParser.getBooleanValue());
+
+		} else if (text.equals(IJtmQrKeys.NUMBER)) {
+
+			// read number result
+			JsonToken token = this.jParser.nextToken();
+			text = this.jParser.getText();
+
+			if (token.equals(JsonToken.VALUE_NUMBER_FLOAT)) {
+				result.add(Double.parseDouble(text));
+			} else if (token.equals(JsonToken.VALUE_NUMBER_INT)) {
+				result.add(Integer.parseInt(text));
+			}
+
+		} else if (text.equals(IJTMConstants.ITEM_TYPE)) {
+
+			// read object result
+			this.jParser.nextToken();
+			text = this.jParser.getText();
+
+			if (text.equals(IJTMConstants.TOPIC)) {
+				result.add(ConstructReader.readTopic(this.jParser));
+			} else if (text.equals(IJTMConstants.NAME)) {
+				result.add(ConstructReader.readName(this.jParser, null));
+			} else if (text.equals(IJTMConstants.OCCURRENCE)) {
+				result.add(ConstructReader.readOccurrence(this.jParser, null));
+			} else if (text.equals(IJTMConstants.ASSOCIATION)) {
+				result.add(ConstructReader.readAssociation(this.jParser));
+			} else if (text.equals(IJTMConstants.ROLE)) {
+				result.add(ConstructReader.readRole(this.jParser, null));
+			} else if (text.equals(IJTMConstants.VARIANT)) {
+				result.add(ConstructReader.readVariant(this.jParser, null));
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -143,6 +183,15 @@ public class JTMQRReader {
 		}
 
 		return indexes;
+	}
+
+	/**
+	 * Returns the parser instance
+	 * 
+	 * @return the parser
+	 */
+	protected JsonParser getParser() {
+		return jParser;
 	}
 
 }

@@ -48,7 +48,7 @@ public class CompareFunction extends FunctionImpl {
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings("unchecked")
-	public de.topicmapslab.tmql4j.components.processor.core.QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
+	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
 		QueryMatches results = new QueryMatches(runtime);
 
 		/*
@@ -92,7 +92,8 @@ public class CompareFunction extends FunctionImpl {
 			/*
 			 * combine tuples
 			 */
-			result.put(QueryMatches.getNonScopedVariable(), sequenceA.retainAll(sequenceB));
+			sequenceA.retainAll(sequenceB);
+			result.put(QueryMatches.getNonScopedVariable(), !sequenceA.isEmpty());
 			results.add(result);
 		}
 		return results;

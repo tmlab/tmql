@@ -22,7 +22,7 @@ public class BestlabelFunction extends FunctionImpl {
 	public BestlabelFunction(final IQueryPart topic) {
 		addArgument(topic);
 	}
-	
+
 	/**
 	 * constructor
 	 * 
@@ -35,7 +35,7 @@ public class BestlabelFunction extends FunctionImpl {
 		addArgument(topic);
 		addArgument(new Navigation(Boolean.toString(strict)));
 	}
-	
+
 	/**
 	 * constructor
 	 * 
@@ -58,6 +58,20 @@ public class BestlabelFunction extends FunctionImpl {
 	@Override
 	protected String getFunctionName() {
 		return GetBestLabel.GETBESTLABEL;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public BestlabelFunction clone() throws CloneNotSupportedException {
+		IQueryPart argument = getArguments().get(0).clone();
+		BestlabelFunction clone = new BestlabelFunction(argument);
+		for (int i = 1; i < getArguments().size(); i++) {
+			IQueryPart part = getArguments().get(i).clone();
+			clone.addArgument(part);
+		}
+		return clone;
 	}
 
 }
