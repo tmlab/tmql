@@ -8,6 +8,7 @@
  */
 package de.topicmapslab.tmql4j.path.components.navigation.axis;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -101,7 +102,7 @@ public class RoleTypesNavigationAxis extends BaseNavigationAxisImpl {
 				}
 			}
 
-			return set;
+			return filterByTypeBackward(associations, optional);
 		}
 		throw new InvalidValueException();
 	}
@@ -129,14 +130,14 @@ public class RoleTypesNavigationAxis extends BaseNavigationAxisImpl {
 			/*
 			 * create new instance of tuple-sequence
 			 */
-			Collection<Object> set = new LinkedList<Object>();
+			Collection<Topic> set = new LinkedList<Topic>();
 			/*
 			 * iterate over all associations
 			 */
 			for (Association association : associations) {
 				set.addAll(association.getRoleTypes());				
 			}
-			return set;
+			return filterByTypeForward(set, optional);
 		}
 		/*
 		 * check if construct is an association
@@ -146,11 +147,42 @@ public class RoleTypesNavigationAxis extends BaseNavigationAxisImpl {
 			/*
 			 * create new instance of tuple-sequence
 			 */
-			Collection<Object> set = new LinkedList<Object>();
+			Collection<Topic> set = new LinkedList<Topic>();
 			set.addAll(association.getRoleTypes());
-			return set;
+			return filterByTypeForward(set, optional);
 		}
 		throw new InvalidValueException();
+	}
+	
+	/**
+	 * Internal method to filter role types by topic type
+	 */
+	private Collection<Topic> filterByTypeForward(Collection<Topic> roleTypes, Object optional){
+		if ( !(optional instanceof Topic)){
+			return roleTypes;
+		}
+		Topic type = (Topic)optional;
+		Collection<Topic> set = new ArrayList<Topic>();
+		for ( Topic t : roleTypes){
+			if ( t.getTypes().contains(type)){
+				set.add(t);
+			}
+		}
+		return set;
+	}
+	
+	private Collection<Association> filterByTypeBackward(Collection<Association> associations, Object optional){
+		if ( !(optional instanceof Topic)){
+			return associations;
+		}
+		Topic type = (Topic)optional;
+		Collection<Association> set = new ArrayList<Association>();
+		for ( Association a : associations){
+			if ( a.getType().equals(type)){
+				set.add(a);
+			}
+		}
+		return set;
 	}
 
 	/**

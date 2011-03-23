@@ -19,7 +19,7 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.core.selection.Sele
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.where.InCriterion;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.axis.TypesAxisTranslator;
+import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.axis.TypesAxisTranslator;
 
 /**
  * @author Sven Krosse
@@ -27,6 +27,7 @@ import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl
  */
 public class TranslatorUtils {
 
+	private static final String ID_TYPE = "id_type";
 	private static final String TABLE_LOCATORS = "locators";
 	private static final String TABLE_REL_SUBJECTIDENTIFIER = "rel_subject_identifiers";
 	private static final String CONDITION_RELATION = "{0}.id = {1}.id_locator";
@@ -204,6 +205,50 @@ public class TranslatorUtils {
 		 * create condition
 		 */
 		definition.add(MessageFormat.format(TYPE_CONDITION, fromPart.getAlias(), typeSelection));
+		/*
+		 * add selection
+		 */
+		definition.addSelection(new Selection(COL_ID, fromPart.getAlias()));
+		return definition;
+	}
+	
+	/**
+	 * Utility method generates a SQL query to get all typed constructs for the
+	 * given topic reference as SQL selection
+	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param context
+	 *            the context
+	 * @param reference
+	 *            the reference
+	 * @param initialIndex
+	 *            the initial index
+	 * @return the SQL definition
+	 */
+	public static final ISqlDefinition generateSqlDefinitionForTypeablesByReference(ITMQLRuntime runtime, IContext context, String reference, final int initialIndex) {
+		/*
+		 * create SQL definition
+		 */
+		ISqlDefinition definition = new SqlDefinition();
+		definition.setInternalAliasIndex(initialIndex);		
+		/*
+		 * create from part
+		 */
+		IFromPart fromPart = new FromPart(TYPEABLES, definition.getAlias(), true);
+		definition.addFromPart(fromPart);
+		/*
+		 * get type reference
+		 */
+		final String ref = runtime.getConstructResolver().toAbsoluteIRI(context, reference);
+		/*
+		 * create new SQL definition to selection typing topic
+		 */
+		ISqlDefinition inDef = TranslatorUtils.topicBySubjectIdentifier(definition, ref);
+		/*
+		 * create condition
+		 */
+		definition.add(new InCriterion(ID_TYPE, fromPart.getAlias(), inDef));
 		/*
 		 * add selection
 		 */

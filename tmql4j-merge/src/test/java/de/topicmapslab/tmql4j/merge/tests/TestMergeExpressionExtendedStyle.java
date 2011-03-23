@@ -14,6 +14,8 @@ import org.junit.Test;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.majortom.util.FeatureStrings;
+import de.topicmapslab.tmql4j.components.processor.prepared.IPreparedStatement;
+import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 import de.topicmapslab.tmql4j.path.query.TMQLQuery;
 
@@ -24,6 +26,41 @@ import de.topicmapslab.tmql4j.path.query.TMQLQuery;
  */
 public class TestMergeExpressionExtendedStyle extends Tmql4JTestCase {
 
+	@Test
+	public void testPrepared(){
+		Topic t = createTopic();
+		Topic t2 = createTopic();
+		
+		assertEquals(2, topicMap.getTopics().size());
+		
+		IPreparedStatement stmt  = runtime.preparedStatement(" MERGE ? << id , ? << id");
+		stmt.setTopicMap(topicMap);
+		stmt.run(t.getId(), t2.getId());
+		IResultSet<?> set = stmt.getResults();
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+
+		assertEquals(1, topicMap.getTopics().size());
+	}
+	
+	@Test
+	public void testPrepared2(){
+		Topic t = createTopic();
+		Topic t2 = createTopic();
+		
+		assertEquals(2, topicMap.getTopics().size());
+				
+		String query = "MERGE \"" + t.getId() + "\" << id , \"" +t2.getId() + "\" << id";
+		System.out.println(query);
+		IResultSet<?> set = execute(query);
+		assertEquals(1, set.size());
+		assertEquals(1, set.first().size());
+		assertEquals(1L, set.first().first());
+
+		assertEquals(1, topicMap.getTopics().size());
+	}
+	
 	@Test
 	public void testMerge() throws Exception {
 		Topic type = createTopicBySI("myType");

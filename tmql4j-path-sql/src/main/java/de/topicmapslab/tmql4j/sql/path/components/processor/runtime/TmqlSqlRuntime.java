@@ -12,6 +12,7 @@ import org.tmapi.core.TopicMapSystem;
 
 import de.topicmapslab.tmql4j.components.processor.ITmqlProcessor;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.path.components.processor.TmqlProcessor2007;
 import de.topicmapslab.tmql4j.path.components.processor.runtime.TmqlRuntime2007;
 import de.topicmapslab.tmql4j.sql.path.components.processor.TmqlSqlProcessor;
 
@@ -41,7 +42,7 @@ public class TmqlSqlRuntime extends TmqlRuntime2007 {
 	/**
 	 * {@inheritDoc}
 	 */
-	public ITmqlProcessor getTmqlProcessor() {
+	protected ITmqlProcessor createTmqlProcessor() {
 		return new TmqlSqlProcessor(this);
 	}
 	

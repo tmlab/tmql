@@ -25,7 +25,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.Step;
 import de.topicmapslab.tmql4j.path.query.TMQLQuery;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.SqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
-import de.topicmapslab.tmql4j.sql.path.components.runtime.module.translator.impl.axis.AxisTranslatorImpl;
+import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.axis.AxisTranslatorImpl;
 
 /**
  * @author Sven Krosse

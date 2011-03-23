@@ -10,6 +10,7 @@ package de.topicmapslab.tmql4j.flwr.tests;
 
 import static junit.framework.Assert.assertEquals;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
@@ -24,6 +25,7 @@ public class TestEnvironmentClause extends Tmql4JTestCase {
 	
 
 	@Test
+	@Ignore
 	public void testPragmaOfTypeTransitivity() throws Exception {
 
 		fromXtm("src/test/resources/toytm.xtm");

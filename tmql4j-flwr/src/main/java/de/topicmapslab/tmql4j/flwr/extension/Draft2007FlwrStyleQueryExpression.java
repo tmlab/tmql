@@ -23,7 +23,6 @@ import de.topicmapslab.tmql4j.flwr.components.interpreter.GroupByClauseInterpret
 import de.topicmapslab.tmql4j.flwr.components.interpreter.LimitClauseInterpreter;
 import de.topicmapslab.tmql4j.flwr.components.interpreter.NonInterpretedContentInterpreter;
 import de.topicmapslab.tmql4j.flwr.components.interpreter.OffsetClauseInterpreter;
-import de.topicmapslab.tmql4j.flwr.components.interpreter.OrderByClauseInterpreter;
 import de.topicmapslab.tmql4j.flwr.components.interpreter.QueryExpressionInterpreter;
 import de.topicmapslab.tmql4j.flwr.components.interpreter.ReturnClauseInterpreter;
 import de.topicmapslab.tmql4j.flwr.components.interpreter.TMContentInterpreter;
@@ -39,7 +38,6 @@ import de.topicmapslab.tmql4j.flwr.grammar.productions.GroupByClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.LimitClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.NonInterpretedContent;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.OffsetClause;
-import de.topicmapslab.tmql4j.flwr.grammar.productions.OrderByClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.QueryExpression;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.ReturnClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.TMContent;
@@ -47,9 +45,11 @@ import de.topicmapslab.tmql4j.flwr.grammar.productions.WhereClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.XMLContent;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.path.components.interpreter.OrderByClauseInterpreter;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Limit;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Offset;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Unique;
+import de.topicmapslab.tmql4j.path.grammar.productions.OrderByClause;
 
 /**
  * @author Sven Krosse

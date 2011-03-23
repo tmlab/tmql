@@ -30,6 +30,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Offset;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Order;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Unique;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Where;
+import de.topicmapslab.tmql4j.path.grammar.productions.OrderByClause;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /*

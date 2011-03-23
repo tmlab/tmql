@@ -26,11 +26,11 @@ import de.topicmapslab.tmql4j.flwr.grammar.productions.ForClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.GroupByClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.LimitClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.OffsetClause;
-import de.topicmapslab.tmql4j.flwr.grammar.productions.OrderByClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.ReturnClause;
 import de.topicmapslab.tmql4j.flwr.grammar.productions.WhereClause;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Unique;
+import de.topicmapslab.tmql4j.path.grammar.productions.OrderByClause;
 
 /**
  * 

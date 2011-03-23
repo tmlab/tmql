@@ -35,7 +35,7 @@ To merge the topics we simply has to add the keyword 'MERGE' in front of our tup
 
 -------------------------------------
 1:	%prefix psi http://psi.ontopedia.net/
-2:	MERGE ( psi:Puccini , psi:Puccini_2 )
+2:	MERGE psi:Puccini , psi:Puccini_2
 -------------------------------------
 
 ===== Summary =====

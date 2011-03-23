@@ -27,6 +27,10 @@ public enum SqlTables {
 	 */
 	ASSOCIATION,
 	/**
+	 * current nodes are roles
+	 */
+	ROLE,
+	/**
 	 * current node is the topic map
 	 */
 	TOPICMAP,
