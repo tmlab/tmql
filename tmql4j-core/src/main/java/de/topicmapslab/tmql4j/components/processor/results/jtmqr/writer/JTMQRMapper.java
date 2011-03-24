@@ -1,5 +1,6 @@
 package de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer;
 
+import java.util.List;
 import java.util.Map;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -23,5 +24,6 @@ public class JTMQRMapper extends ObjectMapper {
 		getSerializationConfig().addMixInAnnotations(SimpleResultSet.class, SequenceSerializer.SimpleResultSetMixIn.class);
 		getSerializationConfig().addMixInAnnotations(Map.class, MapSerializer.MapMixIn.class);
 		getSerializationConfig().addMixInAnnotations(QueryMatches.class, QueryMatchesSerializer.QueryMatchesMixIn.class);
+		getSerializationConfig().addMixInAnnotations(List.class, ListSerializer.ListMixIn.class);
 	}
 }

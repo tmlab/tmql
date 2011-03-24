@@ -39,7 +39,7 @@ public class QueryMatchesSerializer extends JsonSerializer<QueryMatches> {
 		jgen.writeNumberField(IJtmQrKeys.VERSION, 1.0);
 
 		addMetadata(matches, jgen);
-		
+
 		jgen.writeFieldName(IJtmQrKeys.SEQUENCE);
 		jgen.writeStartArray();
 		{
@@ -64,7 +64,6 @@ public class QueryMatchesSerializer extends JsonSerializer<QueryMatches> {
 	public void addMetadata(QueryMatches matches, JsonGenerator jgen) throws IOException {
 		jgen.writeFieldName(IJtmQrKeys.METADATA);
 		jgen.writeStartObject();
-
 		/*
 		 * write number of rows
 		 */

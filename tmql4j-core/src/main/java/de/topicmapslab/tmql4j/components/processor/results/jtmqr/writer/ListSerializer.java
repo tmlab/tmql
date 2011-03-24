@@ -1,14 +1,13 @@
 package de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer;
 
 import java.io.IOException;
-import java.util.Map;
+import java.util.List;
 
+import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-
-import de.topicmapslab.tmql4j.util.CollectionsUtility;
 
 /**
  * Serializing a map
@@ -16,31 +15,32 @@ import de.topicmapslab.tmql4j.util.CollectionsUtility;
  * @author Sven Krosse
  * 
  */
-public class MapSerializer extends JsonSerializer<Map<?, ?>> {
+public class ListSerializer extends JsonSerializer<List<?>> {
 	/**
 	 * Abstract class for calling JSON generator
 	 * 
 	 * @author Sven Krosse
 	 * 
 	 */
-	@JsonSerialize(using = MapSerializer.class)
-	public abstract class MapMixIn {
+	@JsonSerialize(using = ListSerializer.class)
+	public abstract class ListMixIn {
 	}
 
 	/**
 	 * 
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public void serialize(Map<?, ?> tuple, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+	public void serialize(List<?> list, JsonGenerator jgen, SerializerProvider provider) throws IOException {
 
-		jgen.writeStartObject();
-		jgen.writeFieldName(IJtmQrKeys.TUPLE);
+		// jgen.writeStartObject();
+		jgen.writeFieldName(IJtmQrKeys.ARRAY);
 		jgen.writeStartArray();
 		{
-			for (final String key : CollectionsUtility.getOrderedKeys((Map<String, Object>) tuple)) {
-				Object value = tuple.get(key);
+			for (final Object value : list) {
+				if (value instanceof List<?>) {
+					throw new JsonGenerationException("List cannot contain list again!");
+				}
 
 				jgen.writeStartObject();
 				/*
@@ -51,7 +51,7 @@ public class MapSerializer extends JsonSerializer<Map<?, ?>> {
 			}
 		}
 		jgen.writeEndArray();
-		jgen.writeEndObject();
+		// jgen.writeEndObject();
 	}
 
 }

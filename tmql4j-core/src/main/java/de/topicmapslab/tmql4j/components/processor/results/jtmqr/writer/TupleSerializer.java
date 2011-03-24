@@ -1,17 +1,12 @@
 package de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.SerializerProvider;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.tmapi.core.Construct;
-import org.tmapi.core.Locator;
 
-import de.topicmapslab.jtm.writer.JTMVersion;
-import de.topicmapslab.jtm.writer.JTMWriter;
 import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResult;
 
 /**
@@ -43,18 +38,10 @@ public class TupleSerializer extends JsonSerializer<SimpleResult> {
 		 */
 		for (Object result : tuple.getResults()) {
 			jgen.writeStartObject();
-
-			if (result instanceof Number) {
-				jgen.writeObjectField(IJtmQrKeys.NUMBER, result);
-			} else if (result instanceof String) {
-				jgen.writeStringField(IJtmQrKeys.STRING, result.toString());
-			} else if (result instanceof Construct) {
-				writeConstruct(jgen, (Construct) result);
-			} else if (result instanceof Boolean) {
-				jgen.writeBooleanField(IJtmQrKeys.BOOLEAN, Boolean.valueOf(result.toString()));
-			} else if (result instanceof Locator) {
-				jgen.writeStringField(IJtmQrKeys.LOCATOR, ((Locator) result).getReference());
-			}
+			/*
+			 * write field value
+			 */
+			JTMQRWriterUtils.handleObjectValue(jgen, result);
 			jgen.writeEndObject();
 		}
 
@@ -63,24 +50,6 @@ public class TupleSerializer extends JsonSerializer<SimpleResult> {
 		 */
 		jgen.writeEndArray();
 		jgen.writeEndObject();
-	}
-
-	/**
-	 * Internal method to write the construct part
-	 * 
-	 * @param jgen
-	 *            the JSON generator
-	 * @param construct
-	 *            the construct to transform
-	 * @throws IOException
-	 *             thrown if an I/O error occur
-	 */
-	private void writeConstruct(JsonGenerator jgen, Construct construct) throws IOException {
-		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		JTMWriter jtmWriter = new JTMWriter(buffer);
-		jtmWriter.write(construct, JTMVersion.JTM_1_1).flush();
-
-		jgen.writeRaw(IJtmQrKeys.QUOTED_ITEM + buffer.toString());
 	}
 
 }

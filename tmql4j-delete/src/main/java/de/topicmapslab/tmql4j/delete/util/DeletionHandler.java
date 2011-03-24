@@ -27,7 +27,6 @@ import de.topicmapslab.tmql4j.path.components.navigation.NavigationRegistry;
 import de.topicmapslab.tmql4j.path.components.navigation.model.INavigationAxis;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisPlayers;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisRoleTypes;
-import de.topicmapslab.tmql4j.path.grammar.lexical.AxisRoles;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisScope;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisSupertypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTypes;
@@ -191,7 +190,7 @@ public class DeletionHandler {
 				/*
 				 * ignore already deleted constructs
 				 */
-				if ( obj instanceof Construct && ids.contains(((Construct)obj).getId())){
+				if (obj instanceof Construct && ids.contains(((Construct) obj).getId())) {
 					continue;
 				}
 				ids.addAll(delete(topicMap, obj, cascade));
@@ -224,7 +223,9 @@ public class DeletionHandler {
 				Set<Name> names = HashUtil.getHashSet();
 				names.addAll(topic.getNames());
 				for (Name name : names) {
-					ids.addAll(deleteName(topicMap, name, cascade));
+					if (!ids.contains(name.getId())) {
+						ids.addAll(deleteName(topicMap, name, cascade));
+					}
 				}
 				/*
 				 * delete all occurrences of the topic
@@ -232,7 +233,9 @@ public class DeletionHandler {
 				Set<Occurrence> occurrences = HashUtil.getHashSet();
 				occurrences.addAll(topic.getOccurrences());
 				for (Occurrence occurrence : occurrences) {
-					ids.addAll(deleteOccurrence(topicMap, occurrence, cascade));
+					if (!ids.contains(occurrence.getId())) {
+						ids.addAll(deleteOccurrence(topicMap, occurrence, cascade));
+					}
 				}
 
 				NavigationRegistry handler = NavigationRegistry.buildHandler();
@@ -243,7 +246,10 @@ public class DeletionHandler {
 				 * delete all associations played by the topic
 				 */
 				for (Object obj : axis.navigateBackward(topic)) {
-					ids.addAll(deleteAssociation(topicMap, ((Role) obj).getParent(), cascade));
+					Role r = (Role) obj;
+					if (!ids.contains(r.getId())) {
+						ids.addAll(deleteAssociation(topicMap, r.getParent(), cascade));
+					}
 				}
 				axis = handler.lookup(AxisTypes.class);
 				axis.setTopicMap(topicMap);
@@ -251,7 +257,10 @@ public class DeletionHandler {
 				 * delete all instances of the topic as type
 				 */
 				for (Object obj : axis.navigateBackward(topic)) {
-					ids.addAll(deleteTopic(topicMap, (Topic) obj, cascade));
+					Topic t = (Topic) obj;
+					if (!ids.contains(t.getId())) {
+						ids.addAll(deleteTopic(topicMap, t, cascade));
+					}
 				}
 				axis = handler.lookup(AxisSupertypes.class);
 				axis.setTopicMap(topicMap);
@@ -259,7 +268,10 @@ public class DeletionHandler {
 				 * delete all sub-types of the topic as type
 				 */
 				for (Object obj : axis.navigateBackward(topic)) {
-					ids.addAll(deleteTopic(topicMap, (Topic) obj, cascade));
+					Topic t = (Topic) obj;
+					if (!ids.contains(t.getId())) {
+						ids.addAll(deleteTopic(topicMap, t, cascade));
+					}
 				}
 
 				axis = handler.lookup(AxisRoleTypes.class);
@@ -268,7 +280,10 @@ public class DeletionHandler {
 				 * delete all associations which used the topic as role-type
 				 */
 				for (Object obj : axis.navigateBackward(topic)) {
-					ids.addAll(deleteAssociation(topicMap, (Association) obj, cascade));
+					Association a = (Association) obj;
+					if (!ids.contains(a.getId())) {
+						ids.addAll(deleteAssociation(topicMap, a, cascade));
+					}
 				}
 
 				/*
@@ -276,7 +291,9 @@ public class DeletionHandler {
 				 */
 				Reifiable reifiable = topic.getReified();
 				if (reifiable != null) {
-					ids.addAll(delete(topicMap, reifiable, cascade));
+					if (!ids.contains(reifiable.getId())) {
+						ids.addAll(delete(topicMap, reifiable, cascade));
+					}
 				}
 
 				/*
@@ -285,7 +302,10 @@ public class DeletionHandler {
 				axis = handler.lookup(AxisScope.class);
 				axis.setTopicMap(topicMap);
 				for (Object obj : axis.navigateBackward(topic)) {
-					ids.addAll(deleteScoped(topicMap, (Scoped) obj, cascade));
+					Scoped s = (Scoped) obj;
+					if (!ids.contains(s.getId())) {
+						ids.addAll(deleteScoped(topicMap, s, cascade));
+					}
 				}
 
 				/*
@@ -297,21 +317,25 @@ public class DeletionHandler {
 						index.open();
 					}
 					for (Name n : index.getNames(topic)) {
-						ids.addAll(deleteName(topicMap, n, cascade));
+						if (!ids.contains(n.getId())) {
+							ids.addAll(deleteName(topicMap, n, cascade));
+						}
 					}
 					for (Occurrence o : index.getOccurrences(topic)) {
-						ids.addAll(deleteOccurrence(topicMap, o, cascade));
+						if (!ids.contains(o.getId())) {
+							ids.addAll(deleteOccurrence(topicMap, o, cascade));
+						}
 					}
 					Set<Association> set = HashUtil.getHashSet();
 					for (Role r : index.getRoles(topic)) {
-						if (set.contains(r.getParent())) {
+						if (set.contains(r.getParent()) || ids.contains(r.getId())) {
 							continue;
 						}
 						ids.addAll(deleteAssociation(topicMap, r.getParent(), cascade));
 						set.add(r.getParent());
 					}
 					for (Association a : index.getAssociations(topic)) {
-						if (set.contains(a)) {
+						if (set.contains(a) || ids.contains(a.getId())) {
 							continue;
 						}
 						ids.addAll(deleteAssociation(topicMap, a, cascade));
@@ -322,8 +346,10 @@ public class DeletionHandler {
 				}
 
 			}
-			ids.add(topic.getId());
-			topic.remove();
+			if (!ids.contains(topic.getId())) {
+				ids.add(topic.getId());
+				topic.remove();
+			}
 			return ids;
 		} catch (Exception e) {
 			throw new DeletionException(e);

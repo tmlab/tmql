@@ -33,6 +33,7 @@ public class with_JTMQRWriter {
 	protected JsonNode writeAndRead(SimpleResult result) throws IOException {
 		jtmqrWriter.write(result);
 		jtmqrWriter.flush();
+		System.out.println(out.toString());
 		return jsonReader.readTree(out.toString());
 	}
 

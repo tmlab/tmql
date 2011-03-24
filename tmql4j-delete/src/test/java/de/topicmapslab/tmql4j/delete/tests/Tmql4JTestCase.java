@@ -8,6 +8,8 @@
  */
 package de.topicmapslab.tmql4j.delete.tests;
 
+import java.io.File;
+
 import org.junit.After;
 import org.junit.Before;
 import org.tmapi.core.Association;
@@ -16,6 +18,8 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
+import org.tmapix.io.CTMTopicMapReader;
+import org.tmapix.io.XTMTopicMapReader;
 
 import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
@@ -163,5 +167,17 @@ public abstract class Tmql4JTestCase {
 		query.setTopicMap(topicMap);
 		runtime.run(query);
 		return (T) query.getResults();
+	}
+	
+	public void fromCtm(final String path) throws Exception{
+		CTMTopicMapReader reader = new CTMTopicMapReader(topicMap,
+				new File(path));
+		reader.read();
+	}
+	
+	public void fromXtm(final String path) throws Exception{
+		XTMTopicMapReader reader = new XTMTopicMapReader(topicMap,
+				new File(path));
+		reader.read();
 	}
 }

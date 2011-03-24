@@ -28,6 +28,10 @@ public interface IJtmQrKeys {
 	 * the JSON hash key for tuple values
 	 */
 	public static final String TUPLE = "t";
+	/**
+	 * the JSON hash key for tuple values
+	 */
+	public static final String ARRAY = "a";
 
 	/**
 	 * the JSON hash key for numerical values
