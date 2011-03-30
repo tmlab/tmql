@@ -50,12 +50,13 @@ public interface IContext {
 	public Object getCurrentNode();
 
 	/**
-	 * Returns the current index of iteration in context of the sequence of tuples.
+	 * Returns the current index of iteration in context of the sequence of
+	 * tuples.
 	 * 
 	 * @return the current index
 	 */
 	public int getCurrentIndexInSequence();
-	
+
 	/**
 	 * Returns the current index of iteration in context of the tuple.
 	 * 
@@ -109,11 +110,45 @@ public interface IContext {
 	 * @return the query processor
 	 */
 	public ITmqlProcessor getTmqlProcessor();
-	
+
 	/**
 	 * Returns the output stream or <code>null</code>
+	 * 
 	 * @return the stream
 	 */
 	public OutputStream getOutputStream();
+
+	/**
+	 * Method to store an custom feature in an internal map, for example proceed
+	 * by a user defined pragma.
+	 * 
+	 * @param key
+	 *            the key
+	 * @param value
+	 *            the value
+	 * @since 3.1.0
+	 */
+	public void setCustomFeature(final String key, final Object value);
+
+	/**
+	 * Returns the user defined feature or <code>null</code> if the feature not
+	 * set.
+	 * 
+	 * @param <T>
+	 *            the type of return value
+	 * @param key
+	 *            the key
+	 * @return the feature value or <code>null</code>
+	 * @since 3.1.0
+	 */
+	public <T extends Object> T getCustomFeature(final String key);
+
+	/**
+	 * Returns all user defined feature or <code>null</code> if no features set.
+	 * 
+	 * @return the features or <code>null</code>
+	 * @since 3.1.0
+	 */
+	public Map<String, Object> getCustomFeatures();
 
 }

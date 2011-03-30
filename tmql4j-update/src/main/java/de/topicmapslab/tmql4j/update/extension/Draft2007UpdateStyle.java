@@ -14,6 +14,8 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLExtensionRegistryException;
 import de.topicmapslab.tmql4j.extension.IExtensionPoint;
 import de.topicmapslab.tmql4j.extension.ILanguageExtension;
+import de.topicmapslab.tmql4j.update.grammar.pragma.DatatypeBindingPragma;
+import de.topicmapslab.tmql4j.update.grammar.pragma.DatatypeValidationPragma;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
@@ -31,18 +33,22 @@ public class Draft2007UpdateStyle implements IExtensionPoint {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void registerExtension(ITMQLRuntime runtime) throws TMQLExtensionRegistryException {
+
+		runtime.getLanguageContext().getPragmaRegistry().register(new DatatypeBindingPragma());
+		runtime.getLanguageContext().getPragmaRegistry().register(new DatatypeValidationPragma());
 
 		extensions = HashUtil.getHashSet();
 
 		Draft2007UpdateQueryExpression draft2007FlwrStyleQueryExpression = new Draft2007UpdateQueryExpression();
 		draft2007FlwrStyleQueryExpression.registerExtension(runtime);
 		extensions.add(draft2007FlwrStyleQueryExpression);
-		
+
 		Draft2007UpdatePredicationInvocation draft2007UpdatePredicationInvocation = new Draft2007UpdatePredicationInvocation();
 		draft2007UpdatePredicationInvocation.registerExtension(runtime);
 		extensions.add(draft2007UpdatePredicationInvocation);
-		
+
 		Draft2007UpdateValueExpression draft2007UpdateValueExpression = new Draft2007UpdateValueExpression();
 		draft2007UpdateValueExpression.registerExtension(runtime);
 		extensions.add(draft2007UpdateValueExpression);
@@ -51,6 +57,7 @@ public class Draft2007UpdateStyle implements IExtensionPoint {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getExtensionPointId() {
 		return DRAFT2007_UPDATE_STYLE;
 	}
@@ -58,6 +65,7 @@ public class Draft2007UpdateStyle implements IExtensionPoint {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Set<ILanguageExtension> getLanguageExtensions() {
 		return extensions;
 	}

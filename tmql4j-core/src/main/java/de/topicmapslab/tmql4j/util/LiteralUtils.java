@@ -167,19 +167,6 @@ public class LiteralUtils {
 	public static final boolean isDateTime(final String literal) {
 		return dateTimePattern.matcher(literal).matches();
 	}
-	
-	/**
-	 * Method checks if the given string literal can be represented as boolean
-	 * literal.
-	 * 
-	 * @param literal
-	 *            the literal
-	 * @return <code>true</code> if the literal is a boolean literal,
-	 *         <code>false</code> otherwise.
-	 */
-	public static final boolean isBoolean(final String literal) {
-		return "true".equalsIgnoreCase(literal) || "false".equalsIgnoreCase(literal);
-	}
 
 	/**
 	 * Method checks if the given string literal can be represented as quoted
@@ -236,6 +223,19 @@ public class LiteralUtils {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Method checks if the given string literal can be represented as boolean
+	 * value.
+	 * 
+	 * @param literal
+	 *            the literal
+	 * @return <code>true</code> if the literal is an "true" or "false",
+	 *         <code>false</code> otherwise.
+	 */
+	public static final boolean isBoolean(final String literal) {
+		return literal != null && (literal.equalsIgnoreCase("true") || literal.equalsIgnoreCase("false"));
 	}
 
 	/**
@@ -347,12 +347,13 @@ public class LiteralUtils {
 	public static final Calendar asDateTime(final String literal) throws ParseException {
 		Date date = null;
 		for (String dp : datePatterns) {
-			for (String tp : timePatterns)
+			for (String tp : timePatterns) {
 				try {
 					date = new SimpleDateFormat(dp + "'T'" + tp).parse(literal);
 				} catch (ParseException e) {
 					// VOID
 				}
+			}
 		}
 		if (date == null) {
 			throw new ParseException("Invalid dateTime pattern", -1);
@@ -399,6 +400,21 @@ public class LiteralUtils {
 		} else {
 			return unescape(literal);
 		}
+	}
+
+	/**
+	 * Method formats the given literal as boolean literal.
+	 * 
+	 * @param literal
+	 *            the string literal
+	 * @return the boolean literal
+	 * @since 3.1.0
+	 */
+	public static final boolean asBoolean(final String literal) {
+		if (isBoolean(literal)) {
+			return Boolean.parseBoolean(literal);
+		}
+		throw new TMQLRuntimeException("Invalid value of a boolean literal: '" + literal + "'");
 	}
 
 	/**
@@ -499,6 +515,63 @@ public class LiteralUtils {
 			value = o.toString();
 		}
 		return value;
+	}
+
+	/**
+	 * Transform the given literal to a literal of the specified type given by
+	 * dataType IRI.
+	 * 
+	 * @param literal
+	 *            the literal value to convert
+	 * @param datatType
+	 *            the IRI of the data-type
+	 * @return the transformed literal or a string literal if the value does not
+	 *         matches the regular expression of the given type.
+	 * @throws Exception
+	 *             thrown if transformation fails
+	 */
+	public static boolean isValid(final String literal, final String datatType) throws Exception {
+		if (datatType == null) {
+			return true;
+		}
+		final String dataType_ = XmlSchemeDatatypes.toExternalForm(datatType);
+		/*
+		 * handle as date?
+		 */
+		if (dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_DATE)) {
+			return isDate(literal);
+		}
+		/*
+		 * handle as time?
+		 */
+		else if (dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_TIME)) {
+			return isTime(literal);
+		}
+		/*
+		 * handle as dateTime?
+		 */
+		else if (dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_DATETIME)) {
+			return isDateTime(literal);
+		}
+		/*
+		 * handle as integer?
+		 */
+		else if (dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_INTEGER) || dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_INT)) {
+			return isInteger(literal);
+		}
+		/*
+		 * handle as decimal?
+		 */
+		else if (dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_DECIMAL) || dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_FLOAT)) {
+			return isDecimal(literal);
+		}
+		/*
+		 * handle as URI?
+		 */
+		else if (dataType_.equalsIgnoreCase(XmlSchemeDatatypes.XSD_ANYURI)) {
+			return isIri(literal);
+		}
+		return true;
 	}
 
 	/**

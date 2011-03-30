@@ -11,12 +11,14 @@
 package de.topicmapslab.tmql4j.update.util;
 
 import java.lang.reflect.Method;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
+import org.tmapi.core.DatatypeAware;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
@@ -49,11 +51,14 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.AxisVariants;
 import de.topicmapslab.tmql4j.update.components.results.IUpdateAlias;
 import de.topicmapslab.tmql4j.update.exception.UpdateException;
+import de.topicmapslab.tmql4j.update.grammar.pragma.DatatypeBindingPragma;
+import de.topicmapslab.tmql4j.update.grammar.pragma.DatatypeValidationPragma;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Add;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Names;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Occurrences;
 import de.topicmapslab.tmql4j.update.grammar.tokens.Remove;
 import de.topicmapslab.tmql4j.util.HashUtil;
+import de.topicmapslab.tmql4j.util.LiteralUtils;
 
 /**
  * Utility class to handle the update of topic map items. Class handles all
@@ -66,6 +71,10 @@ import de.topicmapslab.tmql4j.util.HashUtil;
  */
 public class UpdateHandler {
 
+	/**
+	 * 
+	 */
+	private static final String INVALID_VALUE_FOR_DATATYPE = "Invalid value({0})) for datatype({1})";
 	/**
 	 * the topic map containing the items to delete
 	 */
@@ -348,7 +357,7 @@ public class UpdateHandler {
 		}
 		return QueryMatches.asQueryMatchNS(runtime, tuple);
 	}
-	
+
 	public QueryMatches updateNames(Object entry, Object value, Object optionalType, Class<? extends IToken> operator) throws UpdateException {
 		/*
 		 * is set operation modifies the value of a name
@@ -432,11 +441,10 @@ public class UpdateHandler {
 		if (de.topicmapslab.tmql4j.update.grammar.tokens.Set.class.equals(operator)) {
 			if (entry instanceof Variant) {
 				Variant variant = (Variant) entry;
-				if (optionalDatatype == null) {
-					variant.setValue(value.toString());
-				} else {
-					variant.setValue(value.toString(), optionalDatatype);
-				}
+				/*
+				 * update value
+				 */
+				updateDatatypeAware(variant, value, optionalDatatype);
 				/*
 				 * modify result processor
 				 */
@@ -496,7 +504,7 @@ public class UpdateHandler {
 				 */
 				context.getTmqlProcessor().getResultProcessor().setColumnAlias(0, IUpdateAlias.VARIANTS);
 				context.getTmqlProcessor().getResultProcessor().setColumnAlias(1, IUpdateAlias.NAMES);
-				if ( !topicIds.isEmpty()){
+				if (!topicIds.isEmpty()) {
 					context.getTmqlProcessor().getResultProcessor().setColumnAlias(2, IUpdateAlias.TOPICS);
 				}
 				context.getTmqlProcessor().getResultProcessor().setAutoReduction(false);
@@ -515,6 +523,60 @@ public class UpdateHandler {
 		}
 	}
 
+	/**
+	 * Internal method to modify the value of a datatyped construct ( occurrence
+	 * or variant ). Before the value is set, the pragmas are checked for
+	 * validation and datatpye reuse.
+	 * 
+	 * @param dt
+	 *            the datatyped
+	 * @param value
+	 *            the value
+	 * @param optionalDatatype
+	 *            the datatype
+	 * @throws TMQLRuntimeException
+	 *             thrown if the value is invalid or cannot be set
+	 */
+	private void updateDatatypeAware(DatatypeAware dt, Object value, Locator optionalDatatype) throws TMQLRuntimeException {
+		Locator datatype = optionalDatatype;
+		String valueAsString = LiteralUtils.asString(value);
+		/*
+		 * get pragma value or set to default
+		 */
+		Boolean datatypeBindingFeature = this.context.getCustomFeature(DatatypeBindingPragma.IDENTIFIER);
+		datatypeBindingFeature = datatypeBindingFeature == null ? DatatypeBindingPragma.getDefault() : datatypeBindingFeature;
+		/*
+		 * reuse old datatype if not datatype is given
+		 */
+		if (datatype == null && datatypeBindingFeature.booleanValue()) {
+			datatype = dt.getDatatype();
+		}
+		/*
+		 * should be validate?
+		 */
+		Boolean datatypeValidation = this.context.getCustomFeature(DatatypeValidationPragma.IDENTIFIER);
+		datatypeValidation = datatypeValidation == null ? DatatypeValidationPragma.getDefault() : datatypeValidation;
+		if (datatypeValidation.booleanValue() && datatype != null) {
+			try {
+				if (!LiteralUtils.isValid(valueAsString, datatype.getReference())) {
+					throw new TMQLRuntimeException(MessageFormat.format(INVALID_VALUE_FOR_DATATYPE, valueAsString, datatype.getReference()));
+				}
+			} catch (TMQLRuntimeException e) {
+				throw e;
+			} catch (Exception e) {
+				throw new TMQLRuntimeException(MessageFormat.format(INVALID_VALUE_FOR_DATATYPE, valueAsString, datatype.getReference()));
+			}
+		}
+		/*
+		 * set the value with datatype
+		 */
+		if (datatype != null) {
+			dt.setValue(valueAsString, datatype);
+		} else {
+			dt.setValue(valueAsString);
+		}
+	}
+
 	public QueryMatches updateOccurrences(Object entry, Object value, Object optionalType, Class<? extends IToken> operator, Locator optionalDatatype) throws UpdateException {
 		/*
 		 * is set operation modifies the value of an occurrence
@@ -522,11 +584,10 @@ public class UpdateHandler {
 		if (de.topicmapslab.tmql4j.update.grammar.tokens.Set.class.equals(operator)) {
 			if (entry instanceof Occurrence) {
 				Occurrence occurrence = (Occurrence) entry;
-				if (optionalDatatype == null) {
-					occurrence.setValue(value.toString());
-				} else {
-					occurrence.setValue(value.toString(), optionalDatatype);
-				}
+				/*
+				 * update value
+				 */
+				updateDatatypeAware(occurrence, value, optionalDatatype);
 				/*
 				 * modify result processor
 				 */
@@ -966,7 +1027,7 @@ public class UpdateHandler {
 		 * create results
 		 */
 		Map<String, Object> tuple = HashUtil.getHashMap();
-		Role role = association.createRole(roleType_, (Topic) player_);
+		Role role = association.createRole(roleType_, player_);
 		tuple.put(IUpdateAlias.ROLES, role.getId());
 		context.getTmqlProcessor().getResultProcessor().setColumnAlias(1, IUpdateAlias.ROLES);
 		tuple.put(IUpdateAlias.ASSOCIATIONS, association.getId());

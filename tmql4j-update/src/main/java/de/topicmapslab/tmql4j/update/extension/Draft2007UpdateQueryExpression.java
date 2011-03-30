@@ -47,6 +47,7 @@ public class Draft2007UpdateQueryExpression implements ILanguageExtension {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void registerExtension(ITMQLRuntime runtime) throws TMQLExtensionRegistryException {
 		ITokenRegistry tokens = runtime.getLanguageContext().getTokenRegistry();
 		tokens.register(Add.class);
@@ -69,6 +70,7 @@ public class Draft2007UpdateQueryExpression implements ILanguageExtension {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Class<? extends IExpression> getExpressionType() {
 		return de.topicmapslab.tmql4j.path.grammar.productions.QueryExpression.class;
 	}
@@ -76,6 +78,7 @@ public class Draft2007UpdateQueryExpression implements ILanguageExtension {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean extendsExpressionType(Class<? extends IExpression> expressionType) {
 		return de.topicmapslab.tmql4j.path.grammar.productions.QueryExpression.class.equals(expressionType);
 	}
@@ -83,6 +86,7 @@ public class Draft2007UpdateQueryExpression implements ILanguageExtension {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isValidProduction(ITMQLRuntime runtime, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, IExpression caller) {
 		return QueryExpression.isValid(tmqlTokens);
 	}
@@ -90,6 +94,7 @@ public class Draft2007UpdateQueryExpression implements ILanguageExtension {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IExpression parse(ITMQLRuntime runtime, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, IExpression caller, boolean autoAdd) throws TMQLInvalidSyntaxException,
 			TMQLGeneratorException {
 		IExpression expression = new QueryExpression(caller, tmqlTokens, tokens, runtime);

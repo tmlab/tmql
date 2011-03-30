@@ -32,6 +32,7 @@ public class Context implements IContext {
 	private Map<String, String> prefixes;
 	private final ITmqlProcessor processor;
 	private final OutputStream stream;
+	private Map<String, Object> features;
 
 	/**
 	 * constructor
@@ -44,7 +45,7 @@ public class Context implements IContext {
 	public Context(ITmqlProcessor processor, IQuery query) {
 		this(processor, query, null);
 	}
-	
+
 	/**
 	 * constructor
 	 * 
@@ -78,6 +79,7 @@ public class Context implements IContext {
 		this.transitive = clone.isTransitive();
 		this.prefixes = clone.getPrefixes();
 		this.stream = clone.getOutputStream();
+		this.features = clone.getCustomFeatures();
 	}
 
 	/**
@@ -93,6 +95,7 @@ public class Context implements IContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IQuery getQuery() {
 		return query;
 	}
@@ -100,6 +103,7 @@ public class Context implements IContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public QueryMatches getContextBindings() {
 		return context;
 	}
@@ -107,6 +111,7 @@ public class Context implements IContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int getCurrentIndexInSequence() {
 		return currentIndexInSequence;
 	}
@@ -122,6 +127,7 @@ public class Context implements IContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int getCurrentIndexInTuple() {
 		return currentIndexInTuple;
 	}
@@ -137,6 +143,7 @@ public class Context implements IContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Map<String, Object> getCurrentTuple() {
 		return currentTuple;
 	}
@@ -154,6 +161,7 @@ public class Context implements IContext {
 	 * 
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Object getCurrentNode() {
 		return currentNode;
 	}
@@ -170,6 +178,7 @@ public class Context implements IContext {
 	 * 
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isTransitive() {
 		return transitive;
 	}
@@ -178,6 +187,7 @@ public class Context implements IContext {
 	 * 
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setTransitive(boolean transitive) {
 		this.transitive = transitive;
 	}
@@ -185,6 +195,7 @@ public class Context implements IContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getPrefix(String qiri) {
 		if (prefixes == null) {
 			return null;
@@ -195,6 +206,7 @@ public class Context implements IContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Map<String, String> getPrefixes() {
 		if (prefixes == null) {
 			return Collections.emptyMap();
@@ -205,6 +217,7 @@ public class Context implements IContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setPrefix(String qiri, String reference) {
 		if (prefixes == null) {
 			prefixes = HashUtil.getHashMap();
@@ -215,6 +228,7 @@ public class Context implements IContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public ITmqlProcessor getTmqlProcessor() {
 		return processor;
 	}
@@ -222,8 +236,40 @@ public class Context implements IContext {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public OutputStream getOutputStream() {
 		return stream;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setCustomFeature(String key, Object value) {
+		if (features == null) {
+			features = HashUtil.getHashMap();
+		}
+		features.put(key, value);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends Object> T getCustomFeature(String key) {
+		if (features == null) {
+			return null;
+		}
+		return (T) features.get(key);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<String, Object> getCustomFeatures() {
+		return features;
 	}
 
 }

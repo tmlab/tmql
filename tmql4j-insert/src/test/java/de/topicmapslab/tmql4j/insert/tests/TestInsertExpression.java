@@ -15,6 +15,9 @@ import static junit.framework.Assert.assertNull;
 import org.junit.Test;
 import org.tmapi.core.Topic;
 
+import de.topicmapslab.majortom.model.index.IRevisionIndex;
+import de.topicmapslab.majortom.model.revision.IRevision;
+import de.topicmapslab.majortom.model.revision.IRevisionChange;
 import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 import de.topicmapslab.tmql4j.path.query.TMQLQuery;
 
@@ -29,8 +32,7 @@ public class TestInsertExpression extends Tmql4JTestCase {
 	public void testInsertTopic() throws Exception {
 
 		String subjectIdentifier = "http://psi.example.org/topic";
-		assertNull(topicMap.getTopicBySubjectIdentifier(topicMap
-				.createLocator(subjectIdentifier)));
+		assertNull(topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(subjectIdentifier)));
 
 		String query = null;
 		SimpleResultSet set = null;
@@ -41,8 +43,7 @@ public class TestInsertExpression extends Tmql4JTestCase {
 		assertEquals(1, set.first().size());
 		assertEquals(1L, set.first().first());
 
-		assertNotNull(topicMap.getTopicBySubjectIdentifier(topicMap
-				.createLocator(subjectIdentifier)));
+		assertNotNull(topicMap.getTopicBySubjectIdentifier(topicMap.createLocator(subjectIdentifier)));
 	}
 
 	@Test
@@ -55,8 +56,7 @@ public class TestInsertExpression extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = " INSERT ''' " + base + "myType ( " + base + "myType : " + base
-				+ "myTopic ) '''";
+		query = " INSERT ''' " + base + "myType ( " + base + "myType : " + base + "myTopic ) '''";
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
@@ -64,18 +64,27 @@ public class TestInsertExpression extends Tmql4JTestCase {
 
 		assertEquals(1, topic.getRolesPlayed().size());
 		assertEquals(1, topic.getRolesPlayed(type).size());
-		assertEquals(type, topic.getRolesPlayed(type).iterator().next()
-				.getParent().getType());
+		assertEquals(type, topic.getRolesPlayed(type).iterator().next().getParent().getType());
 	}
 
 	@Test
 	public void testInsertFailingIRIs() throws Exception {
-		String queries[] = {
-				"INSERT '''<http://maiana.topicmapslab.de/u/peter/tm/archiv-ostpreussen/#haus> - \"some name\" . '''",
+		String queries[] = { "INSERT '''<http://maiana.topicmapslab.de/u/peter/tm/archiv-ostpreussen/#haus> - \"some name\" . '''",
 				"INSERT '''<http://en.wikipedia.org/wiki/Munich_(district)> - \"some name\" . ''' " };
 
 		for (String q : queries) {
 			execute(new TMQLQuery(topicMap, q));
+		}
+
+		IRevisionIndex index = topicMap.getIndex(IRevisionIndex.class);
+		index.open();
+		IRevision r = index.getFirstRevision();
+		while (r != null) {
+			System.out.println(r.getChangesetType().name());
+			for (IRevisionChange c : r.getChangeset()) {
+				System.out.println("\t" + c.getType().name());
+			}
+			r = r.getFuture();
 		}
 
 	}
