@@ -18,7 +18,7 @@ import de.topicmapslab.jtm.writer.IJTMConstants;
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.model.ConstructReader;
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.model.LocatorStub;
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.result.SimpleJtmqrResultSet;
-import de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer.IJtmQrKeys;
+import de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer.v1.IJtmQrKeys;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 

@@ -8,6 +8,8 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
+import de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer.v1.JTMQRMapper;
+import de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer.v2.JTMQR2Mapper;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
@@ -29,10 +31,31 @@ public class JTMQRWriter {
 	 * the object mapper instance
 	 */
 	private ObjectMapper mapper;
+	
+	/**
+	 * the jtmqr format
+	 */
+	private final JTMQRFormat format;
 
 	public JTMQRWriter(OutputStream outputStream) {
 		out = outputStream;
+		this.format = JTMQRFormat.JTMQR_1;
 		mapper = new JTMQRMapper();
+		
+	}
+	
+	public JTMQRWriter(OutputStream outputStream, JTMQRFormat format) {
+		out = outputStream;
+		this.format = format;
+		
+		if(this.format.equals(JTMQRFormat.JTMQR_1)){
+			this.mapper = new JTMQRMapper();
+		}else if(this.format.equals(JTMQRFormat.JTMQR_2)){
+			this.mapper = new JTMQR2Mapper();
+		}else{
+			throw new RuntimeException("Unexspected JTMQR Format");
+		}
+		
 	}
 
 	/**

@@ -15,7 +15,7 @@ import org.codehaus.jackson.JsonNode;
 import org.junit.Test;
 import static junit.framework.Assert.*;
 
-import de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer.IJtmQrKeys;
+import de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer.v1.IJtmQrKeys;
 import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResult;
 import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 
