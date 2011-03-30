@@ -55,6 +55,7 @@ public class RoleTypesNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Class<? extends Construct> getBackwardNavigationResultClass(Object construct) throws NavigationException {
 		return Association.class;
 	}
@@ -62,6 +63,7 @@ public class RoleTypesNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Class<? extends Construct> getForwardNavigationResultClass(Object construct) throws NavigationException {
 		return Topic.class;
 	}
@@ -69,6 +71,7 @@ public class RoleTypesNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Collection<?> navigateBackward(Object construct, Object optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			Topic topic = (Topic) construct;
@@ -76,7 +79,7 @@ public class RoleTypesNavigationAxis extends BaseNavigationAxisImpl {
 			/*
 			 * create new instance of tuple-sequence
 			 */
-			Collection<Object> set = new LinkedList<Object>();
+			Collection<Association> set = new ArrayList<Association>();
 
 			Set<Association> associations = new HashSet<Association>();
 			/*
@@ -102,7 +105,7 @@ public class RoleTypesNavigationAxis extends BaseNavigationAxisImpl {
 				}
 			}
 
-			return filterByTypeBackward(associations, optional);
+			return filterByTypeBackward(set, optional);
 		}
 		throw new InvalidValueException();
 	}
@@ -110,11 +113,12 @@ public class RoleTypesNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Collection<?> navigateForward(Object construct, Object optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			Topic topic = (Topic) construct;
 			TopicMap map = topic.getTopicMap();
-			Set<Association> associations =  new HashSet<Association>();
+			Set<Association> associations = new HashSet<Association>();
 			/*
 			 * check optional type
 			 */
@@ -135,7 +139,7 @@ public class RoleTypesNavigationAxis extends BaseNavigationAxisImpl {
 			 * iterate over all associations
 			 */
 			for (Association association : associations) {
-				set.addAll(association.getRoleTypes());				
+				set.addAll(association.getRoleTypes());
 			}
 			return filterByTypeForward(set, optional);
 		}
@@ -153,32 +157,32 @@ public class RoleTypesNavigationAxis extends BaseNavigationAxisImpl {
 		}
 		throw new InvalidValueException();
 	}
-	
+
 	/**
 	 * Internal method to filter role types by topic type
 	 */
-	private Collection<Topic> filterByTypeForward(Collection<Topic> roleTypes, Object optional){
-		if ( !(optional instanceof Topic)){
+	private Collection<Topic> filterByTypeForward(Collection<Topic> roleTypes, Object optional) {
+		if (!(optional instanceof Topic)) {
 			return roleTypes;
 		}
-		Topic type = (Topic)optional;
+		Topic type = (Topic) optional;
 		Collection<Topic> set = new ArrayList<Topic>();
-		for ( Topic t : roleTypes){
-			if ( t.getTypes().contains(type)){
+		for (Topic t : roleTypes) {
+			if (t.getTypes().contains(type)) {
 				set.add(t);
 			}
 		}
 		return set;
 	}
-	
-	private Collection<Association> filterByTypeBackward(Collection<Association> associations, Object optional){
-		if ( !(optional instanceof Topic)){
+
+	private Collection<Association> filterByTypeBackward(Collection<Association> associations, Object optional) {
+		if (!(optional instanceof Topic)) {
 			return associations;
 		}
-		Topic type = (Topic)optional;
+		Topic type = (Topic) optional;
 		Collection<Association> set = new ArrayList<Association>();
-		for ( Association a : associations){
-			if ( a.getType().equals(type)){
+		for (Association a : associations) {
+			if (a.getType().equals(type)) {
 				set.add(a);
 			}
 		}
@@ -188,6 +192,7 @@ public class RoleTypesNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean supportsBackwardNavigation(Object construct, Construct optional) throws NavigationException {
 		if (construct instanceof Association) {
 			return true;
@@ -198,6 +203,7 @@ public class RoleTypesNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean supportsForwardNavigation(Object construct, Object optional) throws NavigationException {
 		if (construct instanceof Topic) {
 			return true;
