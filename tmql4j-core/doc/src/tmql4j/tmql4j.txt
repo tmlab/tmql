@@ -1,0 +1,73 @@
+== TMQL4J ==
+
+The tmql4j engine is the first Java-based engine processing the topic maps query language. The engine id designed as processing chain of independent modules and in a flexible architecture to provide the possibility of integrating your own module extensions and adaptations. The engine supports the draft of the 15th of august 2008 in addition to a number of extension like the topic maps modification language ( TMQL-ML ) or the template definition language ( TMQL-TD ).   
+
+///////////////////////////////////////
+Describe the architecture of the engine
+///////////////////////////////////////
+
+include::tmql4j-engine.txt[]
+
+//////////////////////////////////////
+Describe how to initialize the runtime
+//////////////////////////////////////
+
+include::tmql4j-getting-started.txt[]
+
+/////////////
+Query factory
+/////////////
+
+include::tmql4j-query.txt[]
+
+////////////////////////
+adding prefix directives
+////////////////////////
+
+include::tmql4j-prefix.txt[]
+
+/////////////////////////////////////////////
+implementing your own function implementation
+/////////////////////////////////////////////
+
+include::tmql4j-function.txt[]
+
+////////////////////////////////////
+implementing your own engine modules
+////////////////////////////////////
+
+include::tmql4j-module-integration.txt[]
+
+//////////////////////////////////
+implementing your own Result class
+//////////////////////////////////
+
+include::tmql4j-results.txt[]
+
+//////////////////////
+TMQL4J API
+//////////////////////
+
+include::tmql4j-api.txt[]
+
+///////////////////////
+TMQL4J Prepared Statements
+///////////////////////
+
+include::tmql4j-prepared-statement.txt[]
+
+//////////////////////
+TMQL4J Extensions
+//////////////////////
+
+include::tmql4j-extensions.txt[]
+
+include::tmql4majortom.txt[]
+
+//////////////////////
+TMQL4J RTM integration
+//////////////////////
+
+include::tmql4j-rtm.txt[]
+
+

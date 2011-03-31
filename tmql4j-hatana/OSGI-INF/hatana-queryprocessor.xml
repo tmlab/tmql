@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="tmql4j-hatana">
+   <implementation class="de.topicmapslab.tmql4j.hatana.query.HatanaQueryProcessor" />
+   <service>
+      <provide interface="de.topicmapslab.tmql4j.query.IQueryProcessor"/>
+   </service>
+</scr:component>

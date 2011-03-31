@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="tmql2007-runtime">
+   <implementation class="de.topicmapslab.tmql4j.path.components.processor.runtime.TmqlRuntime2007"/>
+   <service>
+      <provide interface="de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime"/>
+   </service>
+</scr:component>

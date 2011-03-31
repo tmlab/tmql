@@ -1,0 +1,101 @@
+=== Delete expressions ===
+
+The part II of the topic maps query language specification contains the modification expressions of the language. The modification part supports four different expression types representing the four operation types modifying a topic map. Delete operation is one them and enables the deletion of specific elements of the topic map. Delete operations are represented by 'delete expressions'.
+
+------------------------
+1:	delete-expression 	::= DELETE [ CASCADE ] < value-expression >
+2:							[ WHERE boolean-expression ]
+3:
+4:	delete-expression 	::= DELETE CASCADE ALL
+------------------------
+
+The only mandatory part of an 'delete' expression is the 'delete clause' symbolized by the keyword 'DELETE' and a comma-separated list of value expressions. The keyword 'CASCADE' is an optional part of the delete clause. In addition to the delete clause a where clause be used to evaluate a set of variable bindings similar to the insert expression.
+
+The value expressions of the delete clause are used to define exactly the information resources to delete like a locator object, an association item or a topic item.
+
+==== Processing model ====
+
+The processing model of a delete expression is quite simple. If there is an where clause it will be interpreted in the same way like as a part of a select expression or flwr expression. The where clause is used to evaluate a sub set of possible variables bindings which should be used in the content of the delete clause. The result of the evaluation will be a set of variables bindings.
+
+The delete clause will be execute for each valid variable binding of the where-clause. The delete clause contains a set of value expressions to define exactly the information resources to remove. Normally a value expression only define a variable to remove the bound value or use a navigation to navigate to the item to remove. The keyword 'CASCADE' represents the deletion mode of the query processor. If the keyword is missing the processor only removes elements which are independent to other information resources of the same topic map. For example if a topic is used as theme, it cannot removed without using this keyword. If the keyword is contained every dependent item will be removed too. 
+
+The overall result of the query will be a singleton sequence of a singleton tuple containing the number of removed items.
+
+==== Delete clause ====
+
+The 'delete clause' starts with the keyword 'DELETE' and is the only non-optional part of a delete expression. A delete clause contains a comma-separated list of value expressions used to identify exactly the information resources to remove. Normally a delete clause contains a list of variables or navigations based on variable bindings. 
+
+[NOTE]
+The delete clause can only contain variables which are bind by the where clause.
+
+As addition to that the delete clause can contains a set of path expressions without any variables to remove specific items. For example if a specific topic has to be removed the delete clause only contains a topic reference of this topic item.
+
+--------------------------
+1:	# remove the topic representing the composer puccini
+2:	DELETE http://psi.ontopedia.net/Puccini
+--------------------------
+
+==== Cascade ====
+
+Sometimes information items cannot removed from a topic map because they are connected to other items in a way they must not simply removed. For example if a topic is used as a theme the meaning of a statement will be changed if the theme will be removed from the scope. The processor will stop the execution if at least one topic depends on other information resources.
+
+If the keyword 'CASCADE' is used the processor will remove all dependent information items too. Please take care.
+
+If a topic item will be removed, the processor will remove all of its characteristic items and all played associations. If the deleted topic represent a topic type all instances and subtypes will be removed too. If the topic is a theme the scoped item will be removed too. If the topic item used as reifier the reification will be removed, but the reified item keep alive.
+
+If an association item will be removed the processor will remove all role constructs and destroy each scoping and reification relationship to any topic item.
+
+If a name item will be remove the processor will remove all variants too and destroy each scoping and reification relationship to any topic item.
+
+If a occurrence item will be removed the processor will destroy each scoping and reification relationship to any topic item.
+
+If a locator object will be removed the processor checks if the construct using the identifier has to remove too. The processor will remove the identified item too, if there isn't another locator identifying the construct.
+
+If a variant item will be removed the processor will destroy each scoping and reification relationship to any topic item.
+
+[NOTE]
+The process is iterative which means i.e. if a name is removed because of the deletion of its parent topic, all variants will be removed too.
+
+The following table summarizes the dependencies resolved by the deletion processor.
+
+[width="100%", cols="1,5"]
+|================
+|*item type*|*removed dependencies*
+|topic|	
++++++++++++++++++++++++++++
+<ul>
+<li>all characteristics and their dependencies</li>
+<li>all association played</li>
+<li>all instances and subtypes</li>
+<li>all scoped constructs using this item as theme</li>
+<li>reification destroyed</li>
+</ul>
++++++++++++++++++++++++++++
+|occurrence|reification destroyed
+|name|
++++++++++++++++++++++++++++
+<ul>
+<li>all variants</li>
+<li>reification destroyed</li>
+</ul>
++++++++++++++++++++++++++++
+|variant|reification destroyed
+|association item|
++++++++++++++++++++++++++++
+<ul>
+<li>all role constructs</li>
+<li>reification destroyed</li>
+</ul>
++++++++++++++++++++++++++++
+|a locator|the construct if there isn't an other locator
+|================
+
+==== Where clause ====
+
+The 'where clause' define a boolean condition to evaluate the variable bindings. The clause can contain every boolean expression which was discussed in the previous chapters. A where clause returns a set of satisfying variable bindings. 
+
+The delete expression can only use variable bound in the context of the where clause. If it is missing the usage of any variable is invalid.
+
+==== The keyword ALL ====
+
+The keyword 'ALL' can be used instead of a value-expression in the context of a delete-clause to remove all items of the queried topic map. The keyword 'CASCADE' is mandatory.

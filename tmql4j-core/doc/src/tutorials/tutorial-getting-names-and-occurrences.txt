@@ -1,0 +1,23 @@
+=== Tutorial:  Get names and occurrences ===
+
+===== Use Case =====
+
+The goal is to extract all names and occurrences of the topic Puccini.
+
+===== Solution =====
+
+In relation to the last tutorial we use the 'characteristics' axis, too. To extract names as characteristics of a topic item, the optional type shall be used. According to the topic maps data model all names are of type 'topic-name-type'. The current draft of TMQL reserve a identifier representing all names or occurrence as optional parameter of the characteristics axis. The allocated identifier are 'tm:name' and 'tm:occurrence'.
+
+--------------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics tm:name
+2:
+3:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics tm:occurrence
+--------------------------------
+
+===============================
+The query in line 1 returns all names of the topic item representing the composer Puccini. The query make use of the reserved type identifier 'tm:name' as optional argument of the 'characteristics' navigation axis. In line 3 we see the same query except the optional type definition. The query returns all occurrences of the topic item Puccini using the type identifier 'tm:occurrence'
+===============================
+
+===== Summary =====
+
+The tutorial explain how to use the optional type argument in addition to the reserved identifier 'tm:name' and 'tm:occurrence' to extract all names or all occurrences of a topic item.
