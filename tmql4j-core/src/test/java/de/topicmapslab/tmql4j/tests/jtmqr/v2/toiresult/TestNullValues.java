@@ -57,7 +57,10 @@ public class TestNullValues extends AbstractTest {
 		assertEquals(2, outRS.get(0).size());
 
 		assertTrue(outRS.isNullValue(0, 0));
-		assertEquals(testDouble, outRS.get(0, 1));
+		
+		Object o =  outRS.get(0, 1);
+		
+		assertEquals(testDouble, o);
 	}
 
 }

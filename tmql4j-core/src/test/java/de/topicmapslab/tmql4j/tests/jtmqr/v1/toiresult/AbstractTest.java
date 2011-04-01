@@ -71,7 +71,6 @@ public abstract class AbstractTest {
 	protected IResultSet<?> convert(SimpleResultSet input) {
 		try {
 			String jtmqrString = input.toJTMQR();
-			System.out.println(jtmqrString);
 			InputStream in = new ByteArrayInputStream(jtmqrString.getBytes());
 
 			JTMQRReader reader = new JTMQRReader(in);

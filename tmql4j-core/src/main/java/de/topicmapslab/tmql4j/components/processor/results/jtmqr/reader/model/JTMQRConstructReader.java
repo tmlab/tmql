@@ -19,23 +19,14 @@ import org.tmapi.core.Variant;
 
 import de.topicmapslab.jtm.writer.IJTMConstants;
 
-/**
- * class to read json stream
- * 
- * @author Christian Haß
- * 
- */
-public class ConstructReader {
+public class JTMQRConstructReader {
 
-	/**
-	 * possible states
-	 * 
-	 * @author Christian Haß
-	 */
+	
 	private enum State {
 		OBJECT, ARRAY
 	}
 
+	
 	/**
 	 * reads a topic construct
 	 * 
@@ -47,16 +38,13 @@ public class ConstructReader {
 	 */
 	public static Topic readTopic(JsonParser jParser) throws JsonParseException, IOException {
 
-		Stack<State> stack = new Stack<ConstructReader.State>();
+		Stack<State> stack = new Stack<JTMQRConstructReader.State>();
 		TopicStub topic = new TopicStub();
 
 		while (jParser.nextToken() != null) {
 
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
-
-			// System.out.println("readTopic " + jParser.getCurrentLocation() +
-			// " " + token + " --> " + text);
 
 			if (token.equals(JsonToken.END_OBJECT)) {
 
@@ -109,15 +97,12 @@ public class ConstructReader {
 	 */
 	private static Set<Name> readNames(JsonParser jParser, Topic parent) throws JsonParseException, IOException {
 
-		Stack<State> stack = new Stack<ConstructReader.State>();
+		Stack<State> stack = new Stack<JTMQRConstructReader.State>();
 		Set<Name> result = new HashSet<Name>();
 
 		while (jParser.nextToken() != null) {
 
 			JsonToken token = jParser.getCurrentToken();
-
-			// System.out.println("readNames " + jParser.getCurrentLocation() +
-			// " " + token + " --> " + jParser.getText());
 
 			if (token.equals(JsonToken.START_OBJECT)) {
 				Name name = readName(jParser, parent);
@@ -172,16 +157,13 @@ public class ConstructReader {
 	 */
 	public static Name readName(JsonParser jParser, Topic parent) throws JsonParseException, IOException {
 
-		Stack<State> stack = new Stack<ConstructReader.State>();
+		Stack<State> stack = new Stack<JTMQRConstructReader.State>();
 		NameStub name = new NameStub(parent);
 
 		while (jParser.nextToken() != null) {
 
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
-
-			// System.out.println("readName " + jParser.getCurrentLocation() +
-			// " " + token + " --> " + text);
 
 			if (token.equals(JsonToken.END_OBJECT)) {
 
@@ -234,15 +216,12 @@ public class ConstructReader {
 	 */
 	private static Set<Occurrence> readOccurrences(JsonParser jParser, Topic parent) throws JsonParseException, IOException {
 
-		Stack<State> stack = new Stack<ConstructReader.State>();
+		Stack<State> stack = new Stack<JTMQRConstructReader.State>();
 		Set<Occurrence> result = new HashSet<Occurrence>();
 
 		while (jParser.nextToken() != null) {
 
 			JsonToken token = jParser.getCurrentToken();
-
-			// System.out.println("readOccurrences " +
-			// jParser.getCurrentLocation() + " " + token + " --> " + text);
 
 			if (token.equals(JsonToken.START_OBJECT)) {
 				Occurrence occurrence = readOccurrence(jParser, parent);
@@ -274,16 +253,13 @@ public class ConstructReader {
 	 */
 	public static Occurrence readOccurrence(JsonParser jParser, Topic parent) throws JsonParseException, IOException {
 
-		Stack<State> stack = new Stack<ConstructReader.State>();
+		Stack<State> stack = new Stack<JTMQRConstructReader.State>();
 		OccurrenceStub occurrence = new OccurrenceStub(parent);
 
 		while (jParser.nextToken() != null) {
 
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
-
-			// System.out.println("readOccurrence " +
-			// jParser.getCurrentLocation() + " " + token + " --> " + text);
 
 			if (token.equals(JsonToken.END_OBJECT)) {
 
@@ -342,9 +318,6 @@ public class ConstructReader {
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
 
-			// System.out.println("readAssociation " +
-			// jParser.getCurrentLocation() + " " + token + " --> " + text);
-
 			if (token.equals(JsonToken.END_OBJECT)) {
 
 				return association;
@@ -381,17 +354,14 @@ public class ConstructReader {
 	 * @throws JsonParseException
 	 * @throws IOException
 	 */
-	public static Set<Role> readRoles(JsonParser jParser, Association parent) throws JsonParseException, IOException {
+	private static Set<Role> readRoles(JsonParser jParser, Association parent) throws JsonParseException, IOException {
 
-		Stack<State> stack = new Stack<ConstructReader.State>();
+		Stack<State> stack = new Stack<JTMQRConstructReader.State>();
 		Set<Role> result = new HashSet<Role>();
 
 		while (jParser.nextToken() != null) {
 
 			JsonToken token = jParser.getCurrentToken();
-
-			// System.out.println("readRoles " + jParser.getCurrentLocation() +
-			// " " + token + " --> " + text);
 
 			if (token.equals(JsonToken.START_OBJECT)) {
 				Role role = readRole(jParser, parent);
@@ -423,16 +393,13 @@ public class ConstructReader {
 	 */
 	public static Role readRole(JsonParser jParser, Association parent) throws JsonParseException, IOException {
 
-		Stack<State> stack = new Stack<ConstructReader.State>();
+		Stack<State> stack = new Stack<JTMQRConstructReader.State>();
 		RoleStub role = new RoleStub(parent);
 
 		while (jParser.nextToken() != null) {
 
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
-
-			// System.out.println("readRole " + jParser.getCurrentLocation() +
-			// " " + token + " --> " + text);
 
 			if (token.equals(JsonToken.END_OBJECT)) {
 
@@ -508,9 +475,6 @@ public class ConstructReader {
 		String text = jParser.getText();
 		TopicStub topic = new TopicStub();
 
-		// System.out.println("readTopicReference " +
-		// jParser.getCurrentLocation() + " " + token + " --> " + text);
-
 		if (text.startsWith(IJTMConstants.PREFIX_II)) {
 			topic._addItemIdentifier(text.substring(3));
 		} else if (text.startsWith(IJTMConstants.PREFIX_SI)) {
@@ -533,9 +497,9 @@ public class ConstructReader {
 	 * @throws JsonParseException
 	 * @throws IOException
 	 */
-	public static Set<Topic> readScope(JsonParser jParser) throws JsonParseException, IOException {
+	private static Set<Topic> readScope(JsonParser jParser) throws JsonParseException, IOException {
 
-		Stack<State> stack = new Stack<ConstructReader.State>();
+		Stack<State> stack = new Stack<JTMQRConstructReader.State>();
 
 		Set<Topic> scope = new HashSet<Topic>();
 
@@ -543,9 +507,6 @@ public class ConstructReader {
 
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
-
-			// System.out.println("readScope " + jParser.getCurrentLocation() +
-			// " " + token + " --> " + text);
 
 			if (token.equals(JsonToken.START_ARRAY)) {
 				stack.push(State.ARRAY);
@@ -574,18 +535,15 @@ public class ConstructReader {
 	 * @throws JsonParseException
 	 * @throws IOException
 	 */
-	public static Set<Variant> readVariants(JsonParser jParser, Name parent) throws JsonParseException, IOException {
+	private static Set<Variant> readVariants(JsonParser jParser, Name parent) throws JsonParseException, IOException {
 
-		Stack<State> stack = new Stack<ConstructReader.State>();
+		Stack<State> stack = new Stack<JTMQRConstructReader.State>();
 
 		Set<Variant> result = new HashSet<Variant>();
 
 		while (jParser.nextToken() != null) {
 
 			JsonToken token = jParser.getCurrentToken();
-
-			// System.out.println("readVariants " + jParser.getCurrentLocation()
-			// + " " + token + " --> " + text);
 
 			if (token.equals(JsonToken.END_ARRAY)) {
 
@@ -625,9 +583,6 @@ public class ConstructReader {
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
 
-			// System.out.println("readVariant " + jParser.getCurrentLocation()
-			// + " " + token + " --> " + text);
-
 			if (token.equals(JsonToken.END_OBJECT)) {
 
 				return variant;
@@ -662,12 +617,10 @@ public class ConstructReader {
 	 * @throws JsonParseException
 	 * @throws IOException
 	 */
-	public static String readValue(JsonParser jParser) throws JsonParseException, IOException {
+	private static String readValue(JsonParser jParser) throws JsonParseException, IOException {
 
 		jParser.nextToken();
 		String text = jParser.getText();
-		// System.out.println("readValue " + jParser.getCurrentLocation() + " "
-		// + token + " --> " + text);
 
 		return text;
 	}
@@ -681,13 +634,10 @@ public class ConstructReader {
 	 * @throws JsonParseException
 	 * @throws IOException
 	 */
-	public static String readId(JsonParser jParser) throws JsonParseException, IOException {
+	private static String readId(JsonParser jParser) throws JsonParseException, IOException {
 
 		jParser.nextToken();
 		String text = jParser.getText();
-		// System.out.println("readValue " + jParser.getCurrentLocation() + " "
-		// + token + " --> " + text);
-
 		return text;
 	}
 
@@ -700,7 +650,7 @@ public class ConstructReader {
 	 * @throws JsonParseException
 	 * @throws IOException
 	 */
-	public static Set<String> readIdentifier(JsonParser jParser) throws JsonParseException, IOException {
+	private static Set<String> readIdentifier(JsonParser jParser) throws JsonParseException, IOException {
 
 		Set<String> identifier = new HashSet<String>();
 
@@ -708,9 +658,6 @@ public class ConstructReader {
 
 			JsonToken token = jParser.getCurrentToken();
 			String text = jParser.getText();
-
-			// System.out.println("readIdentifier " +
-			// jParser.getCurrentLocation() + " " + token + " --> " + text);
 
 			if (token.equals(JsonToken.END_ARRAY)) {
 				return identifier;
@@ -724,6 +671,31 @@ public class ConstructReader {
 		return identifier;
 	}
 
+	/**
+	 * creates a topic from an prefixed identifier, i.e. starting with si:, sl:
+	 * or ii:
+	 * 
+	 * @param prefixedIdentifier
+	 *            - the prefixed identifier
+	 * @return the topic
+	 */
+	private static Topic createTopicByIdentifier(String prefixedIdentifier) {
+
+		TopicStub topic = new TopicStub();
+
+		if (prefixedIdentifier.startsWith(IJTMConstants.PREFIX_II)) {
+			topic._addItemIdentifier(prefixedIdentifier.substring(3));
+		} else if (prefixedIdentifier.startsWith(IJTMConstants.PREFIX_SI)) {
+			topic._addSubjectIdentifier(prefixedIdentifier.substring(3));
+		} else if (prefixedIdentifier.startsWith(IJTMConstants.PREFIX_SL)) {
+			topic._addSubjectLocator(prefixedIdentifier.substring(3));
+		} else {
+			throw new RuntimeException("Unable to specify identifier type");
+		}
+
+		return topic;
+	}
+	
 	/**
 	 * reads the aliase from meta data
 	 * 
@@ -756,30 +728,35 @@ public class ConstructReader {
 
 		return aliases;
 	}
-
+	
 	/**
-	 * creates a topic from an prefixed identifier, i.e. starting with si:, sl:
-	 * or ii:
+	 * reads the header from meta data
 	 * 
-	 * @param prefixedIdentifier
-	 *            - the prefixed identifier
-	 * @return the topic
+	 * @param jParser
+	 * @return map of aliases and indexes
+	 * @throws JsonParseException
+	 * @throws IOException
 	 */
-	private static Topic createTopicByIdentifier(String prefixedIdentifier) {
+	public static Map<String, Integer> readHeader(JsonParser jParser) throws JsonParseException, IOException {
 
-		TopicStub topic = new TopicStub();
+		Map<String, Integer> header = new HashMap<String, Integer>();
 
-		if (prefixedIdentifier.startsWith(IJTMConstants.PREFIX_II)) {
-			topic._addItemIdentifier(prefixedIdentifier.substring(3));
-		} else if (prefixedIdentifier.startsWith(IJTMConstants.PREFIX_SI)) {
-			topic._addSubjectIdentifier(prefixedIdentifier.substring(3));
-		} else if (prefixedIdentifier.startsWith(IJTMConstants.PREFIX_SL)) {
-			topic._addSubjectLocator(prefixedIdentifier.substring(3));
-		} else {
-			throw new RuntimeException("Unable to specify identifier type");
+		int currendIndex = -1;
+
+		while (jParser.nextToken() != null) {
+
+			JsonToken token = jParser.getCurrentToken();
+			String text = jParser.getText();
+
+			if (token.equals(JsonToken.END_OBJECT)) {
+				return header;
+			} else if (token.equals(JsonToken.VALUE_STRING)) {
+				currendIndex++; 
+				header.put(text, currendIndex);
+			}
 		}
 
-		return topic;
+		return header;
 	}
-
+	
 }

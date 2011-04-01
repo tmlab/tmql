@@ -9,6 +9,7 @@ import org.tmapi.core.TopicMapSystemFactory;
 
 import de.topicmapslab.majortom.model.core.ITopicMap;
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.reader.JTMQRReader;
+import de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer.JTMQRFormat;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 
@@ -71,7 +72,7 @@ public abstract class AbstractTest {
 	protected IResultSet<?> convert(SimpleResultSet input) {
 		try {
 			
-			String jtmqrString = input.toJTMQR();
+			String jtmqrString = input.toJTMQR(JTMQRFormat.JTMQR_2);
 			
 			InputStream in = new ByteArrayInputStream(jtmqrString.getBytes());
 

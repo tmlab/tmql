@@ -112,7 +112,7 @@ public abstract class Result implements IResult {
 			add(value);
 		}
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
