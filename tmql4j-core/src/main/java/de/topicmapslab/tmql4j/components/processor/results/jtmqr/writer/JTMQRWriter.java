@@ -1,12 +1,5 @@
 package de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.ObjectMapper;
-
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer.v1.JTMQRMapper;
 import de.topicmapslab.tmql4j.components.processor.results.jtmqr.writer.v2.JTMQR2Mapper;
@@ -14,34 +7,25 @@ import de.topicmapslab.tmql4j.components.processor.results.model.IResult;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.tmdm.SimpleResultSet;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Author: mhoyer Created: 28.10.2010 02:26:45
  */
 public class JTMQRWriter {
-	/**
-	 * 
-	 */
 	private static final String UTF_8 = "UTF-8";
-	/**
-	 * the output stream to use
-	 */
 	private OutputStream out;
-	/**
-	 * the object mapper instance
-	 */
 	private ObjectMapper mapper;
 	
-	/**
-	 * the jtmqr format
-	 */
 	private final JTMQRFormat format;
 
 	public JTMQRWriter(OutputStream outputStream) {
-		out = outputStream;
-		this.format = JTMQRFormat.JTMQR_1;
-		mapper = new JTMQRMapper();
-		
+		this(outputStream, JTMQRFormat.JTMQR_1);
 	}
 	
 	public JTMQRWriter(OutputStream outputStream, JTMQRFormat format) {
