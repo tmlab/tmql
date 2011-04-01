@@ -1,0 +1,39 @@
+=== Create the Runtime ===
+
+The whole querying process is encapsulated by a container called runtime. The runtime provides methods to define prefixes or register new functions or any other extensions.. 
+
+The runtime can not be instantiate in a usual way. The user has to use an instance of the runtime factory to get an representation of this container class using the topic map system as optional argument. The container implementation is represented by an interface class to hide internal methods and unify the using of the engine. The next paragraphs describing each function provided by the runtime interface and how it shall be used to realize the business use cases.
+
+-------------------------------------
+1:	TopicMapSystem topicMapSystem = TopicMapSystemFactory.newInstance().newTopicMapSystem();
+2:	
+3:	TopicMap topicMap = topicMapSystem.createTopicMap("http://de.topicmapslab/tmql4j/");
+4:
+5:	File ltm = new File("src/test/resources/ItalianOpera.ltm");
+6:
+7:	LTMTopicMapReader reader = new LTMTopicMapReader(topicMap, ltm);
+8:	reader.read();			
+9:
+10:	ITMQLRuntime runtime = TMQLRuntimeFactory.newFactory().newRuntime("tmql-2007");
+11: 
+12:	IQuery query = runtime.run(topicMap, "http://psi.ontopedia.net/Puccini");
+-------------------------------------
+
+=====================================
+The short code snippet give you an overview about initializing and using the runtime container. As we can see in line 10, the 'TMQLRuntimeFactory' is used to create a new runtime by calling the method 'newRuntime'. In the lines 1 until 8 we initializing the topic map instance by importing a topic map from an external LTM file. The last code line of the snippet calling the runtime to execute the given query.
+=====================================
+
+The factory supports a set of different method initializing a runtime container estimating a topic map system and/or the language name which should be supported by the runtime instance. 
+
+[[allowed_expressions]]
+====  Control supported expressions ====
+Using a query instance the application can control the parsing process by excluding forbidden expression types, like the insert - or update-expressions. The query only handle forbidden expression, any other expression are allowed. If a query contains a restricted expression type an exception will be thrown by the parser implementation. Please note that the expression types only represent restriction of first-level expressions, that means that the expression only restricted as children of the root expression containing in the generated parsing tree. If the expression is used in lower levels of the tree it wont be restricted and wont be affected in an exception.
+
+As a special shortcut the query interface provides the functionality to disable all expression types which occurs a modification of the topic map as one call.
+
+-------------------------------------
+1:	IQuery query = new TMQLQuery(topicMap, "INSERT ''' myTopic . '''");
+2:	query.forbidExpression(InsertExpression.class);
+3:
+4:	query.forbidModificationQueries();
+-------------------------------------

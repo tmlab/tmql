@@ -1,0 +1,9 @@
+=== Tutorial: Using predicates ===
+
+===== Use Case =====
+
+
+
+===== Solution =====
+
+===== Summary =====

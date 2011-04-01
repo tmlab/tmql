@@ -1,0 +1,97 @@
+=== Section: Delete expression ===
+
+A delete expression can be used to remove existing content of the topic map. The delete expression isn't currently a part of the TMQL draft and is an extension designed by the topic maps lab with request to get a part of the final standard of TMQL. 
+
+Please note that the extension will only supported by the engine by using the modification extension plugin. If the extension is located in the java class path, the engine would be able to use them.
+
+==== Tutorial: Remove a specific topic item ====
+
+===== Use Case =====
+
+We try to delete a topic item from the topic map. The topic item will be represented by its subject-identifier 'http://psi.ontopedia.net/Puccini'.
+
+===== Solution =====
+
+A delete-expression can be split into two parts. The where-clause can be used to bind variables or check conditions to extract items to remove. The where-clause is optional and can be left out if the delete-clause is quite simple. The delete-clause define exactly the topic map items to remove.
+
+A delete-clause always starts with the keyword 'DELETE' following by the delete-clause and the optional where-clause. The items to remove can addressed by a simple path-expression only contains a topic reference - the subject-identifier.
+
+-------------------------
+1:	DELETE http://psi.ontopedia.net/Puccini
+-------------------------
+
+In context of the opera topic map the execution of this query will be failed, because the topic item with the identifier 'http://psi.ontopedia.net/Puccini' will be used by other topic map constructs for example as reifier or as a association player. A delete-expression only removes independent constructs. Dependent constructs are topic items used as theme, type or player.
+
+The delete-expression supports an optional keyword to remove dependent constructs too. Please take care, because all dependent elements will be removed too. If the delete-expression contains the keyword 'CASCADE' all dependent elements will be removed. This means that all scoped elements, all instances or subtypes and all played associations will be removed from the topic map.
+
+------------------------
+1: 	DELETE CASCADE http://psi.ontopedia.net/Puccini
+------------------------
+
+All dependencies which can be resolved will be changed too. If a reifier will be removed, the reification will be destroyed but the reified element keep alive. 
+
+If a topic item will be removed all names, occurrences and played associations deleted. If the topic is a type all instances and subtypes will be removed too. If the topic represents a theme the scoped construct will be removed too, because the semantic of the statement will be changed if the theme is removed.
+
+If a name item will be removed, all variants removed too. This process is iterative, which means if a name will be removed because its parent topic was deleted, its variants removed too.
+
+If an association item will be removed, all role items will be removed too. This process is iterative, which means if an association will be removed because one of its players are removed, all other roles will be removed too.
+
+===== Summary =====
+
+The delete-expression can be split into the delete-clause starting with the keyword 'DELETE' and the optional where-clause. The where-clause can be used to filter the content to remove. The delete expression can contain a navigation to the item to remove, for example a name of a topic. If the keyword 'CASCADE' is missing, the execution fails if the item is dependent to other items. The keyword 'CASCADE' removes all dependencies or the item and its dependencies too. This process is iterative.
+
+==== Tutorial: Using variables to remove content ====
+
+===== Use Case =====
+
+Now we try to remove all names of all instances of composer.
+
+===== Solution =====
+
+In this case we will use the where-clause to extract all instances of composer and bind them to the variable '$composer'. To realize the binding to all instances of composer we use the isa-expression.
+
+-------------------------
+1:	$composer ISA http://psi.ontopedia.net/Composer
+-------------------------
+
+Or we use a prefix definition
+
+-----------------------------
+1:	%prefix psi http://psi.ontopedia.net/ $composer ISA psi:Composer
+-----------------------------
+
+To remove only the names of a composer we have to modify the delete-clause using a navigation-expression getting all name items.
+
+--------------------------------
+1:	$composer >> characteristics tm:name
+--------------------------------
+
+The last step will be the combination of both query parts to delete all names of all composers.
+
+---------------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	DELETE CASCADE composer >> characteristics tm:name
+3:		WHERE $composer ISA psi:Composer
+---------------------------------
+
+===== Summary =====
+
+By using variables the delete-clause can be used to remove specific elements of a set of topic map constructs like each instance of a specific type. The delete-clause can define simple path-expression to remove a specific item contained by a topic map construct, like its names or identifiers.
+
+==== Tutorial: Delete the topic map content ====
+
+===== Use Case =====
+
+In the last tutorial in this section we want to remove all topic map constructs except the topic map itself.
+
+===== Solution =====
+
+To realize the deletion of all topic map items, the delete-expression can used the special keyword 'ALL'. The keyword 'CASCADE' will be mandatory because the topic map constructs will be depend to each other. The whole delete-expression similar contains only three keywords and nothing more.
+
+----------------------
+1:	DELETE CASCADE ALL
+----------------------
+
+===== Summary =====
+
+The special keyword 'ALL' can used to remove the whole content of a topic map.

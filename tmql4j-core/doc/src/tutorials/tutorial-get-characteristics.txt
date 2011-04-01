@@ -1,0 +1,53 @@
+=== Tutorial: Getting a sequence of all characteristics ===
+
+===== Use Case =====
+
+In the next iteration we try to extract all characteristics of the topic item Puccini. 
+
+===== Solution =====
+
+In contrast to the topic maps data model TMQL does not differ between names and occurrences of a topic item. The current draft combines names and occurrences to the characteristics of a topic item. In relation to this there is only one defined axis to get all characteristics of a topic item as one tuple sequence.
+
+The first step is to get the topic item we wanted to know. After that we extract the characteristics using the navigation axis 'characteristics' of the TMQL draft.
+
+--------------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics
+--------------------------------
+
+===============================
+As first part of the query we define a prefix using to reduce the absolute IRIs of the remaining query part to relative IRIs. After that we use the item reference 'psi:Puccini' to identify the topic item Puccini. Using the navigation axis 'characteristics' we navigate from the node representing the topic to all nodes representing characteristics of the topic node. The query does not returns the literals representing the values of the characteristics. It will return a tuple sequence of topic map items representing the characteristics.
+===============================
+
+Because of the fact we want to query the literals representing the values of characteristics, we have to add a new navigation step at the end of the last query. The current draft supports a new navigation axis 'atomify' to serialize a characteristics construct and locators to its literals, mostly strings. 
+
+--------------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics >> atomify
+--------------------------------
+
+===============================
+In addition to the last query the forward navigation using the 'atomify' axis extract all values of each characteristic of the topic item Puccini. The query will return a set of string literals representing the values of the characteristics.
+===============================
+
+The 'characteristics' axis supports a optional type representing the topic type of the characteristics construct. The optional type is specified by a topic item reference after the axis name.
+
+--------------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics psi:date_of_birth >> atomify
+--------------------------------
+
+===============================
+In addition to the last query the result of this query only contains all literals of the characteristics of type psi:date_of_birth.
+===============================
+
+In most use case the literals of characteristics are used instead of the characteristics constructs itself. Because of that the non-canonical level contains a term-substitution for the both navigation steps '>> characteristics >> atomify'. It is possible to use the '/' followed by the optional type. Please note that the shortcut restricts the optional type, if it is missing a grammar error will be raised.
+
+--------------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini / psi:date_of_birth
+--------------------------------
+
+===============================
+This query has the same result as the last one.
+===============================
+
+===== Summary =====
+
+The tutorial explain how to extract characteristics or their literals using a TMQL query. It explain the functionality of the 'characteristics' and 'atomify' axis with optional type parameters. It also show a non-canonical shortcut for the combination of this both axis.

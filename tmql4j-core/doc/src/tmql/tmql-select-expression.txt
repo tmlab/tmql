@@ -1,0 +1,92 @@
+=== Select expressions ===
+
+The current draft of the topic maps query language supports three different types of query-expressions. Each of theme will be inspired by other query languages of other industrial standards. One of them is the select-expression style inspired by the query language of relation databases - SQL.
+
+The select style represented by the production called 'select expression'. A select expression contains a number of optional sub expression smilar to the SQL query language.
+
+--------------------------------------
+1:	select-expression	::=	SELECT    < value-expression >
+2:							[  FROM   value-expression ]
+3:							[  WHERE   boolean-expression ]
+4:							[  GROUP BY  < $[0-9]+ > ]
+5:							[  ORDER BY    < value-expression > ]
+6:							[  UNIQUE  ]
+7:							[  OFFSET  value-expression ]
+8:							[  LIMIT  value-expression ] 
+9:							[ USE use-definition ]
+--------------------------------------
+
+Only the select-clause represented by the keyword 'SELECT' is mandatory, all other expression can be left out.
+
+==== Processing model ====
+
+The processing model of a select expression defines to execution order of the contained expressions. In this case the 'from clause' has to be interpreted at first. The 'from clause' define the context of possible variable bindings of the whole select expression and define a sub set of topic map constructs they can be bind to. If the 'from clause' is missing the context will be defined as the whole queried topic map represented by the variable '%_'.
+
+After the execution of the 'from clause' the offset and limit clause will be interpreted. The contained value expressions only define a numerical literal representing the first selected index and the maximum number of selected values. The result will be stored as the processing variables $_lower' and '$_limit'.
+
+Then all free unbound variables of the where-clause are determinded. Each variable are bound i. e. using iterations to any possible value of the context defined by the 'from-clause'. During the processing of the where-clause each variable binding tuple will be checked for satisfaction in the context of the defined boolean condition. The result of the 'where clause' will be a unordered sequence of tuple representing all satisfying variable bindings.
+
+If the 'order-by clause' is used, the unordered sequence will be ordered using the defined value expressions.
+
+After the optional sortation of the variable bindings the 'select clause' used to transform the variable bindings to the values to user is interested in. The clause normally contains a set of navigations or functions to extract exactly the information the user is interested in.
+
+If there is a 'group-by' clause the interpreter creates a projection of the results, to group them using the given indexes. If the clause contains all indexes, the result keeps unchanged.
+
+The keyword 'UNIQUE' only symbolize the reduction of the result set by removing duplicates. If the keyword is missing, the result set can contain each tuple multiple times.
+
+As last execution step the bounded variables '$_limit' and '$_lower' used to extract the expected selection window of the whole result set. To realize that the function 'slice' is used.
+
+==== Select clause ====
+
+The 'select clause' is symbolized by the keyword 'SELECT' and contains a comma-separated list of value expressions to transform the variable bindings of the evaluation to a sequence of tuples. Normally the 'select clause' contains navigation expression or simple functions.
+
+[NOTE]
+The select clause must not use variables which are not used in the context of the where-clause and they must not use anonymous variables like '$_' because the variables support only write-access.
+
+==== From clause ====
+
+The 'from clause' is used to define the context of the query execution. The context is used to get the set of possible variable bindings used by the 'where clause' to evaluate variable bindings. The clause is optional if it is missing the context will be bound to the variable '%_' representing the queried topic map.
+
+Normally the clause contains a simple content combination or a navigation expression to define the context of the querying process for this select expression.
+
+==== Where clause ====
+
+The 'where clause' define a boolean condition to evaluate the variable bindings. The clause can contain every boolean expression which was discussed in the previous chapters. A where clause returns a set of satisfying variable bindings. 
+
+The select expression can only use variable bound in the context of the where clause. If it is missing the usage of any variable is invalid.
+
+==== Group-By clause ====
+
+The 'group-by clause' is optional and enables to control the representation of results. In normal case the results are represented as two-dimensional tables containing only atomic values within a cell. Using the 'group-by' clause results can be grouped resulting in array values within a table cell.
+
+The 'group-by' clause allows the definition of a set of indexes, the result should group by. The indexes are represented by the tuple variables starting with the dollar '$' following by any numerical combination. 
+
+---------------------
+SELECT $t , $t >> indicators
+WHERE $t ISA person
+GROUP BY $0
+---------------------
+
+=====================
+The example query returns all person instances and the topic subject-identifiers. Without the 'group-by' clause, the result processor returns this topic instance n-times, one time for each subject-identifier of the topic. Using the 'group-by' there is only one row for each topic containing an array at the second position which contains all its subject-identifier.
+=====================
+
+==== Order-By clause ====
+
+The 'order-by clause' is optional if it is missing the sequence of variable evaluations of the where clause keep unordered. The clause can be used to order them by using a comma-separated list of value expressions normally containing only simple navigations to get literals of internal characteristics of the bound items. 
+
+The keywords 'ASC' and 'DESC' can be used after every value expression to define the order direction. If the keyword is missing 'ASC' is used as default.
+
+==== Unique ====
+
+By default the result set can contain the same tuple multiple times. Sometimes the user only interested in the unique set of results. By adding the keyword 'UNIQUE' the result sequence will be reduced to a sequence containing every origin tuple only one times.
+
+==== Offset clause ====
+
+The offset clause is optional and starts with the keyword 'OFFSET' followed by a numerical literal. The numerical value will be bound to the system variable '$_lower' and will be used to define the first index of the result set to select. All tuples of the result sequence located at a lower index will be ignored and removed from the result set. If the clause is missing the offset will be '0'.
+
+==== Limit clause ====
+
+The limit clause is optional and starts with the keyword 'LIMIT' followed by a numerical literal. The numerical value will be bound to the system variable '$_limit' and will be used as the maximum number of selected items. If the result set contains more than the limit clause restricts, they will be removed from the final result set. If the limit clause is missing the limit value will be '-1' representing an unlimited selection.
+
+

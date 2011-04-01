@@ -1,0 +1,60 @@
+=== Prefix Definitions ===
+
+In the context of a TMQL query a topic will be represented by a subject-identifier, subject-locator or item-identifier. Each of this identifiers are represented by a string-represented IRI which has to be known by the underlying topic maps engine. Related to a model, the most identifiers of a topic map will be similar to each other in relation to their IRI string literals, except from a short part at the end of the IRI literal. The identifiers use the same prefix and because of using a set of topics as part of the query we have to write a set of many identifiers only differs in a short part at the end. The solution of this problem is to define a number of prefixes and use relative IRIs instead of the absolute one.
+
+There are some predefined prefixes defined by the current draft of the topic maps query language which can be used without defining explicitly. The following prefixes are contained by the predefined environment.
+
+[cols="1,2,5"]
+|==========================================
+|*prefix literal*| *absolute IRI* | *description*
+|tm|http://psi.topicmaps.org/iso13250/model/|This is the namespace for the concepts defined by TMDM (via the TMDM/TMRM mapping).
+|xsd|http://www.w3.org/2001/XMLSchema#|This is the namespace for the XML Schema Datatypes.
+|tmql|http://psi.topicmaps.org/tmql/1.0/|Under this prefix the concepts of TMQL itself are located.
+|fn|http://psi.topicmaps.org/tmql/1.0/functions/|Under this prefix user-callable functions of the predefined TMQL environment are located.
+|dc|http://purl.org/dc/terms/|Under this prefix Dublin Core elements are located.
+|==========================================
+
+==== Define Prefixes as Query-Part ====
+
+The current draft of the query language define an special expression type to define prefixes as part of the query itself. The defined prefixes are only valid for this specific query and not for the whole runtime. If the user wants to define a prefix only for a query this method should be used. The number of prefixes defined as part of the query is not restricted by the current draft. The prefix definition is a part of the environment clause of a TMQL query and starts with the keyword '%prefix' followed by the prefix literal and the absolute IRI as replacement of the prefix IRI. 
+
+-----------------------------------------
+1:	%prefix tmql4j http://tmql4j.topicmapslab.de/
+-----------------------------------------
+
+The defined prefixes can be used as QNames as part of a relative IRI in the context of the same query to identify a topic or a topic type.
+
+-----------------------------------------
+1:	%prefix tmql4j http://tmql4j.topicmapslab.de/ tmql4j:person >> instances
+2:
+3:	http://tmql4j.topicmapslab.de/person >> instances 
+-----------------------------------------
+
+=========================================
+The example show two queries with the same meaning. In line 1 there is a query using prefix definitions as part of the environment clause and uses the defined prefix literal as QName of the identifier 'tmql4j:person'. As we can see the QName and the rest of the IRI will be devide by a colon. The second query in line 3 don't use a prefix definition, but in the current example it is shorter because the prefix is used only one times. Please note that the benefits of using prefixes is proportional to the number of repeating IRI parts.
+=========================================
+
+==== Define Prefixes using  Prefix Handler ====
+
+Sometimes a prefix will be used in different queries by the same tmql4j engine, so it will be uncomfortable to define this prefixes as part of each query again. The tmql4j engine provides a method to register additional prefixes which are valid in the whole runtime lifecycle. The method expects two arguments which are the same like the tokens of the prefix definition as a part of the query. The first argument is the prefix literal and the second is the absolute IRI represented by the QName.
+
+-------------------------------------
+1:	PrefixHandler handler = runtime.getLanguageContext().getPrefixHandler();
+2:
+3:	property.registerPrefix("tmql4j", "http://tmql4j.topicmapslab.de");
+-------------------------------------
+
+=====================================
+The prefix management will be encapsulate by the language context which can be accessed by the runtime method 'getLanguageExtension' as we can see in line 1. In line 3 the method 'registerPrefix' of the prefix handler will be used to add a new prefix definition to the runtime container with the prefix literal 'tmql4j' and the given string-represented IRI. The code line 3 has the same effect like the prefix definition of the last section, but in addition each query executed by the runtime container can use the prefix without defining it as a part of the query.
+=====================================
+
+==== Define Default Prefixes using  Prefix Handler ====
+
+For a whole runtime it is possible to define a default prefix without any prefix IRI. The default prefix can be used, in the way, that the relative part can be written without the prefix. The engine transforms automatically the relative IRI to a absolute IRI using this prefix.
+
+-------------------------------------
+1:	PrefixHandler handler = runtime.getLanguageContext().getPrefixHandler();
+2:
+3:	property.setDefaultPrefix("http://tmql4j.topicmapslab.de");
+-------------------------------------
+
