@@ -26,6 +26,7 @@ import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.query.IQuery;
 import de.topicmapslab.tmql4j.util.HashUtil;
+import de.topicmapslab.tmql4j.util.LiteralUtils;
 
 /**
  * @author Sven Krosse
@@ -87,7 +88,8 @@ public class PreparedStatement implements IPreparedStatement {
 	 * @param tree
 	 *            the tree
 	 */
-	public PreparedStatement(ITMQLRuntime runtime, IQuery query, IParserTree tree) {
+	public PreparedStatement(ITMQLRuntime runtime, IQuery query,
+			IParserTree tree) {
 		this.runtime = runtime;
 		this.tree = tree;
 		this.query = query;
@@ -121,7 +123,8 @@ public class PreparedStatement implements IPreparedStatement {
 	 */
 	private void checkIndex(int index) throws TMQLRuntimeException {
 		if (index >= indexes.size()) {
-			throw new TMQLRuntimeException(MessageFormat.format(THE_GIVEN_INDEX_IS_OUT_OF_RANGE, index));
+			throw new TMQLRuntimeException(MessageFormat.format(
+					THE_GIVEN_INDEX_IS_OUT_OF_RANGE, index));
 		}
 	}
 
@@ -135,7 +138,8 @@ public class PreparedStatement implements IPreparedStatement {
 	 */
 	private void checkWildcard(String wildcard) throws TMQLRuntimeException {
 		if (!namedWildcards.containsKey(wildcard)) {
-			throw new TMQLRuntimeException(MessageFormat.format(THE_GIVEN_WILDCARD_IS_NOT_PRESENT, wildcard));
+			throw new TMQLRuntimeException(MessageFormat.format(
+					THE_GIVEN_WILDCARD_IS_NOT_PRESENT, wildcard));
 		}
 	}
 
@@ -357,15 +361,19 @@ public class PreparedStatement implements IPreparedStatement {
 		 * first check if all indexes are set
 		 */
 		for (Integer index : indexes.values()) {
-			if (!getValues().containsKey(index) || getValues().get(index) == null) {
-				throw new TMQLRuntimeException(MessageFormat.format(MISSING_VALUE_FOR_INDEX, index));
+			if (!getValues().containsKey(index)
+					|| getValues().get(index) == null) {
+				throw new TMQLRuntimeException(MessageFormat.format(
+						MISSING_VALUE_FOR_INDEX, index));
 			}
 		}
 		/*
 		 * check if the tree does not contains forbidden expression
 		 */
 		if (!tree.isValid(runtime, query)) {
-			throw new TMQLRuntimeException(MessageFormat.format(THE_QUERY_CONTAINS_FORBIDDEN_EXPRESSION, tree.root().getClass().getSimpleName()));
+			throw new TMQLRuntimeException(MessageFormat.format(
+					THE_QUERY_CONTAINS_FORBIDDEN_EXPRESSION, tree.root()
+							.getClass().getSimpleName()));
 		}
 		/*
 		 * check if topic map is set
@@ -406,7 +414,8 @@ public class PreparedStatement implements IPreparedStatement {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void allowExpression(Class<? extends IExpression> allowedExpressionType) {
+	public void allowExpression(
+			Class<? extends IExpression> allowedExpressionType) {
 		query.allowExpression(allowedExpressionType);
 	}
 
@@ -420,7 +429,8 @@ public class PreparedStatement implements IPreparedStatement {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void forbidExpression(Class<? extends IExpression> forbiddenExpressionType) {
+	public void forbidExpression(
+			Class<? extends IExpression> forbiddenExpressionType) {
 		query.forbidExpression(forbiddenExpressionType);
 	}
 
@@ -477,10 +487,31 @@ public class PreparedStatement implements IPreparedStatement {
 		runtime.getTmqlProcessor().query(this);
 	}
 
+//	private void toString(StringBuilder builder, IExpression expression) {
+//		if (expression.getExpressions().isEmpty()) {
+//			if (expression instanceof PreparedExpression) {
+//				Object value = get(expression);
+//				if ( value instanceof String ){
+//					builder.append(LiteralUtils.asQuotedString(value.toString()));
+//				}else{
+//					builder.append(LiteralUtils.asString(value));
+//				}
+//			} else {
+//				for (String token : expression.getTokens()) {
+//					builder.append(token);
+//					builder.append(" ");
+//				}
+//			}
+//		}else{
+//			for ( IExpression exp)
+//		}
+//	}
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getNonParametrizedQueryString() {
+
 		/*
 		 * lazy load
 		 */
@@ -495,17 +526,20 @@ public class PreparedStatement implements IPreparedStatement {
 			for (int index = 0; index < getValues().size(); index++) {
 				Object value = getValues().get(index);
 				if (value == null) {
-					throw new TMQLRuntimeException(MessageFormat.format(MISSING_VALUE_FOR_INDEX, index));
+					throw new TMQLRuntimeException(MessageFormat.format(
+							MISSING_VALUE_FOR_INDEX, index));
 				}
 				String replacement;
 				if (value instanceof Construct) {
-					replacement = QUOTE + ((Construct) value).getId() + "\" << id";
-				} else if ( value instanceof String ){
-					replacement = escape((String)value);
-				}else{
+					replacement = QUOTE + ((Construct) value).getId()
+							+ "\" << id";
+				} else if (value instanceof String) {
+					replacement = escape((String) value);
+				} else {
 					replacement = value.toString();
 				}
-				nonParametrizedQueryString = nonParametrizedQueryString.replaceFirst("\\?", replacement);
+				nonParametrizedQueryString = nonParametrizedQueryString
+						.replaceFirst("\\?", replacement);
 			}
 		}
 		return nonParametrizedQueryString;
@@ -513,18 +547,21 @@ public class PreparedStatement implements IPreparedStatement {
 
 	/**
 	 * Internal method to escape a string value
-	 * @param value the value
+	 * 
+	 * @param value
+	 *            the value
 	 * @return the string
 	 */
-	private String escape(String value){
-		if ( value.contains(TRIPLE_QUOTE)){
-			return  TRIPLE_QUOTE +  value.replace(QUOTE, ESCAPED_QUOTE) + TRIPLE_QUOTE;
-		}else if ( value.contains(QUOTE)){
+	private String escape(String value) {
+		if (value.contains(TRIPLE_QUOTE)) {
+			return TRIPLE_QUOTE + value.replace(QUOTE, ESCAPED_QUOTE)
+					+ TRIPLE_QUOTE;
+		} else if (value.contains(QUOTE)) {
 			return TRIPLE_QUOTE + value + TRIPLE_QUOTE;
 		}
 		return QUOTE + value + QUOTE;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
