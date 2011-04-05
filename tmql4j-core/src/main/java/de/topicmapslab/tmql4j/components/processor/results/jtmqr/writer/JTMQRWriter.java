@@ -37,7 +37,7 @@ public class JTMQRWriter {
 		}else if(this.format.equals(JTMQRFormat.JTMQR_2)){
 			this.mapper = new JTMQR2Mapper();
 		}else{
-			throw new RuntimeException("Unexspected JTMQR Format");
+			throw new RuntimeException("Unexpected JTMQR Format");
 		}
 		
 	}
