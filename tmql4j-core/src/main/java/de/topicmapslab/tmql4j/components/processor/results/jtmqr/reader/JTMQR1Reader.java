@@ -22,23 +22,23 @@ import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 
 public class JTMQR1Reader {
 
-	private JsonParser jParser;
-	
+	private final JsonParser jParser;
+
 	protected JTMQR1Reader(JsonParser jParser) {
 		this.jParser = jParser;
 	}
-	
-	protected IResultSet<IResult> readResultSet() throws JsonParseException, IOException{
-		
+
+	protected IResultSet<IResult> readResultSet() throws JsonParseException, IOException {
+
 		SimpleJtmqrResultSet resultSet = new SimpleJtmqrResultSet();
 		IResult result = null;
-		
+
 		JsonToken lastToken = null;
 		while (this.jParser.nextToken() != null) {
 
 			JsonToken token = this.jParser.getCurrentToken();
 			String text = this.jParser.getText();
-			
+
 			/*
 			 * is name field
 			 */
@@ -60,7 +60,7 @@ public class JTMQR1Reader {
 
 		return resultSet;
 	}
-	
+
 	/**
 	 * Method called to handle <code>null</code> values
 	 * 
@@ -87,6 +87,7 @@ public class JTMQR1Reader {
 	 * @throws IOException
 	 */
 	protected IResult handleField(SimpleJtmqrResultSet resultSet, IResult result, String text) throws JsonParseException, IOException {
+
 		/*
 		 * is alias node
 		 */
@@ -291,5 +292,5 @@ public class JTMQR1Reader {
 
 		return indexes;
 	}
-	
+
 }

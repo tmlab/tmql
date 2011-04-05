@@ -59,9 +59,9 @@ If the current node is a string literal the backward navigation returns the cons
 
 The 'typed' axis represents the relationship between typed constructs and the topic type. It does not support any optional type arguments and can be navigated in both directions.
 
-If the current node is a typed construct the forward navigation returns the topic type of this construct.
+If the current node is a topic type the forward navigation returns all typed constructs being of this type.
 
-If the current node is a topic type the backward navigation returns all typed constructs being of this type.
+If the current node is a typed construct the backward navigation returns the topic type of this construct.
 
 ==== The types axis ====
 

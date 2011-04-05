@@ -22,8 +22,7 @@ public class JTMQRReader {
 
 	private JsonParser jParser;
 	private final InputStream inStream;
-	
-	
+
 	/**
 	 * constructor
 	 * 
@@ -32,7 +31,7 @@ public class JTMQRReader {
 	 * @throws JsonParseException
 	 * @throws IOException
 	 */
-	public JTMQRReader(InputStream in){
+	public JTMQRReader(InputStream in) {
 		this.inStream = in;
 	}
 
@@ -44,45 +43,45 @@ public class JTMQRReader {
 	 */
 	public IResultSet<IResult> readResultSet() {
 
-		try{
-		
+		try {
+
 			// get version
 			JsonFactory jFactory = new JsonFactory();
 			this.jParser = jFactory.createJsonParser(this.inStream);
 			String version = null;
-			
+
 			while (this.jParser.nextToken() != null) {
-				
+
 				JsonToken token = this.jParser.getCurrentToken();
 				String text = this.jParser.getText();
 
-				if(token.equals(JsonToken.FIELD_NAME) && text.equals("version")){
+				if (token.equals(JsonToken.FIELD_NAME) && text.equals("version")) {
 					this.jParser.nextToken();
 					version = this.jParser.getText();
 					break;
 				}
 			}
-			
-			if(version == null)
+
+			if (version == null) {
 				throw new TMQLRuntimeException("Cant get version string.");
-			
-			if(version.equals("1.0")){
-				
+			}
+
+			if (version.equals("1.0")) {
+
 				return new JTMQR1Reader(this.jParser).readResultSet();
-				
-			}else if(version.equals("2.0")){
-				
+
+			} else if (version.equals("2.0")) {
+
 				return new JTMQR2Reader(this.jParser).readResultSet();
-				
-			}else{
+
+			} else {
 				throw new TMQLRuntimeException("unexpected JTMQR version (" + version + ")");
 			}
-		
-		}catch (Exception e) {
+
+		} catch (Exception e) {
 			throw new TMQLRuntimeException("Parse JTMQR failed.", e);
 		}
 	}
-
 
 	/**
 	 * Returns the parser instance

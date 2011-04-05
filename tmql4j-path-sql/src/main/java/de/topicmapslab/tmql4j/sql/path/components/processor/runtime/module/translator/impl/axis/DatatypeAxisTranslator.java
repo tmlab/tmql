@@ -15,6 +15,10 @@ import de.topicmapslab.tmql4j.sql.path.utils.TranslatorUtils;
 
 public class DatatypeAxisTranslator extends AxisTranslatorImpl {
 
+	/**
+	 * 
+	 */
+	private static final String OCCURRENCES = "occurrences";
 	private static final String ID = "id";
 	private static final String BACKWARD_CONDITION = "{0} = {1}.id_datatype";
 	private static final String BACKWARD_CONDITION_ALIAS = "{0}.{1} = {2}.id_datatype";
@@ -23,23 +27,19 @@ public class DatatypeAxisTranslator extends AxisTranslatorImpl {
 	private static final String ID_DATATYPE = "id_datatype";
 
 	@Override
-	protected ISqlDefinition forward(ITMQLRuntime runtime, IContext context,
-			String optionalType, ISqlDefinition definition)
-			throws TMQLRuntimeException {
+	protected ISqlDefinition forward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
 		ISqlDefinition result = definition.clone();
 		result.clearSelection();
 		/*
 		 * append from clause for characteristics
 		 */
-		IFromPart fromPart = new FromPart(DATATYPEAWARES, result.getAlias(),
-				false);
+		IFromPart fromPart = new FromPart(DATATYPEAWARES, result.getAlias(), true);
 		result.addFromPart(fromPart);
 		/*
 		 * append condition as connection to incoming SQL definition
 		 */
 		ISelection selection = definition.getLastSelection();
-		result.add(MessageFormat.format(FORWARD_CONDITION,
-				selection.getSelection(), fromPart.getAlias()));
+		result.add(MessageFormat.format(FORWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));
 		/*
 		 * add new selection
 		 */
@@ -50,29 +50,23 @@ public class DatatypeAxisTranslator extends AxisTranslatorImpl {
 	}
 
 	@Override
-	protected ISqlDefinition backward(ITMQLRuntime runtime, IContext context,
-			String optionalType, ISqlDefinition definition)
-			throws TMQLRuntimeException {
+	protected ISqlDefinition backward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
 		ISqlDefinition result = definition.clone();
 		result.clearSelection();
 		ISelection lastSel = definition.getLastSelection();
 		/*
 		 * append from clause for characteristics
 		 */
-		IFromPart fromPart = new FromPart(DATATYPEAWARES, result.getAlias(),
-				false);
+		IFromPart fromPart = new FromPart(optionalType == null ? DATATYPEAWARES : OCCURRENCES, result.getAlias(), true);
 		result.addFromPart(fromPart);
 		/*
 		 * append condition as connection to incoming SQL definition
 		 */
 		if (lastSel.getCurrentTable() == SqlTables.STRING) {
-			String alias = TranslatorUtils.addLocatorSelection(result,
-					lastSel.getSelection());
-			result.add(MessageFormat.format(BACKWARD_CONDITION_ALIAS, alias,
-					ID, fromPart.getAlias()));
+			String alias = TranslatorUtils.addLocatorSelection(result, lastSel.getColumn());
+			result.add(MessageFormat.format(BACKWARD_CONDITION_ALIAS, alias, ID, fromPart.getAlias()));
 		} else {
-			result.add(MessageFormat.format(BACKWARD_CONDITION,
-					lastSel.getSelection(), fromPart.getAlias()));
+			result.add(MessageFormat.format(BACKWARD_CONDITION, lastSel.getSelection(), fromPart.getAlias()));
 		}
 		/*
 		 * add new selection
@@ -80,6 +74,7 @@ public class DatatypeAxisTranslator extends AxisTranslatorImpl {
 		ISelection sel = new Selection(ID, fromPart.getAlias());
 		sel.setCurrentTable(SqlTables.ANY);
 		result.addSelection(sel);
+		TranslatorUtils.addOptionalTypeArgument(runtime, context, optionalType, result, "id_type", fromPart.getAlias());
 		return result;
 	}
 

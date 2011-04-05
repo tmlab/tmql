@@ -29,6 +29,9 @@ import de.topicmapslab.tmql4j.sql.path.utils.TranslatorUtils;
  */
 public class TraverseAxisTranslator extends AxisTranslatorImpl {
 
+	private static final String BACKWARD_CONDITION = "{0}.id_parent != {1}";
+	private static final String BACKWARD_INNER_CONDITION = "{0}.id_parent = {1}";
+
 	static final String ASSOCIATIONS = "associations";
 	static final String TABLE = "roles";
 	static final String FORWARD_SELECTION = "id_player";
@@ -40,13 +43,14 @@ public class TraverseAxisTranslator extends AxisTranslatorImpl {
 	static final String PARENT = "id_parent";
 	static final String PLAYER = "id_player";
 
-	static final String BACKWARD_PARENT_CONDITION = "{0}.id_parent = {1}";
+	static final String BACKWARD_PARENT_CONDITION = BACKWARD_INNER_CONDITION;
 	static final String BACKWARD_CONDITION_DIFFERENT_PLAYER = "{0} != {1}.id_parent";
 	static final String BACKWARD_CONDITION_TRAVERSE = "{0}.id_player IN ( SELECT id_player FROM roles WHERE id_parent = ( {1} ) )";
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected ISqlDefinition forward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
 		ISqlDefinition result = definition.clone();
 		result.clearSelection();
@@ -90,7 +94,7 @@ public class TraverseAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add new selection
 		 */
-		ISelection sel =new Selection(FORWARD_SELECTION, fromPart.getAlias());
+		ISelection sel = new Selection(FORWARD_SELECTION, fromPart.getAlias());
 		result.addSelection(sel);
 		sel.setCurrentTable(SqlTables.TOPIC);
 		return result;
@@ -99,64 +103,113 @@ public class TraverseAxisTranslator extends AxisTranslatorImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected ISqlDefinition backward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
 		ISqlDefinition result = definition.clone();
+		ISelection lastSelection = result.getLastSelection();
 		result.clearSelection();
-		/*
-		 * append from clause for associations
-		 */
-		IFromPart fromPart = new FromPart(TABLE, result.getAlias(), true);
-		result.addFromPart(fromPart);
-		/*
-		 * append condition as connection to incoming SQL definition
-		 */
-		ISelection selection = definition.getLastSelection();
-		result.add(MessageFormat.format(BACKWARD_CONDITION_DIFFERENT_PLAYER, selection.getSelection(), fromPart.getAlias()));
+		if (lastSelection.getCurrentTable() == SqlTables.TOPIC) {
+			result = TranslatorUtils.generateSqlDefinitionForTypeables(runtime, context, result, lastSelection.getSelection());
+			lastSelection = result.getLastSelection();
+			result.clearSelection();
+		}
+		IFromPart roles = new FromPart(TABLE, result.getAlias(), true);
+		result.addFromPart(roles);
 
 		/*
-		 * create condition for traversal step In condition for co-players
+		 * create inner definition
 		 */
 		ISqlDefinition inDef = new SqlDefinition();
-		inDef.setInternalAliasIndex(result.getInternalAliasIndex());
-		IFromPart inDefFromPart = new FromPart(TABLE, result.getAlias(), true);
-		inDef.addFromPart(inDefFromPart);
-		inDef.addSelection(new Selection(PLAYER, inDefFromPart.getAlias()));
+		IFromPart innerFrom = new FromPart(TABLE, inDef.getAlias(), true);
+		inDef.addFromPart(innerFrom);
+		inDef.add(MessageFormat.format(BACKWARD_INNER_CONDITION, innerFrom.getAlias(), lastSelection.getSelection()));
 		/*
-		 * direct association mapping if current node is an association
-		 */
-		if (selection.getCurrentTable() == SqlTables.TOPIC) {
-			ISqlDefinition associationsOfType = TranslatorUtils.generateSqlDefinitionForTypeables(runtime, context, selection.getSelection(), definition.getInternalAliasIndex());
-			inDef.add(new InCriterion(PARENT,inDefFromPart.getAlias(), associationsOfType));
-		}
-		/*
-		 * indirect association mapping over type is current node is a topic
-		 */
-		else{
-			inDef.add(MessageFormat.format(BACKWARD_PARENT_CONDITION, inDefFromPart.getAlias(), selection.getSelection()));	
-		}
-		/*
-		 * optional type condition
+		 * optional filter
 		 */
 		if (optionalType != null) {
-			/*
-			 * add from part and binding for association table
-			 */
-			IFromPart fromPartAssociation = new FromPart("associations", result.getAlias(), true);
-			inDef.addFromPart(fromPartAssociation);
-			inDef.add(MessageFormat.format(PARENT_CONDITION, fromPartAssociation.getAlias(), inDefFromPart.getAlias()));
-			/*
-			 * add type condition
-			 */
-			ISqlDefinition inTypeBySi = TranslatorUtils.topicBySubjectIdentifier(result, runtime.getConstructResolver().toAbsoluteIRI(context, optionalType));
-			inDef.add(new InCriterion(TYPE, fromPartAssociation.getAlias(), inTypeBySi));
+			TranslatorUtils.addOptionalTopicTypeArgument(runtime, context, optionalType, inDef, PLAYER, innerFrom.getAlias());
 		}
-		result.add(new InCriterion(PLAYER, fromPart.getAlias(), inDef));
-		/*
-		 * add new selection
-		 */
-		ISelection sel = new Selection(BACKWARD_SELECTION, fromPart.getAlias());
-		result.addSelection(sel);
+		ISelection innerSel = new Selection(PLAYER, innerFrom.getAlias());
+		inDef.addSelection(innerSel);
+
+		result.add(new InCriterion(PLAYER, roles.getAlias(), inDef));
+		result.add(MessageFormat.format(BACKWARD_CONDITION, roles.getAlias(), lastSelection.getSelection()));
+
+		ISelection sel = new Selection(PARENT, roles.getAlias());
 		sel.setCurrentTable(SqlTables.ASSOCIATION);
+		result.addSelection(sel);
+
 		return result;
+
+		// ISqlDefinition result = definition.clone();
+		// result.clearSelection();
+		// /*
+		// * append from clause for associations
+		// */
+		// IFromPart fromPart = new FromPart(TABLE, result.getAlias(), true);
+		// result.addFromPart(fromPart);
+		// /*
+		// * append condition as connection to incoming SQL definition
+		// */
+		// ISelection selection = definition.getLastSelection();
+		// result.add(MessageFormat.format(BACKWARD_CONDITION_DIFFERENT_PLAYER,
+		// selection.getSelection(), fromPart.getAlias()));
+		//
+		// /*
+		// * create condition for traversal step In condition for co-players
+		// */
+		// ISqlDefinition inDef = new SqlDefinition();
+		// inDef.setInternalAliasIndex(result.getInternalAliasIndex());
+		// IFromPart inDefFromPart = new FromPart(TABLE, result.getAlias(),
+		// true);
+		// inDef.addFromPart(inDefFromPart);
+		// inDef.addSelection(new Selection(PLAYER, inDefFromPart.getAlias()));
+		// /*
+		// * direct association mapping if current node is an association
+		// */
+		// if (selection.getCurrentTable() == SqlTables.TOPIC) {
+		// ISqlDefinition associationsOfType =
+		// TranslatorUtils.generateSqlDefinitionForTypeables(runtime, context,
+		// selection.getSelection(), definition.getInternalAliasIndex());
+		// inDef.add(new InCriterion(PARENT, inDefFromPart.getAlias(),
+		// associationsOfType));
+		// }
+		// /*
+		// * indirect association mapping over type is current node is a topic
+		// */
+		// else {
+		// inDef.add(MessageFormat.format(BACKWARD_PARENT_CONDITION,
+		// inDefFromPart.getAlias(), selection.getSelection()));
+		// }
+		// /*
+		// * optional type condition
+		// */
+		// if (optionalType != null) {
+		// /*
+		// * add from part and binding for association table
+		// */
+		// IFromPart fromPartAssociation = new FromPart("associations",
+		// result.getAlias(), true);
+		// inDef.addFromPart(fromPartAssociation);
+		// inDef.add(MessageFormat.format(PARENT_CONDITION,
+		// fromPartAssociation.getAlias(), inDefFromPart.getAlias()));
+		// /*
+		// * add type condition
+		// */
+		// ISqlDefinition inTypeBySi =
+		// TranslatorUtils.topicBySubjectIdentifier(result,
+		// runtime.getConstructResolver().toAbsoluteIRI(context, optionalType));
+		// inDef.add(new InCriterion(TYPE, fromPartAssociation.getAlias(),
+		// inTypeBySi));
+		// }
+		// result.add(new InCriterion(PLAYER, fromPart.getAlias(), inDef));
+		// /*
+		// * add new selection
+		// */
+		// ISelection sel = new Selection(BACKWARD_SELECTION,
+		// fromPart.getAlias());
+		// result.addSelection(sel);
+		// sel.setCurrentTable(SqlTables.ASSOCIATION);
+		// return result;
 	}
 }

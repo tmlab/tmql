@@ -47,12 +47,13 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public ISqlDefinition toSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
 		switch (expression.getGrammarType()) {
 			case Anchor.TYPE_TOPICREF: {
 				final String token = expression.getTokens().get(0);
 				ISqlDefinition newDefinition = definition.clone();
-				newDefinition.clearSelection();				
+				newDefinition.clearSelection();
 				/*
 				 * create from part for topics table
 				 */
@@ -89,37 +90,40 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 			case Anchor.TYPE_DOT: {
 				ISqlDefinition def = new SqlDefinition();
 				def.setInternalAliasIndex(definition.getInternalAliasIndex());
-				def.addSelection(definition.getLastSelection());				
+				def.addSelection(definition.getLastSelection());
 				return def;
 			}
 			case Anchor.TYPE_LITERAL: {
 				ISqlDefinition def = new SqlDefinition();
 				String token = expression.getTokens().get(0);
 				SqlTables table = SqlTables.ANY;
-				String cast = null; 
-				try{
-					if ( LiteralUtils.isString(token)){
+				// String cast = null;
+				try {
+					if (LiteralUtils.isString(token)) {
 						token = ISqlConstants.SINGLEQUOTE + LiteralUtils.asString(token) + ISqlConstants.SINGLEQUOTE;
 						table = SqlTables.STRING;
-						cast = ISqlConstants.ISqlTypes.VARCHAR;
-					}else if ( LiteralUtils.isInteger(token)){
+						// cast = ISqlConstants.ISqlTypes.VARCHAR;
+					} else if (LiteralUtils.isInteger(token)) {
 						table = SqlTables.INTEGER;
-					}else if ( LiteralUtils.isDecimal(token)){
+					} else if (LiteralUtils.isDecimal(token)) {
 						table = SqlTables.DECIMAL;
-					}else if ( LiteralUtils.isDate(token) || LiteralUtils.isTime(token) || LiteralUtils.isDateTime(token)){
+					} else if (LiteralUtils.isDate(token) || LiteralUtils.isTime(token) || LiteralUtils.isDateTime(token)) {
 						table = SqlTables.DATETIME;
-					}					
+					} else if (LiteralUtils.isBoolean(token)) {
+						table = SqlTables.BOOLEAN;
+					}
 				} catch (Exception ex) {
 					throw new TMQLRuntimeException("Cannot found element for given reference '" + token + "'!");
 				}
-				ISelection sel = new Selection(token, def.getAlias(), false);
-				sel.cast(cast);
+				ISelection sel = new Selection(token, null, true);
+				// sel.cast(cast);
 				def.addSelection(sel);
 				sel.setCurrentTable(table);
 				return def;
-			} case Anchor.TYPE_VARIABLE:{
+			}
+			case Anchor.TYPE_VARIABLE: {
 				final String variable = expression.getTokens().get(0);
-				if ( AnchorInterpreter.VARIABLE_TOPIC_MAP.equalsIgnoreCase(variable)){
+				if (AnchorInterpreter.VARIABLE_TOPIC_MAP.equalsIgnoreCase(variable)) {
 					ISqlDefinition def = new SqlDefinition();
 					ISelection sel = new Selection(context.getQuery().getTopicMap().getId(), null);
 					def.addSelection(sel);

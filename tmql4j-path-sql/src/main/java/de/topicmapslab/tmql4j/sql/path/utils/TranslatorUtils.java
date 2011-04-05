@@ -32,15 +32,20 @@ public class TranslatorUtils {
 	private static final String TABLE_REL_SUBJECTIDENTIFIER = "rel_subject_identifiers";
 	private static final String CONDITION_RELATION = "{0}.id = {1}.id_locator";
 	private static final String CONDITION_REFERENCE = "{0}.reference = ''{1}''";
+	private static final String CONDITION_REFERENCE_WITHOUT_QUOTE = "{0}.reference = {1}";
 	private static final String SELECTION = "id_topic";
 
 	/**
-	 * Utility method to select a locator by its reference and returns the alias of the locators FROM part
-	 * @param definition the definition, the selection should add to
-	 * @param reference the reference
+	 * Utility method to select a locator by its reference and returns the alias
+	 * of the locators FROM part
+	 * 
+	 * @param definition
+	 *            the definition, the selection should add to
+	 * @param reference
+	 *            the reference
 	 * @return the alias of locators FROM part
 	 */
-	public static final String addLocatorSelection(final ISqlDefinition definition, final String reference){
+	public static final String addLocatorSelection(final ISqlDefinition definition, final String reference) {
 		/*
 		 * add from parts
 		 */
@@ -49,13 +54,13 @@ public class TranslatorUtils {
 		/*
 		 * add condition
 		 */
-		definition.add(MessageFormat.format(CONDITION_REFERENCE, locators.getAlias(), reference));
+		definition.add(MessageFormat.format(CONDITION_REFERENCE_WITHOUT_QUOTE, locators.getAlias(), reference));
 		/*
 		 * return alias of locator id
 		 */
 		return locators.getAlias();
 	}
-	
+
 	/**
 	 * Utility method create a SQL definition to select a topic by subject
 	 * identifier
@@ -128,8 +133,6 @@ public class TranslatorUtils {
 		}
 	}
 
-	
-	
 	/**
 	 * Utility method to add the optional type matching to the SQL definition if
 	 * necessary
@@ -194,7 +197,24 @@ public class TranslatorUtils {
 		 */
 		ISqlDefinition definition = new SqlDefinition();
 		definition.setInternalAliasIndex(initialIndex);
+		return generateSqlDefinitionForTypeables(runtime, context, definition, typeSelection);
+	}
 
+	/**
+	 * Utility method generates a SQL query to get all typed constructs for the
+	 * given topic type as SQL selection
+	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param context
+	 *            the context
+	 * @param definition
+	 *            the definition the selection should add to
+	 * @param typeSelection
+	 *            the type selection
+	 * @return the SQL definition
+	 */
+	public static final ISqlDefinition generateSqlDefinitionForTypeables(ITMQLRuntime runtime, IContext context, ISqlDefinition definition, String typeSelection) {
 		/*
 		 * create from part
 		 */
@@ -211,7 +231,7 @@ public class TranslatorUtils {
 		definition.addSelection(new Selection(COL_ID, fromPart.getAlias()));
 		return definition;
 	}
-	
+
 	/**
 	 * Utility method generates a SQL query to get all typed constructs for the
 	 * given topic reference as SQL selection
@@ -231,7 +251,7 @@ public class TranslatorUtils {
 		 * create SQL definition
 		 */
 		ISqlDefinition definition = new SqlDefinition();
-		definition.setInternalAliasIndex(initialIndex);		
+		definition.setInternalAliasIndex(initialIndex);
 		/*
 		 * create from part
 		 */

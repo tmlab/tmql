@@ -88,7 +88,8 @@ public class AnchorInterpreter extends ExpressionInterpreterImpl<Anchor> {
 		 * anchor is an item reference (constant)
 		 */
 		if (anchor.equals(Element.class)) {
-			if (TmdmSubjectIdentifier.isTmdmName(anchor_) || TmdmSubjectIdentifier.isTmdmOccurrence(anchor_)) {
+			if (TmdmSubjectIdentifier.isTmdmName(anchor_) || TmdmSubjectIdentifier.isTmdmOccurrence(anchor_) || TmdmSubjectIdentifier.isTmdmRole(anchor_)
+					|| TmdmSubjectIdentifier.isTmdmAssociation(anchor_)) {
 				return QueryMatches.asQueryMatchNS(runtime, anchor_);
 			}
 			try {

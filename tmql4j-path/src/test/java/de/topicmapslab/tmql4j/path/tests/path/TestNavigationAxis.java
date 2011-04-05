@@ -196,6 +196,42 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			assertEquals(1, r.size());
 			assertTrue(typed.contains(r.first()));
 		}
+
+		query = "myTopic >> typed tm:name ";
+		set = execute(query);
+		assertEquals(25, set.size());
+		for (IResult r : set.getResults()) {
+			assertEquals(1, r.size());
+			assertTrue(r.first() instanceof Name);
+			assertTrue(typed.contains(r.first()));
+		}
+
+		query = "myTopic >> typed tm:occurrence ";
+		set = execute(query);
+		assertEquals(25, set.size());
+		for (IResult r : set.getResults()) {
+			assertEquals(1, r.size());
+			assertTrue(r.first() instanceof Occurrence);
+			assertTrue(typed.contains(r.first()));
+		}
+
+		query = "myTopic >> typed tm:association ";
+		set = execute(query);
+		assertEquals(25, set.size());
+		for (IResult r : set.getResults()) {
+			assertEquals(1, r.size());
+			assertTrue(r.first() instanceof Association);
+			assertTrue(typed.contains(r.first()));
+		}
+
+		query = "myTopic >> typed tm:role ";
+		set = execute(query);
+		assertEquals(25, set.size());
+		for (IResult r : set.getResults()) {
+			assertEquals(1, r.size());
+			assertTrue(r.first() instanceof Role);
+			assertTrue(typed.contains(r.first()));
+		}
 	}
 
 	@Test
@@ -486,8 +522,7 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		Association a = createAssociation();
 		Topic t = createTopic();
 		a.createRole(t, createTopic());
-		
-		
+
 		String query = null;
 		SimpleResultSet set = null;
 
@@ -496,21 +531,21 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(t, set.get(0, 0));
-		
+
 		t.addType(createTopicBySI("myType"));
-		
+
 		query = "\"" + a.getId() + "\" << id >> roletypes myType";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(t, set.get(0, 0));
-		
+
 		createTopicBySI("otherType");
 		query = "\"" + a.getId() + "\" << id >> roletypes otherType";
 		set = execute(query);
 		assertEquals(0, set.size());
 	}
-	
+
 	@Test
 	public void testRoleTypesAxis() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
@@ -564,12 +599,12 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		for (Association association : associations) {
 			assertTrue(result.contains(association));
 		}
-		
+
 		query = "roleType << roletypes myType";
 		set = execute(query);
 		assertEquals(associations.length, set.size());
 
-		 result = HashUtil.getHashSet();
+		result = HashUtil.getHashSet();
 		for (IResult r : set.getResults()) {
 			assertTrue(r.first() instanceof Association);
 			result.add((Association) r.first());
@@ -578,7 +613,7 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		for (Association association : associations) {
 			assertTrue(result.contains(association));
 		}
-		
+
 		createTopicBySI("otherType");
 		query = "roleType << roletypes otherType";
 		set = execute(query);
@@ -612,6 +647,7 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			assertTrue(result.contains(role));
 		}
 	}
+
 	@Test
 	public void testRolesAxisForAssociation() throws Exception {
 		Topic type = createTopicBySI("myType");
@@ -619,15 +655,15 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		Association a = createAssociation();
 		Role[] roles = new Role[10];
 		for (int i = 0; i < roles.length; i++) {
-			Topic t = createTopic();			
+			Topic t = createTopic();
 			Role r = a.createRole(type, t);
 			roles[i] = r;
 		}
-		
+
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "\"" + a.getId()+ "\" << id >> roles";
+		query = "\"" + a.getId() + "\" << id >> roles";
 		set = execute(query);
 		assertEquals(roles.length, set.size());
 
@@ -640,15 +676,14 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		for (Role role : roles) {
 			assertTrue(result.contains(role));
 		}
-		
-		query = "\"" + a.getId()+ "\" << id >> roles otherType";
+
+		query = "\"" + a.getId() + "\" << id >> roles otherType";
 		set = execute(query);
 		assertEquals(0, set.size());
-		
-		query = "\"" + a.getId()+ "\" << id >> roles myType";
+
+		query = "\"" + a.getId() + "\" << id >> roles myType";
 		set = execute(query);
 		assertEquals(roles.length, set.size());
-
 
 		result = HashUtil.getHashSet();
 		for (IResult r : set.getResults()) {
@@ -660,32 +695,33 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			assertTrue(result.contains(role));
 		}
 	}
-	
+
 	@Test
-	public void testRolesAxisBWForRoles() throws Exception {	
-		Topic type = createTopicBySI("myType");	
-		createTopicBySI("otherType");	
-		Association association =createAssociation(type);
-		Role r = association.createRole(createTopic(), createTopic());		
+	public void testRolesAxisBWForRoles() throws Exception {
+		Topic type = createTopicBySI("myType");
+		createTopicBySI("otherType");
+		Association association = createAssociation(type);
+		Role r = association.createRole(createTopic(), createTopic());
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "\""+r.getId() + "\" << id << roles";
+		query = "\"" + r.getId() + "\" << id << roles";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(association, set.get(0, 0));
-		
-		query = "\""+r.getId() + "\" << id << roles myType";
+
+		query = "\"" + r.getId() + "\" << id << roles myType";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals(association, set.get(0, 0));
-		
-		query = "\""+r.getId() + "\" << id << roles otherType";
+
+		query = "\"" + r.getId() + "\" << id << roles otherType";
 		set = execute(query);
 		assertEquals(0, set.size());
 	}
+
 	@Test
 	public void testRolesAxisWithoutParameterBW() throws Exception {
 		Topic roleType = createTopicBySI("roleType");
@@ -1667,7 +1703,7 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 			assertEquals(1, r.size());
 			assertTrue(ints.contains(r.first()));
 		}
-		
+
 		/*
 		 * test backward with type
 		 */

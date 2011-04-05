@@ -33,6 +33,16 @@ public class TmdmSubjectIdentifier {
 	public static final String TM_OCCURRENCE = "tm:occurrence";
 	public static final String TMDM_OCCURRENCE = "tmdm:occurrence";
 	/**
+	 * the tm:association
+	 */
+	public static final String TM_ASSOCIATION = "tm:association";
+	public static final String TMDM_ASSOCIATION = "tmdm:association";
+	/**
+	 * the tm:role
+	 */
+	public static final String TM_ROLE = "tm:role";
+	public static final String TMDM_ROLE = "tmdm:role";
+	/**
 	 * subject-identifier of the topic-type of the topic maps data model
 	 */
 	public static final String TMDM_TOPIC_TYPE = "http://psi.topicmaps.org/iso13250/glossary/topic-type";
@@ -145,6 +155,42 @@ public class TmdmSubjectIdentifier {
 		if (obj instanceof String) {
 			String identifier = (String) obj;
 			return identifier.equalsIgnoreCase(TMDM_NAME) || identifier.equalsIgnoreCase(TM_NAME);
+		}
+		return false;
+	}
+
+	/**
+	 * Utility method to check if the given object is a string with the value
+	 * "tm:role" or "tmdm:role"
+	 * 
+	 * @param obj
+	 *            the object
+	 * @return <code>true</code> if the object is the string "tm:role" or
+	 *         "tmdm:role", <code>false</code> otherwise
+	 * @since 3.1.0
+	 */
+	public static boolean isTmdmRole(Object obj) {
+		if (obj instanceof String) {
+			String identifier = (String) obj;
+			return identifier.equalsIgnoreCase(TMDM_ROLE) || identifier.equalsIgnoreCase(TM_ROLE);
+		}
+		return false;
+	}
+
+	/**
+	 * Utility method to check if the given object is a string with the value
+	 * "tm:association" or "tmdm:association"
+	 * 
+	 * @param obj
+	 *            the object
+	 * @return <code>true</code> if the object is the string "tm:association" or
+	 *         "tmdm:association", <code>false</code> otherwise
+	 * @since 3.1.0
+	 */
+	public static boolean isTmdmAssociation(Object obj) {
+		if (obj instanceof String) {
+			String identifier = (String) obj;
+			return identifier.equalsIgnoreCase(TM_ASSOCIATION) || identifier.equalsIgnoreCase(TMDM_ASSOCIATION);
 		}
 		return false;
 	}
