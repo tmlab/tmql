@@ -21,7 +21,6 @@ import static de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix.TYPE
 import static de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix.TYPE_SHORTCUT_TYPE_FILTER;
 import static de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix.TYPE_TYPE_FILTER;
 
-import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +43,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.Anchor;
 import de.topicmapslab.tmql4j.path.grammar.productions.BooleanExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix;
 import de.topicmapslab.tmql4j.util.HashUtil;
+import de.topicmapslab.tmql4j.util.LiteralUtils;
 
 /**
  * 
@@ -376,7 +376,7 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 		if (matches.isEmpty()) {
 			return QueryMatches.emptyMatches();
 		}
-		int index = getIndex(matches.getFirstValue());
+		int index = LiteralUtils.asInteger(matches.getFirstValue());
 		if (index != -1) {
 			/*
 			 * extract sequence from the top of the stack
@@ -388,49 +388,6 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 			}
 		}
 		return QueryMatches.emptyMatches();
-	}
-
-	/**
-	 * Utility method to transform given value to the index
-	 * 
-	 * @param value
-	 *            the value
-	 * @return the index or <code>-1</code>
-	 */
-	private int getIndex(Object value) {
-		/*
-		 * is null value
-		 */
-		if (value == null) {
-			return -1;
-		}
-		/*
-		 * is BigInteger
-		 */
-		if (value instanceof BigInteger) {
-			return ((BigInteger) value).intValue();
-		}
-		/*
-		 * is Integer
-		 */
-		else if (value instanceof Integer) {
-			return ((Integer) value).intValue();
-		}
-		/*
-		 * is long
-		 */
-		else if (value instanceof Long) {
-			return ((Long) value).intValue();
-		}
-		/*
-		 * try to parse integer
-		 */
-		try {
-			return Integer.parseInt(value.toString());
-		} catch (NumberFormatException e) {
-			return -1;
-		}
-
 	}
 
 	/**
@@ -460,8 +417,8 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 		if (matches.length < 2 || matches[0].isEmpty() || matches[1].isEmpty()) {
 			return QueryMatches.emptyMatches();
 		}
-		int upper = getIndex(matches[1].getFirstValue());
-		int lower = getIndex(matches[0].getFirstValue());
+		int upper = LiteralUtils.asInteger(matches[1].getFirstValue());
+		int lower = LiteralUtils.asInteger(matches[0].getFirstValue());
 		/*
 		 * extract sequence from the top of the stack
 		 */

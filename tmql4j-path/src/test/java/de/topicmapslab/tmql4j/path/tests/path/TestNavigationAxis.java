@@ -397,7 +397,7 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		Topic[] topics = new Topic[100];
 		for (int i = 0; i < topics.length; i++) {
 			topics[i] = createTopic();
-			createAssociation(topic).createRole(createTopic(), topics[i]);
+			createAssociation(createTopic()).createRole(topic, topics[i]);
 		}
 		String query = null;
 		SimpleResultSet set = null;
@@ -442,15 +442,15 @@ public class TestNavigationAxis extends Tmql4JTestCase {
 		for (int i = 0; i < topics.length; i++) {
 			topics[i] = createTopic();
 			topics[i].addType(type);
-			createAssociation(topic).createRole(createTopic(), topics[i]);
-			createAssociation(topic).createRole(createTopic(), createTopic());
+			createAssociation(createTopic()).createRole(topic, topics[i]);
+			createAssociation(createTopic()).createRole(topic, createTopic());
 		}
 		String query = null;
 		SimpleResultSet set = null;
 
 		query = "myTopic >> players myType";
 		set = execute(query);
-		assertEquals(topics.length * 2, set.size());
+		assertEquals(topics.length, set.size());
 
 		Set<Topic> result = HashUtil.getHashSet();
 		for (IResult r : set.getResults()) {

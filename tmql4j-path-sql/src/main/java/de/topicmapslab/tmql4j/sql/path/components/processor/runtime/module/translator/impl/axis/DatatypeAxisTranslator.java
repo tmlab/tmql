@@ -1,7 +1,5 @@
 package de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.axis;
 
-import java.text.MessageFormat;
-
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
@@ -11,20 +9,11 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
+import de.topicmapslab.tmql4j.sql.path.utils.ConditionalUtils;
+import de.topicmapslab.tmql4j.sql.path.utils.ISchema;
 import de.topicmapslab.tmql4j.sql.path.utils.TranslatorUtils;
 
 public class DatatypeAxisTranslator extends AxisTranslatorImpl {
-
-	/**
-	 * 
-	 */
-	private static final String OCCURRENCES = "occurrences";
-	private static final String ID = "id";
-	private static final String BACKWARD_CONDITION = "{0} = {1}.id_datatype";
-	private static final String BACKWARD_CONDITION_ALIAS = "{0}.{1} = {2}.id_datatype";
-	private static final String DATATYPEAWARES = "datatypeawares";
-	private static final String FORWARD_CONDITION = "{0} = {1}.id";
-	private static final String ID_DATATYPE = "id_datatype";
 
 	@Override
 	protected ISqlDefinition forward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
@@ -33,17 +22,18 @@ public class DatatypeAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * append from clause for characteristics
 		 */
-		IFromPart fromPart = new FromPart(DATATYPEAWARES, result.getAlias(), true);
+		IFromPart fromPart = new FromPart(ISchema.DatatypeAwares.TABLE, result.getAlias(), true);
 		result.addFromPart(fromPart);
 		/*
 		 * append condition as connection to incoming SQL definition
 		 */
 		ISelection selection = definition.getLastSelection();
-		result.add(MessageFormat.format(FORWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));
+		String condition = ConditionalUtils.equal(selection, fromPart.getAlias(), ISchema.Constructs.ID);
+		result.add(condition);
 		/*
 		 * add new selection
 		 */
-		ISelection sel = new Selection(ID_DATATYPE, fromPart.getAlias());
+		ISelection sel = new Selection(ISchema.DatatypeAwares.ID_DATATYPE, fromPart.getAlias());
 		sel.setCurrentTable(SqlTables.LOCATOR);
 		result.addSelection(sel);
 		return result;
@@ -57,24 +47,26 @@ public class DatatypeAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * append from clause for characteristics
 		 */
-		IFromPart fromPart = new FromPart(optionalType == null ? DATATYPEAWARES : OCCURRENCES, result.getAlias(), true);
+		IFromPart fromPart = new FromPart(optionalType == null ? ISchema.DatatypeAwares.TABLE : ISchema.Occurrences.TABLE, result.getAlias(), true);
 		result.addFromPart(fromPart);
 		/*
 		 * append condition as connection to incoming SQL definition
 		 */
 		if (lastSel.getCurrentTable() == SqlTables.STRING) {
 			String alias = TranslatorUtils.addLocatorSelection(result, lastSel.getColumn());
-			result.add(MessageFormat.format(BACKWARD_CONDITION_ALIAS, alias, ID, fromPart.getAlias()));
+			String condition = ConditionalUtils.equal(alias, ISchema.Constructs.ID, fromPart.getAlias(), ISchema.DatatypeAwares.ID_DATATYPE);
+			result.add(condition);
 		} else {
-			result.add(MessageFormat.format(BACKWARD_CONDITION, lastSel.getSelection(), fromPart.getAlias()));
+			String condition = ConditionalUtils.equal(lastSel, fromPart.getAlias(), ISchema.DatatypeAwares.ID_DATATYPE);
+			result.add(condition);
 		}
 		/*
 		 * add new selection
 		 */
-		ISelection sel = new Selection(ID, fromPart.getAlias());
+		ISelection sel = new Selection(ISchema.Constructs.ID, fromPart.getAlias());
 		sel.setCurrentTable(SqlTables.ANY);
 		result.addSelection(sel);
-		TranslatorUtils.addOptionalTypeArgument(runtime, context, optionalType, result, "id_type", fromPart.getAlias());
+		TranslatorUtils.addOptionalTypeArgument(runtime, context, optionalType, result, ISchema.Typeables.ID_TYPE, fromPart.getAlias());
 		return result;
 	}
 

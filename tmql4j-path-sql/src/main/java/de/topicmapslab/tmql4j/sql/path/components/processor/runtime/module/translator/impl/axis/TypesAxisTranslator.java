@@ -8,8 +8,6 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.axis;
 
-import java.text.MessageFormat;
-
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
@@ -19,6 +17,8 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
+import de.topicmapslab.tmql4j.sql.path.utils.ConditionalUtils;
+import de.topicmapslab.tmql4j.sql.path.utils.ISchema;
 
 /**
  * @author Sven Krosse
@@ -26,35 +26,29 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
  */
 public class TypesAxisTranslator extends AxisTranslatorImpl {
 
-	static final String FORWARD_SELECTION = "id_type";
-	static final String BACKWARD_SELECTION = "id_instance";
-	static final String TABLE = "rel_instance_of";
-	static final String TYPEABLES = "typeables";
-	static final String FORWARD_CONDITION = "{0} = {1}.id_instance";
-	static final String FORWARD_CONDITION_TYPEABLES = "{0} = {1}.id";
-	static final String BACKWARD_CONDITION = "{0} = {1}.id_type";
-
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected ISqlDefinition forward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
 		ISqlDefinition result = definition.clone();
 		result.clearSelection();
 		/*
 		 * append from clause for characteristics
 		 */
-		IFromPart fromPart = new FromPart(definition.getLastSelection().getCurrentTable() == SqlTables.TOPIC ? TABLE : TYPEABLES, result.getAlias(), true);
+		IFromPart fromPart = new FromPart(definition.getLastSelection().getCurrentTable() == SqlTables.TOPIC ? ISchema.RelInstanceOf.TABLE : ISchema.Typeables.TABLE, result.getAlias(), true);
 		result.addFromPart(fromPart);
 		/*
 		 * append condition as connection to incoming SQL definition
 		 */
 		ISelection selection = definition.getLastSelection();
-		result.add(MessageFormat.format(definition.getLastSelection().getCurrentTable() == SqlTables.TOPIC ? FORWARD_CONDITION : FORWARD_CONDITION_TYPEABLES, selection.getSelection(),
-				fromPart.getAlias()));
+		String condition = ConditionalUtils.equal(selection, fromPart.getAlias(), definition.getLastSelection().getCurrentTable() == SqlTables.TOPIC ? ISchema.RelInstanceOf.ID_INSTANCE
+				: ISchema.Constructs.ID);
+		result.add(condition);
 		/*
 		 * add new selection
 		 */
-		ISelection sel = new Selection(FORWARD_SELECTION, fromPart.getAlias());
+		ISelection sel = new Selection(ISchema.RelInstanceOf.ID_TYPE, fromPart.getAlias());
 		result.addSelection(sel);
 		sel.setCurrentTable(SqlTables.TOPIC);
 		return result;
@@ -63,6 +57,7 @@ public class TypesAxisTranslator extends AxisTranslatorImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public ISqlDefinition backward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
 		/*
 		 * special handling for tm:subject >> instances and tm:subject << types
@@ -76,17 +71,18 @@ public class TypesAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * append from clause for characteristics
 		 */
-		IFromPart fromPart = new FromPart(TABLE, result.getAlias(), true);
+		IFromPart fromPart = new FromPart(ISchema.RelInstanceOf.TABLE, result.getAlias(), true);
 		result.addFromPart(fromPart);
 		/*
 		 * append condition as connection to incoming SQL definition
 		 */
 		ISelection selection = definition.getLastSelection();
-		result.add(MessageFormat.format(BACKWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));
+		String condition = ConditionalUtils.equal(selection, fromPart.getAlias(), ISchema.RelInstanceOf.ID_TYPE);
+		result.add(condition);
 		/*
 		 * add new selection
 		 */
-		ISelection sel = new Selection(BACKWARD_SELECTION, fromPart.getAlias());
+		ISelection sel = new Selection(ISchema.RelInstanceOf.ID_INSTANCE, fromPart.getAlias());
 		result.addSelection(sel);
 		sel.setCurrentTable(SqlTables.TOPIC);
 		return result;

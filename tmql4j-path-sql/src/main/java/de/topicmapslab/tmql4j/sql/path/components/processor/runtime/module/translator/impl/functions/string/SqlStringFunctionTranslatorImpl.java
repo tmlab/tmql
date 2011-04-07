@@ -8,12 +8,12 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.functions.string;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundClose;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundOpen;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Comma;
-import de.topicmapslab.tmql4j.path.grammar.lexical.Dot;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.selection.Selection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
@@ -28,9 +28,13 @@ import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
  */
 public abstract class SqlStringFunctionTranslatorImpl extends FunctionTranslatorImpl {
 
+	private static final String PARAM_WITH_CAST = " CAST ( {0}.{1} AS varchar )";
+	private static final String PARAM_WITHOUT_CAST = " {0}.{1}";
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected ISelection getSelection(ISqlDefinition definition, List<ISqlDefinition> parameters, List<IFromPart> fromParts) {
 
 		StringBuilder builder = new StringBuilder();
@@ -72,23 +76,27 @@ public abstract class SqlStringFunctionTranslatorImpl extends FunctionTranslator
 		 */
 		ISelection selection = new Selection(builder.toString(), definition.getAlias(), false);
 		selection.setCurrentTable(getResultType());
+		// selection.cast(ISqlConstants.ISqlTypes.VARCHAR);
 		return selection;
 	}
 
 	/**
 	 * Returns the function name
+	 * 
 	 * @return the function name
 	 */
 	protected abstract String getSqlFunction();
 
 	/**
-	 * Returns the result type of this function. The default is {@link SqlTables#STRING}
+	 * Returns the result type of this function. The default is
+	 * {@link SqlTables#STRING}
+	 * 
 	 * @return the result type.
 	 */
-	protected SqlTables getResultType(){
+	protected SqlTables getResultType() {
 		return SqlTables.STRING;
 	}
-	
+
 	/**
 	 * Generates the SQL parameter for the current index
 	 * 
@@ -103,11 +111,11 @@ public abstract class SqlStringFunctionTranslatorImpl extends FunctionTranslator
 	 * @return the generated SQL parameter
 	 */
 	protected String generateSqlParameter(ISqlDefinition definition, List<ISqlDefinition> parameters, List<IFromPart> fromParts, int currentIndex) {
-		StringBuilder builder = new StringBuilder();
-		builder.append(fromParts.get(currentIndex).getAlias());
-		builder.append(Dot.TOKEN);
-		builder.append(parameters.get(currentIndex).getLastSelection().getAlias());
-		return builder.toString();
+		ISelection selection = parameters.get(currentIndex).getLastSelection();
+		if (selection.getCurrentTable() == SqlTables.STRING) {
+			return MessageFormat.format(PARAM_WITH_CAST, fromParts.get(currentIndex).getAlias(), selection.getAlias());
+		}
+		return MessageFormat.format(PARAM_WITHOUT_CAST, fromParts.get(currentIndex).getAlias(), selection.getAlias());
 	}
 
 	/**

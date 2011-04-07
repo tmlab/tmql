@@ -730,4 +730,47 @@ public class LiteralUtils {
 		}
 		return query.getTopicMap().createLocator(XmlSchemeDatatypes.XSD_ANY);
 	}
+
+	/**
+	 * Utility method to transform given value to a integer value
+	 * 
+	 * @param value
+	 *            the value
+	 * @return the integer value or <code>-1</code>
+	 */
+	public static int asInteger(Object value) {
+		/*
+		 * is null value
+		 */
+		if (value == null) {
+			return -1;
+		}
+		/*
+		 * is BigInteger
+		 */
+		if (value instanceof BigInteger) {
+			return ((BigInteger) value).intValue();
+		}
+		/*
+		 * is Integer
+		 */
+		else if (value instanceof Integer) {
+			return ((Integer) value).intValue();
+		}
+		/*
+		 * is long
+		 */
+		else if (value instanceof Long) {
+			return ((Long) value).intValue();
+		}
+		/*
+		 * try to parse integer
+		 */
+		try {
+			return Integer.parseInt(value.toString());
+		} catch (NumberFormatException e) {
+			return -1;
+		}
+
+	}
 }

@@ -14,23 +14,43 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinitio
 
 /**
  * Criterion represents an boolean In condition.
+ * 
  * @author Sven Krosse
- *
+ * 
  */
 public class InCriterion extends Criterion {
 
 	private static final String ALIAS_STRING = "{0}.{1} IN ( {2} ) ";
 	private static final String NOALIAS_STRING = "{0} IN ( {1} ) ";
-	
+
 	private final String column;
 	private final String alias;
 	private final ISqlDefinition definition;
-	
+
 	/**
 	 * constructor
-	 * @param column the column
-	 * @param alias the alias
-	 * @param definition the inner SQL definition
+	 * 
+	 * @param column
+	 *            the column
+	 * @param definition
+	 *            the inner SQL definition
+	 */
+	public InCriterion(String column, ISqlDefinition definition) {
+		super(column);
+		this.column = column;
+		this.alias = null;
+		this.definition = definition;
+	}
+
+	/**
+	 * constructor
+	 * 
+	 * @param column
+	 *            the column
+	 * @param alias
+	 *            the alias
+	 * @param definition
+	 *            the inner SQL definition
 	 */
 	public InCriterion(String column, String alias, ISqlDefinition definition) {
 		super(column);
@@ -38,37 +58,40 @@ public class InCriterion extends Criterion {
 		this.alias = alias;
 		this.definition = definition;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toString() {
-		if ( alias == null ){
+		if (alias == null) {
 			return MessageFormat.format(NOALIAS_STRING, column, definition.toString());
 		}
 		return MessageFormat.format(ALIAS_STRING, alias, column, definition.toString());
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean equals(Object obj) {
-		if ( obj == this){
+		if (obj == this) {
 			return true;
 		}
-		if ( obj instanceof InCriterion ){
+		if (obj instanceof InCriterion) {
 			InCriterion c = ((InCriterion) obj);
-			boolean r = c.definition ==definition;
+			boolean r = c.definition == definition;
 			r &= c.column.equalsIgnoreCase(column);
 			r &= c.alias == null ? alias == null : c.alias.equalsIgnoreCase(alias);
 			return r;
 		}
 		return false;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int hashCode() {
 		int hash = definition.hashCode();
 		hash |= column.hashCode();

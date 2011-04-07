@@ -53,6 +53,7 @@ public class PlayersNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Class<?> getBackwardNavigationResultClass(Object construct) throws NavigationException {
 		return Role.class;
 	}
@@ -60,6 +61,7 @@ public class PlayersNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Class<? extends Construct> getForwardNavigationResultClass(Object construct) throws NavigationException {
 		return Topic.class;
 	}
@@ -67,6 +69,7 @@ public class PlayersNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Collection<?> navigateBackward(Object construct, Object optional) throws NavigationException {
 		/*
 		 * check if construct is a topic
@@ -88,6 +91,7 @@ public class PlayersNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Collection<?> navigateForward(Object construct, Object optional) throws NavigationException {
 		Set<Role> roles = null;
 		if (construct instanceof Association) {
@@ -97,7 +101,7 @@ public class PlayersNavigationAxis extends BaseNavigationAxisImpl {
 			Topic type = (Topic) construct;
 			roles = HashUtil.getHashSet();
 			for (Association association : type.getTopicMap().getAssociations()) {
-				roles.addAll(association.getRoles());
+				roles.addAll(association.getRoles(type));
 			}
 		} else if (construct instanceof Role) {
 			roles = HashUtil.getHashSet();
@@ -121,6 +125,7 @@ public class PlayersNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean supportsBackwardNavigation(Object construct, Construct optional) throws NavigationException {
 		boolean result = false;
 		if (construct instanceof Topic) {
@@ -135,6 +140,7 @@ public class PlayersNavigationAxis extends BaseNavigationAxisImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean supportsForwardNavigation(Object construct, Object optional) throws NavigationException {
 		boolean result = false;
 		if (construct instanceof Association) {

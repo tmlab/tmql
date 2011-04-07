@@ -207,34 +207,37 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 	public void testUrlEncodeFunction() throws Exception {
 		URL url = new URL("http://psi.ontopia.com?query=lal lulu");
 		SimpleResultSet set = null;
+		String value = URLEncoder.encode(url.toString(), "UTF-8");
+		value = value.replaceAll("\\+", "%20");
 
 		String query = "fn:url-encode ( \"" + url.toString() + "\" ) ";
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertTrue(set.first().first().equals(URLEncoder.encode(url.toString(), "UTF-8")));
+		assertTrue(value.equalsIgnoreCase(set.first().first().toString()));
 	}
 
 	@Test
 	public void testUrlDencodeFunction() throws Exception {
 		URL url = new URL("http://psi.ontopia.com?query=lal lulu");
 		String value = URLEncoder.encode(url.toString(), "UTF-8");
+		String result = URLDecoder.decode(value, "UTF-8");
 		SimpleResultSet set = null;
 
 		String query = "fn:url-decode ( \"" + value + "\" ) ";
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertTrue(set.first().first().equals(URLDecoder.decode(value, "UTF-8")));
+		assertEquals(result.toLowerCase(), set.get(0, 0).toString().toLowerCase());
 	}
 
 	@Test
 	public void testCountFunction() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 10; i++) {
 			topic.createName("Name " + Integer.toString(i));
 		}
-		assertEquals(100, topic.getNames().size());
+		assertEquals(10, topic.getNames().size());
 
 		String query;
 		SimpleResultSet set = null;
@@ -242,7 +245,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
-		assertEquals(BigInteger.valueOf(100), set.first().first());
+		assertEquals(BigInteger.valueOf(10), set.first().first());
 
 		Topic topicBySL = createTopicBySL("loc");
 		query = "// tm:subject [ fn:count(.>>locators)> 0 ]";
@@ -255,14 +258,14 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 	@Test
 	public void testCompareFunction() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 10; i++) {
 			topic.createName("Name " + Integer.toString(i));
 		}
-		assertEquals(100, topic.getNames().size());
+		assertEquals(10, topic.getNames().size());
 
 		String query;
 		SimpleResultSet set = null;
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 10; i++) {
 			query = "fn:compare( myTopic / tm:name , \"Name " + Integer.toString(i) + "\")";
 			set = execute(new TMQLQuery(topicMap, query));
 			assertEquals(1, set.size());
@@ -274,18 +277,18 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 	@Test
 	public void testExceptFunction() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
-		Name[] names = new Name[100];
-		for (int i = 0; i < 100; i++) {
+		Name[] names = new Name[10];
+		for (int i = 0; i < 10; i++) {
 			names[i] = topic.createName("Name " + Integer.toString(i));
 		}
-		assertEquals(100, topic.getNames().size());
+		assertEquals(10, topic.getNames().size());
 
 		String query;
 		SimpleResultSet set = null;
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 10; i++) {
 			query = "fn:except(  myTopic / tm:name , \"Name " + Integer.toString(i) + "\")";
 			set = execute(new TMQLQuery(topicMap, query));
-			assertEquals(99, set.size());
+			assertEquals(9, set.size());
 			assertEquals(1, set.first().size());
 			for (IResult r : set) {
 				if (r.first().equals(names[i])) {
@@ -459,16 +462,19 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 	public void testZigZagFunction() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
 		Set<Name> names = HashUtil.getHashSet();
-		for (int i = 0; i < 100; i++) {
-			names.add(topic.createName("Name " + i));
+		Set<String> values = HashUtil.getHashSet();
+		for (int i = 0; i < 10; i++) {
+			String string = "Name " + i;
+			values.add(string);
+			names.add(topic.createName(string));
 		}
-		assertEquals(100, topic.getNames().size());
+		assertEquals(10, topic.getNames().size());
 
 		String query;
 		SimpleResultSet set = null;
 		query = "myTopic >> characteristics tm:name";
 		set = execute(new TMQLQuery(topicMap, query));
-		assertEquals(100, set.size());
+		assertEquals(10, set.size());
 		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertTrue(names.contains(r.first()));
@@ -478,9 +484,19 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		for (IResult r : set) {
-			assertEquals(100, r.size());
+			assertEquals(10, r.size());
 			for (Object o : r) {
 				assertTrue(names.contains(o));
+			}
+		}
+
+		query = "fn:zigzag(  myTopic / tm:name )";
+		set = execute(new TMQLQuery(topicMap, query));
+		assertEquals(1, set.size());
+		for (IResult r : set) {
+			assertEquals(10, r.size());
+			for (Object o : r) {
+				assertTrue(values.contains(o));
 			}
 		}
 
@@ -490,16 +506,16 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 	public void testZagZigFunction() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
 		Set<Name> names = HashUtil.getHashSet();
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < 10; i++) {
 			names.add(topic.createName("Name " + i));
 		}
-		assertEquals(100, topic.getNames().size());
+		assertEquals(10, topic.getNames().size());
 
 		String query;
 		SimpleResultSet set = null;
 		query = "myTopic >> characteristics tm:name";
 		set = execute(new TMQLQuery(topicMap, query));
-		assertEquals(100, set.size());
+		assertEquals(10, set.size());
 		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertTrue(names.contains(r.first()));
@@ -509,7 +525,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(1, set.size());
 		for (IResult r : set) {
-			assertEquals(100, r.size());
+			assertEquals(10, r.size());
 			for (Object o : r) {
 				assertTrue(names.contains(o));
 			}
@@ -517,7 +533,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 
 		query = "fn:zagzig ( fn:zigzag (  myTopic >> characteristics tm:name ) )";
 		set = execute(new TMQLQuery(topicMap, query));
-		assertEquals(100, set.size());
+		assertEquals(10, set.size());
 		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertTrue(names.contains(r.first()));
@@ -624,12 +640,12 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 	 * @throws Exception
 	 */
 	@Test
-	public void testMaxFunction() throws Exception {
-		Topic topic = createTopicByII("myType");
-		for (int i = 0; i < 100; i++) {
+	public void testMaxAndMinFunction() throws Exception {
+		Topic topic = createTopicBySI("myType");
+		for (int i = 0; i < 10; i++) {
 			Topic t = createTopic();
 			t.addType(topic);
-			for (int j = 0; j < i; j++) {
+			for (int j = 0; j < i + 1; j++) {
 				t.createName("name" + j);
 			}
 		}
@@ -641,34 +657,13 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.get(0).size());
-		assertEquals(BigInteger.valueOf(99), set.get(0,0));
-	}
-	
-	/**
-	 * TEST METHOD
-	 * 
-	 * @throws Exception
-	 */
-	@Test
-	public void testMinFunction() throws Exception {
-		Topic topic = createTopicByII("myType");
-		for (int i = 0; i < 100; i++) {
-			Topic t = createTopic();
-			t.addType(topic);
-			for (int j = 0; j <= i; j++) {
-				t.createName("name" + j);
-			}
-		}
-
-		String query = null;
-		SimpleResultSet set = null;
+		assertEquals(BigInteger.valueOf(10), set.get(0, 0));
 
 		query = " fn:min ( myType >> instances, fn:count ( . >> characteristics ))";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.get(0).size());
-		assertEquals(BigInteger.valueOf(1), set.get(0,0));
+		assertEquals(BigInteger.valueOf(1), set.get(0, 0));
 	}
-
 
 }

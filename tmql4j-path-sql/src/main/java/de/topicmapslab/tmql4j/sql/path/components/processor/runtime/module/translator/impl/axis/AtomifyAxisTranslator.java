@@ -8,8 +8,6 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.axis;
 
-import java.text.MessageFormat;
-
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
@@ -19,6 +17,8 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
+import de.topicmapslab.tmql4j.sql.path.utils.ConditionalUtils;
+import de.topicmapslab.tmql4j.sql.path.utils.ISchema;
 
 /**
  * @author Sven Krosse
@@ -26,60 +26,60 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
  */
 public class AtomifyAxisTranslator extends AxisTranslatorImpl {
 
-	static final String FORWARD_SELECTION = "value";
-	static final String BACKWARD_SELECTION = "id";
-	static final String CHARACTERISTICS = "SELECT id_parent, id, value FROM names UNION SELECT id_parent, id, value FROM occurrences";
-	static final String CHARACTERISTICS_AND_LOCATORS = "SELECT id_parent, id, value FROM names UNION SELECT id_parent, id, value FROM occurrences UNION SELECT NULL AS id_parent, id, reference AS value FROM locators";
-	static final String FORWARD_CONDITION = "{0} = {1}.id";
 	static final String BACKWARD_CONDITION = "{0} = {1}.value";
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected ISqlDefinition forward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
 		ISqlDefinition result = definition.clone();
 		result.clearSelection();
 		/*
 		 * append from clause for characteristics
 		 */
-		IFromPart fromPart = new FromPart(CHARACTERISTICS_AND_LOCATORS, result.getAlias(), false);
+		IFromPart fromPart = new FromPart(ISchema.Characteristics.NAMES_OCCURRENCES_AND_LOCATORS, result.getAlias(), false);
 		result.addFromPart(fromPart);
 		/*
 		 * append condition as connection to incoming SQL definition
 		 */
 		ISelection selection = definition.getLastSelection();
-		result.add(MessageFormat.format(FORWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));
+		String condition = ConditionalUtils.equal(selection, fromPart.getAlias(), ISchema.Constructs.ID);
+		result.add(condition);
 		/*
 		 * add new selection
 		 */
-		ISelection sel = new Selection(FORWARD_SELECTION, fromPart.getAlias());
+		ISelection sel = new Selection(ISchema.Characteristics.VALUE, fromPart.getAlias());
 		sel.setCurrentTable(SqlTables.STRING);
-		result.addSelection(sel);		
+		result.addSelection(sel);
 		return result;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected ISqlDefinition backward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
 		ISqlDefinition result = definition.clone();
 		result.clearSelection();
 		/*
 		 * append from clause for characteristics
 		 */
-		IFromPart fromPart = new FromPart(CHARACTERISTICS_AND_LOCATORS, result.getAlias(), false);
+		IFromPart fromPart = new FromPart(ISchema.Characteristics.NAMES_OCCURRENCES_AND_LOCATORS, result.getAlias(), false);
 		result.addFromPart(fromPart);
 		/*
 		 * append condition as connection to incoming SQL definition
 		 */
 		ISelection selection = definition.getLastSelection();
-		result.add(MessageFormat.format(BACKWARD_CONDITION, selection.getCurrentTable() == SqlTables.STRING ? selection.getColumn(): selection.getSelection(), fromPart.getAlias()));
+		String condition = ConditionalUtils.equal(selection.getCurrentTable() == SqlTables.STRING ? selection.getColumn() : selection.getSelection(), fromPart.getAlias(),
+				ISchema.Characteristics.VALUE);
+		result.add(condition);
 		/*
 		 * add new selection
 		 */
-		ISelection sel = new Selection(BACKWARD_SELECTION, fromPart.getAlias());
+		ISelection sel = new Selection(ISchema.Constructs.ID, fromPart.getAlias());
 		sel.setCurrentTable(SqlTables.CHARACTERISTICS);
-		result.addSelection(sel);		
+		result.addSelection(sel);
 		return result;
 	}
 

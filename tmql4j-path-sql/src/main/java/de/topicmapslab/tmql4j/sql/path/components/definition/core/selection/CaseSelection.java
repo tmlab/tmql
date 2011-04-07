@@ -28,7 +28,7 @@ import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
  */
 public class CaseSelection extends Selection {
 
-	private ISqlDefinition innerDef;
+	private final ISqlDefinition innerDef;
 
 	/**
 	 * @param selection
@@ -41,10 +41,11 @@ public class CaseSelection extends Selection {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toString() {
 		SqlTables table = innerDef.getLastSelection().getCurrentTable();
 		/*
-		 * get default array value and type dependend from current table 
+		 * get default array value and type dependend from current table
 		 */
 		String arrayType;
 		String arrayValue;
@@ -54,10 +55,13 @@ public class CaseSelection extends Selection {
 		} else if (table == SqlTables.BOOLEAN) {
 			arrayValue = Boolean.toString(false);
 			arrayType = ISqlConstants.ISqlTypes.BOOLEAN;
+		} else if (table.isRecord()) {
+			arrayValue = "";
+			arrayType = ISqlConstants.ISqlTypes.RECORD;
 		} else {
 			arrayValue = Integer.toString(-1);
 			arrayType = ISqlConstants.ISqlTypes.BIGINT;
-		}		
+		}
 		StringBuilder builder = new StringBuilder();
 		/*
 		 * create case part
@@ -73,7 +77,7 @@ public class CaseSelection extends Selection {
 		builder.append(ISqlConstants.ISqlKeywords.ARRAY);
 		builder.append(BracketRoundOpen.TOKEN);
 		builder.append(BracketRoundOpen.TOKEN);
-		final String innerPart =innerDef.toString(); 
+		final String innerPart = innerDef.toString();
 		builder.append(innerPart);
 		builder.append(BracketRoundClose.TOKEN);
 		builder.append(BracketRoundClose.TOKEN);
@@ -92,12 +96,12 @@ public class CaseSelection extends Selection {
 		builder.append(BracketRoundOpen.TOKEN);
 		builder.append(innerPart);
 		builder.append(BracketRoundClose.TOKEN);
-		builder.append(ISqlConstants.WHITESPACE);		
+		builder.append(ISqlConstants.WHITESPACE);
 		/*
 		 * create default array part as ELSE part
 		 */
 		builder.append(ISqlConstants.ISqlKeywords.ELSE);
-		builder.append(ISqlConstants.WHITESPACE);	
+		builder.append(ISqlConstants.WHITESPACE);
 		builder.append(ISqlConstants.ISqlKeywords.ARRAY);
 		builder.append(BracketSquareOpen.TOKEN);
 		builder.append(arrayValue);
@@ -113,7 +117,7 @@ public class CaseSelection extends Selection {
 		builder.append(ISqlConstants.ISqlKeywords.END);
 		builder.append(BracketRoundClose.TOKEN);
 		builder.append(As.TOKEN);
-		builder.append(ISqlConstants.WHITESPACE);	
+		builder.append(ISqlConstants.WHITESPACE);
 		builder.append(getAlias());
 		return builder.toString();
 	}
@@ -121,6 +125,7 @@ public class CaseSelection extends Selection {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean equals(Object arg0) {
 		if (arg0 instanceof CaseSelection) {
 			return ((CaseSelection) arg0).innerDef.equals(innerDef);
@@ -131,6 +136,7 @@ public class CaseSelection extends Selection {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int hashCode() {
 		return this.innerDef.hashCode();
 	}

@@ -8,8 +8,6 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.axis;
 
-import java.text.MessageFormat;
-
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
@@ -19,6 +17,8 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
+import de.topicmapslab.tmql4j.sql.path.utils.ConditionalUtils;
+import de.topicmapslab.tmql4j.sql.path.utils.ISchema;
 import de.topicmapslab.tmql4j.sql.path.utils.TranslatorUtils;
 
 /**
@@ -27,16 +27,9 @@ import de.topicmapslab.tmql4j.sql.path.utils.TranslatorUtils;
  */
 public class RoleTypesAxisTranslator extends AbstractRolesAxisTranslator {
 
-	private static final String TYPE = "id_type";
-	private static final String BACKWARD_SELECTION = "id";
-	private static final String TABLE = "roles";
-	private static final String ASSOCIATIONS = "associations";
-	private static final String PARENT_CONDITION = "{0}.id = {1}.id_parent";
-	private static final String BACKWARD_CONDITION = "{0} = {1}.id_type";
-
 	@Override
 	protected String getForkwardSelectionColumn() {
-		return TYPE;
+		return ISchema.Typeables.ID_TYPE;
 	}
 
 	@Override
@@ -60,26 +53,28 @@ public class RoleTypesAxisTranslator extends AbstractRolesAxisTranslator {
 		/*
 		 * append from clause for characteristics
 		 */
-		IFromPart fromPart = new FromPart(TABLE, result.getAlias(), true);
+		IFromPart fromPart = new FromPart(ISchema.Roles.TABLE, result.getAlias(), true);
 		result.addFromPart(fromPart);
-		IFromPart fromPartAssociation = new FromPart(ASSOCIATIONS, result.getAlias(), true);
+		IFromPart fromPartAssociation = new FromPart(ISchema.Associations.TABLE, result.getAlias(), true);
 		result.addFromPart(fromPartAssociation);
 		/*
 		 * append condition as connection to incoming SQL definition
 		 */
 		ISelection selection = definition.getLastSelection();
-		result.add(MessageFormat.format(BACKWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));
-		result.add(MessageFormat.format(PARENT_CONDITION, fromPartAssociation.getAlias(), fromPart.getAlias()));
+		String condition = ConditionalUtils.equal(selection, fromPart.getAlias(), ISchema.Typeables.ID_TYPE);
+		result.add(condition);
+		condition = ConditionalUtils.equal(fromPartAssociation.getAlias(), ISchema.Constructs.ID, fromPart.getAlias(), ISchema.Constructs.ID_PARENT);
+		result.add(condition);
 		/*
 		 * add new selection
 		 */
-		ISelection sel = new Selection(BACKWARD_SELECTION, fromPartAssociation.getAlias());
+		ISelection sel = new Selection(ISchema.Constructs.ID, fromPartAssociation.getAlias());
 		result.addSelection(sel);
 		sel.setCurrentTable(SqlTables.ANY);
 		/*
 		 * add optional type argument if necessary
 		 */
-		TranslatorUtils.addOptionalTypeArgument(runtime, context, optionalType, definition, TYPE, fromPartAssociation.getAlias());
+		TranslatorUtils.addOptionalTypeArgument(runtime, context, optionalType, definition, ISchema.Typeables.ID_TYPE, fromPartAssociation.getAlias());
 		return result;
 	}
 }

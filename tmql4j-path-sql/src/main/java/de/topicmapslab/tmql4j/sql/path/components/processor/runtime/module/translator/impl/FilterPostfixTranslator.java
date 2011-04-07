@@ -11,18 +11,23 @@ package de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.tran
 import java.text.MessageFormat;
 
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.prepared.IPreparedStatement;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Scope;
 import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisInstances;
+import de.topicmapslab.tmql4j.path.grammar.productions.Anchor;
 import de.topicmapslab.tmql4j.path.grammar.productions.BooleanExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.where.InCriterion;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.TmqlSqlTranslatorImpl;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.TranslatorRegistry;
+import de.topicmapslab.tmql4j.util.LiteralUtils;
 
 /**
  * @author Sven Krosse
@@ -38,13 +43,11 @@ public class FilterPostfixTranslator extends TmqlSqlTranslatorImpl<FilterPostfix
 	 * SQL query for scope filters
 	 */
 	private static final String SQL_SCOPE_FILTER = " {0} IN ( SELECT s.id FROM scopeables AS s, rel_themes AS rt, locators AS l, rel_subject_identifiers AS r WHERE l.id = r.id_locator AND l.reference = ''{1}'' AND rt.id_theme = id_topic AND s.id_scope = rt.id_scope )";
-	/**
-	 * SQL query for boolean filters
-	 */
-	private static final String SQL_BOOLEAN_FILTER = " {0} IN ( {1} )";
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public ISqlDefinition toSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
 		/*
 		 * switch by grammar type
@@ -54,7 +57,9 @@ public class FilterPostfixTranslator extends TmqlSqlTranslatorImpl<FilterPostfix
 			 * index filters
 			 */
 			case FilterPostfix.TYPE_BOUNDS_FILTER:
-			case FilterPostfix.TYPE_SHORTCUT_BOUNDS_FILTER:
+			case FilterPostfix.TYPE_SHORTCUT_BOUNDS_FILTER: {
+				return rangeFilterToSql(runtime, context, expression, definition);
+			}
 			case FilterPostfix.TYPE_INDEX_FILTER:
 			case FilterPostfix.TYPE_SHORTCUT_INDEX_FILTER: {
 				return indexFilterToSql(runtime, context, expression, definition);
@@ -167,6 +172,55 @@ public class FilterPostfixTranslator extends TmqlSqlTranslatorImpl<FilterPostfix
 	}
 
 	/**
+	 * Transform the given index range filter by using the given SQL definition
+	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param context
+	 *            the current context
+	 * @param expression
+	 *            the expression to transform
+	 * @param definition
+	 *            the current SQL definition
+	 * @return the new SQL definition
+	 * @throws TMQLRuntimeException
+	 *             thrown if anything fails
+	 */
+	public ISqlDefinition rangeFilterToSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
+		int offset = getNumericValue(runtime, context, expression.getExpressions().get(0));
+		if (offset < 0) {
+			offset = 0;
+		}
+		definition.setOffset(offset);
+		int limit = getNumericValue(runtime, context, expression.getExpressions().get(1));
+		limit -= offset;
+		if (limit < 0) {
+			limit = 0;
+		}
+		definition.setLimit(limit);
+		return definition;
+	}
+
+	/**
+	 * Returns the numerical value extracted from the given TMQL Query
+	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param context
+	 *            the context
+	 * @param expression
+	 *            the expression ( {@link Anchor} )
+	 * @return the numeric value or <code>-1</code>
+	 */
+	private int getNumericValue(ITMQLRuntime runtime, IContext context, IExpression expression) {
+		if (expression.contains(PreparedExpression.class)) {
+			Object value = ((IPreparedStatement) context.getQuery()).get(expression.getExpressions().get(0));
+			return LiteralUtils.asInteger(value);
+		}
+		return LiteralUtils.asInteger(expression.getTokens().get(0)).intValue();
+	}
+
+	/**
 	 * Transform the given index filter by using the given SQL definition
 	 * 
 	 * @param runtime
@@ -182,7 +236,12 @@ public class FilterPostfixTranslator extends TmqlSqlTranslatorImpl<FilterPostfix
 	 *             thrown if anything fails
 	 */
 	public ISqlDefinition indexFilterToSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
-		throw new TMQLRuntimeException("Unsupported expression type for SQL translator.");
+		int offset = getNumericValue(runtime, context, expression.getExpressions().get(0));
+		if (offset < 0) {
+			offset = Integer.MAX_VALUE;
+		}
+		definition.setOffset(offset);
+		return definition;
 	}
 
 	/**
@@ -202,28 +261,29 @@ public class FilterPostfixTranslator extends TmqlSqlTranslatorImpl<FilterPostfix
 	 */
 	public ISqlDefinition booleanFilterToSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
 		/*
+		 * filter definition
+		 */
+		ISqlDefinition innerDefinition = definition.clone();
+		innerDefinition.clearFromParts();
+		/*
 		 * get current selection
 		 */
 		ISelection selection = definition.getLastSelection();
 		/*
 		 * call boolean-expression translator
 		 */
-		ISqlDefinition newDefinition = TranslatorRegistry.getTranslator(BooleanExpression.class).toSql(runtime, context, expression.getExpressions().get(0), definition);
-		
-		String condition ;
-		if ( newDefinition.getLastSelection().getCurrentTable() == SqlTables.BOOLEAN ){
-			condition = MessageFormat.format(SQL_BOOLEAN_FILTER, Boolean.toString(true), newDefinition.toString());
-		}else{
-			condition = MessageFormat.format(SQL_BOOLEAN_FILTER, selection.getSelection(), newDefinition.toString());
+		ISqlDefinition newDefinition = TranslatorRegistry.getTranslator(BooleanExpression.class).toSql(runtime, context, expression.getExpressions().get(0), innerDefinition);
+
+		InCriterion in;
+		if (newDefinition.getLastSelection().getCurrentTable() == SqlTables.BOOLEAN) {
+			in = new InCriterion(Boolean.toString(true), newDefinition);
+		} else {
+			in = new InCriterion(selection.getSelection(), newDefinition);
 		}
-		/*
-		 * generate condition
-		 */
-		
 		/*
 		 * update SQL definition
 		 */
-		definition.add(condition);
+		definition.add(in);
 		return definition;
 	}
 

@@ -136,9 +136,9 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		Scoped[] scopeds = new Scoped[100];
 		for (int i = 0; i < scopeds.length; i++) {
 			if (i % 2 == 0) {
-				scopeds[i] = topic.createName("Value", new Topic[0]);
+				scopeds[i] = topic.createName("Value" + i, new Topic[0]);
 			} else if (i % 2 == 1) {
-				scopeds[i] = topic.createOccurrence(createTopic(), "Value", new Topic[0]);
+				scopeds[i] = topic.createOccurrence(createTopic(), "Value" + i, new Topic[0]);
 			}
 			scopeds[i].addTheme(theme);
 		}
@@ -167,9 +167,9 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		Scoped[] scopeds = new Scoped[100];
 		for (int i = 0; i < scopeds.length; i++) {
 			if (i % 2 == 0) {
-				scopeds[i] = topic.createName("Value", new Topic[0]);
+				scopeds[i] = topic.createName("Value" + i, new Topic[0]);
 			} else if (i % 2 == 1) {
-				scopeds[i] = topic.createOccurrence(createTopic(), "Value", new Topic[0]);
+				scopeds[i] = topic.createOccurrence(createTopic(), "Value" + i, new Topic[0]);
 			}
 			scopeds[i].addTheme(theme);
 		}
@@ -198,9 +198,9 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		Scoped[] scopeds = new Scoped[100];
 		for (int i = 0; i < scopeds.length; i++) {
 			if (i % 2 == 0) {
-				scopeds[i] = topic.createName("Value", new Topic[0]);
+				scopeds[i] = topic.createName("Value" + i, new Topic[0]);
 			} else if (i % 2 == 1) {
-				scopeds[i] = topic.createOccurrence(createTopic(), "Value", new Topic[0]);
+				scopeds[i] = topic.createOccurrence(createTopic(), "Value" + i, new Topic[0]);
 			}
 			scopeds[i].addTheme(theme);
 		}

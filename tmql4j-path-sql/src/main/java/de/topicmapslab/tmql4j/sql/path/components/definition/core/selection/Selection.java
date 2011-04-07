@@ -23,7 +23,7 @@ import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
 public class Selection implements ISelection {
 
 	private final String column;
-	private final String alias;
+	private String alias;
 	private String cast;
 	private boolean isColumn = true;
 	private SqlTables sqlTable;
@@ -77,6 +77,7 @@ public class Selection implements ISelection {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getAlias() {
 		return alias;
 	}
@@ -84,6 +85,15 @@ public class Selection implements ISelection {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
+	public void setAlias(String alias) {
+		this.alias = alias;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public String getColumn() {
 		return column;
 	}
@@ -91,6 +101,7 @@ public class Selection implements ISelection {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getSelection() {
 		return toString();
 	}
@@ -98,6 +109,7 @@ public class Selection implements ISelection {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		/*
@@ -152,6 +164,7 @@ public class Selection implements ISelection {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void cast(String type) {
 		this.cast = type;
 	}
@@ -159,6 +172,7 @@ public class Selection implements ISelection {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public SqlTables getCurrentTable() {
 		return sqlTable;
 	}
@@ -166,6 +180,7 @@ public class Selection implements ISelection {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setCurrentTable(SqlTables table) {
 		this.sqlTable = table;
 	}

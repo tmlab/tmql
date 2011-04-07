@@ -259,7 +259,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = prefix + " 1 % 2 ";
+		query = prefix + " 1.0 % 2.0 ";
 		set = execute(new TMQLQuery(topicMap, query));
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();
@@ -271,7 +271,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 			Assert.fail();
 		}
 
-		query = prefix + " 20 % 20 ";
+		query = prefix + " 20.0 % 20.0 ";
 		set = execute(new TMQLQuery(topicMap, query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -283,7 +283,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 			Assert.fail();
 		}
 
-		query = prefix + " - 20 % 20 ";
+		query = prefix + " - 20.0 % 20.0 ";
 		set = execute(new TMQLQuery(topicMap, query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -319,10 +319,10 @@ public class TestValueExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		Assert.assertEquals(1, set.size());
 		Object o = set.first().first();
-		if (o instanceof BigDecimal) {
-			Assert.assertEquals(1, ((BigDecimal) o).longValue());
+		if (o instanceof BigInteger) {
+			Assert.assertEquals(1, ((BigInteger) o).longValue());
 		} else if (o instanceof Collection<?>) {
-			Assert.assertEquals(1, ((BigDecimal) ((Collection<?>) o).iterator().next()).longValue());
+			Assert.assertEquals(1, ((BigInteger) ((Collection<?>) o).iterator().next()).longValue());
 		} else {
 			Assert.fail();
 		}
@@ -331,10 +331,10 @@ public class TestValueExpression extends Tmql4JTestCase {
 		set = execute(new TMQLQuery(topicMap, query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
-		if (o instanceof BigDecimal) {
-			Assert.assertEquals(0, ((BigDecimal) o).doubleValue(), 0);
+		if (o instanceof BigInteger) {
+			Assert.assertEquals(0, ((BigInteger) o).doubleValue(), 0);
 		} else if (o instanceof Collection<?>) {
-			Assert.assertEquals(0, ((BigDecimal) ((Collection<?>) o).iterator().next()).doubleValue(), 0);
+			Assert.assertEquals(0, ((BigInteger) ((Collection<?>) o).iterator().next()).doubleValue(), 0);
 		} else {
 			Assert.fail();
 		}
@@ -420,7 +420,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 			Assert.fail();
 		}
 
-		query = prefix + " \"a\" > \"B\" ";
+		query = prefix + " \"c\" > \"B\" ";
 		set = execute(new TMQLQuery(topicMap, query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();
@@ -451,7 +451,7 @@ public class TestValueExpression extends Tmql4JTestCase {
 			Assert.fail();
 		}
 
-		query = prefix + " \"a\" >= \"B\" ";
+		query = prefix + " \"c\" >= \"B\" ";
 		set = execute(new TMQLQuery(topicMap, query));
 		Assert.assertEquals(1, set.size());
 		o = set.first().first();

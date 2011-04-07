@@ -10,16 +10,24 @@ package de.topicmapslab.tmql4j.sql.path.components.definition.model;
 
 /**
  * @author Sven Krosse
- *
+ * 
  */
 public interface ISelection {
 
 	/**
-	 * Returns the alias 
+	 * Returns the alias
 	 * 
 	 * @return the alias
 	 */
 	public String getAlias();
+
+	/**
+	 * Modify the internal alias
+	 * 
+	 * @param alias
+	 *            the new alias
+	 */
+	public void setAlias(String alias);
 
 	/**
 	 * Returns the column name.
@@ -27,19 +35,22 @@ public interface ISelection {
 	 * @return the column name
 	 */
 	public String getColumn();
-	
+
 	/**
 	 * Returns the selection as string matches the pattern
 	 * 
-	 *  <code>alias.column</code>
+	 * <code>alias.column</code>
 	 * 
 	 * @return the selection
 	 */
 	public String getSelection();
-	
+
 	/**
-	 * Adds a cast definition for this selection. Only one cast is allowed for each selection, past casts will be overwritten.
-	 * @param type the type to cast to
+	 * Adds a cast definition for this selection. Only one cast is allowed for
+	 * each selection, past casts will be overwritten.
+	 * 
+	 * @param type
+	 *            the type to cast to
 	 */
 	public void cast(String type);
 

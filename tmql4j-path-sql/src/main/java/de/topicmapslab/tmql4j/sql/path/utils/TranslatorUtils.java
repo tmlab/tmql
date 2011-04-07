@@ -9,16 +9,23 @@
 package de.topicmapslab.tmql4j.sql.path.utils;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundClose;
+import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundOpen;
+import de.topicmapslab.tmql4j.path.grammar.lexical.By;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Order;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.SqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.from.FromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.selection.Selection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.where.InCriterion;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.axis.TypesAxisTranslator;
 
 /**
@@ -27,13 +34,10 @@ import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.trans
  */
 public class TranslatorUtils {
 
-	private static final String ID_TYPE = "id_type";
-	private static final String TABLE_LOCATORS = "locators";
-	private static final String TABLE_REL_SUBJECTIDENTIFIER = "rel_subject_identifiers";
-	private static final String CONDITION_RELATION = "{0}.id = {1}.id_locator";
-	private static final String CONDITION_REFERENCE = "{0}.reference = ''{1}''";
-	private static final String CONDITION_REFERENCE_WITHOUT_QUOTE = "{0}.reference = {1}";
-	private static final String SELECTION = "id_topic";
+	/**
+	 * 
+	 */
+	private static final String INDEX = "index";
 
 	/**
 	 * Utility method to select a locator by its reference and returns the alias
@@ -49,12 +53,13 @@ public class TranslatorUtils {
 		/*
 		 * add from parts
 		 */
-		IFromPart locators = new FromPart(TABLE_LOCATORS, definition.getAlias(), true);
+		IFromPart locators = new FromPart(ISchema.Locators.TABLE, definition.getAlias(), true);
 		definition.addFromPart(locators);
 		/*
 		 * add condition
 		 */
-		definition.add(MessageFormat.format(CONDITION_REFERENCE_WITHOUT_QUOTE, locators.getAlias(), reference));
+		String condition = ConditionalUtils.equal(reference, locators.getAlias(), ISchema.Locators.REFERENCE);
+		definition.add(condition);
 		/*
 		 * return alias of locator id
 		 */
@@ -77,19 +82,23 @@ public class TranslatorUtils {
 		/*
 		 * add from parts
 		 */
-		IFromPart locators = new FromPart(TABLE_LOCATORS, newDefinition.getAlias(), true);
+		IFromPart locators = new FromPart(ISchema.Locators.TABLE, newDefinition.getAlias(), true);
 		newDefinition.addFromPart(locators);
-		IFromPart relation = new FromPart(TABLE_REL_SUBJECTIDENTIFIER, newDefinition.getAlias(), true);
+		IFromPart relation = new FromPart(ISchema.RelSubjectIdentifiers.TABLE, newDefinition.getAlias(), true);
 		newDefinition.addFromPart(relation);
 		/*
 		 * add condition
 		 */
-		newDefinition.add(MessageFormat.format(CONDITION_RELATION, locators.getAlias(), relation.getAlias()));
-		newDefinition.add(MessageFormat.format(CONDITION_REFERENCE, locators.getAlias(), reference));
+		String condition = ConditionalUtils.equal(locators.getAlias(), ISchema.Locators.ID, relation.getAlias(), ISchema.RelSubjectIdentifiers.ID_LOCATOR);
+		newDefinition.add(condition);
+		condition = ConditionalUtils.equal(ISqlConstants.SINGLEQUOTE + reference + ISqlConstants.SINGLEQUOTE, locators.getAlias(), ISchema.Locators.REFERENCE);
+		newDefinition.add(condition);
 		/*
 		 * add selection
 		 */
-		newDefinition.addSelection(new Selection(SELECTION, relation.getAlias()));
+		ISelection selection = new Selection(ISchema.RelSubjectIdentifiers.ID_TOPIC, relation.getAlias());
+		selection.setCurrentTable(SqlTables.TOPIC);
+		newDefinition.addSelection(selection);
 		return newDefinition;
 	}
 
@@ -173,10 +182,6 @@ public class TranslatorUtils {
 		}
 	}
 
-	private static final String TYPEABLES = "typeables";
-	private static final String COL_ID = "id";
-	private static final String TYPE_CONDITION = "{0}.id_type = {1}";
-
 	/**
 	 * Utility method generates a SQL query to get all typed constructs for the
 	 * given topic type as SQL selection
@@ -218,17 +223,18 @@ public class TranslatorUtils {
 		/*
 		 * create from part
 		 */
-		IFromPart fromPart = new FromPart(TYPEABLES, definition.getAlias(), true);
+		IFromPart fromPart = new FromPart(ISchema.Typeables.TABLE, definition.getAlias(), true);
 		definition.addFromPart(fromPart);
 
 		/*
 		 * create condition
 		 */
-		definition.add(MessageFormat.format(TYPE_CONDITION, fromPart.getAlias(), typeSelection));
+		String condition = ConditionalUtils.equal(typeSelection, fromPart.getAlias(), ISchema.Typeables.ID_TYPE);
+		definition.add(condition);
 		/*
 		 * add selection
 		 */
-		definition.addSelection(new Selection(COL_ID, fromPart.getAlias()));
+		definition.addSelection(new Selection(ISchema.Constructs.ID, fromPart.getAlias()));
 		return definition;
 	}
 
@@ -255,7 +261,7 @@ public class TranslatorUtils {
 		/*
 		 * create from part
 		 */
-		IFromPart fromPart = new FromPart(TYPEABLES, definition.getAlias(), true);
+		IFromPart fromPart = new FromPart(ISchema.Typeables.TABLE, definition.getAlias(), true);
 		definition.addFromPart(fromPart);
 		/*
 		 * get type reference
@@ -268,11 +274,11 @@ public class TranslatorUtils {
 		/*
 		 * create condition
 		 */
-		definition.add(new InCriterion(ID_TYPE, fromPart.getAlias(), inDef));
+		definition.add(new InCriterion(ISchema.Typeables.ID_TYPE, fromPart.getAlias(), inDef));
 		/*
 		 * add selection
 		 */
-		definition.addSelection(new Selection(COL_ID, fromPart.getAlias()));
+		definition.addSelection(new Selection(ISchema.Constructs.ID, fromPart.getAlias()));
 		return definition;
 	}
 
@@ -290,6 +296,93 @@ public class TranslatorUtils {
 	 */
 	public static final String generateSupertypeSubtypeSet(ITMQLRuntime runtime, IContext context) {
 		return MessageFormat.format(SUPERTYPE_SUBTYPE, context.getQuery().getTopicMap().getId());
+	}
+
+	/**
+	 * Creates a new from clause containing an union over all given SQL
+	 * definitions
+	 * 
+	 * @param definitions
+	 *            the definitions
+	 * @param fromAlias
+	 *            the alias of the from clause
+	 * @param resultAlias
+	 *            the alias to set as result alias
+	 * @return the from clause
+	 */
+	public static final IFromPart asUnion(Collection<ISqlDefinition> definitions, String fromAlias, String resultAlias) {
+		StringBuilder builder = new StringBuilder();
+		boolean first = true;
+		int i = 0;
+		for (ISqlDefinition definition : definitions) {
+			if (!first) {
+				builder.append(ISqlConstants.WHITESPACE);
+				builder.append(ISqlConstants.ISqlOperators.UNION);
+				builder.append(ISqlConstants.WHITESPACE);
+			}
+			/*
+			 * translate last selection alias
+			 */
+			ISelection selection = definition.getLastSelection();
+			selection.setAlias(resultAlias);
+			/*
+			 * add index to definition to keep order stable
+			 */
+			definition.addSelection(new Selection(Integer.toString(i++), INDEX, false));
+			builder.append(definition.toString());
+			first = false;
+		}
+		builder.append(ISqlConstants.WHITESPACE);
+		builder.append(Order.TOKEN);
+		builder.append(ISqlConstants.WHITESPACE);
+		builder.append(By.TOKEN);
+		builder.append(ISqlConstants.WHITESPACE);
+		builder.append(INDEX);
+		return new FromPart(builder.toString(), fromAlias, false);
+	}
+
+	/**
+	 * Creates a selection clause containing a function call with the given
+	 * argument
+	 * 
+	 * @param function
+	 *            the function name
+	 * @param argument
+	 *            the argument
+	 * @param selectionAlias
+	 *            the selection alias or <code>null</code>
+	 * @return the selection
+	 */
+	public static final ISelection getFunctionCall(final String function, ISelection argument, String selectionAlias) {
+		StringBuilder builder = new StringBuilder();
+		builder.append(function);
+		builder.append(BracketRoundOpen.TOKEN);
+		builder.append(argument.getSelection());
+		builder.append(BracketRoundClose.TOKEN);
+		ISelection selection = new Selection(builder.toString(), selectionAlias, false);
+		return selection;
+	}
+
+	/**
+	 * Creates a selection clause containing a function call with the given
+	 * argument <code>columnAlias.column</code>
+	 * 
+	 * @param function
+	 *            the function name
+	 * @param column
+	 *            the column
+	 * @param columnAlias
+	 *            the column alias or <code>null</code>
+	 * @param cast
+	 *            an optional cast for arguments
+	 * @param selectionAlias
+	 *            the selection alias or <code>null</code>
+	 * @return the selection
+	 */
+	public static final ISelection getFunctionCall(final String function, String column, String columnAlias, String cast, String selectionAlias) {
+		ISelection selection = new Selection(column, columnAlias);
+		selection.cast(cast);
+		return getFunctionCall(function, selection, selectionAlias);
 	}
 
 }

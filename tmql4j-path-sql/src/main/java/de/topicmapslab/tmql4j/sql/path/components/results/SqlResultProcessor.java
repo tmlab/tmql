@@ -17,9 +17,13 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringTokenizer;
+
+import org.postgresql.util.PGobject;
 
 import de.topicmapslab.majortom.core.LocatorImpl;
 import de.topicmapslab.majortom.database.jdbc.model.ISession;
@@ -40,6 +44,7 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinitio
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
 import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
 import de.topicmapslab.tmql4j.util.HashUtil;
+import de.topicmapslab.tmql4j.util.LiteralUtils;
 
 /**
  * @author Sven Krosse
@@ -137,6 +142,7 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 			while (rs.next()) {
 				IResult result = resultSet.createResult();
 				boolean onlyNullValues = true;
+				int resultIndex = 0;
 				for (int col = 1; col < metaData.getColumnCount() + 1; col++) {
 					SqlTables selectionType = tables.get(col - 1);
 					int columnType = metaData.getColumnType(col);
@@ -144,6 +150,7 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 					if (ISqlConstants.IS_NULL_VALUE_IN_SQL.equalsIgnoreCase(value)) {
 						value = null;
 					}
+
 					/*
 					 * store value if value is an id
 					 */
@@ -167,7 +174,7 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 							/*
 							 * is any construct or locator except the topic map
 							 */
-							else {
+							else if (!"-1".equalsIgnoreCase(value)) {
 								/*
 								 * store id value
 								 */
@@ -180,16 +187,38 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 									list = HashUtil.getList();
 									indexes.put(value, list);
 								}
-								list.add(new Index(row, col - 1));
+								list.add(new Index(row, resultIndex));
 								result.add(value);
 							}
+						} else if (selectionType.isRecord()) {
+							Object o = rs.getObject(col);
+							if (o instanceof PGobject) {
+								for (String id : toArray((PGobject) o)) {
+									if (selectionType.isConstructRecord()) {
+										ids.add(id);
+										List<Index> list = indexes.get(id);
+										if (list == null) {
+											list = HashUtil.getList();
+											indexes.put(id, list);
+										}
+										list.add(new Index(row, resultIndex));
+									}
+									resultIndex++;
+									result.add(id);
+								}
+								resultIndex--;
+							} else {
+								throw new TMQLRuntimeException("Unsupported result type!");
+							}
+
 						}
 						onlyNullValues = false;
 					} else {
 						result.add(value);
 					}
+					resultIndex++;
 				}
-				if (!onlyNullValues) {
+				if (!onlyNullValues && result.size() > 0) {
 					resultSet.addResult(result);
 				}
 				row++;
@@ -218,6 +247,26 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 		} catch (SQLException e) {
 			throw new TMQLRuntimeException("Unexpected end of connection to SQL database!", e);
 		}
+	}
+
+	/**
+	 * Transforms the given {@link PGobject} to a set of IDs
+	 * 
+	 * @param obj
+	 *            the object
+	 * @return the set of IDs
+	 */
+	private Set<String> toArray(PGobject obj) {
+		String value = obj.getValue();
+		if (value.length() > 2) {
+			StringTokenizer tokenizer = new StringTokenizer(value.substring(1, value.length() - 1), ",");
+			Set<String> set = HashUtil.getHashSet();
+			while (tokenizer.hasMoreTokens()) {
+				set.add(LiteralUtils.asNonQuotedString(tokenizer.nextToken()));
+			}
+			return set;
+		}
+		return Collections.emptySet();
 	}
 
 	/**

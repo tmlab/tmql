@@ -36,7 +36,7 @@ public interface ISqlDefinition extends Cloneable {
 	 *            flag indicates if content of from part is a table
 	 */
 	public void addFromPart(final String fromPart, final String alias, final boolean isTable);
-	
+
 	/**
 	 * Method adds a new part to the internal from clause and generates a new
 	 * alias
@@ -57,13 +57,18 @@ public interface ISqlDefinition extends Cloneable {
 	 *            part
 	 */
 	public void addFromPart(IFromPart part);
-	
+
 	/**
 	 * Returns the last entry of from clause
 	 * 
 	 * @return the last entry of from clause or <code>null</code>.
 	 */
 	public IFromPart getLastFromPart();
+
+	/**
+	 * removes all entries form from parts
+	 */
+	public void clearFromParts();
 
 	/**
 	 * Returns the last entry of selection clause
@@ -116,7 +121,7 @@ public interface ISqlDefinition extends Cloneable {
 	 * @return the cloned construct
 	 */
 	public ISqlDefinition clone();
-	
+
 	/**
 	 * Returns all selections
 	 * 
@@ -138,16 +143,43 @@ public interface ISqlDefinition extends Cloneable {
 	 * @return the index
 	 */
 	public int getInternalAliasIndex();
-	
+
 	/**
 	 * Adds a new order by part to the SQL selection
-	 * @param orderBy the order by part
+	 * 
+	 * @param orderBy
+	 *            the order by part
 	 */
 	public void addOrderByPart(OrderBy orderBy);
-	
+
 	/**
 	 * Removes all order by parts
 	 */
 	public void clearOrderBy();
+
+	/**
+	 * Setting the limit
+	 * 
+	 * @param limit
+	 *            the limit
+	 */
+	public void setLimit(Integer limit);
+
+	/**
+	 * Setting the offset
+	 * 
+	 * @param offset
+	 *            the offset
+	 */
+	public void setOffset(Integer offset);
+
+	/**
+	 * Set the distinct flag to the SQL definition
+	 * 
+	 * @param distinct
+	 *            <code>true</code> if DISTINCT selection is required,
+	 *            <code>false</code> otherwise.
+	 */
+	public void setDistinct(boolean distinct);
 
 }

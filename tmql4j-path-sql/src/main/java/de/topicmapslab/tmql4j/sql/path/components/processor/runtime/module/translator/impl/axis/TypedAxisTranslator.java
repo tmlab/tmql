@@ -8,8 +8,6 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.axis;
 
-import java.text.MessageFormat;
-
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
@@ -19,6 +17,8 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
+import de.topicmapslab.tmql4j.sql.path.utils.ConditionalUtils;
+import de.topicmapslab.tmql4j.sql.path.utils.ISchema;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 
 /**
@@ -26,14 +26,6 @@ import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
  * 
  */
 public class TypedAxisTranslator extends AxisTranslatorImpl {
-
-	private static final String ROLES = "roles";
-	private static final String ASSOCIATIONS = "associations";
-	private static final String NAMES = "names";
-	private static final String OCCURRENCES = "occurrences";
-	static final String FORWARD_SELECTION = "id";
-	static final String TABLE = "typeables";
-	static final String FORWARD_CONDITION = "{0} = {1}.id_type";
 
 	/**
 	 * {@inheritDoc}
@@ -47,15 +39,15 @@ public class TypedAxisTranslator extends AxisTranslatorImpl {
 		 */
 		IFromPart fromPart = null;
 		if (optionalType == null) {
-			fromPart = new FromPart(TABLE, result.getAlias(), true);
+			fromPart = new FromPart(ISchema.Typeables.TABLE, result.getAlias(), true);
 		} else if (TmdmSubjectIdentifier.isTmdmName(optionalType)) {
-			fromPart = new FromPart(NAMES, result.getAlias(), true);
+			fromPart = new FromPart(ISchema.Names.TABLE, result.getAlias(), true);
 		} else if (TmdmSubjectIdentifier.isTmdmOccurrence(optionalType)) {
-			fromPart = new FromPart(OCCURRENCES, result.getAlias(), true);
+			fromPart = new FromPart(ISchema.Occurrences.TABLE, result.getAlias(), true);
 		} else if (TmdmSubjectIdentifier.isTmdmAssociation(optionalType)) {
-			fromPart = new FromPart(ASSOCIATIONS, result.getAlias(), true);
+			fromPart = new FromPart(ISchema.Associations.TABLE, result.getAlias(), true);
 		} else if (TmdmSubjectIdentifier.isTmdmRole(optionalType)) {
-			fromPart = new FromPart(ROLES, result.getAlias(), true);
+			fromPart = new FromPart(ISchema.Roles.TABLE, result.getAlias(), true);
 		} else {
 			throw new TMQLRuntimeException("Unsupported type for optional argument of typed axis!");
 		}
@@ -64,11 +56,12 @@ public class TypedAxisTranslator extends AxisTranslatorImpl {
 		 * append condition as connection to incoming SQL definition
 		 */
 		ISelection selection = definition.getLastSelection();
-		result.add(MessageFormat.format(FORWARD_CONDITION, selection.getSelection(), fromPart.getAlias()));
+		String condition = ConditionalUtils.equal(selection, fromPart.getAlias(), ISchema.Typeables.ID_TYPE);
+		result.add(condition);
 		/*
 		 * add new selection
 		 */
-		ISelection sel = new Selection(FORWARD_SELECTION, fromPart.getAlias());
+		ISelection sel = new Selection(ISchema.Constructs.ID, fromPart.getAlias());
 		result.addSelection(sel);
 		sel.setCurrentTable(SqlTables.ANY);
 		return result;

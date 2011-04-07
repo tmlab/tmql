@@ -8,8 +8,6 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.axis;
 
-import java.text.MessageFormat;
-
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
@@ -19,6 +17,8 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
+import de.topicmapslab.tmql4j.sql.path.utils.ConditionalUtils;
+import de.topicmapslab.tmql4j.sql.path.utils.ISchema;
 
 /**
  * @author Sven Krosse
@@ -26,18 +26,10 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
  */
 public abstract class IdentityAxisTranslator extends AxisTranslatorImpl {
 
-	static final String LOCATORS = "locators";
-
-	static final String LOCATOR_ID = "id_locator";
-
-	static final String CONDITION = "{0}.id = {1}.id_locator";
-	static final String CONDITION_WITHOUT_ALIAS = "{0} = {1}.{2}";
-	static final String FORWARD_CONDITION = "{0} = {1}.{2}";
-	static final String BACKWARD_CONDITION = "{0} = {1}.reference";
-
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected ISqlDefinition forward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
 		ISqlDefinition result = definition.clone();
 		result.clearSelection();
@@ -50,20 +42,22 @@ public abstract class IdentityAxisTranslator extends AxisTranslatorImpl {
 		 * append condition as connection to incoming SQL definition
 		 */
 		ISelection selection = definition.getLastSelection();
-		result.add(MessageFormat.format(FORWARD_CONDITION, selection.getSelection(), fromPartRel.getAlias(), getRelationColumn()));
+		String condition = ConditionalUtils.equal(selection.getSelection(), fromPartRel.getAlias(), getRelationColumn());
+		result.add(condition);
 		/*
 		 * add new selection
 		 */
-		
-		ISelection sel= new Selection(LOCATOR_ID, fromPartRel.getAlias());
+
+		ISelection sel = new Selection(ISchema.RelItemIdentifiers.ID_LOCATOR, fromPartRel.getAlias());
 		sel.setCurrentTable(SqlTables.LOCATOR);
-		result.addSelection(sel);		
+		result.addSelection(sel);
 		return result;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected ISqlDefinition backward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
 		ISqlDefinition result = definition.clone();
 		result.clearSelection();
@@ -80,16 +74,20 @@ public abstract class IdentityAxisTranslator extends AxisTranslatorImpl {
 		 * current nodes are strings
 		 */
 		if (selection.getCurrentTable() == SqlTables.STRING) {
-			IFromPart fromPart = new FromPart(LOCATORS, result.getAlias(), true);
+			IFromPart fromPart = new FromPart(ISchema.Locators.TABLE, result.getAlias(), true);
 			result.addFromPart(fromPart);
-			result.add(MessageFormat.format(BACKWARD_CONDITION, selection.getCurrentTable() == SqlTables.STRING ? selection.getColumn(): selection.getSelection(), fromPart.getAlias()));
-			result.add(MessageFormat.format(CONDITION, fromPart.getAlias(), fromPartRel.getAlias()));
+			String condition = ConditionalUtils.equal(selection.getCurrentTable() == SqlTables.STRING ? selection.getColumn() : selection.getSelection(), fromPart.getAlias(),
+					ISchema.Locators.REFERENCE);
+			result.add(condition);
+			condition = ConditionalUtils.equal(fromPart.getAlias(), ISchema.Constructs.ID, fromPartRel.getAlias(), ISchema.RelItemIdentifiers.ID_LOCATOR);
+			result.add(condition);
 		}
 		/*
 		 * current nodes are locators
 		 */
 		else {
-			result.add(MessageFormat.format(CONDITION_WITHOUT_ALIAS, selection.getCurrentTable() == SqlTables.STRING ? selection.getColumn(): selection.getSelection(), fromPartRel.getAlias(), getRelationColumn()));
+			String condition = ConditionalUtils.equal(selection.getCurrentTable() == SqlTables.STRING ? selection.getColumn() : selection.getSelection(), fromPartRel.getAlias(), getRelationColumn());
+			result.add(condition);
 		}
 		/*
 		 * add new selection
@@ -102,12 +100,14 @@ public abstract class IdentityAxisTranslator extends AxisTranslatorImpl {
 
 	/**
 	 * returns the relational table name
+	 * 
 	 * @return the relational table name
 	 */
 	protected abstract String getRelationTable();
-	
+
 	/**
 	 * Returns the column name of the relation table
+	 * 
 	 * @return the column name
 	 */
 	protected abstract String getRelationColumn();

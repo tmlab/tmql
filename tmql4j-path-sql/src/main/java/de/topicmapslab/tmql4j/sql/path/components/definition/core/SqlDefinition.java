@@ -12,6 +12,8 @@ import java.util.Collections;
 import java.util.List;
 
 import de.topicmapslab.tmql4j.path.grammar.lexical.Comma;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Limit;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Offset;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Where;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.from.FromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.orderBy.OrderBy;
@@ -37,6 +39,9 @@ public class SqlDefinition implements ISqlDefinition {
 	private List<OrderBy> orderByParts;
 	private int aliasIndex;
 	private ICriteria criteria;
+	private Integer offset;
+	private Integer limit;
+	private boolean distinct = false;
 
 	/**
 	 * constructor
@@ -62,6 +67,8 @@ public class SqlDefinition implements ISqlDefinition {
 		}
 		this.aliasIndex = clone.aliasIndex;
 		this.criteria = clone.criteria;
+		this.offset = clone.offset;
+		this.limit = clone.limit;
 	}
 
 	/**
@@ -81,6 +88,7 @@ public class SqlDefinition implements ISqlDefinition {
 	 * 
 	 * @return the selections
 	 */
+	@Override
 	public List<ISelection> getSelectionParts() {
 		if (selectionParts == null) {
 			return Collections.emptyList();
@@ -91,6 +99,7 @@ public class SqlDefinition implements ISqlDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getAlias() {
 		return ISqlConstants.ALIAS_PREFIX + Integer.toString(aliasIndex++);
 	}
@@ -98,6 +107,7 @@ public class SqlDefinition implements ISqlDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void addFromPart(String fromPart, String alias, boolean isTable) {
 		addFromPart(new FromPart(fromPart, alias, isTable));
 	}
@@ -105,6 +115,7 @@ public class SqlDefinition implements ISqlDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void addFromPart(IFromPart part) {
 		if (fromParts == null) {
 			fromParts = HashUtil.getList();
@@ -115,6 +126,7 @@ public class SqlDefinition implements ISqlDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String addFromPart(String fromPart, boolean isTable) {
 		String alias = getAlias();
 		addFromPart(fromPart, alias, isTable);
@@ -124,6 +136,7 @@ public class SqlDefinition implements ISqlDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IFromPart getLastFromPart() {
 		if (fromParts == null) {
 			return null;
@@ -134,6 +147,18 @@ public class SqlDefinition implements ISqlDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
+	public void clearFromParts() {
+		if (fromParts != null) {
+			fromParts.clear();
+			fromParts = null;
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public ISelection getLastSelection() {
 		if (selectionParts == null) {
 			return null;
@@ -144,6 +169,7 @@ public class SqlDefinition implements ISqlDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void clearSelection() {
 		if (selectionParts != null) {
 			selectionParts.clear();
@@ -154,6 +180,7 @@ public class SqlDefinition implements ISqlDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void addSelection(String selectionPart) {
 		addSelection(new Selection(selectionPart));
 	}
@@ -161,6 +188,7 @@ public class SqlDefinition implements ISqlDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void addSelection(ISelection selectionPart) {
 		if (selectionParts == null) {
 			selectionParts = HashUtil.getList();
@@ -171,6 +199,7 @@ public class SqlDefinition implements ISqlDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void add(String criterion) {
 		add(new Criterion(criterion));
 	}
@@ -178,6 +207,7 @@ public class SqlDefinition implements ISqlDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void add(ICriterion criterion) {
 		if (criteria == null) {
 			criteria = new Conjunction();
@@ -188,6 +218,7 @@ public class SqlDefinition implements ISqlDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public ISqlDefinition clone() {
 		return new SqlDefinition(this);
 	}
@@ -195,6 +226,7 @@ public class SqlDefinition implements ISqlDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		/*
@@ -210,6 +242,10 @@ public class SqlDefinition implements ISqlDefinition {
 		}
 		builder.append(ISqlConstants.ISqlKeywords.SELECT);
 		builder.append(ISqlConstants.WHITESPACE);
+		if (distinct) {
+			builder.append(ISqlConstants.ISqlKeywords.DISTINCT);
+			builder.append(ISqlConstants.WHITESPACE);
+		}
 		builder.append(selection.toString());
 		/*
 		 * ignore missing from is inner selection
@@ -255,6 +291,21 @@ public class SqlDefinition implements ISqlDefinition {
 			builder.append(ISqlConstants.ISqlKeywords.ORDER_BY);
 			builder.append(ISqlConstants.WHITESPACE);
 			builder.append(orderBys.toString());
+		}
+		/*
+		 * offset and limit
+		 */
+		if (offset != null) {
+			builder.append(ISqlConstants.WHITESPACE);
+			builder.append(Offset.TOKEN);
+			builder.append(ISqlConstants.WHITESPACE);
+			builder.append(offset);
+		}
+		if (limit != null) {
+			builder.append(ISqlConstants.WHITESPACE);
+			builder.append(Limit.TOKEN);
+			builder.append(ISqlConstants.WHITESPACE);
+			builder.append(limit);
 		}
 		/*
 		 * generate query
@@ -309,6 +360,7 @@ public class SqlDefinition implements ISqlDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setInternalAliasIndex(int index) {
 		this.aliasIndex = index;
 	}
@@ -316,6 +368,7 @@ public class SqlDefinition implements ISqlDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int getInternalAliasIndex() {
 		return this.aliasIndex;
 	}
@@ -323,6 +376,7 @@ public class SqlDefinition implements ISqlDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void clearOrderBy() {
 		if (orderByParts != null) {
 			orderByParts.clear();
@@ -333,6 +387,7 @@ public class SqlDefinition implements ISqlDefinition {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void addOrderByPart(OrderBy orderBy) {
 		if (orderByParts == null) {
 			orderByParts = HashUtil.getList();
@@ -351,5 +406,29 @@ public class SqlDefinition implements ISqlDefinition {
 			return Collections.emptyList();
 		}
 		return orderByParts;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setLimit(Integer limit) {
+		this.limit = limit;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setOffset(Integer offset) {
+		this.offset = offset;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setDistinct(boolean distinct) {
+		this.distinct = distinct;
 	}
 }

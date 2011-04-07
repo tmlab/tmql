@@ -8,27 +8,28 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.axis;
 
+import de.topicmapslab.tmql4j.sql.path.utils.ISchema;
+
 /**
  * @author Sven Krosse
  * 
  */
 public class ItemAxisTranslator extends IdentityAxisTranslator {
 
-	static final String COLUMN = "id_construct";
-	static final String RELATION = "rel_item_identifiers";
-
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected String getRelationColumn() {
-		return COLUMN;
+		return ISchema.RelItemIdentifiers.ID_CONSTRUCT;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected String getRelationTable() {
-		return RELATION;
+		return ISchema.RelItemIdentifiers.TABLE;
 	}
 
 }

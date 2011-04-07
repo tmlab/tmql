@@ -8,8 +8,6 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl;
 
-import java.text.MessageFormat;
-
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
@@ -20,12 +18,16 @@ import de.topicmapslab.tmql4j.path.grammar.productions.SimpleContent;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.SqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.from.FromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.selection.Selection;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.where.InCriterion;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.TmqlSqlTranslatorImpl;
+import de.topicmapslab.tmql4j.sql.path.utils.ConditionalUtils;
+import de.topicmapslab.tmql4j.sql.path.utils.ISchema;
 import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
+import de.topicmapslab.tmql4j.sql.path.utils.TranslatorUtils;
 import de.topicmapslab.tmql4j.util.LiteralUtils;
 import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
 
@@ -34,15 +36,6 @@ import de.topicmapslab.tmql4j.util.TmdmSubjectIdentifier;
  * 
  */
 public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
-
-	private static final String SELECTION = "id";
-	private static final String TOPICS = "topics";
-	private static final String LOCATORS = "locators";
-	private static final String REL_SUBJECT_IDENTIFIERS = "rel_subject_identifiers";
-	private static final String TOPICMAP_CONDITION = "{0}.id_topicmap = {1}";
-	private static final String CONDITION_LOCATOR_REL = "{0}.id = {1}.id_locator";
-	private static final String CONDITION_REL_TOPIC = "{0}.id_topic = {1}.id";
-	private static final String CONDITION_REFERENCE = "{0}.reference = ''{1}''";
 
 	/**
 	 * {@inheritDoc}
@@ -57,32 +50,49 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 				/*
 				 * create from part for topics table
 				 */
-				IFromPart part = new FromPart(TOPICS, newDefinition.getAlias(), true);
+				IFromPart part = new FromPart(ISchema.Topics.TABLE, newDefinition.getAlias(), true);
 				newDefinition.addFromPart(part);
 				SqlTables table;
 				/*
 				 * create condition
 				 */
-				newDefinition.add(MessageFormat.format(TOPICMAP_CONDITION, part.getAlias(), context.getQuery().getTopicMap().getId()));
+				String condition = ConditionalUtils.equal(context.getQuery().getTopicMap().getId(), part.getAlias(), ISchema.Constructs.ID_TOPICMAP);
+				newDefinition.add(condition);
 				if (TmdmSubjectIdentifier.isTmdmSubject(token)) {
 					table = SqlTables.TMSUBJECT;
 				} else {
 					/*
-					 * add additional tables
+					 * fetch topic by subject-identifier
 					 */
-					IFromPart fromPartLocs = new FromPart(LOCATORS, newDefinition.getAlias(), true);
-					newDefinition.addFromPart(fromPartLocs);
-					IFromPart fromPartRel = new FromPart(REL_SUBJECT_IDENTIFIERS, newDefinition.getAlias(), true);
-					newDefinition.addFromPart(fromPartRel);
-					/*
-					 * add additional condition
-					 */
-					newDefinition.add(MessageFormat.format(CONDITION_LOCATOR_REL, fromPartLocs.getAlias(), fromPartRel.getAlias()));
-					newDefinition.add(MessageFormat.format(CONDITION_REL_TOPIC, fromPartRel.getAlias(), part.getAlias()));
-					newDefinition.add(MessageFormat.format(CONDITION_REFERENCE, fromPartLocs.getAlias(), runtime.getConstructResolver().toAbsoluteIRI(context, token)));
+					ISqlDefinition innerDefinition = TranslatorUtils.topicBySubjectIdentifier(newDefinition, runtime.getConstructResolver().toAbsoluteIRI(context, token));
+					InCriterion in = new InCriterion(ISchema.Constructs.ID, part.getAlias(), innerDefinition);
+					newDefinition.add(in);
 					table = SqlTables.TOPIC;
+					// /*
+					// * add additional tables
+					// */
+					// IFromPart fromPartLocs = new
+					// FromPart(ISchema.Locators.TABLE,
+					// newDefinition.getAlias(), true);
+					// newDefinition.addFromPart(fromPartLocs);
+					// IFromPart fromPartRel = new
+					// FromPart(ISchema.RelSubjectIdentifiers.TABLE,
+					// newDefinition.getAlias(), true);
+					// newDefinition.addFromPart(fromPartRel);
+					// /*
+					// * add additional condition
+					// */
+					//
+					// newDefinition.add(MessageFormat.format(CONDITION_LOCATOR_REL,
+					// fromPartLocs.getAlias(), fromPartRel.getAlias()));
+					// newDefinition.add(MessageFormat.format(CONDITION_REL_TOPIC,
+					// fromPartRel.getAlias(), part.getAlias()));
+					// newDefinition.add(MessageFormat.format(CONDITION_REFERENCE,
+					// fromPartLocs.getAlias(),
+					// runtime.getConstructResolver().toAbsoluteIRI(context,
+					// token)));
 				}
-				ISelection sel = new Selection(SELECTION, part.getAlias());
+				ISelection sel = new Selection(ISchema.Constructs.ID, part.getAlias());
 				newDefinition.addSelection(sel);
 				sel.setCurrentTable(table);
 				return newDefinition;
@@ -97,12 +107,10 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 				ISqlDefinition def = new SqlDefinition();
 				String token = expression.getTokens().get(0);
 				SqlTables table = SqlTables.ANY;
-				// String cast = null;
 				try {
 					if (LiteralUtils.isString(token)) {
 						token = ISqlConstants.SINGLEQUOTE + LiteralUtils.asString(token) + ISqlConstants.SINGLEQUOTE;
 						table = SqlTables.STRING;
-						// cast = ISqlConstants.ISqlTypes.VARCHAR;
 					} else if (LiteralUtils.isInteger(token)) {
 						table = SqlTables.INTEGER;
 					} else if (LiteralUtils.isDecimal(token)) {
@@ -115,8 +123,7 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 				} catch (Exception ex) {
 					throw new TMQLRuntimeException("Cannot found element for given reference '" + token + "'!");
 				}
-				ISelection sel = new Selection(token, null, true);
-				// sel.cast(cast);
+				ISelection sel = new Selection(token, def.getAlias(), false);
 				def.addSelection(sel);
 				sel.setCurrentTable(table);
 				return def;

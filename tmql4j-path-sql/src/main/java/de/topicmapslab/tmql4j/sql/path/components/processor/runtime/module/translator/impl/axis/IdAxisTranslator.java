@@ -8,8 +8,6 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.axis;
 
-import java.text.MessageFormat;
-
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
@@ -19,30 +17,30 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
+import de.topicmapslab.tmql4j.sql.path.utils.ConditionalUtils;
+import de.topicmapslab.tmql4j.sql.path.utils.ISchema;
+import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
 
 /**
  * @author Sven Krosse
  * 
  */
 public class IdAxisTranslator extends AxisTranslatorImpl {
-		
-	private static final String TABLE = "constructs";
-	private static final String COLUMN = "id";
-	private static final String CONDITION = "{0}.id = {1}";
-	private static final String VARCHAR = "character varying";
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected ISqlDefinition forward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
 		definition.getLastSelection().setCurrentTable(SqlTables.STRING);
-		definition.getLastSelection().cast(VARCHAR);
+		definition.getLastSelection().cast(ISqlConstants.ISqlTypes.VARCHAR);
 		return definition;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected ISqlDefinition backward(ITMQLRuntime runtime, IContext context, String optionalType, ISqlDefinition definition) throws TMQLRuntimeException {
 		if (definition.getLastSelection().getCurrentTable() != SqlTables.STRING) {
 			return definition;
@@ -55,20 +53,21 @@ public class IdAxisTranslator extends AxisTranslatorImpl {
 		/*
 		 * add from part
 		 */
-		IFromPart from = new FromPart(TABLE, newDefinition.getAlias(), true);
+		IFromPart from = new FromPart(ISchema.Constructs.TABLE, newDefinition.getAlias(), true);
 		newDefinition.addFromPart(from);
 		/*
 		 * add condition
 		 */
 		ISelection lastSelection = definition.getLastSelection();
-		newDefinition.add(MessageFormat.format(CONDITION, from.getAlias(), lastSelection.getCurrentTable() == SqlTables.STRING ? lastSelection.getColumn(): lastSelection.getSelection()));
+		String condition = ConditionalUtils.equal(lastSelection.getCurrentTable() == SqlTables.STRING ? lastSelection.getColumn() : lastSelection.getSelection(), from.getAlias(),
+				ISchema.Constructs.ID);
+		newDefinition.add(condition);
 		/*
 		 * add selection part
 		 */
-		ISelection sel = new Selection(COLUMN, from.getAlias());
+		ISelection sel = new Selection(ISchema.Constructs.ID, from.getAlias());
 		newDefinition.addSelection(sel);
 		sel.setCurrentTable(SqlTables.ANY);
 		return newDefinition;
 	}
-
 }

@@ -76,6 +76,7 @@ public class ValueExpressionTranslator extends TmqlSqlTranslatorImpl<ValueExpres
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public ISqlDefinition toSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
 		switch (expression.getGrammarType()) {
 			case ValueExpression.TYPE_CONTENT: {
@@ -88,7 +89,7 @@ public class ValueExpressionTranslator extends TmqlSqlTranslatorImpl<ValueExpres
 				return prefixToSql(runtime, context, (ValueExpression) expression, definition);
 			}
 			case ValueExpression.TYPE_FUNCTION_INVOCATION: {
-				return functionToSql(runtime, context, (ValueExpression) expression, definition);
+				return functionToSql(runtime, context, expression, definition);
 			}
 		}
 		throw new TMQLRuntimeException("Unsupported expression type for SQL translator.");
@@ -207,9 +208,20 @@ public class ValueExpressionTranslator extends TmqlSqlTranslatorImpl<ValueExpres
 
 		SqlTables table = getResultTable(leftHandDef.getLastSelection().getCurrentTable(), rightHandDef.getLastSelection().getCurrentTable());
 
+		ISelection last = leftHandDef.getLastSelection();
+		String leftContent = last.getAlias() == null ? last.getColumn() : last.getAlias();
+		last = rightHandDef.getLastSelection();
+		String rightContent = last.getAlias() == null ? last.getColumn() : last.getAlias();
+
 		String op = operators.get(operator);
-		if (Plus.class.equals(operator) & table == SqlTables.STRING) {
+		if (Plus.class.equals(operator) && table == SqlTables.STRING) {
 			op = ISqlConstants.ISqlOperators.CONCAT;
+		}
+		/*
+		 * clear value for regular expression call
+		 */
+		else if (RegularExpression.class.equals(operator)) {
+			rightContent = rightContent.replaceAll("\\\\", "\\\\\\\\");
 		}
 		/*
 		 * modify to boolean
@@ -219,7 +231,7 @@ public class ValueExpressionTranslator extends TmqlSqlTranslatorImpl<ValueExpres
 			table = SqlTables.BOOLEAN;
 		}
 
-		String content = MessageFormat.format(INFIX, leftHandDef.getLastSelection().getColumn(), op, rightHandDef.getLastSelection().getColumn());
+		String content = MessageFormat.format(INFIX, leftContent, op, rightContent);
 		ISelection selection = new Selection(content, definition.getAlias(), false);
 		concat.clearSelection();
 		concat.addSelection(selection);
