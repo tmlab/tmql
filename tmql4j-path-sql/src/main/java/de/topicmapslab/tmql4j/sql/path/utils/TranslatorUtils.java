@@ -308,16 +308,59 @@ public class TranslatorUtils {
 	 *            the alias of the from clause
 	 * @param resultAlias
 	 *            the alias to set as result alias
+	 * @param stableOrder
+	 *            flag indicates if a second column should be selection
+	 *            containing the index of the selection to keep order stable
 	 * @return the from clause
 	 */
-	public static final IFromPart asUnion(Collection<ISqlDefinition> definitions, String fromAlias, String resultAlias) {
+	public static final IFromPart asUnion(Collection<ISqlDefinition> definitions, String fromAlias, String resultAlias, boolean stableOrder) {
+		return asSetOperation(definitions, fromAlias, resultAlias, ISqlConstants.ISqlOperators.UNION, stableOrder);
+	}
+
+	/**
+	 * Creates a new from clause containing an intersection over all given SQL
+	 * definitions
+	 * 
+	 * @param definitions
+	 *            the definitions
+	 * @param fromAlias
+	 *            the alias of the from clause
+	 * @param resultAlias
+	 *            the alias to set as result alias
+	 * @param stableOrder
+	 *            flag indicates if a second column should be selection
+	 *            containing the index of the selection to keep order stable
+	 * @return the from clause
+	 */
+	public static final IFromPart asIntersection(Collection<ISqlDefinition> definitions, String fromAlias, String resultAlias, boolean stableOrder) {
+		return asSetOperation(definitions, fromAlias, resultAlias, ISqlConstants.ISqlOperators.INTERSECT, stableOrder);
+	}
+
+	/**
+	 * Creates a new from clause containing a set operation over all given SQL
+	 * definitions
+	 * 
+	 * @param definitions
+	 *            the definitions
+	 * @param fromAlias
+	 *            the alias of the from clause
+	 * @param resultAlias
+	 *            the alias to set as result alias
+	 * @param operator
+	 *            the operator
+	 * @param stableOrder
+	 *            flag indicates if a second column should be selection
+	 *            containing the index of the selection to keep order stable
+	 * @return the from clause
+	 */
+	public static final IFromPart asSetOperation(Collection<ISqlDefinition> definitions, String fromAlias, String resultAlias, String operator, boolean stableOrder) {
 		StringBuilder builder = new StringBuilder();
 		boolean first = true;
 		int i = 0;
 		for (ISqlDefinition definition : definitions) {
 			if (!first) {
 				builder.append(ISqlConstants.WHITESPACE);
-				builder.append(ISqlConstants.ISqlOperators.UNION);
+				builder.append(operator);
 				builder.append(ISqlConstants.WHITESPACE);
 			}
 			/*
@@ -328,16 +371,20 @@ public class TranslatorUtils {
 			/*
 			 * add index to definition to keep order stable
 			 */
-			definition.addSelection(new Selection(Integer.toString(i++), INDEX, false));
+			if (stableOrder) {
+				definition.addSelection(new Selection(Integer.toString(i++), INDEX, false));
+			}
 			builder.append(definition.toString());
 			first = false;
 		}
-		builder.append(ISqlConstants.WHITESPACE);
-		builder.append(Order.TOKEN);
-		builder.append(ISqlConstants.WHITESPACE);
-		builder.append(By.TOKEN);
-		builder.append(ISqlConstants.WHITESPACE);
-		builder.append(INDEX);
+		if (stableOrder) {
+			builder.append(ISqlConstants.WHITESPACE);
+			builder.append(Order.TOKEN);
+			builder.append(ISqlConstants.WHITESPACE);
+			builder.append(By.TOKEN);
+			builder.append(ISqlConstants.WHITESPACE);
+			builder.append(INDEX);
+		}
 		return new FromPart(builder.toString(), fromAlias, false);
 	}
 

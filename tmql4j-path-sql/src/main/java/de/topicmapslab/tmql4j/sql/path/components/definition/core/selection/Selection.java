@@ -185,4 +185,12 @@ public class Selection implements ISelection {
 		this.sqlTable = table;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isColumn() {
+		return isColumn;
+	}
+
 }

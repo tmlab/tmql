@@ -55,6 +55,14 @@ public interface ISelection {
 	public void cast(String type);
 
 	/**
+	 * Checks if the selection is a column or a simple value
+	 * 
+	 * @return <code>true</code> if the selection clause selects a column,
+	 *         otherwise <code>false</code>
+	 */
+	public boolean isColumn();
+
+	/**
 	 * Sets the given table as current navigation point for this SQL definition.
 	 * 
 	 * @param table

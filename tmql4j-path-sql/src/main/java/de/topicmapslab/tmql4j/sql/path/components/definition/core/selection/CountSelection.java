@@ -101,4 +101,11 @@ public class CountSelection implements ISelection {
 		return table;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isColumn() {
+		return false;
+	}
 }

@@ -107,10 +107,12 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 				ISqlDefinition def = new SqlDefinition();
 				String token = expression.getTokens().get(0);
 				SqlTables table = SqlTables.ANY;
+				String cast = null;
 				try {
 					if (LiteralUtils.isString(token)) {
-						token = ISqlConstants.SINGLEQUOTE + LiteralUtils.asString(token) + ISqlConstants.SINGLEQUOTE;
+						token = ISqlConstants.SINGLEQUOTE + LiteralUtils.asString(token).replaceAll("\\\\", "\\\\\\\\") + ISqlConstants.SINGLEQUOTE;
 						table = SqlTables.STRING;
+						cast = ISqlConstants.ISqlTypes.VARCHAR;
 					} else if (LiteralUtils.isInteger(token)) {
 						table = SqlTables.INTEGER;
 					} else if (LiteralUtils.isDecimal(token)) {
@@ -126,6 +128,7 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 				ISelection sel = new Selection(token, def.getAlias(), false);
 				def.addSelection(sel);
 				sel.setCurrentTable(table);
+				sel.cast(cast);
 				return def;
 			}
 			case Anchor.TYPE_VARIABLE: {

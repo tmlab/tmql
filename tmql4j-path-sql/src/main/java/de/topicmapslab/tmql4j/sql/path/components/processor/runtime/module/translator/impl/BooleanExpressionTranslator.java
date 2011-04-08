@@ -8,6 +8,9 @@
  */
 package de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
@@ -15,12 +18,14 @@ import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.BooleanExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.BooleanPrimitive;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.SqlDefinition;
-import de.topicmapslab.tmql4j.sql.path.components.definition.core.where.Intersect;
-import de.topicmapslab.tmql4j.sql.path.components.definition.core.where.Union;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.selection.Selection;
+import de.topicmapslab.tmql4j.sql.path.components.definition.model.IFromPart;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.TmqlSqlTranslatorImpl;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.TranslatorRegistry;
+import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
+import de.topicmapslab.tmql4j.sql.path.utils.TranslatorUtils;
 
 /**
  * @author Sven Krosse
@@ -31,16 +36,17 @@ public class BooleanExpressionTranslator extends TmqlSqlTranslatorImpl<BooleanEx
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public ISqlDefinition toSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
 		switch (expression.getGrammarType()) {
 			case BooleanExpression.TYPE_BOOLEAN_PRIMITIVE: {
 				return primitveToSql(runtime, context, expression, definition);
 			}
 			case BooleanExpression.TYPE_CONJUNCTION: {
-				return conjunctionToSql(runtime, context, expression, definition);
+				return booleanOperationToSql(runtime, context, expression, definition, ISqlConstants.ISqlOperators.INTERSECT);
 			}
 			case BooleanExpression.TYPE_DISJUNCTION: {
-				return disjunctionToSql(runtime, context, expression, definition);
+				return booleanOperationToSql(runtime, context, expression, definition, ISqlConstants.ISqlOperators.UNION);
 			}
 			default: {
 				return everyToSql(runtime, context, expression, definition);
@@ -49,7 +55,7 @@ public class BooleanExpressionTranslator extends TmqlSqlTranslatorImpl<BooleanEx
 	}
 
 	/**
-	 * Transform the given conjunction by using the given SQL definition
+	 * Transform the given boolean operation by using the given SQL definition
 	 * 
 	 * @param runtime
 	 *            the runtime
@@ -59,54 +65,13 @@ public class BooleanExpressionTranslator extends TmqlSqlTranslatorImpl<BooleanEx
 	 *            the expression to transform
 	 * @param definition
 	 *            the current SQL definition
+	 * @param operator
+	 *            the SQL operator
 	 * @return the new SQL definition
 	 * @throws TMQLRuntimeException
 	 *             thrown if anything fails
 	 */
-	public ISqlDefinition conjunctionToSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
-		/*
-		 * get last selection
-		 */
-		ISelection selection = definition.getLastSelection();
-		/*
-		 * copy SQL definition
-		 */
-		ISqlDefinition def = new SqlDefinition();
-		def.addSelection(selection);
-		def.setInternalAliasIndex(definition.getInternalAliasIndex());		
-		/*
-		 * create new SQL intersect
-		 */
-		Intersect intersect = null;
-		for (IExpression ex : expression.getExpressions()) {
-			ISqlDefinition newDefinition = toSql(runtime, context, ex, def);
-			newDefinition.clearSelection();
-			newDefinition.addSelection(selection);
-			if (intersect == null) {
-				intersect = new Intersect((SqlDefinition) newDefinition);
-			} else {
-				intersect.intersect(newDefinition);
-			}
-		}
-		return intersect;
-	}
-
-	/**
-	 * Transform the given disjunction by using the given SQL definition
-	 * 
-	 * @param runtime
-	 *            the runtime
-	 * @param context
-	 *            the current context
-	 * @param expression
-	 *            the expression to transform
-	 * @param definition
-	 *            the current SQL definition
-	 * @return the new SQL definition
-	 * @throws TMQLRuntimeException
-	 *             thrown if anything fails
-	 */
-	public ISqlDefinition disjunctionToSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
+	public ISqlDefinition booleanOperationToSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition, String operator) throws TMQLRuntimeException {
 		/*
 		 * get last selection
 		 */
@@ -120,18 +85,19 @@ public class BooleanExpressionTranslator extends TmqlSqlTranslatorImpl<BooleanEx
 		/*
 		 * create new SQL intersect
 		 */
-		Union union = null;
+		List<ISqlDefinition> intersects = new ArrayList<ISqlDefinition>();
 		for (IExpression ex : expression.getExpressions()) {
-			ISqlDefinition newDefinition = toSql(runtime, context, ex, def);
-			newDefinition.clearSelection();
-			newDefinition.addSelection(selection);
-			if (union == null) {
-				union = new Union((SqlDefinition) newDefinition);
-			} else {
-				union.union(newDefinition);
-			}
+			ISqlDefinition intersect = toSql(runtime, context, ex, def);
+			intersects.add(intersect);
 		}
-		return union;
+		ISqlDefinition intersection = new SqlDefinition();
+		String resultAlias = definition.getAlias();
+		IFromPart fromPart = TranslatorUtils.asSetOperation(intersects, intersection.getAlias(), resultAlias, operator, false);
+		intersection.addFromPart(fromPart);
+		Selection selectionPart = new Selection(resultAlias, null, true);
+		intersection.addSelection(selectionPart);
+		selectionPart.setCurrentTable(intersects.get(0).getSelectionParts().get(0).getCurrentTable());
+		return intersection;
 	}
 
 	/**

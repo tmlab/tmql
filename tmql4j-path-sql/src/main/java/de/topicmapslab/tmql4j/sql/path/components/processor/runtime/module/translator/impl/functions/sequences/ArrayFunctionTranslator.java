@@ -42,7 +42,7 @@ public class ArrayFunctionTranslator extends FunctionTranslatorImpl {
 		SqlTables table = parameters.isEmpty() ? SqlTables.ANY : parameters.get(0).getLastSelection().getCurrentTable();
 		String fromAlias = definition.getAlias();
 		String resultAlias = definition.getAlias();
-		IFromPart part = TranslatorUtils.asUnion(parameters, fromAlias, resultAlias);
+		IFromPart part = TranslatorUtils.asUnion(parameters, fromAlias, resultAlias, true);
 		definition.addFromPart(part);
 		ISelection selection = new Selection(resultAlias, fromAlias);
 		selection.setCurrentTable(table);

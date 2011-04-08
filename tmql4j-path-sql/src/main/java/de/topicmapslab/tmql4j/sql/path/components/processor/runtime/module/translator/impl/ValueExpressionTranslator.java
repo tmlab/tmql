@@ -209,20 +209,22 @@ public class ValueExpressionTranslator extends TmqlSqlTranslatorImpl<ValueExpres
 		SqlTables table = getResultTable(leftHandDef.getLastSelection().getCurrentTable(), rightHandDef.getLastSelection().getCurrentTable());
 
 		ISelection last = leftHandDef.getLastSelection();
-		String leftContent = last.getAlias() == null ? last.getColumn() : last.getAlias();
+		ISelection leftContentSelection = new Selection(last.isColumn() ? last.getColumn() : last.getAlias(), leftHandFromPart.getAlias());
 		last = rightHandDef.getLastSelection();
-		String rightContent = last.getAlias() == null ? last.getColumn() : last.getAlias();
+		ISelection rightContentSelection = new Selection(last.isColumn() ? last.getColumn() : last.getAlias(), rightHandFromPart.getAlias());
 
 		String op = operators.get(operator);
 		if (Plus.class.equals(operator) && table == SqlTables.STRING) {
 			op = ISqlConstants.ISqlOperators.CONCAT;
 		}
-		/*
-		 * clear value for regular expression call
-		 */
-		else if (RegularExpression.class.equals(operator)) {
-			rightContent = rightContent.replaceAll("\\\\", "\\\\\\\\");
-		}
+		// /*
+		// * clear value for regular expression call
+		// */
+		// else if (RegularExpression.class.equals(operator)) {
+		// rightContentSelection = new
+		// Selection(rightContentSelection.getColumn().replaceAll("\\\\",
+		// "\\\\\\\\"), rightContentSelection.getAlias());
+		// }
 		/*
 		 * modify to boolean
 		 */
@@ -231,7 +233,7 @@ public class ValueExpressionTranslator extends TmqlSqlTranslatorImpl<ValueExpres
 			table = SqlTables.BOOLEAN;
 		}
 
-		String content = MessageFormat.format(INFIX, leftContent, op, rightContent);
+		String content = MessageFormat.format(INFIX, leftContentSelection, op, rightContentSelection);
 		ISelection selection = new Selection(content, definition.getAlias(), false);
 		concat.clearSelection();
 		concat.addSelection(selection);
