@@ -298,6 +298,22 @@ public class TranslatorUtils {
 		return MessageFormat.format(SUPERTYPE_SUBTYPE, context.getQuery().getTopicMap().getId());
 	}
 
+	private static final String TYPE_INSTANCE = "SELECT id_type, id_instance FROM rel_instance_of UNION SELECT ( SELECT id_player FROM roles AS r, rel_subject_identifiers AS rl, locators AS l WHERE id_locator = l.id AND reference = ''http://psi.topicmaps.org/iso13250/model/type'' AND r.id_type = id_topic AND r.id_parent = a.id ) AS id_type, ( SELECT id_player FROM roles AS r, rel_subject_identifiers AS rl, locators AS l WHERE id_locator = l.id AND reference = ''http://psi.topicmaps.org/iso13250/model/instance'' AND r.id_type = id_topic AND r.id_parent = a.id ) AS id_instance FROM associations AS a, rel_subject_identifiers AS rl, locators AS l WHERE id_locator = l.id AND reference = ''http://psi.topicmaps.org/iso13250/model/type-instance'' AND a.id_type = id_topic AND a.id_topicmap = {0} ";
+
+	/**
+	 * Generates the query to extract all type-instance parts as association and
+	 * relation
+	 * 
+	 * @param runtime
+	 *            the runtime
+	 * @param context
+	 *            the context
+	 * @return the generated query
+	 */
+	public static final String generateTypeInstanceSet(ITMQLRuntime runtime, IContext context) {
+		return MessageFormat.format(TYPE_INSTANCE, context.getQuery().getTopicMap().getId());
+	}
+
 	/**
 	 * Creates a new from clause containing an union over all given SQL
 	 * definitions
@@ -367,7 +383,9 @@ public class TranslatorUtils {
 			 * translate last selection alias
 			 */
 			ISelection selection = definition.getLastSelection();
-			selection.setAlias(resultAlias);
+			if (resultAlias != null) {
+				selection.setAlias(resultAlias);
+			}
 			/*
 			 * add index to definition to keep order stable
 			 */

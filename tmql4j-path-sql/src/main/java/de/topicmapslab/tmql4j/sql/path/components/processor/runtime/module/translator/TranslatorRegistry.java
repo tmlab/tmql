@@ -11,6 +11,7 @@ package de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.tran
 import java.util.Map;
 
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.path.grammar.productions.AKOExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.AliasValueExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.Anchor;
 import de.topicmapslab.tmql4j.path.grammar.productions.BooleanExpression;
@@ -19,6 +20,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.Content;
 import de.topicmapslab.tmql4j.path.grammar.productions.ExistsClause;
 import de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix;
 import de.topicmapslab.tmql4j.path.grammar.productions.FunctionInvocation;
+import de.topicmapslab.tmql4j.path.grammar.productions.ISAExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.Navigation;
 import de.topicmapslab.tmql4j.path.grammar.productions.PathExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.Postfix;
@@ -30,6 +32,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.Step;
 import de.topicmapslab.tmql4j.path.grammar.productions.StepDefinition;
 import de.topicmapslab.tmql4j.path.grammar.productions.TupleExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.ValueExpression;
+import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.AKOExpressionTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.AliasValueExpressionTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.AnchorTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.BooleanExpressionTranslator;
@@ -38,6 +41,7 @@ import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.trans
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.ExistsClauseTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.FilterPostfixTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.FunctionInvocationTranslator;
+import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.ISAExpressionTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.NavigationTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.PathExpressionTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.PostfixTranslator;
@@ -60,6 +64,7 @@ public class TranslatorRegistry {
 	private final static Map<Class<? extends IExpression>, ISqlTranslator<?>> translators = HashUtil.getHashMap();
 
 	static {
+		translators.put(AKOExpression.class, new AKOExpressionTranslator());
 		translators.put(AliasValueExpression.class, new AliasValueExpressionTranslator());
 		translators.put(Anchor.class, new AnchorTranslator());
 		translators.put(BooleanPrimitive.class, new BooleanPrimitiveTranslator());
@@ -68,6 +73,7 @@ public class TranslatorRegistry {
 		translators.put(ExistsClause.class, new ExistsClauseTranslator());
 		translators.put(FilterPostfix.class, new FilterPostfixTranslator());
 		translators.put(FunctionInvocation.class, new FunctionInvocationTranslator());
+		translators.put(ISAExpression.class, new ISAExpressionTranslator());
 		translators.put(Navigation.class, new NavigationTranslator());
 		translators.put(PathExpression.class, new PathExpressionTranslator());
 		translators.put(PostfixedExpression.class, new PostfixedExpressionTranslator());

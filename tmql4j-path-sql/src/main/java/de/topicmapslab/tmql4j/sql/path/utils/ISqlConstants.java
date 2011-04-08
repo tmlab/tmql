@@ -86,6 +86,8 @@ public interface ISqlConstants {
 
 		public static final String IN = "IN";
 
+		public static final String IS = "IS";
+
 	}
 
 	public interface ISqlTypes {

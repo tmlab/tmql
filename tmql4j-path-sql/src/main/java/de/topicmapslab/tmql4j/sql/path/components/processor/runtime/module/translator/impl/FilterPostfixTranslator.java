@@ -21,12 +21,16 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisInstances;
 import de.topicmapslab.tmql4j.path.grammar.productions.Anchor;
 import de.topicmapslab.tmql4j.path.grammar.productions.BooleanExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.FilterPostfix;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.SqlDefinition;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.selection.CountSelection;
+import de.topicmapslab.tmql4j.sql.path.components.definition.core.selection.Selection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.core.where.InCriterion;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.TmqlSqlTranslatorImpl;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.TranslatorRegistry;
+import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
 import de.topicmapslab.tmql4j.util.LiteralUtils;
 
 /**
@@ -277,6 +281,12 @@ public class FilterPostfixTranslator extends TmqlSqlTranslatorImpl<FilterPostfix
 		InCriterion in;
 		if (newDefinition.getLastSelection().getCurrentTable() == SqlTables.BOOLEAN) {
 			in = new InCriterion(Boolean.toString(true), newDefinition);
+		} else if (newDefinition.getLastSelection().getCurrentTable() == SqlTables.STRING) {
+			ISqlDefinition cnt = new SqlDefinition();
+			cnt.addFromPart(newDefinition.toString(), definition.getAlias(), false);
+			cnt.addSelection(new CountSelection(new Selection(ISqlConstants.ANY, null), null));
+			in = new InCriterion(Integer.toString(0), cnt);
+			in.negate(true);
 		} else {
 			in = new InCriterion(selection.getSelection(), newDefinition);
 		}

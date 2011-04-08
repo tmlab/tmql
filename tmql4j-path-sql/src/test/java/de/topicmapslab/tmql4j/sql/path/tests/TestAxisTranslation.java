@@ -33,7 +33,7 @@ import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.trans
  */
 public class TestAxisTranslation extends Tmql4JTestCase {
 
-	private ISqlDefinition state = new SqlDefinition();
+	private final ISqlDefinition state = new SqlDefinition();
 
 	/**
 	 * constructor
@@ -51,7 +51,7 @@ public class TestAxisTranslation extends Tmql4JTestCase {
 
 	@Test
 	public void testname() throws Exception {
-		execute("// tm:subject  [ . / tm:name OR . >> indicators ]");
+		execute("// tm:subject  [ . / tm:name  ]");
 	}
 
 	public IExpression toExpression(IToken token, boolean forward) {

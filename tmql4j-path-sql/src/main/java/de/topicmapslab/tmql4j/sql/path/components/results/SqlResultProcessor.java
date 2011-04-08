@@ -218,7 +218,7 @@ public class SqlResultProcessor extends TmqlResultProcessor {
 					}
 					resultIndex++;
 				}
-				if (!onlyNullValues && result.size() > 0) {
+				if (!onlyNullValues && result.size() > 0 || (onlyNullValues && result.size() > 1)) {
 					resultSet.addResult(result);
 				}
 				row++;

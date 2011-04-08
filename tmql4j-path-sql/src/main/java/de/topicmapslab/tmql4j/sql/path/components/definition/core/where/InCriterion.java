@@ -23,9 +23,13 @@ public class InCriterion extends Criterion {
 	private static final String ALIAS_STRING = "{0}.{1} IN ( {2} ) ";
 	private static final String NOALIAS_STRING = "{0} IN ( {1} ) ";
 
+	private static final String NON_ALIAS_STRING = "{0}.{1} NOT IN ( {2} ) ";
+	private static final String NON_NOALIAS_STRING = "{0} NOT IN ( {1} ) ";
+
 	private final String column;
 	private final String alias;
 	private final ISqlDefinition definition;
+	private boolean negate = false;
 
 	/**
 	 * constructor
@@ -64,10 +68,25 @@ public class InCriterion extends Criterion {
 	 */
 	@Override
 	public String toString() {
-		if (alias == null) {
+		if (negate) {
+			if (alias == null) {
+				return MessageFormat.format(NON_NOALIAS_STRING, column, definition.toString());
+			}
+			return MessageFormat.format(NON_ALIAS_STRING, alias, column, definition.toString());
+		} else if (alias == null) {
 			return MessageFormat.format(NOALIAS_STRING, column, definition.toString());
 		}
 		return MessageFormat.format(ALIAS_STRING, alias, column, definition.toString());
+	}
+
+	/**
+	 * Modify the internal flag of negation of this in criterion
+	 * 
+	 * @param negate
+	 *            the flag
+	 */
+	public void negate(boolean negate) {
+		this.negate = negate;
 	}
 
 	/**
@@ -83,6 +102,7 @@ public class InCriterion extends Criterion {
 			boolean r = c.definition == definition;
 			r &= c.column.equalsIgnoreCase(column);
 			r &= c.alias == null ? alias == null : c.alias.equalsIgnoreCase(alias);
+			r &= c.negate == negate;
 			return r;
 		}
 		return false;
@@ -96,6 +116,7 @@ public class InCriterion extends Criterion {
 		int hash = definition.hashCode();
 		hash |= column.hashCode();
 		hash |= alias == null ? 0 : alias.hashCode();
+		hash |= negate ? 0 : 1;
 		return hash;
 	}
 

@@ -27,7 +27,11 @@ public class QueryExpressionTranslator extends TmqlSqlTranslatorImpl<QueryExpres
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public ISqlDefinition toSql(ITMQLRuntime runtime, IContext context, IExpression expression, ISqlDefinition definition) throws TMQLRuntimeException {
+		if (expression.contains(QueryExpression.class)) {
+			return toSql(runtime, context, expression.getExpressions().get(0), definition);
+		}
 		return TranslatorRegistry.getTranslator(PathExpression.class).toSql(runtime, context, expression.getExpressionFilteredByType(PathExpression.class).get(0), definition);
 	}
 
