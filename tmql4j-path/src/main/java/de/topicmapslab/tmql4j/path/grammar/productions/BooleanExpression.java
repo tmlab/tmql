@@ -30,7 +30,6 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Or;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Some;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
-
 /**
  * Special implementation of {@link ExpressionImpl} representing a
  * boolean-expression.
@@ -89,10 +88,7 @@ public class BooleanExpression extends ExpressionImpl {
 	 *             thrown if the sub-tree can not be generated
 	 */
 	@SuppressWarnings("unchecked")
-	public BooleanExpression(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public BooleanExpression(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
 		/*
@@ -106,8 +102,7 @@ public class BooleanExpression extends ExpressionImpl {
 		/*
 		 * not some binding-set satisfies not ( boolean-expression )
 		 */
-		else if (tmqlTokens.get(0).equals(Not.class)
-				&& tmqlTokens.get(1).equals(Some.class)) {
+		else if (tmqlTokens.get(0).equals(Not.class) && tmqlTokens.get(1).equals(Some.class)) {
 			checkForExtensions(ForAllClause.class, tmqlTokens, tokens, runtime);
 			setGrammarType(TYPE_FORALL_CLAUSE);
 		}
@@ -115,8 +110,7 @@ public class BooleanExpression extends ExpressionImpl {
 		 * is cramped boolean primitive
 		 */
 		if (isParenthetic(tmqlTokens)) {
-			checkForExtensions(BooleanPrimitive.class, tmqlTokens, tokens,
-					runtime);
+			checkForExtensions(BooleanPrimitive.class, tmqlTokens, tokens, runtime);
 			setGrammarType(TYPE_BOOLEAN_PRIMITIVE);
 		}
 		/*
@@ -129,11 +123,8 @@ public class BooleanExpression extends ExpressionImpl {
 			 */
 			IParserUtilsCallback callback = new IParserUtilsCallback() {
 				@Override
-				public void newToken(List<Class<? extends IToken>> tmqlTokens,
-						List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException,
-						TMQLInvalidSyntaxException {
-					checkForExtensions(BooleanExpression.class, tmqlTokens,
-							tokens, runtime);
+				public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
+					checkForExtensions(BooleanExpression.class, tmqlTokens, tokens, runtime);
 				}
 			};
 
@@ -158,11 +149,8 @@ public class BooleanExpression extends ExpressionImpl {
 			 */
 			IParserUtilsCallback callback = new IParserUtilsCallback() {
 				@Override
-				public void newToken(List<Class<? extends IToken>> tmqlTokens,
-						List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException,
-						TMQLInvalidSyntaxException {
-					checkForExtensions(BooleanExpression.class, tmqlTokens,
-							tokens, runtime);
+				public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
+					checkForExtensions(BooleanExpression.class, tmqlTokens, tokens, runtime);
 				}
 			};
 
@@ -181,8 +169,7 @@ public class BooleanExpression extends ExpressionImpl {
 		 * is other boolean primitive like negation or exists-clause
 		 */
 		else {
-			checkForExtensions(BooleanPrimitive.class, tmqlTokens, tokens,
-					runtime);
+			checkForExtensions(BooleanPrimitive.class, tmqlTokens, tokens, runtime);
 			setGrammarType(TYPE_BOOLEAN_PRIMITIVE);
 		}
 	}
@@ -212,8 +199,7 @@ public class BooleanExpression extends ExpressionImpl {
 		}
 
 		long bracketCount = 1;
-		for (Class<? extends IToken> token : tmqlTokens.subList(1, tmqlTokens
-				.size())) {
+		for (Class<? extends IToken> token : tmqlTokens.subList(1, tmqlTokens.size())) {
 			if (token.equals(BracketRoundOpen.class)) {
 				/*
 				 * new first round opening bracket --> no parenthetic
@@ -233,5 +219,18 @@ public class BooleanExpression extends ExpressionImpl {
 			}
 		}
 		return true;
-	}	
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getJoinToken() {
+		if (getGrammarType() == TYPE_CONJUNCTION) {
+			return And.TOKEN;
+		} else if (getGrammarType() == TYPE_DISJUNCTION) {
+			return Or.TOKEN;
+		}
+		return super.getJoinToken();
+	}
 }

@@ -185,6 +185,7 @@ public abstract class ParserTreeImpl implements IParserTree {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IExpression root() {
 		return root;
 	}
@@ -192,6 +193,7 @@ public abstract class ParserTreeImpl implements IParserTree {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IQuery getQuery() {
 		return query;
 	}
@@ -199,6 +201,7 @@ public abstract class ParserTreeImpl implements IParserTree {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void toStringTree(StringBuilder builder) {
 		builder.append(root().getClass().getSimpleName());
 		builder.append(TREE_TOKENS);
@@ -234,12 +237,12 @@ public abstract class ParserTreeImpl implements IParserTree {
 		 */
 		for (int index = 0; index < hasBrothers.length - 1; index++) {
 			boolean hasBrother = hasBrothers[index];
-			if (hasBrother)
+			if (hasBrother) {
 				/*
 				 * add tree like symbolic lines for brothers
 				 */
 				builder.append(TREE_BROTHER);
-			else {
+			} else {
 				/*
 				 * add white-spaces
 				 */
@@ -298,6 +301,7 @@ public abstract class ParserTreeImpl implements IParserTree {
 	 * 
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isValid(ITMQLRuntime runtime, IQuery query) {
 		/*
 		 * iterate over top-level expression
@@ -317,11 +321,12 @@ public abstract class ParserTreeImpl implements IParserTree {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List<List<IExpression>> paths(Class<? extends IExpression> expressionType) {
 		List<List<IExpression>> paths = HashUtil.getList();
 		List<IExpression> currentPath = HashUtil.getList();
-		currentPath.add(root());		
-		paths(expressionType, root(), currentPath, paths);		
+		currentPath.add(root());
+		paths(expressionType, root(), currentPath, paths);
 		return paths;
 	}
 
@@ -348,5 +353,15 @@ public abstract class ParserTreeImpl implements IParserTree {
 				paths(expressionType, expression, currentPath_, paths);
 			}
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toQueryString() {
+		StringBuilder builder = new StringBuilder();
+		root().asFlatString(builder);
+		return builder.toString().trim();
 	}
 }

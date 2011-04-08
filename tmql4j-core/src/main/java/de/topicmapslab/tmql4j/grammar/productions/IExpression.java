@@ -176,7 +176,7 @@ public interface IExpression {
 	 *             thrown if querying fails
 	 */
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException;
-	
+
 	/**
 	 * Method checks if the current expression is a child of the specified
 	 * expression type. The method walks up to the tree root and check all
@@ -188,7 +188,7 @@ public interface IExpression {
 	 *         specified type, <code>false</code> otherwise.
 	 */
 	public boolean isChildOf(Class<? extends IExpression> clazz);
-	
+
 	/**
 	 * Method checks if the internal expression has at least one child-node of
 	 * the given expression type.
@@ -205,4 +205,14 @@ public interface IExpression {
 	 *             thrown if operation fails.
 	 */
 	public boolean contains(Class<? extends IExpression> type) throws TMQLRuntimeException;
+
+	/**
+	 * Method returns a flat string representation of the current expression,
+	 * similar to the query part representing the tree path.
+	 * 
+	 * @param builder
+	 *            the builder to add the flat string of this expression
+	 * @since 3.1.0
+	 */
+	public void asFlatString(StringBuilder builder);
 }

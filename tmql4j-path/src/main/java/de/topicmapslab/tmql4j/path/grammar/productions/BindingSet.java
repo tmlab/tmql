@@ -58,10 +58,7 @@ public class BindingSet extends ExpressionImpl {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
-	public BindingSet(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public BindingSet(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
 		setGrammarType(0);
@@ -71,11 +68,8 @@ public class BindingSet extends ExpressionImpl {
 		 */
 		IParserUtilsCallback callback = new IParserUtilsCallback() {
 			@Override
-			public void newToken(List<Class<? extends IToken>> tmqlTokens,
-					List<String> tokens, Class<? extends IToken> foundDelimer)
-					throws TMQLGeneratorException, TMQLInvalidSyntaxException {
-				checkForExtensions(VariableAssignment.class, tmqlTokens,
-						tokens, runtime);
+			public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
+				checkForExtensions(VariableAssignment.class, tmqlTokens, tokens, runtime);
 			}
 		};
 
@@ -100,8 +94,14 @@ public class BindingSet extends ExpressionImpl {
 		/*
 		 * expects more than 2 tokens containing the keyword IN
 		 */
-		return getTmqlTokens().size() > 2
-				&& ParserUtils.containsTokens(getTmqlTokens(), In.class);
+		return getTmqlTokens().size() > 2 && ParserUtils.containsTokens(getTmqlTokens(), In.class);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getJoinToken() {
+		return Comma.TOKEN;
+	}
 }

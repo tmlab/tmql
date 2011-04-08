@@ -39,6 +39,8 @@ import de.topicmapslab.tmql4j.util.CollectionsUtility;
  */
 public abstract class ExpressionImpl implements IExpression {
 
+	protected static final String WHITESPACE = " ";
+	private static final String EMPTY = "";
 	private static final long serialVersionUID = 1L;
 	/**
 	 * a list of contained expression
@@ -100,6 +102,7 @@ public abstract class ExpressionImpl implements IExpression {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public final void addExpression(IExpression ex) {
 		this.children.add(ex);
 	}
@@ -107,6 +110,7 @@ public abstract class ExpressionImpl implements IExpression {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List<IExpression> getExpressions() {
 		return children;
 	}
@@ -114,6 +118,7 @@ public abstract class ExpressionImpl implements IExpression {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List<Class<? extends IToken>> getTmqlTokens() {
 		return tmqlTokens;
 	}
@@ -121,6 +126,7 @@ public abstract class ExpressionImpl implements IExpression {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List<String> getTokens() {
 		return tokens;
 	}
@@ -128,6 +134,7 @@ public abstract class ExpressionImpl implements IExpression {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public int getGrammarType() {
 		return type;
 	}
@@ -135,6 +142,7 @@ public abstract class ExpressionImpl implements IExpression {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String toString() {
 		return getClass().getSimpleName();
 	}
@@ -142,6 +150,7 @@ public abstract class ExpressionImpl implements IExpression {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IExpression getParent() {
 		return parent;
 	}
@@ -149,6 +158,7 @@ public abstract class ExpressionImpl implements IExpression {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setGrammarType(int type) {
 		this.type = type;
 	}
@@ -165,6 +175,7 @@ public abstract class ExpressionImpl implements IExpression {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends IExpression> List<T> getExpressionFilteredByType(Class<? extends T> type) {
 		/*
@@ -189,6 +200,7 @@ public abstract class ExpressionImpl implements IExpression {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public List<String> getVariables() {
 		List<String> variables = new LinkedList<String>();
 		/*
@@ -214,6 +226,7 @@ public abstract class ExpressionImpl implements IExpression {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public final void setExpressions(List<IExpression> reorder) throws TMQLRuntimeException {
 		/*
 		 * check if lists are equal
@@ -225,28 +238,29 @@ public abstract class ExpressionImpl implements IExpression {
 		this.children.addAll(reorder);
 	}
 
-//	/**
-//	 * {@inheritDoc}
-//	 */
-//	@Override
-//	public int hashCode() {
-//		return this.tokens.hashCode();
-//	}
-//
-//	/**
-//	 * {@inheritDoc}
-//	 */
-//	@Override
-//	public boolean equals(Object obj) {
-//		if (obj instanceof IExpression) {
-//			return ((IExpression) obj).getTokens().equals(tokens);
-//		}
-//		return false;
-//	}
+	// /**
+	// * {@inheritDoc}
+	// */
+	// @Override
+	// public int hashCode() {
+	// return this.tokens.hashCode();
+	// }
+	//
+	// /**
+	// * {@inheritDoc}
+	// */
+	// @Override
+	// public boolean equals(Object obj) {
+	// if (obj instanceof IExpression) {
+	// return ((IExpression) obj).getTokens().equals(tokens);
+	// }
+	// return false;
+	// }
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void checkForExtensions(Class<? extends IExpression> clazz, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
 			TMQLGeneratorException {
 
@@ -300,6 +314,7 @@ public abstract class ExpressionImpl implements IExpression {
 	 * 
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isChildOf(Class<? extends IExpression> clazz) {
 		IExpression parent = getParent();
 		while (parent != null) {
@@ -314,16 +329,84 @@ public abstract class ExpressionImpl implements IExpression {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		IExpressionInterpreter<?> interpreter = runtime.getLanguageContext().getInterpreterRegistry().interpreterInstance(this);
 		return interpreter.interpret(runtime, context, optionalArguments);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean contains(Class<? extends IExpression> type) throws TMQLRuntimeException {
 		return !getExpressionFilteredByType(type).isEmpty();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void asFlatString(StringBuilder builder) {
+		/*
+		 * call before creation
+		 */
+		addFlatPartBefore(builder);
+		/*
+		 * has no children
+		 */
+		if (getExpressions().isEmpty()) {
+			for (String token : getTokens()) {
+				builder.append(token);
+				builder.append(WHITESPACE);
+			}
+		}
+		/*
+		 * join children
+		 */
+		else {
+			for (IExpression expression : getExpressions()) {
+				expression.asFlatString(builder);
+				builder.append(getJoinToken());
+				builder.append(WHITESPACE);
+			}
+		}
+		/*
+		 * call after creation
+		 */
+		addFlatPartAfter(builder);
+	}
+
+	/**
+	 * Method called before the children will be transformed to a flat string
+	 * 
+	 * @param builder
+	 *            the builder to add the content
+	 * @since 3.1.0
+	 */
+	protected void addFlatPartBefore(StringBuilder builder) {
+		// VOID
+	}
+
+	/**
+	 * Returns the join token for combination of subexpression
+	 * 
+	 * @return the join token
+	 * @since 3.1.0
+	 */
+	protected String getJoinToken() {
+		return EMPTY;
+	}
+
+	/**
+	 * Method called after the children will be transformed to a flat string
+	 * 
+	 * @param builder
+	 *            the builder to add the content
+	 * @since 3.1.0
+	 */
+	protected void addFlatPartAfter(StringBuilder builder) {
+		// VOID
 	}
 
 }
