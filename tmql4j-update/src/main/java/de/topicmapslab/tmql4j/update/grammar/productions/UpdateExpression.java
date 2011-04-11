@@ -110,12 +110,34 @@ public class UpdateExpression extends ExpressionImpl {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void asFlatString(StringBuilder builder) {
+		builder.append(Update.TOKEN);
+		builder.append(WHITESPACE);
+		boolean first = true;
+		for (UpdateClause expression : getExpressionFilteredByType(UpdateClause.class)) {
+			if (!first) {
+				builder.append(Comma.TOKEN);
+				builder.append(WHITESPACE);
+			}
+			expression.asFlatString(builder);
+			first = false;
+		}
+		for (WhereClause expression : getExpressionFilteredByType(WhereClause.class)) {
+			expression.asFlatString(builder);
+			builder.append(WHITESPACE);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean isValid() {
 		if (getTmqlTokens().isEmpty()) {
 			return false;
 		} else if (!getTmqlTokens().get(0).equals(Update.class)) {
 			return false;
-		} else if (!getTmqlTokens().contains(Set.class) && !getTmqlTokens().contains(Add.class)&& !getTmqlTokens().contains(Remove.class)) {
+		} else if (!getTmqlTokens().contains(Set.class) && !getTmqlTokens().contains(Add.class) && !getTmqlTokens().contains(Remove.class)) {
 			return false;
 		}
 		return true;

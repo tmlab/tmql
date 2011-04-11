@@ -15,27 +15,29 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 /**
  * The token of the boolean disjunction OR
+ * 
  * @author Sven Krosse
- *
+ * 
  */
 public class Or extends Token {
 
 	/**
 	 * the token
 	 */
-	private static final String TOKEN = "OR";
+	public static final String TOKEN = "OR";
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean isToken(ITMQLRuntime runtime, String literal) {		
+	public boolean isToken(ITMQLRuntime runtime, String literal) {
 		return literal.equalsIgnoreCase(TOKEN);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getLiteral() {
 		return TOKEN;
 	}

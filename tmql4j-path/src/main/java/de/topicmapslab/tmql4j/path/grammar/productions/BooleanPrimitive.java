@@ -158,9 +158,32 @@ public class BooleanPrimitive extends ExpressionImpl {
 	 * {@inheritDoc}
 	 */
 	@Override
+	protected void addFlatPartAfter(StringBuilder builder) {
+		if (getGrammarType() == TYPE_BOOLEAN_EXPRESSION) {
+			builder.append(BracketRoundClose.TOKEN);
+			builder.append(WHITESPACE);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void asFlatString(StringBuilder builder) {
+		// TODO Auto-generated method stub
+		super.asFlatString(builder);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	protected void addFlatPartBefore(StringBuilder builder) {
 		if (getGrammarType() == TYPE_NOT_EXPRESSION) {
 			builder.append(Not.TOKEN);
+			builder.append(WHITESPACE);
+		} else if (getGrammarType() == TYPE_BOOLEAN_EXPRESSION) {
+			builder.append(BracketRoundOpen.TOKEN);
 			builder.append(WHITESPACE);
 		}
 	}

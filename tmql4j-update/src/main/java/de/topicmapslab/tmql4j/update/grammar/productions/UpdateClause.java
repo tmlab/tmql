@@ -70,9 +70,9 @@ public class UpdateClause extends ExpressionImpl {
 	 * the language-specific token representing the anchor
 	 */
 	private final Class<? extends IToken> anchor;
-//	/**
-//	 * the string-represented token representing the optional parameter
-//	 */
+	// /**
+	// * the string-represented token representing the optional parameter
+	// */
 	// private final String optionalType;
 
 	/**
@@ -188,6 +188,22 @@ public class UpdateClause extends ExpressionImpl {
 	 */
 	public Class<? extends IToken> getAnchor() {
 		return anchor;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		builder.append(getTokens().get(0));
+		builder.append(WHITESPACE);
+		builder.append(getTokens().get(1));
+		builder.append(WHITESPACE);
+		Class<? extends IToken> token = getTmqlTokens().get(1);
+		if (!token.equals(Set.class) && !token.equals(Add.class) && !token.equals(Remove.class)) {
+			builder.append(getTokens().get(2));
+			builder.append(WHITESPACE);
+		}
 	}
 
 	//

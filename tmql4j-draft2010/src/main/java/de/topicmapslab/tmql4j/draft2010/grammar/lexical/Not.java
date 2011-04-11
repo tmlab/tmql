@@ -14,19 +14,21 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 /**
  * The token of the boolean negation NOT
+ * 
  * @author Sven Krosse
- *
+ * 
  */
 public class Not extends Token {
 
 	/**
 	 * thet token
 	 */
-	private static final String TOKEN = "NOT";
+	public static final String TOKEN = "NOT";
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getLiteral() {
 		return TOKEN;
 	}

@@ -12,6 +12,7 @@ import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Subtraction;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Union;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
+import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
@@ -29,7 +30,7 @@ public class SetExpression extends ExpressionImpl {
 	/**
 	 * the operators
 	 */
-	private List<Class<? extends IToken>> operators = new LinkedList<Class<? extends IToken>>();
+	private final List<Class<? extends IToken>> operators = new LinkedList<Class<? extends IToken>>();
 
 	/**
 	 * base constructor to create a new expression without sub-nodes
@@ -57,6 +58,7 @@ public class SetExpression extends ExpressionImpl {
 		 */
 		IParserUtilsCallback callback = new IParserUtilsCallback() {
 
+			@Override
 			public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
 				checkForExtensions(Expression.class, tmqlTokens, tokens, runtime);
 				operators.add(foundDelimer);
@@ -81,6 +83,7 @@ public class SetExpression extends ExpressionImpl {
 	 * 
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isValid() {
 		return true;
 	}
@@ -92,5 +95,25 @@ public class SetExpression extends ExpressionImpl {
 	 */
 	public List<Class<? extends IToken>> getOperators() {
 		return operators;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void asFlatString(StringBuilder builder) {
+		int index = 0;
+		boolean first = true;
+		for (Expression ex : getExpressionFilteredByType(Expression.class)) {
+			try {
+				if (!first) {
+					builder.append(operators.get(index++).newInstance().getLiteral());
+					builder.append(WHITESPACE);
+				}
+				ex.asFlatString(builder);
+			} catch (Exception e) {
+				throw new TMQLRuntimeException(e);
+			}
+		}
 	}
 }

@@ -73,7 +73,7 @@ public class ReturnClause extends ExpressionImpl {
 		 * is NCL return-clause containing XML content
 		 */
 		else {
-			checkForExtensions(Content.class, tmqlTokens.subList(1, tmqlTokens.size()), tokens.subList(1, tokens.size()), runtime);
+			checkForExtensions(Content.class, tmqlTokens, tokens, runtime);
 		}
 	}
 
@@ -87,5 +87,14 @@ public class ReturnClause extends ExpressionImpl {
 		 * start-tag
 		 */
 		return getTmqlTokens().size() > 1 && (getTmqlTokens().get(0).equals(Return.class) || getTmqlTokens().get(0).equals(XmlStartTag.class));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		builder.append(Return.TOKEN);
+		builder.append(WHITESPACE);
 	}
 }

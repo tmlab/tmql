@@ -101,6 +101,7 @@ public class BooleanExpression extends ExpressionImpl {
 			 */
 			IParserUtilsCallback callback = new IParserUtilsCallback() {
 
+				@Override
 				public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
 					checkForExtensions(BooleanExpression.class, tmqlTokens, tokens, runtime);
 				}
@@ -127,6 +128,7 @@ public class BooleanExpression extends ExpressionImpl {
 			 */
 			IParserUtilsCallback callback = new IParserUtilsCallback() {
 
+				@Override
 				public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
 					checkForExtensions(BooleanExpression.class, tmqlTokens, tokens, runtime);
 				}
@@ -177,6 +179,7 @@ public class BooleanExpression extends ExpressionImpl {
 	 * {@inheritDoc}
 	 */
 
+	@Override
 	public boolean isValid() {
 		return true;
 	}
@@ -251,4 +254,41 @@ public class BooleanExpression extends ExpressionImpl {
 
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		if (getGrammarType() == TYPE_CLAMPED) {
+			builder.append(BracketRoundOpen.TOKEN);
+			builder.append(WHITESPACE);
+		} else if (getGrammarType() == TYPE_NOTEXPRESSION) {
+			builder.append(Not.TOKEN);
+			builder.append(WHITESPACE);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartAfter(StringBuilder builder) {
+		if (getGrammarType() == TYPE_CLAMPED) {
+			builder.append(BracketRoundClose.TOKEN);
+			builder.append(WHITESPACE);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getJoinToken() {
+		if (getGrammarType() == TYPE_CONJUNCTION) {
+			return And.TOKEN;
+		} else if (getGrammarType() == TYPE_DISJUNCTION) {
+			return Or.TOKEN;
+		}
+		return super.getJoinToken();
+	}
 }

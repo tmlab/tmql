@@ -71,4 +71,14 @@ public class FromClause extends ExpressionImpl {
 		 */
 		return getTokens().size() > 1 && getTmqlTokens().get(0).equals(From.class);
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		builder.append(From.TOKEN);
+		builder.append(WHITESPACE);
+
+	}
 }

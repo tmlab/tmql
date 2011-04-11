@@ -6,6 +6,8 @@ import java.util.Set;
 import de.topicmapslab.tmql4j.components.parser.IParserUtilsCallback;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.draft2010.components.parser.ParserUtils;
+import de.topicmapslab.tmql4j.draft2010.grammar.lexical.BracketRoundClose;
+import de.topicmapslab.tmql4j.draft2010.grammar.lexical.BracketRoundOpen;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Comma;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Function;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
@@ -14,7 +16,6 @@ import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.util.HashUtil;
-
 
 /**
  * Class representing the production 'function-call' of the new draft 2010
@@ -43,22 +44,17 @@ public class FunctionCall extends ExpressionImpl {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
-	public FunctionCall(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public FunctionCall(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
 		/*
 		 * call-back instance of parser utility
 		 */
 		IParserUtilsCallback callback = new IParserUtilsCallback() {
-			
-			public void newToken(List<Class<? extends IToken>> tmqlTokens,
-					List<String> tokens, Class<? extends IToken> foundDelimer)
-					throws TMQLGeneratorException, TMQLInvalidSyntaxException {
-				checkForExtensions(Expression.class, tmqlTokens, tokens,
-						runtime);
+
+			@Override
+			public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
+				checkForExtensions(Expression.class, tmqlTokens, tokens, runtime);
 			}
 		};
 
@@ -71,15 +67,40 @@ public class FunctionCall extends ExpressionImpl {
 		/*
 		 * split expression
 		 */
-		ParserUtils.split(callback, tmqlTokens
-				.subList(2, tmqlTokens.size() - 1), tokens.subList(2, tokens
-				.size() - 1), delimers, true);
+		ParserUtils.split(callback, tmqlTokens.subList(2, tmqlTokens.size() - 1), tokens.subList(2, tokens.size() - 1), delimers, true);
 	}
 
-	
+	@Override
 	public boolean isValid() {
-		return !getTmqlTokens().isEmpty()
-				&& getTmqlTokens().get(0).equals(Function.class);
+		return !getTmqlTokens().isEmpty() && getTmqlTokens().get(0).equals(Function.class);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		builder.append(getTokens().get(0));
+		builder.append(WHITESPACE);
+		builder.append(BracketRoundOpen.TOKEN);
+		builder.append(WHITESPACE);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartAfter(StringBuilder builder) {
+		builder.append(BracketRoundClose.TOKEN);
+		builder.append(WHITESPACE);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getJoinToken() {
+		return Comma.TOKEN;
 	}
 
 }

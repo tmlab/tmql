@@ -15,27 +15,29 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 /**
  * The conjunction token AND
+ * 
  * @author Sven Krosse
- *
+ * 
  */
 public class And extends Token {
 
 	/**
 	 * the token
 	 */
-	private static final String TOKEN = "AND";
+	public static final String TOKEN = "AND";
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean isToken(ITMQLRuntime runtime, String literal) {		
+	public boolean isToken(ITMQLRuntime runtime, String literal) {
 		return literal.equalsIgnoreCase(TOKEN);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getLiteral() {
 		return TOKEN;
 	}

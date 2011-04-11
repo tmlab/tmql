@@ -46,7 +46,7 @@ public class DeleteClause extends ExpressionImpl {
 	 * internal flag which is <code>true</code> if the keyword CASCADE is
 	 * contained
 	 */
-	private boolean cascade;
+	private final boolean cascade;
 
 	/**
 	 * base constructor to create a new instance.
@@ -102,6 +102,27 @@ public class DeleteClause extends ExpressionImpl {
 		 * check if keyword cascade is contained
 		 */
 		cascade = ParserUtils.containsTokens(tmqlTokens, Cascade.class);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		builder.append(Delete.TOKEN);
+		builder.append(WHITESPACE);
+		if ( getTmqlTokens().get(1).equals(Cascade.class)){
+			builder.append(Cascade.TOKEN);
+			builder.append(WHITESPACE);
+		}
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getJoinToken() {
+		return Comma.TOKEN;
 	}
 
 	/**

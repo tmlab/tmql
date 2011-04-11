@@ -72,4 +72,12 @@ public class InsertClause extends ExpressionImpl {
 		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		builder.append(Insert.TOKEN);
+		builder.append(WHITESPACE);
+	}
 }

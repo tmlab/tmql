@@ -109,4 +109,12 @@ public class Parameters extends ExpressionImpl {
 		return !getTmqlTokens().isEmpty();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getJoinToken() {
+		return Comma.TOKEN;
+	}
+
 }

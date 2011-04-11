@@ -38,30 +38,40 @@ public class BooleanFilter extends ExpressionImpl {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
-	public BooleanFilter(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public BooleanFilter(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
 		/*
 		 * add boolean expression without brackets
 		 */
-		checkForExtensions(BooleanExpression.class, tmqlTokens.subList(1,
-				tmqlTokens.size() - 1), tokens.subList(1, tokens.size() - 1),
-				runtime);
+		checkForExtensions(BooleanExpression.class, tmqlTokens.subList(1, tmqlTokens.size() - 1), tokens.subList(1, tokens.size() - 1), runtime);
 	}
 
-	
+	@Override
 	public boolean isValid() {
 		/*
 		 * the expression has to contain at least 3 tokens and has to be
 		 * encapsulated by square brackets
 		 */
-		return getTmqlTokens().size() > 2
-				&& getTmqlTokens().get(0).equals(BracketSquareOpen.class)
-				&& getTmqlTokens().get(getTmqlTokens().size() - 1).equals(
-						BracketSquareClose.class);
+		return getTmqlTokens().size() > 2 && getTmqlTokens().get(0).equals(BracketSquareOpen.class) && getTmqlTokens().get(getTmqlTokens().size() - 1).equals(BracketSquareClose.class);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		builder.append(BracketSquareOpen.TOKEN);
+		builder.append(WHITESPACE);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartAfter(StringBuilder builder) {
+		builder.append(BracketSquareClose.TOKEN);
+		builder.append(WHITESPACE);
 	}
 
 }

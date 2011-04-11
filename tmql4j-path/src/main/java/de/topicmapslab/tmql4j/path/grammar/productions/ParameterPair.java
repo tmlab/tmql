@@ -67,4 +67,15 @@ public class ParameterPair extends ExpressionImpl {
 	public boolean isValid() {
 		return !getTmqlTokens().isEmpty();
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		builder.append(getTokens().get(0));
+		builder.append(WHITESPACE);
+		builder.append(getTokens().get(1));
+		builder.append(WHITESPACE);
+	}
 }

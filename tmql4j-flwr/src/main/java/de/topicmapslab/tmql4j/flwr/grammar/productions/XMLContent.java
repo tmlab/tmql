@@ -91,6 +91,25 @@ public class XMLContent extends ExpressionImpl {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void asFlatString(StringBuilder builder) {
+
+		for (IExpression expression : getExpressions()) {
+			if (expression instanceof QueryExpression) {
+				builder.append(BracketAngleOpen.TOKEN);
+				builder.append(WHITESPACE);
+			}
+			expression.asFlatString(builder);
+			if (expression instanceof QueryExpression) {
+				builder.append(BracketAngleClose.TOKEN);
+				builder.append(WHITESPACE);
+			}
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public boolean isValid() {
 		return !getTmqlTokens().isEmpty();
 	}

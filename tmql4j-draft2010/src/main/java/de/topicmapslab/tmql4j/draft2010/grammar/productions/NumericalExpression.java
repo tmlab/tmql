@@ -15,6 +15,7 @@ import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Plus;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Star;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
+import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
@@ -128,13 +129,17 @@ public class NumericalExpression extends ExpressionImpl {
 	 * 
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isValid() {
 		return true;
 	}
 
 	/**
-	 * Extracts the indexes of the given operator classes for additive operations
-	 * @param tmqlTokens the operator classes
+	 * Extracts the indexes of the given operator classes for additive
+	 * operations
+	 * 
+	 * @param tmqlTokens
+	 *            the operator classes
 	 * @return a list of all indexes
 	 */
 	private List<Integer> indizesOfAdditiveOperations(List<Class<? extends IToken>> tmqlTokens) {
@@ -177,9 +182,13 @@ public class NumericalExpression extends ExpressionImpl {
 		}
 		return indizes;
 	}
+
 	/**
-	 * Extracts the indexes of the given operator classes for multiplicative operations
-	 * @param tmqlTokens the operator classes
+	 * Extracts the indexes of the given operator classes for multiplicative
+	 * operations
+	 * 
+	 * @param tmqlTokens
+	 *            the operator classes
 	 * @return a list of all indexes
 	 */
 	private List<Integer> indizesOfMultiplicativeOperations(List<Class<? extends IToken>> tmqlTokens) {
@@ -216,9 +225,38 @@ public class NumericalExpression extends ExpressionImpl {
 
 	/**
 	 * Returns all internal stored operators
+	 * 
 	 * @return the operators
 	 */
 	public List<Class<? extends IToken>> getOperators() {
 		return operators;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void asFlatString(StringBuilder builder) {
+		if (getGrammarType() == TYPE_UNARY) {
+			if (getTmqlTokens().get(0).equals(Minus.class)) {
+				builder.append(Minus.TOKEN);
+				builder.append(WHITESPACE);
+			}
+			getExpressions().get(0).asFlatString(builder);
+		} else {
+			int index = 0;
+			boolean first = true;
+			for (NumericalExpression n : getExpressionFilteredByType(NumericalExpression.class)) {
+				try {
+					if (!first) {
+						builder.append(operators.get(index++).newInstance().getLiteral());
+						builder.append(WHITESPACE);
+					}
+					n.asFlatString(builder);
+				} catch (Exception e) {
+					throw new TMQLRuntimeException(e);
+				}
+			}
+		}
 	}
 }

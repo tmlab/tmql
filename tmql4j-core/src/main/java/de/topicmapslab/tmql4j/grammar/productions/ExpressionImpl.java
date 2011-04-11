@@ -365,10 +365,18 @@ public abstract class ExpressionImpl implements IExpression {
 		 * join children
 		 */
 		else {
+			boolean first = true;
 			for (IExpression expression : getExpressions()) {
+				if (!first) {
+					String token = getJoinToken();
+					if (!EMPTY.equalsIgnoreCase(token)) {
+						builder.append(token);
+						builder.append(WHITESPACE);
+					}
+				}
+				first = false;
 				expression.asFlatString(builder);
-				builder.append(getJoinToken());
-				builder.append(WHITESPACE);
+
 			}
 		}
 		/*

@@ -63,7 +63,7 @@ public class OffsetClause extends ExpressionImpl {
 	public OffsetClause(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 		setGrammarType(0);
-		if ( tmqlTokens.contains(Wildcard.class)){
+		if (tmqlTokens.contains(Wildcard.class)) {
 			checkForExtensions(PreparedExpression.class, tmqlTokens.subList(1, 2), tokens.subList(1, 2), runtime);
 		}
 	}
@@ -77,7 +77,17 @@ public class OffsetClause extends ExpressionImpl {
 		 * expects exactly two tokens beginning with the keyword OFFSET and an
 		 * integer value
 		 */
-		return getTmqlTokens().size() == 2 && getTmqlTokens().get(0).equals(Offset.class) && ( getTmqlTokens().get(1).equals(Wildcard.class) || LiteralUtils.isInteger(getTokens().get(1)));
+		return getTmqlTokens().size() == 2 && getTmqlTokens().get(0).equals(Offset.class) && (getTmqlTokens().get(1).equals(Wildcard.class) || LiteralUtils.isInteger(getTokens().get(1)));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void asFlatString(StringBuilder builder) {
+		for (String token : getTokens()) {
+			builder.append(token);
+			builder.append(WHITESPACE);
+		}
+	}
 }

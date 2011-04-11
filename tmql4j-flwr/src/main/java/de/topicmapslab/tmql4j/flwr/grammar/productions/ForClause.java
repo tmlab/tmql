@@ -54,15 +54,11 @@ public class ForClause extends ExpressionImpl {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
-	public ForClause(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public ForClause(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
 		setGrammarType(0);
-		addExpression(new BindingSet(this, tmqlTokens.subList(1, tmqlTokens
-				.size()), tokens.subList(1, tokens.size()), runtime));
+		addExpression(new BindingSet(this, tmqlTokens.subList(1, tmqlTokens.size()), tokens.subList(1, tokens.size()), runtime));
 	}
 
 	/**
@@ -73,8 +69,16 @@ public class ForClause extends ExpressionImpl {
 		/*
 		 * expects at least 4 tokens beginning with the keyword FOR
 		 */
-		return getTmqlTokens().size() > 3
-				&& getTmqlTokens().get(0).equals(For.class);
+		return getTmqlTokens().size() > 3 && getTmqlTokens().get(0).equals(For.class);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		builder.append(For.TOKEN);
+		builder.append(WHITESPACE);
+	}
+
 }

@@ -103,5 +103,21 @@ public class ForAllClause extends ExpressionImpl {
 	public boolean isValid() {
 		return !getTmqlTokens().isEmpty();
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getJoinToken() {
+		return Satisfies.TOKEN;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		builder.append(Every.TOKEN);
+		builder.append(WHITESPACE);
+	}
 }

@@ -96,12 +96,4 @@ public class AliasValueExpression extends ExpressionImpl {
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String getJoinToken() {
-		return As.TOKEN;
-	}
-
 }

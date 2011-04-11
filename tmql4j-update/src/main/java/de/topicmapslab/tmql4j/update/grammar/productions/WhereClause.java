@@ -72,4 +72,13 @@ public class WhereClause extends ExpressionImpl {
 		return getTmqlTokens().size() > 1 && getTmqlTokens().get(0).equals(Where.class);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		builder.append(Where.TOKEN);
+		builder.append(WHITESPACE);
+	}
+
 }

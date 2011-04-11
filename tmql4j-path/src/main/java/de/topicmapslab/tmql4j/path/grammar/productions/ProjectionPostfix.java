@@ -70,7 +70,25 @@ public class ProjectionPostfix extends ExpressionImpl {
 	 */
 	@Override
 	public boolean isValid() {
-		return getTmqlTokens().size() >= 2 && getTmqlTokens().get(0).equals(BracketRoundOpen.class) && getTmqlTokens().get(getTmqlTokens().size()-1).equals(BracketRoundClose.class);
+		return getTmqlTokens().size() >= 2 && getTmqlTokens().get(0).equals(BracketRoundOpen.class) && getTmqlTokens().get(getTmqlTokens().size() - 1).equals(BracketRoundClose.class);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		builder.append(BracketRoundOpen.TOKEN);
+		builder.append(WHITESPACE);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartAfter(StringBuilder builder) {
+		builder.append(BracketRoundClose.TOKEN);
+		builder.append(WHITESPACE);
 	}
 
 }

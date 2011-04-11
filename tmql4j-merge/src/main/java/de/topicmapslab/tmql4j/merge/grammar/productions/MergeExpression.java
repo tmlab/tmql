@@ -77,10 +77,7 @@ public class MergeExpression extends ExpressionImpl {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
-	public MergeExpression(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public MergeExpression(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
 		final boolean constainsWhere = getTmqlTokens().contains(Where.class);
@@ -88,9 +85,7 @@ public class MergeExpression extends ExpressionImpl {
 		IParserUtilsCallback callback = new IParserUtilsCallback() {
 
 			@Override
-			public void newToken(List<Class<? extends IToken>> tmqlTokens,
-					List<String> tokens, Class<? extends IToken> foundDelimer)
-					throws TMQLGeneratorException, TMQLInvalidSyntaxException {
+			public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
 				/*
 				 * is WHERE-clause
 				 */
@@ -104,13 +99,9 @@ public class MergeExpression extends ExpressionImpl {
 					List<String> tokens_ = new LinkedList<String>();
 					tokens_.add(new Where().getLiteral());
 					tokens_.addAll(tokens);
-					checkForExtensions(WhereClause.class, tmqlTokens_, tokens_,
-							runtime);
-				} else if (foundDelimer == null
-						|| foundDelimer.equals(Where.class)
-						|| foundDelimer.equals(Comma.class)) {
-					checkForExtensions(ValueExpression.class, tmqlTokens,
-							tokens, runtime);
+					checkForExtensions(WhereClause.class, tmqlTokens_, tokens_, runtime);
+				} else if (foundDelimer == null || foundDelimer.equals(Where.class) || foundDelimer.equals(Comma.class)) {
+					checkForExtensions(ValueExpression.class, tmqlTokens, tokens, runtime);
 					setGrammarType(TYPE_VALUEEXPRESSION);
 				}
 			}
@@ -129,6 +120,32 @@ public class MergeExpression extends ExpressionImpl {
 			 * set grammar type
 			 */
 			setGrammarType(TYPE_ALL);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void asFlatString(StringBuilder builder) {
+		builder.append(Merge.TOKEN);
+		builder.append(WHITESPACE);
+		if (getGrammarType() == TYPE_ALL) {
+			builder.append(All.TOKEN);
+			builder.append(WHITESPACE);
+		}
+		boolean first = true;
+		for (ValueExpression expression : getExpressionFilteredByType(ValueExpression.class)) {
+			if (!first) {
+				builder.append(Comma.TOKEN);
+				builder.append(WHITESPACE);
+			}
+			expression.asFlatString(builder);
+			first = false;
+		}
+		for (WhereClause expression : getExpressionFilteredByType(WhereClause.class)) {			
+			expression.asFlatString(builder);
+			builder.append(WHITESPACE);
 		}
 	}
 

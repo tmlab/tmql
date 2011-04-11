@@ -15,6 +15,9 @@ import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundClose;
+import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundOpen;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Comma;
 
 /**
  * Predicate invocation extension especially for update-clauses
@@ -49,6 +52,7 @@ public class PredicateInvocation extends de.topicmapslab.tmql4j.path.grammar.pro
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void checkForExtensions(Class<? extends IExpression> clazz, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
 			TMQLGeneratorException {
 		if (clazz.equals(de.topicmapslab.tmql4j.path.grammar.productions.PredicateInvocationRolePlayerExpression.class)) {
@@ -56,6 +60,28 @@ public class PredicateInvocation extends de.topicmapslab.tmql4j.path.grammar.pro
 		} else {
 			super.checkForExtensions(clazz, tmqlTokens, tokens, runtime);
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void asFlatString(StringBuilder builder) {
+		builder.append(getTokens().get(0));
+		builder.append(WHITESPACE);
+		builder.append(BracketRoundOpen.TOKEN);
+		builder.append(WHITESPACE);
+		boolean first = true;
+		for (PredicateInvocationRolePlayerExpression expression : getExpressionFilteredByType(PredicateInvocationRolePlayerExpression.class)) {
+			if (!first) {
+				builder.append(Comma.TOKEN);
+				builder.append(WHITESPACE);
+			}
+			expression.asFlatString(builder);
+			first = false;
+		}
+		builder.append(BracketRoundClose.TOKEN);
+		builder.append(WHITESPACE);
 	}
 
 }

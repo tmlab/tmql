@@ -81,6 +81,7 @@ public class TopicDefinition extends ExpressionImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isValid() {
 		if (getTokens().size() == 1) {
 			return getTmqlTokens().get(0).equals(Literal.class) || getTmqlTokens().get(0).equals(Wildcard.class);
@@ -103,6 +104,17 @@ public class TopicDefinition extends ExpressionImpl {
 	 */
 	public Class<? extends IToken> getIdentifierType() {
 		return identifierType;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void asFlatString(StringBuilder builder) {
+		for (String token : getTokens()) {
+			builder.append(token);
+			builder.append(WHITESPACE);
+		}
 	}
 
 }

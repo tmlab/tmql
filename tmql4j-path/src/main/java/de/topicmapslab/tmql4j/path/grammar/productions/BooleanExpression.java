@@ -109,7 +109,7 @@ public class BooleanExpression extends ExpressionImpl {
 		/*
 		 * is cramped boolean primitive
 		 */
-		if (isParenthetic(tmqlTokens)) {
+		else if (isParenthetic(tmqlTokens)) {
 			checkForExtensions(BooleanPrimitive.class, tmqlTokens, tokens, runtime);
 			setGrammarType(TYPE_BOOLEAN_PRIMITIVE);
 		}

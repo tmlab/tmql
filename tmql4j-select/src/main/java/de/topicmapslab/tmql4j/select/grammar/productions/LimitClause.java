@@ -58,13 +58,10 @@ public class LimitClause extends ExpressionImpl {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
-	public LimitClause(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public LimitClause(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 		setGrammarType(0);
-		if ( tmqlTokens.contains(Wildcard.class)){
+		if (tmqlTokens.contains(Wildcard.class)) {
 			checkForExtensions(PreparedExpression.class, tmqlTokens.subList(1, 2), tokens.subList(1, 2), runtime);
 		}
 	}
@@ -78,9 +75,18 @@ public class LimitClause extends ExpressionImpl {
 		 * expects exactly two tokens beginning with the keyword LIMIT and an
 		 * integer value
 		 */
-		return getTmqlTokens().size() == 2
-				&& getTmqlTokens().get(0).equals(Limit.class)
-				&& ( getTmqlTokens().get(1).equals(Wildcard.class) || LiteralUtils.isInteger(getTokens().get(1)));
+		return getTmqlTokens().size() == 2 && getTmqlTokens().get(0).equals(Limit.class) && (getTmqlTokens().get(1).equals(Wildcard.class) || LiteralUtils.isInteger(getTokens().get(1)));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void asFlatString(StringBuilder builder) {
+		for (String token : getTokens()) {
+			builder.append(token);
+			builder.append(WHITESPACE);
+		}
 	}
 
 }

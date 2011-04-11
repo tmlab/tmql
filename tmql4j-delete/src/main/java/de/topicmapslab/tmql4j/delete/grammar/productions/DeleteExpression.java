@@ -128,5 +128,5 @@ public class DeleteExpression extends ExpressionImpl {
 		}
 		return  getTmqlTokens().get(1).equals(Cascade.class) || getTmqlTokens().get(1).equals(Function.class) || getTmqlTokens().get(1).equals(Element.class) || getTmqlTokens().get(1).equals(Wildcard.class)  || ParserUtils.containsTokens(getTmqlTokens(), Where.class);
 	}
-
+	
 }

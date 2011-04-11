@@ -19,12 +19,16 @@ import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.grammar.lexical.And;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisScope;
+import de.topicmapslab.tmql4j.path.grammar.lexical.AxisTypes;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketSquareClose;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketSquareOpen;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Dot;
 import de.topicmapslab.tmql4j.path.grammar.lexical.DoubleDot;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Equality;
 import de.topicmapslab.tmql4j.path.grammar.lexical.LowerEquals;
 import de.topicmapslab.tmql4j.path.grammar.lexical.LowerThan;
+import de.topicmapslab.tmql4j.path.grammar.lexical.MoveForward;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Scope;
 import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisInstances;
 import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisTypes;
@@ -59,10 +63,20 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.ShortcutAxisTypes;
 public class FilterPostfix extends ExpressionImpl {
 
 	/**
+	 * 
+	 */
+	private static final String INDEX_VAR = "$#";
+
+	/**
+	 * 
+	 */
+	private static final String BOUNDS_JOIN = "<= $# AND $# <";
+
+	/**
 	 * variable represents the current position during the iteration over a
 	 * tuple sequence
 	 */
-	public static final String CURRENT_POISTION = "$#";
+	public static final String CURRENT_POISTION = INDEX_VAR;
 
 	/**
 	 * grammar type of filter-postfix containing a boolean-expresseion
@@ -199,4 +213,58 @@ public class FilterPostfix extends ExpressionImpl {
 	public boolean isValid() {
 		return !getTmqlTokens().isEmpty();
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartAfter(StringBuilder builder) {
+		builder.append(BracketSquareClose.TOKEN);
+		builder.append(WHITESPACE);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getJoinToken() {
+		if (getGrammarType() == TYPE_BOUNDS_FILTER || getGrammarType() == TYPE_SHORTCUT_BOUNDS_FILTER) {
+			return BOUNDS_JOIN;
+		}
+		return super.getJoinToken();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		builder.append(BracketSquareOpen.TOKEN);
+		builder.append(WHITESPACE);
+		if (getGrammarType() == TYPE_TYPE_FILTER || getGrammarType() == TYPE_SHORTCUT_TYPE_FILTER) {
+			builder.append(Dot.TOKEN);
+			builder.append(WHITESPACE);
+			builder.append(MoveForward.TOKEN);
+			builder.append(WHITESPACE);
+			builder.append(AxisTypes.TOKEN);
+			builder.append(WHITESPACE);
+			builder.append(Equality.TOKEN);
+			builder.append(WHITESPACE);
+		} else if (getGrammarType() == TYPE_SCOPE_FILTER || getGrammarType() == TYPE_SHORTCUT_SCOPE_FILTER) {
+			builder.append(Dot.TOKEN);
+			builder.append(WHITESPACE);
+			builder.append(MoveForward.TOKEN);
+			builder.append(WHITESPACE);
+			builder.append(AxisScope.TOKEN);
+			builder.append(WHITESPACE);
+			builder.append(Equality.TOKEN);
+			builder.append(WHITESPACE);
+		} else if (getGrammarType() == TYPE_INDEX_FILTER || getGrammarType() == TYPE_SHORTCUT_INDEX_FILTER) {
+			builder.append(INDEX_VAR);
+			builder.append(WHITESPACE);
+			builder.append(Equality.TOKEN);
+			builder.append(WHITESPACE);
+		}
+	}
+
 }

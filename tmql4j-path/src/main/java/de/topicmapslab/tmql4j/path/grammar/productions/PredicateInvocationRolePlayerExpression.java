@@ -125,4 +125,11 @@ public class PredicateInvocationRolePlayerExpression extends ExpressionImpl {
 		return !getTmqlTokens().isEmpty();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getJoinToken() {
+		return Colon.TOKEN;
+	}
 }

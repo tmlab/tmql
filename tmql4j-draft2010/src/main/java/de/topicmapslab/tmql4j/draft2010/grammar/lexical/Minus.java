@@ -14,19 +14,21 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 /**
  * The token of the subtraction operator -
+ * 
  * @author Sven Krosse
- *
+ * 
  */
 public class Minus extends Token {
 
 	/**
 	 * the token
 	 */
-	private static final String TOKEN = "-";
+	public static final String TOKEN = "-";
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getLiteral() {
 		return TOKEN;
 	}

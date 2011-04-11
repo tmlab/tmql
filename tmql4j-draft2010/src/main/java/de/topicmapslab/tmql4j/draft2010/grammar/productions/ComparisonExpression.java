@@ -17,6 +17,7 @@ import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Or;
 import de.topicmapslab.tmql4j.draft2010.grammar.lexical.Unequals;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
+import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
 import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
@@ -55,9 +56,7 @@ public class ComparisonExpression extends ExpressionImpl {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
-	public ComparisonExpression(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
+	public ComparisonExpression(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
 			TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
@@ -66,11 +65,9 @@ public class ComparisonExpression extends ExpressionImpl {
 		 */
 		IParserUtilsCallback callback = new IParserUtilsCallback() {
 
-			public void newToken(List<Class<? extends IToken>> tmqlTokens,
-					List<String> tokens, Class<? extends IToken> foundDelimer)
-					throws TMQLGeneratorException, TMQLInvalidSyntaxException {
-				checkForExtensions(Expression.class, tmqlTokens, tokens,
-						runtime);
+			@Override
+			public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
+				checkForExtensions(Expression.class, tmqlTokens, tokens, runtime);
 				if (foundDelimer != null) {
 					operator = foundDelimer;
 				}
@@ -100,14 +97,11 @@ public class ComparisonExpression extends ExpressionImpl {
 		 * should not be empty
 		 */
 		if (getExpressions().isEmpty()) {
-			throw new TMQLInvalidSyntaxException(
-					tmqlTokens,
-					tokens,
-					ComparisonExpression.class,
-					"Operator ( '=' | '!=' | '<' | '>' | '<=' | '>=' ) was expected , but nothing was found.");
+			throw new TMQLInvalidSyntaxException(tmqlTokens, tokens, ComparisonExpression.class, "Operator ( '=' | '!=' | '<' | '>' | '<=' | '>=' ) was expected , but nothing was found.");
 		}
 	}
 
+	@Override
 	public boolean isValid() {
 		return true;
 	}
@@ -119,5 +113,17 @@ public class ComparisonExpression extends ExpressionImpl {
 	 */
 	public Class<? extends IToken> getOperator() {
 		return operator;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getJoinToken() {
+		try {
+			return getOperator().newInstance().getLiteral();
+		} catch (Exception e) {
+			throw new TMQLRuntimeException(e);
+		}
 	}
 }

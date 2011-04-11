@@ -22,6 +22,7 @@ import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketAngleClose;
 import de.topicmapslab.tmql4j.path.grammar.lexical.BracketAngleOpen;
+import de.topicmapslab.tmql4j.path.grammar.lexical.TripleQuote;
 import de.topicmapslab.tmql4j.path.grammar.productions.QueryExpression;
 
 /**
@@ -58,10 +59,7 @@ public class TMContent extends ExpressionImpl {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
-	public TMContent(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public TMContent(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
 		/*
@@ -70,23 +68,18 @@ public class TMContent extends ExpressionImpl {
 		IParserUtilsCallback callback = new IParserUtilsCallback() {
 
 			@Override
-			public void newToken(List<Class<? extends IToken>> tmqlTokens,
-					List<String> tokens, Class<? extends IToken> foundDelimer)
-					throws TMQLGeneratorException, TMQLInvalidSyntaxException {
+			public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
 				/*
 				 * is embed query content
 				 */
 				if (BracketAngleClose.class.equals(foundDelimer)) {
-					checkForExtensions(QueryExpression.class, tmqlTokens,
-							tokens, runtime);
+					checkForExtensions(QueryExpression.class, tmqlTokens, tokens, runtime);
 				}
 				/*
 				 * is other content
 				 */
-				else if (foundDelimer == null
-						|| BracketAngleOpen.class.equals(foundDelimer)) {
-					checkForExtensions(NonInterpretedContent.class, tmqlTokens,
-							tokens, runtime);
+				else if (foundDelimer == null || BracketAngleOpen.class.equals(foundDelimer)) {
+					checkForExtensions(NonInterpretedContent.class, tmqlTokens, tokens, runtime);
 				}
 			}
 		};
@@ -94,8 +87,7 @@ public class TMContent extends ExpressionImpl {
 		/*
 		 * extract embed queries but remove first and last triple-quote token
 		 */
-		ParserUtils.getEmbedQueries(callback, tmqlTokens.subList(1, tmqlTokens
-				.size() - 1), tokens.subList(1, tokens.size() - 1));
+		ParserUtils.getEmbedQueries(callback, tmqlTokens.subList(1, tmqlTokens.size() - 1), tokens.subList(1, tokens.size() - 1));
 	}
 
 	/**
@@ -104,6 +96,28 @@ public class TMContent extends ExpressionImpl {
 	@Override
 	public boolean isValid() {
 		return !getTmqlTokens().isEmpty();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void asFlatString(StringBuilder builder) {
+		builder.append(TripleQuote.TOKEN);
+		builder.append(WHITESPACE);
+		for (IExpression expression : getExpressions()) {
+			if (expression instanceof QueryExpression) {
+				builder.append(BracketAngleOpen.TOKEN);
+				builder.append(WHITESPACE);
+			}
+			expression.asFlatString(builder);
+			if (expression instanceof QueryExpression) {
+				builder.append(BracketAngleClose.TOKEN);
+				builder.append(WHITESPACE);
+			}
+		}
+		builder.append(TripleQuote.TOKEN);
+		builder.append(WHITESPACE);
 	}
 
 }

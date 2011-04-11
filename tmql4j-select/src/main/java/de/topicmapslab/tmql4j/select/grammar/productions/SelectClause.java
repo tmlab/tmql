@@ -60,10 +60,7 @@ public class SelectClause extends ExpressionImpl {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
-	public SelectClause(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public SelectClause(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
 		/*
@@ -71,11 +68,8 @@ public class SelectClause extends ExpressionImpl {
 		 */
 		IParserUtilsCallback callback = new IParserUtilsCallback() {
 			@Override
-			public void newToken(List<Class<? extends IToken>> tmqlTokens,
-					List<String> tokens, Class<? extends IToken> foundDelimer)
-					throws TMQLGeneratorException, TMQLInvalidSyntaxException {
-				checkForExtensions(AliasValueExpression.class, tmqlTokens, tokens,
-						runtime);
+			public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
+				checkForExtensions(AliasValueExpression.class, tmqlTokens, tokens, runtime);
 			}
 		};
 
@@ -100,7 +94,23 @@ public class SelectClause extends ExpressionImpl {
 		/*
 		 * expects at least two tokens starting with the keyword SELECT
 		 */
-		return getTmqlTokens().size() > 1
-				&& getTmqlTokens().get(0).equals(Select.class);
+		return getTmqlTokens().size() > 1 && getTmqlTokens().get(0).equals(Select.class);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		builder.append(Select.TOKEN);
+		builder.append(WHITESPACE);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getJoinToken() {
+		return Comma.TOKEN;
 	}
 }

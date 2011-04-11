@@ -23,6 +23,8 @@ import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.path.components.parser.ParserUtils;
+import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundClose;
+import de.topicmapslab.tmql4j.path.grammar.lexical.BracketRoundOpen;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Comma;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
@@ -60,30 +62,23 @@ public class PredicateInvocation extends ExpressionImpl {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
-	public PredicateInvocation(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public PredicateInvocation(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
-		
+
 		/*
 		 * check if type is a wildcard
 		 */
-		if ( getTmqlTokens().get(0).equals(Wildcard.class)){
+		if (getTmqlTokens().get(0).equals(Wildcard.class)) {
 			checkForExtensions(PreparedExpression.class, tmqlTokens.subList(0, 1), tokens.subList(0, 1), runtime);
-		}		
+		}
 
 		/*
 		 * call-back instance of parser utility
 		 */
 		IParserUtilsCallback callback = new IParserUtilsCallback() {
 			@Override
-			public void newToken(List<Class<? extends IToken>> tmqlTokens,
-					List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException,
-					TMQLInvalidSyntaxException {
-				checkForExtensions(
-						PredicateInvocationRolePlayerExpression.class,
-						tmqlTokens, tokens, runtime);
+			public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
+				checkForExtensions(PredicateInvocationRolePlayerExpression.class, tmqlTokens, tokens, runtime);
 			}
 		};
 
@@ -95,9 +90,7 @@ public class PredicateInvocation extends ExpressionImpl {
 		/*
 		 * split expression
 		 */
-		ParserUtils.split(callback, tmqlTokens
-				.subList(2, tmqlTokens.size() - 1), tokens.subList(2, tokens
-				.size() - 1), delimers, true);
+		ParserUtils.split(callback, tmqlTokens.subList(2, tmqlTokens.size() - 1), tokens.subList(2, tokens.size() - 1), delimers, true);
 
 		setGrammarType(0);
 	}
@@ -108,5 +101,27 @@ public class PredicateInvocation extends ExpressionImpl {
 	@Override
 	public boolean isValid() {
 		return !getTmqlTokens().isEmpty();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void asFlatString(StringBuilder builder) {
+		builder.append(getTokens().get(0));
+		builder.append(WHITESPACE);
+		builder.append(BracketRoundOpen.TOKEN);
+		builder.append(WHITESPACE);
+		boolean first = true;
+		for (PredicateInvocationRolePlayerExpression expression : getExpressionFilteredByType(PredicateInvocationRolePlayerExpression.class)) {
+			if (!first) {
+				builder.append(Comma.TOKEN);
+				builder.append(WHITESPACE);
+			}
+			expression.asFlatString(builder);
+			first = false;
+		}
+		builder.append(BracketRoundClose.TOKEN);
+		builder.append(WHITESPACE);
 	}
 }
