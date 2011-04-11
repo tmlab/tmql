@@ -14,11 +14,14 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 public class Exists extends Token {
 
+	public static final String TOKEN = "EXISTS";
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getLiteral() {
-		return "EXISTS";
+		return TOKEN;
 	}
 
 }

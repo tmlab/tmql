@@ -14,11 +14,14 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 public class BracketAngleOpen extends Token {
 
+	public static final String TOKEN = "{";
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getLiteral() {
-		return "{";
+		return TOKEN;
 	}
 
 }

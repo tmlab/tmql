@@ -14,11 +14,14 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 public class If extends Token {
 
+	public static final String TOKEN = "IF";
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getLiteral() {
-		return "IF";
+		return TOKEN;
 	}
 
 }

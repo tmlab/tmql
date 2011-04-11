@@ -98,10 +98,7 @@ public class BooleanPrimitive extends ExpressionImpl {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
-	public BooleanPrimitive(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public BooleanPrimitive(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
 		/*
@@ -109,9 +106,7 @@ public class BooleanPrimitive extends ExpressionImpl {
 		 */
 		if (tmqlTokens.get(0).equals(Not.class)) {
 			setGrammarType(TYPE_NOT_EXPRESSION);
-			checkForExtensions(BooleanPrimitive.class, tmqlTokens.subList(1,
-					tmqlTokens.size()), tokens.subList(1, tokens.size()),
-					runtime);
+			checkForExtensions(BooleanPrimitive.class, tmqlTokens.subList(1, tmqlTokens.size()), tokens.subList(1, tokens.size()), runtime);
 		}
 		/*
 		 * is forall-clause
@@ -123,22 +118,16 @@ public class BooleanPrimitive extends ExpressionImpl {
 		/*
 		 * is exists-clause
 		 */
-		else if (tmqlTokens.get(0).equals(Exists.class)
-				|| tmqlTokens.get(0).equals(Some.class)
-				|| tmqlTokens.get(0).equals(At.class)) {
+		else if (tmqlTokens.get(0).equals(Exists.class) || tmqlTokens.get(0).equals(Some.class) || tmqlTokens.get(0).equals(At.class)) {
 			setGrammarType(TYPE_EXISTS_CLAUSE);
 			checkForExtensions(ExistsClause.class, tmqlTokens, tokens, runtime);
 		}
 		/*
 		 * is ( boolean-expression )
 		 */
-		else if (tmqlTokens.get(0).equals(BracketRoundOpen.class)
-				&& tmqlTokens.get(tmqlTokens.size() - 1).equals(
-						BracketRoundClose.class)) {
+		else if (tmqlTokens.get(0).equals(BracketRoundOpen.class) && tmqlTokens.get(tmqlTokens.size() - 1).equals(BracketRoundClose.class)) {
 			setGrammarType(TYPE_BOOLEAN_EXPRESSION);
-			checkForExtensions(BooleanExpression.class, tmqlTokens.subList(1,
-					tmqlTokens.size() - 1), tokens.subList(1,
-					tmqlTokens.size() - 1), runtime);
+			checkForExtensions(BooleanExpression.class, tmqlTokens.subList(1, tmqlTokens.size() - 1), tokens.subList(1, tmqlTokens.size() - 1), runtime);
 		}
 		/*
 		 * is @ anchor
@@ -165,4 +154,37 @@ public class BooleanPrimitive extends ExpressionImpl {
 		return !getTmqlTokens().isEmpty();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartAfter(StringBuilder builder) {
+		if (getGrammarType() == TYPE_BOOLEAN_EXPRESSION) {
+			builder.append(BracketRoundClose.TOKEN);
+			builder.append(WHITESPACE);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void asFlatString(StringBuilder builder) {
+		// TODO Auto-generated method stub
+		super.asFlatString(builder);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		if (getGrammarType() == TYPE_NOT_EXPRESSION) {
+			builder.append(Not.TOKEN);
+			builder.append(WHITESPACE);
+		} else if (getGrammarType() == TYPE_BOOLEAN_EXPRESSION) {
+			builder.append(BracketRoundOpen.TOKEN);
+			builder.append(WHITESPACE);
+		}
+	}
 }

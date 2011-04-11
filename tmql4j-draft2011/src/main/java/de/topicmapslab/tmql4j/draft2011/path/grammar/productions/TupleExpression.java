@@ -109,4 +109,12 @@ public class TupleExpression extends ExpressionImpl {
 		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getJoinToken() {
+		return Comma.TOKEN;
+	}
+
 }

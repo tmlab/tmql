@@ -292,4 +292,37 @@ public class ValueExpression extends ExpressionImpl {
 	public boolean isAscOrDescOrdering() {
 		return ascOrDescOrdering;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		if (getGrammarType() == TYPE_PREFIX_OPERATOR) {
+			builder.append(getTokens().get(0));
+			builder.append(WHITESPACE);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getJoinToken() {
+		if (getGrammarType() == TYPE_INFIX_OPERATOR) {
+			return getTokens().get(getIndexOfOperator());
+		}
+		return super.getJoinToken();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartAfter(StringBuilder builder) {
+		if (isAscOrDescOrdering()) {
+			builder.append(getTokens().get(getTokens().size() - 1));
+			builder.append(WHITESPACE);
+		}
+	}
 }

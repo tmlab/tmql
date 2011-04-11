@@ -194,4 +194,35 @@ public class ExistsClause extends ExpressionImpl {
 	public Class<? extends IToken> getQuantifier() {
 		return quantifier;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void asFlatString(StringBuilder builder) {
+		if (getGrammarType() == TYPE_CANONICAL_EXPRESSION) {
+			int i = 0;
+			for (IExpression ex : getExpressions()) {
+				ex.asFlatString(builder);
+				if (i == 1) {
+					builder.append(Satisfies.TOKEN);
+					builder.append(WHITESPACE);
+				}
+				i++;
+			}
+		} else {
+			super.asFlatString(builder);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		if (getGrammarType() == TYPE_NON_CANONICAL_EXPRESSION) {
+			builder.append(Exists.TOKEN);
+			builder.append(WHITESPACE);
+		}
+	}
 }

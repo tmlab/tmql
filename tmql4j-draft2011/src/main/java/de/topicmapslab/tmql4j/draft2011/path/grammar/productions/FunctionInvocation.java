@@ -15,6 +15,7 @@ import java.util.List;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketRoundClose;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketRoundOpen;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Comma;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Function;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
@@ -82,7 +83,36 @@ public class FunctionInvocation extends ExpressionImpl {
 		/*
 		 * expects at lest one token beginning with a function identifier
 		 */
-		return getTmqlTokens().size() >= 3 && getTmqlTokens().get(1).equals(BracketRoundOpen.class) && getTmqlTokens().get(getTmqlTokens().size()-1).equals(BracketRoundClose.class) && getTmqlTokens().get(0).equals(Function.class) && getRuntime().getLanguageContext().getFunctionRegistry().isKnownFunction(getTokens().get(0));
+		return getTmqlTokens().size() >= 3 && getTmqlTokens().get(1).equals(BracketRoundOpen.class) && getTmqlTokens().get(getTmqlTokens().size() - 1).equals(BracketRoundClose.class)
+				&& getTmqlTokens().get(0).equals(Function.class) && getRuntime().getLanguageContext().getFunctionRegistry().isKnownFunction(getTokens().get(0));
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartBefore(StringBuilder builder) {
+		builder.append(getTokens().get(0));
+		builder.append(WHITESPACE);
+		builder.append(BracketRoundOpen.TOKEN);
+		builder.append(WHITESPACE);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getJoinToken() {
+		return Comma.TOKEN;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void addFlatPartAfter(StringBuilder builder) {
+		builder.append(BracketRoundClose.TOKEN);
+		builder.append(WHITESPACE);
 	}
 
 }

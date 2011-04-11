@@ -14,11 +14,14 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 public class Satisfies extends Token {
 
+	public static final String TOKEN = "SATISFIES";
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getLiteral() {
-		return "SATISFIES";
+		return TOKEN;
 	}
 
 }

@@ -14,11 +14,14 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 public class AxisScope extends Token {
 
+	public static final String TOKEN = "scope";
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getLiteral() {
-		return "scope";
+		return TOKEN;
 	}
 
 }

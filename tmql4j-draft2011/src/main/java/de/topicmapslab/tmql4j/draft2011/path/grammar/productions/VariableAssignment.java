@@ -107,4 +107,11 @@ public class VariableAssignment extends ExpressionImpl {
 
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getJoinToken() {
+		return In.TOKEN;
+	}
 }

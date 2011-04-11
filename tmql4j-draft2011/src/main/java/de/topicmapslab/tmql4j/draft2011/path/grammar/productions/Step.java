@@ -91,4 +91,14 @@ public class Step extends ExpressionImpl {
 		return true;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void asFlatString(StringBuilder builder) {
+		for (String token : getTokens()) {
+			builder.append(token);
+			builder.append(WHITESPACE);
+		}
+	}
 }

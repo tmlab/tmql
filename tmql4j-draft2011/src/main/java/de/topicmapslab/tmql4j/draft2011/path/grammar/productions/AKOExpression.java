@@ -59,10 +59,7 @@ public class AKOExpression extends ExpressionImpl {
 	 * @throws TMQLGeneratorException
 	 *             thrown if the sub-tree can not be generated
 	 */
-	public AKOExpression(IExpression parent,
-			List<Class<? extends IToken>> tmqlTokens, List<String> tokens,
-			final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException,
-			TMQLGeneratorException {
+	public AKOExpression(IExpression parent, List<Class<? extends IToken>> tmqlTokens, List<String> tokens, final ITMQLRuntime runtime) throws TMQLInvalidSyntaxException, TMQLGeneratorException {
 		super(parent, tmqlTokens, tokens, runtime);
 
 		setGrammarType(0);
@@ -72,11 +69,8 @@ public class AKOExpression extends ExpressionImpl {
 		 */
 		IParserUtilsCallback callback = new IParserUtilsCallback() {
 			@Override
-			public void newToken(List<Class<? extends IToken>> tmqlTokens,
-					List<String> tokens, Class<? extends IToken> foundDelimer)
-					throws TMQLGeneratorException, TMQLInvalidSyntaxException {
-				checkForExtensions(SimpleContent.class, tmqlTokens, tokens,
-						runtime);
+			public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
+				checkForExtensions(SimpleContent.class, tmqlTokens, tokens, runtime);
 			}
 		};
 
@@ -95,9 +89,18 @@ public class AKOExpression extends ExpressionImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public boolean isValid() {
 		return ParserUtils.containsTokens(getTmqlTokens(), Ako.class);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getJoinToken() {
+		return Ako.TOKEN;
 	}
 
 }

@@ -227,4 +227,53 @@ public class Content extends ExpressionImpl {
 	public int getIndexOfOperator() {
 		return indexOfOperator;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void asFlatString(StringBuilder builder) {
+		if (getGrammarType() == TYPE_CONDITIONAL_EXPRESSION) {
+			builder.append(If.TOKEN);
+			builder.append(WHITESPACE);
+			getExpressions().get(0).asFlatString(builder);
+			builder.append(WHITESPACE);
+			builder.append(Then.TOKEN);
+			builder.append(WHITESPACE);
+			getExpressions().get(1).asFlatString(builder);
+			builder.append(WHITESPACE);
+			if (getExpressions().size() == 3) {
+				builder.append(Else.TOKEN);
+				builder.append(WHITESPACE);
+				getExpressions().get(2).asFlatString(builder);
+				builder.append(WHITESPACE);
+			}
+		} else if (getGrammarType() == TYPE_NONCANONICAL_CONDITIONAL_EXPRESSION) {
+			builder.append(If.TOKEN);
+			builder.append(WHITESPACE);
+			getExpressions().get(0).asFlatString(builder);
+			builder.append(WHITESPACE);
+			builder.append(Then.TOKEN);
+			builder.append(WHITESPACE);
+			getExpressions().get(0).asFlatString(builder);
+			builder.append(WHITESPACE);
+			builder.append(Else.TOKEN);
+			builder.append(WHITESPACE);
+			getExpressions().get(1).asFlatString(builder);
+			builder.append(WHITESPACE);
+		} else {
+			super.asFlatString(builder);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getJoinToken() {
+		if (getGrammarType() == TYPE_SET_OPERATION) {
+			return getTokens().get(getIndexOfOperator());
+		}
+		return super.getJoinToken();
+	}
 }

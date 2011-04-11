@@ -14,11 +14,14 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 public class Else extends Token {
 
+	public static final String TOKEN = "ELSE";
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getLiteral() {
-		return "ELSE";
+		return TOKEN;
 	}
 
 }

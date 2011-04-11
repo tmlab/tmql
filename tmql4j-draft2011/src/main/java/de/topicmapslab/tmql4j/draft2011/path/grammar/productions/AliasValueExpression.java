@@ -91,6 +91,7 @@ public class AliasValueExpression extends ExpressionImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isValid() {
 		return true;
 	}

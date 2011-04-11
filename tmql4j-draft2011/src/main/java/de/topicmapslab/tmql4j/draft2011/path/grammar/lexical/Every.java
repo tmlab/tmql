@@ -14,11 +14,14 @@ import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 public class Every extends Token {
 
+	public static final String TOKEN = "EVERY";
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getLiteral() {
-		return "EVERY";
+		return TOKEN;
 	}
 
 }

@@ -20,7 +20,7 @@ import de.topicmapslab.tmql4j.query.IQuery;
  * 
  * @since 3.1.0
  */
-public class PreparedStatement2007 extends PreparedStatement {
+public class PreparedStatement2011 extends PreparedStatement {
 
 	/**
 	 * constructor
@@ -32,7 +32,7 @@ public class PreparedStatement2007 extends PreparedStatement {
 	 * @param tree
 	 *            the tree
 	 */
-	public PreparedStatement2007(ITMQLRuntime runtime, IQuery query, IParserTree tree) {
+	public PreparedStatement2011(ITMQLRuntime runtime, IQuery query, IParserTree tree) {
 		super(runtime, query, tree);
 	}
 

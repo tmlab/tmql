@@ -514,7 +514,7 @@ public class NonCanonicalUtils {
 		tmqlTokens_.add(MoveBackward.class);
 		tmqlTokens_.add(AxisTypes.class);
 		tokens_.add(tokens.get(1));
-		tokens_.add(new MoveForward().getLiteral());
+		tokens_.add(new MoveBackward().getLiteral());
 		tokens_.add(new AxisTypes().getLiteral());
 
 		/*
