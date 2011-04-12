@@ -1,0 +1,163 @@
+=== Section: Merge expressions ===
+
+A merge expression can be used to define merge rules which can be used to identify topic items which should be merged. The merge expression isn't currently a part of the TMQL draft and is an extension designed by the topic maps lab with request to get a part of the final standard of TMQL. 
+
+A merge expression contains two different production rules. 
+
+The first possibility is to use a simple path-expression to define the topics to merge. If the path-expression contains a tuple-expression all tuples of this sequence will be merged. If the path-expression will be represented by a simple-content production, the whole result set will be merged.
+
+The second possibility is to use a comma-separated list of value-expressions simply contains variables which will be bind by the contained where-clause. Each tuple sequence created by the set of value-expression will be merged to one topic.
+
+==== Tutorial: Merge two specific topics ====
+
+===== Use Case =====
+
+In this case we try to learn how to use a simple tuple-expression to merge two specific topics. We want to merge the topics with the identifiers 'http://psi.ontopedia.net/Puccini' and 'http://psi.ontopedia.net/Puccini_2'.
+
+===== Solution =====
+
+As we can see we will use a tuple-expression to merge the both topics to one new topic according to the merging rules of the topic maps data model. A tuple-expression is a comma-separated list of value-expression encapsulted by round brackets. A value-expression can represent a topic item by using a simple topic reference.
+
+A tuple-expression return a tuple sequence containing two topic items looks like the following one.
+
+-------------------------------------
+1:	( http://psi.ontopedia.net/Puccini , http://psi.ontopedia.net/Puccini_2 )
+-------------------------------------
+
+Or we use simple a prefix
+
+-------------------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	( psi:Puccini , psi:Puccini_2 )
+-------------------------------------
+
+To merge the topics we simply has to add the keyword 'MERGE' in front of our tuple-expression.
+
+-------------------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	MERGE psi:Puccini , psi:Puccini_2
+-------------------------------------
+
+===== Summary =====
+
+The merge-expression starts with the keyword 'MERGE' followed by a simple path-expression or a set of value-expressions in combination with a where-clause. If the path-expression contains a tuple-expression all elements of each tuple of the generated sequence will be merged to one item.
+
+==== Tutorial: Merge expressions using navigation ====
+
+===== Use Case =====
+
+Now we want to merge all instances of person with the email address 'tmql4j@topicmapslab.de'.
+
+===== Solution =====
+
+In this case we cannot use a tuple-expression because we cannot address the tuples to merge directly. We can use a where-clause or simply a path-expression containing a navigation.
+
+At first we try to create a path-expression returning all instances of person, which looks like:
+
+------------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	psi:person >> instances
+------------------------------
+
+The requirement is to extract only persons with the specific email address. We expect that the email is modelled as an occurrence of the type email. To realize our requirement we use a simple filter expression to reduce the set of persons.
+
+------------------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	psi:person >> instances [ . >> characteristics psi:email >> atomify == "tmql4j@topicmapslab.de" ]
+------------------------------------
+
+====================================
+In this example we use a filter expression encapsulated by the square brackets to extract all persons satisfying the given condition. The dot represent one instance of person. Using the 'characteristics' and 'atomify' axes we extract the literal value of the occurrences of the type 'psi:email'. By using the equality operator '==', we check if the literal is equal to the given string literal.
+====================================
+
+We simply can use the shortcut for atomification of characteristics to reduce the query.
+
+------------------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	psi:person >> instances [ . / psi:email == "tmql4j@topicmapslab.de" ]
+------------------------------------
+
+To merge the topics we simply has to add the keyword 'MERGE' in front of our path-expression.
+
+------------------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	MERGE psi:person >> instances [ . / psi:email == "tmql4j@topicmapslab.de" ]
+------------------------------------
+
+===== Summary =====
+
+By using a navigation in combination with filter-expressions the merge-expression can be used to merge topics statisfying a defined condition.
+
+==== Tutorial: Complex merge ====
+
+===== Use Case =====
+
+The last tutorial try to merge persons born in the same city.
+
+===== Solution =====
+
+Because of the dependency of the variables we cannot use a path-expression, so we have to use a where-clause to define our merging-rule. The where-clause bind a set of variables, which should be merged. By using a set of value-expressions the user defines which variable should be merged. By using the keyword 'ALL' each variable binding merged to one topic.
+
+At first we define out variables bind to two persons and one city. We called them '$person' , '$person''  and '$city'. The post-fixed prime symbolize the query engine, that the variables cannot be bind to the same value. The next will be the definition of the type-instance-relationship of each of this variables. We will use the isa-expression to bind one variable to a set of instances. By using conjunctions we can define the variable binding of each variable.
+
+------------------------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	$person ISA psi:person
+3:	AND
+4:	$person' ISA psi:person
+5:	AND
+6:	$city ISA psi:city
+------------------------------------------
+
+The next step will be the definition of the born-in association played by the city instance and one of this persons. To realize that we use a predicate-invocation.
+
+------------------------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	psi:born-in ( psi:person : $person , psi:city : $city )
+3:	AND
+4:	psi:born-in ( psi:person : $person' , psi:city : $city )
+------------------------------------------
+
+Now we combine both sub-queries.
+
+------------------------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	$person ISA psi:person
+3:	AND
+4:	$person' ISA psi:person
+5:	AND
+6:	$city ISA psi:city
+7:	AND
+8:	psi:born-in ( psi:person : $person , psi:city : $city )
+9:	AND
+10:	psi:born-in ( psi:person : $person' , psi:city : $city )
+------------------------------------------
+
+===========================================
+The overall result of this query will be a set of tuples containing one city and two persons which were born in this city.
+===========================================
+
+The last step will be to define a list of value-expression to define the items to merge.
+
+------------------------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	MERGE $person , $person'
+3:		WHERE
+4:			$person ISA psi:person
+5:		AND
+6:			$person' ISA psi:person
+7:		AND
+8:			$city ISA psi:city
+9:		AND
+10:			psi:born-in ( psi:person : $person , psi:city : $city )
+11:		AND
+12:			psi:born-in ( psi:person : $person' , psi:city : $city )
+------------------------------------------
+
+=========================================
+In line 2 we add the merge-expression using the keyword 'MERGE'. The merge-expression contains a comma-separated list of value-expression defining the set of values to merge. In our case we use the variable '$person' and '$person'' which should be merged.
+=========================================
+
+===== Summary =====
+
+A merge-expression can contain a complex where-clause defining a merge-rule by using variables and boolean-conditions. In addition to the where-clause the merge-expression contains a comma-separated list of value-expressions used to define a subset of variables to merge to one topic. If the user want to merge all item bound by a variable the keyword 'ALL' can be used as replacement for the comma-separated list of value-expressions.

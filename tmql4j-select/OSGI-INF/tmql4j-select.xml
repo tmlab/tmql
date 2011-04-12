@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="tmql4j-select">
+   <implementation class="de.topicmapslab.tmql4j.select.extension.Draft2007SelectStlye"/>
+   <service>
+      <provide interface="de.topicmapslab.tmql4j.extension.IExtensionPoint"/>
+   </service>
+</scr:component>

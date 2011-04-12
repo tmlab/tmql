@@ -1,0 +1,41 @@
+=== Tutorial: Getting all instances of a topic type ===
+
+===== Use Case =====
+
+At this step we want to extract all instance of the topic type Composer.
+
+===== Solution =====
+
+The topic type representing a composer has to identify by a item reference too. In addition to that we has to use the 'types' axis in backward direction to get all instances of the given type.
+
+---------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Composer << types
+---------------------------
+
+===========================
+The topic type will be addressed by the identifier 'psi:Composer'. By using the 'types' axis in backward direction, we will extract all instances of the given type. The axis will interpret transitive.
+===========================
+
+In addition to the 'types' axis the non-canonical level contains an 'instances' axis which can be used reverse to the 'types' axis.
+
+---------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Composer >> instances
+---------------------------
+
+===========================
+The result will be the same like the last query.
+===========================
+
+If the usage of the 'types' or 'instances' axis represent the start node of the whole navigation there is another shortcut similar to XPath.
+
+---------------------------
+1:	%prefix psi http://psi.ontopedia.net/ // psi:Composer 
+---------------------------
+
+===========================
+The result will be the same like the last query. Please note that the shortcut '//' is only allowed at the beginning of a navigation.
+===========================
+
+===== Summary =====
+
+The tutorial shows how to extract all instances of a given topic type using three different patterns or solutions. We can use the navigation axis 'types' in backward direction and the 'instances' axis in forward direction. In addition to that we can use the shortcut '//' at the beginning of a query.

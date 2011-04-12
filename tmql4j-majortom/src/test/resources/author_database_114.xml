@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jli-mapping xmlns="http://www.topicmapslab.de/mapping"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://www.topicmapslab.de/mapping http://docs.topicmapslab.de/jli/1.1.4/jli-jdbc-mapping.xsd">
+
+	<connection-settings>
+        <type>MYSQL</type>
+		<url>nemo.tm.informatik.uni-leipzig.de:3306</url>
+		<name>jli_authors</name>
+		<user>jli</user>
+		<password>Hk0Ls_Rl</password>
+		<catalog>public</catalog>
+	</connection-settings>
+
+	<mapping>
+			
+		<topic table="author" keyColumn="author_id">
+			<type>http://example/jli/author</type>
+			<type>http://example/jli/writer</type>
+			<identifier type="II" column="author_id"/>
+			<identifier type="SI" base="" column="wiki_link"/>
+			<name type="http://example/jli/name" column="name"/>
+			<name type="http://example/jli/surname" column="surname"/>
+			<name type="http://example/jli/fullname">
+				<statement>CONCAT(name," ", surname)</statement>
+				<scope>
+					<theme>http://example/jli/generated_value</theme>
+					<theme>http://example/jli/query_selected</theme>
+				</scope>
+			</name>
+			<occurrence type="http://example/jli/date-of-birth" datatype="xsd:date" column="date_of_birth"/>
+			<occurrence type="http://example/jli/date-of-death" datatype="xsd:date" column="date_of_death"/>
+			<occurrence type="http://example/jli/age" datatype="xsd:integer">
+				<statement>ROUND(datediff(date_of_death, date_of_birth)/365.25)</statement>
+				<scope>
+					<theme>http://example/jli/generated_value</theme>
+					<theme>http://example/jli/query_selected</theme>
+				</scope>
+			</occurrence>
+			<occurrence type="http://example/jli/wiki" datatype="xsd:string" column="wiki_link">
+				<scope>
+					<theme>http://example/jli/theme1</theme>
+					<theme>http://example/jli/theme2</theme>
+				</scope>
+			</occurrence>
+		</topic>
+		
+		<topic table="book" keyColumn="book_id">
+			<type>http://example/jli/book</type>
+			<identifier type="SI" base="http://en.wikipedia.org/wiki/ISBN/" column="isbn13"/>
+			<identifier type="II" column="book_id"/>
+			<name type="http://example/jli/book-title" column="title"/>
+		</topic>
+		
+		<topic table="publisher" keyColumn="publisher_id">
+			<type>http://example/jli/publisher</type>
+			<identifier type="SI" column="publisher_id"/>
+			<name column="name">
+				<scope>
+					<theme>http://example/jli/theme1</theme>
+					<theme>http://example/jli/theme2</theme>
+				</scope>
+			</name>
+		</topic>
+		
+		<association type="http://example/jli/published" table="wrote">
+			<role type="http://example/jli/was_published_by" column="book_id" playerTable="book" playerColumn="book_id"/>
+			<role type="http://example/jli/is_publisher" column="publisher_id" playerTable="publisher" playerColumn="publisher_id"/>
+			
+			<reifier>
+				<type>http://example/jli/release_year_reifier</type>
+				<occurrence type="http://example/jli/release_year" column="release_year"/>
+				<occurrence type="http://example/jli/edition" column="edition"/>
+			</reifier>
+			<scope>
+				<theme>http://example/jli/theme1</theme>
+				<theme>http://example/jli/theme2</theme>
+			</scope>
+		</association>
+		
+		<association type="http://example/jli/written_by" table="wrote">
+			<role type="http://example/jli/wrote" column="author_id" playerTable="author" playerColumn="author_id"/>
+			<role type="http://example/jli/was_written_by" column="book_id" playerTable="book" playerColumn="book_id"/>
+			<scope>
+				<theme>http://example/jli/theme2</theme>
+				<theme>http://example/jli/theme3</theme>
+			</scope>
+		</association>
+		
+	</mapping>
+	
+</jli-mapping>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="tmql2007-queryprocessor">
+   <implementation class="de.topicmapslab.tmql4j.path.query.TMQLQueryProcessor"/>
+   <service>
+      <provide interface="de.topicmapslab.tmql4j.query.IQueryProcessor"/>
+   </service>
+</scr:component>

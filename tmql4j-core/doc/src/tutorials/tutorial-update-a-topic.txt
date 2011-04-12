@@ -1,0 +1,135 @@
+=== Section: Update expression ===
+
+An update expression can be used to modify or add content to the queried topic map. The update expression isn't currently a part of the TMQL draft and is an extension designed by the topic maps lab with request to get a part of the final standard of TMQL. 
+
+==== Tutorial: Add a new content to a topic item ====
+
+===== Use Case =====
+
+In this case we want to add a new name to the topic item representing the composer puccini.
+
+===== Solution =====
+
+To realize the use case we need to learn something about the update-expressions at first. An update-expression contains a where-clause defining the context of changes. The where-clause contains a simple path-expression to define the items which should be updated. The context of updates is used for all changes defined by the update-clauses and is dependent from the preferred changes.
+
+An update-clause similar represented by a triple or a 4-tuple looks like the following one.
+
+-----------------------------
+1:	anchor { optional-type } ( SET | ADD ) value-expression
+-----------------------------
+
+The 'anchor' defines the kind of changes and has to be an identifier similar to the navigation axis to identify the node or edge of the abstract graph which has to be changed. 
+
+Because we want to add a new name item, the anchor has to be 'names' representing all changes of name items and we have to use the keyword 'ADD' symbolize the creation of a new name item. The optional type can be left out because our name has no specific type and the default name should be used.
+
+-----------------------------
+1:	names ADD "the new name"
+-----------------------------
+
+The current context has to be a topic item representing the composer puccini. To get the topic we simply use the subject-identifier of this topic.
+
+-----------------------------
+1: http://psi.ontopida.net/Puccini
+-----------------------------
+
+Or we use a prefix definition
+
+-----------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini
+-----------------------------
+
+As final step we have to combine all query snippets to the final update-expression.
+
+---------------------------
+1:	%prefix psi http://psi.ontopedia.net/
+2:	UPDATE names ADD "the new name"
+3:		WHERE psi:Puccini
+---------------------------
+
+==========================
+In line 1 we add an environment-clause containing our prefix definition. Please note that an environment-clause has to add at the beginning of the query any time. In line 3 we use the where-clause to define the update context and set them to the topic item represented by the subject-identifier 'psi:Puccini'. In line 2 we add our update-clause starting with the keyword 'UPDATE'. The update-expression only contains one update-clause adding a new name with the literal "the new name" to the topic puccini. 
+==========================
+
+===== Summary =====
+
+The tutorial explain how to use a update-clause to add a new name to a specific topic item. An update-expression contains at least one update-clause and a where-clause, but the number of update-clauses can be increased if it is necessary. The type of the update context depends on the used anchor. For more information take a look at the previous chapter describing the language specification.
+
+==== Tutorial: Change a topic map construct ====
+
+===== Use Case =====
+
+Now we want to change the value of a occurrence of the same topic item. The occurrence has to be of a web site and has to be scoped by the theme Web. The new value has to 'http://en.wikipedia.org/wiki/Puccini' with the correct data type.
+
+===== Solution =====
+
+In relation to the last tutorial we need another anchor and another keyword. Currently we want to change the value of an occurrence item of a topic, because of that we have to use the anchor 'occurrences' and the keyword 'SET'. 
+
+-----------------------
+1:	occurrences SET "http://en.wikipedia.org/wiki/Puccini"
+-----------------------
+
+In our case the literal represent a string value and the data type of the occurrence will be changed to 'xsd:string' automatically if this query will be execute, but our occurrence should represent an IRI. To realize that the data type has to be changed to 'xsd:anyIRI'. To use a specific data type the TMQL draft supports data-typed literals looks like '"literal"^^data-type'. So we can change our query to the following one.
+
+-----------------------
+1:	occurrences SET "http://en.wikipedia.org/wiki/Puccini"^^xsd:anyIRI
+-----------------------
+
+Because of the fact that the changes will effected the occurrence item itself, the current context has to be the occurrence item. To define the context we will use a simple path expression using a scope and type filter to satisfy the requirements of the use case.
+
+------------------------------
+1:	%prefix psi http://psi.ontopedia.net/ psi:Puccini >> characteristics psi:website @ psi:Web
+------------------------------
+
+===============================
+At first we define the prefix 'psi' representing the absolute IRI 'http://psi.ontopedia.net/'. The rest of the query represent the path expression to get all occurrence of the type web site at the scope Web. Our navigation start at the topic item 'psi:Puccini' navigates to the occurrences of the type 'psi:website' using the 'characteristics' axis. The scope filter symbolized by the token '@' is used to reduce the navigation results to all scoped occurrences.
+===============================
+
+After the combination our final query looks like the following one.
+
+---------------------------------
+1:	%prefix psi http://psi.ontopedia.net/ 
+2:	UPDATE occurrences SET "http://en.wikipedia.org/wiki/Puccini"^^xsd:anyIRI
+3:		WHERE psi:Puccini >> characteristics psi:website @ psi:Web
+---------------------------------
+
+===== Summary =====
+
+This tutorial explain how to change values of specific topic map constructs at the example of an occurrence item. In addition it also describe how to specify the data-type of a literal used as new value of an occurrence item.
+
+==== Tutorial: Combine update-clauses ====
+
+===== Use Case =====
+
+As I told you before, the update-clause can contain more than one update-clause. Now we combine the last tutorial and adding a new theme 'updated' at the same time.
+
+===== Solution =====
+
+At first we look at our last query.
+
+---------------------------------
+1:	%prefix psi http://psi.ontopedia.net/ 
+2:	UPDATE occurrences SET "http://en.wikipedia.org/wiki/Puccini"^^xsd:anyIRI
+3:		WHERE psi:Puccini >> characteristics psi:website @ psi:Web
+---------------------------------
+
+The next step will be the definition of the new update-clause for add a new theme to the occurrence item. Because of the fact we want to change the scope of the occurrence item, the anchor has to be 'scope' and the keyword 'ADD' because we add a new theme. The theme will be represented as topic reference similar to the topic puccini.
+
+--------------------------------
+1:	scope ADD psi:updated
+--------------------------------
+
+================================
+Please note that the topic item 'psi:updated' has to exists.
+================================
+
+In combination our final query looks like this.
+
+---------------------------------
+1:	%prefix psi http://psi.ontopedia.net/ 
+2:	UPDATE occurrences SET "http://en.wikipedia.org/wiki/Puccini"^^xsd:anyIRI , scope ADD psi:updated
+3:		WHERE psi:Puccini >> characteristics psi:website @ psi:Web
+---------------------------------
+
+=================================
+As we see in line 2 both update-clauses simply combined by using a comma.
+=================================

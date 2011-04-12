@@ -1,0 +1,27 @@
+=== Tutorial: Using Prefixes ===
+
+===== Use Case =====
+
+In addition to repeating IRI parts, we want to use prefixes instead of absolute IRIs. We also want to extract the topic item representing the composer Puccini.
+
+===== Solution =====
+
+Each TMQL query can start with an environment clause containing prefix definitions and ontology definitions. A prefix definition can be used to define a QName for a absolute IRI used as prefix in the query itself.
+
+------------------------------
+1:	%prefix psi http:/psi.ontopedia.net/ psi:Puccini
+------------------------------
+
+==============================
+The keyword '%prefix' symbolize a prefix definition as a part of the query. Each prefix definition contains three tokens - the keyword 'prefix', the QName identifier ( 'psi' ) and the absolute IRI 'http://psi.ontopedia.net' ). The remaining part of the query extract the topic item representing Puccini using an item reference as relative IRI using the defined prefix. Like the IRI specification the QName and the remaining IRI part are divided by a colon.
+==============================
+
+In relation to the last tutorial it is not possible to use QNames as parts of string literals. Following query will return an empty result.
+
+------------------------------
+1:	%prefix psi http:/psi.ontopedia.net/ "psi:Puccini" << indicators
+------------------------------
+
+===== Summary =====
+
+The short tutorial show how to use prefixes as a part of the query. Each prefix definition contains three tokens - the keyword 'prefix', the QName identifier ( 'psi' ) and the absolute IRI 'http://psi.ontopedia.net' ).
