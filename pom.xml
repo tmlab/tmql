@@ -91,5 +91,6 @@
 		<module>tmql4j-majortom</module>
 		<module>tmql4j-template</module>
 		<module>tmql4j-draft2007-pack</module>
+		<module>tmql4j-tolog</module>
 	</modules>
 </project>
