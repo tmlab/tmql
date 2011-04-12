@@ -11,6 +11,7 @@ package de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.tran
 import java.util.Map;
 
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.AKOExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.AliasValueExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.Anchor;
@@ -25,6 +26,8 @@ import de.topicmapslab.tmql4j.path.grammar.productions.Navigation;
 import de.topicmapslab.tmql4j.path.grammar.productions.PathExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.Postfix;
 import de.topicmapslab.tmql4j.path.grammar.productions.PostfixedExpression;
+import de.topicmapslab.tmql4j.path.grammar.productions.PredicateInvocation;
+import de.topicmapslab.tmql4j.path.grammar.productions.PredicateInvocationRolePlayerExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.ProjectionPostfix;
 import de.topicmapslab.tmql4j.path.grammar.productions.QueryExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.SimpleContent;
@@ -46,6 +49,9 @@ import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.trans
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.PathExpressionTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.PostfixTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.PostfixedExpressionTranslator;
+import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.PredicateInvocationRolePlayerExpressionTranslator;
+import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.PredicateInvocationTranslator;
+import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.PreparedExpressionTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.ProjectionPostfixTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.QueryExpressionTranslator;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.impl.SimpleContentTranslator;
@@ -76,6 +82,9 @@ public class TranslatorRegistry {
 		translators.put(ISAExpression.class, new ISAExpressionTranslator());
 		translators.put(Navigation.class, new NavigationTranslator());
 		translators.put(PathExpression.class, new PathExpressionTranslator());
+		translators.put(PredicateInvocation.class, new PredicateInvocationTranslator());
+		translators.put(PredicateInvocationRolePlayerExpression.class, new PredicateInvocationRolePlayerExpressionTranslator());
+		translators.put(PreparedExpression.class, new PreparedExpressionTranslator());
 		translators.put(PostfixedExpression.class, new PostfixedExpressionTranslator());
 		translators.put(Postfix.class, new PostfixTranslator());
 		translators.put(ProjectionPostfix.class, new ProjectionPostfixTranslator());

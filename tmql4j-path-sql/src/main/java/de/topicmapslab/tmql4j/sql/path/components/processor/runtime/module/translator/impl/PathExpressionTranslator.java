@@ -16,6 +16,7 @@ import de.topicmapslab.tmql4j.path.grammar.productions.AKOExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.ISAExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.PathExpression;
 import de.topicmapslab.tmql4j.path.grammar.productions.PostfixedExpression;
+import de.topicmapslab.tmql4j.path.grammar.productions.PredicateInvocation;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.TmqlSqlTranslatorImpl;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.TranslatorRegistry;
@@ -37,6 +38,8 @@ public class PathExpressionTranslator extends TmqlSqlTranslatorImpl<PathExpressi
 			return TranslatorRegistry.getTranslator(AKOExpression.class).toSql(runtime, context, expression.getExpressions().get(0), definition);
 		} else if (expression.getGrammarType() == PathExpression.TYPE_ISA_EXPRESSION) {
 			return TranslatorRegistry.getTranslator(ISAExpression.class).toSql(runtime, context, expression.getExpressions().get(0), definition);
+		} else if (expression.getGrammarType() == PathExpression.TYPE_PREDICATE_INVOCATION) {
+			return TranslatorRegistry.getTranslator(PredicateInvocation.class).toSql(runtime, context, expression.getExpressions().get(0), definition);
 		}
 		throw new TMQLRuntimeException("Unsupported expression type for SQL translator.");
 	}

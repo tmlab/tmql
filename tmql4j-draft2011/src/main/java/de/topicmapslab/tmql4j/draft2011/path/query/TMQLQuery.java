@@ -28,10 +28,10 @@ import de.topicmapslab.tmql4j.query.QueryImpl;
 public class TMQLQuery extends QueryImpl {
 
 	/**
-	 * a static array of full qualified names of all expression which occurs a modification of the topic map
+	 * a static array of full qualified names of all expression which occurs a
+	 * modification of the topic map
 	 */
-	public static final String[] modificationExpressions = { "de.topicmapslab.tmql4j.delete.grammar.productions.DeleteExpression", "de.topicmapslab.tmql4j.merge.grammar.productions.MergeExpression",
-			"de.topicmapslab.tmql4j.insert.grammar.productions.InsertExpression", "de.topicmapslab.tmql4j.update.grammar.productions.UpdateExpression" };
+	public static final String[] modificationExpressions = {};
 
 	/**
 	 * Constructor to create a new instance of a TMQL query.
@@ -57,6 +57,7 @@ public class TMQLQuery extends QueryImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void beforeQuery(ITMQLRuntime runtime) {
 		/*
 		 * screen the given query string to remove comments
@@ -76,13 +77,15 @@ public class TMQLQuery extends QueryImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void afterQuery(ITMQLRuntime runtime) {
 		// NOTHING TO DO
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected String[] getModificationExpressionTypeNames() {
 		return modificationExpressions;
 	}

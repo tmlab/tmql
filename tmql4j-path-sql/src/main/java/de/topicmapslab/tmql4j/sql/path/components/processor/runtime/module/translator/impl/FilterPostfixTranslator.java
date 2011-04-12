@@ -267,12 +267,13 @@ public class FilterPostfixTranslator extends TmqlSqlTranslatorImpl<FilterPostfix
 		/*
 		 * filter definition
 		 */
-		ISqlDefinition innerDefinition = definition.clone();
-		innerDefinition.clearFromParts();
+		ISqlDefinition innerDefinition = new SqlDefinition();
+		innerDefinition.setInternalAliasIndex(definition.getInternalAliasIndex());
 		/*
 		 * get current selection
 		 */
 		ISelection selection = definition.getLastSelection();
+		innerDefinition.addSelection(selection);
 		/*
 		 * call boolean-expression translator
 		 */
@@ -281,14 +282,14 @@ public class FilterPostfixTranslator extends TmqlSqlTranslatorImpl<FilterPostfix
 		InCriterion in;
 		if (newDefinition.getLastSelection().getCurrentTable() == SqlTables.BOOLEAN) {
 			in = new InCriterion(Boolean.toString(true), newDefinition);
-		} else if (newDefinition.getLastSelection().getCurrentTable() == SqlTables.STRING) {
+		} else if (newDefinition.getLastSelection().getCurrentTable() == selection.getCurrentTable()) {
+			in = new InCriterion(selection.getSelection(), newDefinition);
+		} else {
 			ISqlDefinition cnt = new SqlDefinition();
 			cnt.addFromPart(newDefinition.toString(), definition.getAlias(), false);
 			cnt.addSelection(new CountSelection(new Selection(ISqlConstants.ANY, null), null));
 			in = new InCriterion(Integer.toString(0), cnt);
 			in.negate(true);
-		} else {
-			in = new InCriterion(selection.getSelection(), newDefinition);
 		}
 		/*
 		 * update SQL definition

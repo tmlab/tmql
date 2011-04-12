@@ -12,6 +12,7 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
+import de.topicmapslab.tmql4j.grammar.productions.PreparedExpression;
 import de.topicmapslab.tmql4j.path.components.interpreter.AnchorInterpreter;
 import de.topicmapslab.tmql4j.path.grammar.productions.Anchor;
 import de.topicmapslab.tmql4j.path.grammar.productions.SimpleContent;
@@ -24,6 +25,7 @@ import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISelection;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.ISqlDefinition;
 import de.topicmapslab.tmql4j.sql.path.components.definition.model.SqlTables;
 import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.TmqlSqlTranslatorImpl;
+import de.topicmapslab.tmql4j.sql.path.components.processor.runtime.module.translator.TranslatorRegistry;
 import de.topicmapslab.tmql4j.sql.path.utils.ConditionalUtils;
 import de.topicmapslab.tmql4j.sql.path.utils.ISchema;
 import de.topicmapslab.tmql4j.sql.path.utils.ISqlConstants;
@@ -68,29 +70,6 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 					InCriterion in = new InCriterion(ISchema.Constructs.ID, part.getAlias(), innerDefinition);
 					newDefinition.add(in);
 					table = SqlTables.TOPIC;
-					// /*
-					// * add additional tables
-					// */
-					// IFromPart fromPartLocs = new
-					// FromPart(ISchema.Locators.TABLE,
-					// newDefinition.getAlias(), true);
-					// newDefinition.addFromPart(fromPartLocs);
-					// IFromPart fromPartRel = new
-					// FromPart(ISchema.RelSubjectIdentifiers.TABLE,
-					// newDefinition.getAlias(), true);
-					// newDefinition.addFromPart(fromPartRel);
-					// /*
-					// * add additional condition
-					// */
-					//
-					// newDefinition.add(MessageFormat.format(CONDITION_LOCATOR_REL,
-					// fromPartLocs.getAlias(), fromPartRel.getAlias()));
-					// newDefinition.add(MessageFormat.format(CONDITION_REL_TOPIC,
-					// fromPartRel.getAlias(), part.getAlias()));
-					// newDefinition.add(MessageFormat.format(CONDITION_REFERENCE,
-					// fromPartLocs.getAlias(),
-					// runtime.getConstructResolver().toAbsoluteIRI(context,
-					// token)));
 				}
 				ISelection sel = new Selection(ISchema.Constructs.ID, part.getAlias());
 				newDefinition.addSelection(sel);
@@ -140,6 +119,9 @@ public class AnchorTranslator extends TmqlSqlTranslatorImpl<SimpleContent> {
 					sel.setCurrentTable(SqlTables.STRING);
 					return def;
 				}
+			}
+			case Anchor.TYPE_PREPARED: {
+				return TranslatorRegistry.getTranslator(PreparedExpression.class).toSql(runtime, context, expression.getExpressions().get(0), definition);
 			}
 		}
 		throw new TMQLRuntimeException("Unsupported expression type for SQL translator.");

@@ -17,10 +17,7 @@ import de.topicmapslab.tmql4j.util.HashUtil;
 
 public class TestPredicateInvocation extends Tmql4JTestCase {
 
-	
-
-	@Test	
-	@Ignore
+	@Test
 	public void testPredicateStrictAsPathPart() throws Exception {
 		Topic type = createTopicBySI("myType");
 		Topic topic = createTopicBySI("myTopic");
@@ -56,7 +53,6 @@ public class TestPredicateInvocation extends Tmql4JTestCase {
 	}
 
 	@Test
-	@Ignore
 	public void testPredicateNonStrictAsPathPart() throws Exception {
 		Topic type = createTopicBySI("myType");
 		Topic topic = createTopicBySI("myTopic");
@@ -90,10 +86,10 @@ public class TestPredicateInvocation extends Tmql4JTestCase {
 			assertTrue(result.contains(topics[i]));
 		}
 	}
-	
+
 	@Test
 	@Ignore
-	public void testAkoPredicateInvocation(){		
+	public void testAkoPredicateInvocation() {
 		Topic supertype = createTopicBySI("mySupertype");
 		Set<Topic> topics = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
@@ -107,16 +103,16 @@ public class TestPredicateInvocation extends Tmql4JTestCase {
 		query = "// tm:subject [ tm:subclass-of ( tm:subclass : . , tm:superclass : mySupertype ) ]";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
-		
-		for ( IResult r : set){
+
+		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertTrue(r.first() instanceof Topic);
-			assertTrue(topics.contains(r.first() ));			
+			assertTrue(topics.contains(r.first()));
 		}
 	}
-	
+
 	@Test
-	public void testAkoPredicateInvocationNCL(){		
+	public void testAkoPredicateInvocationNCL() {
 		Topic supertype = createTopicBySI("mySupertype");
 		Set<Topic> topics = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
@@ -130,17 +126,17 @@ public class TestPredicateInvocation extends Tmql4JTestCase {
 		query = "// tm:subject [ . AKO mySupertype ]";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
-		
-		for ( IResult r : set){
+
+		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertTrue(r.first() instanceof Topic);
-			assertTrue(topics.contains(r.first() ));			
+			assertTrue(topics.contains(r.first()));
 		}
 	}
-	
+
 	@Test
 	@Ignore
-	public void testIsaPredicateInvocation(){		
+	public void testIsaPredicateInvocation() {
 		Topic type = createTopicBySI("myType");
 		Set<Topic> topics = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
@@ -154,16 +150,16 @@ public class TestPredicateInvocation extends Tmql4JTestCase {
 		query = "// tm:subject [ tm:type-instance ( tm:instance : . , tm:type : myType ) ]";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
-		
-		for ( IResult r : set){
+
+		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertTrue(r.first() instanceof Topic);
-			assertTrue(topics.contains(r.first() ));			
+			assertTrue(topics.contains(r.first()));
 		}
 	}
-	
+
 	@Test
-	public void testIsaPredicateInvocationNCL(){		
+	public void testIsaPredicateInvocationNCL() {
 		Topic type = createTopicBySI("myType");
 		Set<Topic> topics = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
@@ -177,11 +173,11 @@ public class TestPredicateInvocation extends Tmql4JTestCase {
 		query = "// tm:subject [ . ISA myType ]";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
-		
-		for ( IResult r : set){
+
+		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertTrue(r.first() instanceof Topic);
-			assertTrue(topics.contains(r.first() ));			
+			assertTrue(topics.contains(r.first()));
 		}
 	}
 

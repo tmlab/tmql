@@ -48,8 +48,7 @@ public class AKOExpressionTranslator extends TmqlSqlTranslatorImpl<AKOExpression
 		 */
 		ISqlDefinition supertype = translator.toSql(runtime, context, expression.getExpressions().get(1), new SqlDefinition());
 		/*
-		 * get from content as UNION for all supertypes ( by association and
-		 * relation )
+		 * get from content as UNION for all supertypes ( by association and relation )
 		 */
 		String union = TranslatorUtils.generateSupertypeSubtypeSet(runtime, context);
 		/*
