@@ -11,7 +11,7 @@
   <version>${project.parent.version}</version>
   <properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<server.url>http://localhost:8080</server.url>
+		<server.url>http://nemo.topicmapslab.de:8080</server.url>
   </properties>
   <build>
 		<resources>
@@ -46,7 +46,7 @@
 				<artifactId>tomcat-maven-plugin</artifactId>
 				<version>1.1</version>
 				<configuration>
-					<server>tomcat-server</server>
+					<server>nemo-server</server>
 					<warFile>${project.build.directory}/${project.build.finalName}.war</warFile>
 					<update>true</update>
 					<url>${server.url}/manager/html</url>

@@ -21,8 +21,8 @@ import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.draft2011.path.components.navigation.NavigationRegistry;
-import de.topicmapslab.tmql4j.draft2011.path.components.navigation.model.INavigationAxis;
+import de.topicmapslab.tmql4j.draft2011.path.components.navigation.Axes;
+import de.topicmapslab.tmql4j.draft2011.path.components.navigation.model.IAxis;
 import de.topicmapslab.tmql4j.draft2011.path.exception.NavigationException;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisSubtypes;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Variable;
@@ -63,6 +63,7 @@ public class AKOExpressionInterpreter extends ExpressionInterpreterImpl<AKOExpre
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
@@ -105,9 +106,9 @@ public class AKOExpressionInterpreter extends ExpressionInterpreterImpl<AKOExpre
 		/*
 		 * get navigation axis
 		 */
-		INavigationAxis axis;
+		IAxis axis;
 		try {
-			axis = NavigationRegistry.buildHandler().lookup(AxisSubtypes.class);
+			axis = Axes.buildHandler().lookup(AxisSubtypes.class);
 			/*
 			 * iterate over all topics
 			 */
@@ -116,7 +117,7 @@ public class AKOExpressionInterpreter extends ExpressionInterpreterImpl<AKOExpre
 				 * get all sub-types of the current topic
 				 */
 				if (o instanceof Topic) {
-					for (Object obj_ : axis.navigateForward(o)) {
+					for (Object obj_ : axis.navigate(context, o, null)) {
 						Map<String, Object> map = HashUtil.getHashMap();
 						map.put(variable, obj_);
 						matches.add(map);

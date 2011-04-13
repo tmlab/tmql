@@ -34,8 +34,8 @@ import de.topicmapslab.tmql4j.components.processor.core.Context;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.draft2011.path.components.navigation.NavigationRegistry;
-import de.topicmapslab.tmql4j.draft2011.path.components.navigation.model.INavigationAxis;
+import de.topicmapslab.tmql4j.draft2011.path.components.navigation.Axes;
+import de.topicmapslab.tmql4j.draft2011.path.components.navigation.model.IAxis;
 import de.topicmapslab.tmql4j.draft2011.path.exception.NavigationException;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisTypes;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.Anchor;
@@ -60,8 +60,7 @@ import de.topicmapslab.tmql4j.util.LiteralUtils;
  * filter-postfix ::= [ integer ] ==> [ $# == integer ]
  * </p>
  * <p>
- * filter-postfix ::= [ integer-1 .. integer-2 ] ==> [ integer-1 <= $# & $# <
- * integer-2 ]
+ * filter-postfix ::= [ integer-1 .. integer-2 ] ==> [ integer-1 <= $# & $# < integer-2 ]
  * </p>
  * <p>
  * filter-postfix ::= [ @ scope ] | @ scope
@@ -130,18 +129,15 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 	}
 
 	/**
-	 * The method is called to interpret the given sub-expression by using the
-	 * given runtime. The interpretation will call the sub-expression if the
-	 * given expression isn't a leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the given runtime. The interpretation will
+	 * call the sub-expression if the given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
-	 * The interpretation will transform the value on top of the stack and put
-	 * its results also on top.
+	 * The interpretation will transform the value on top of the stack and put its results also on top.
 	 * </p>
 	 * 
 	 * @param runtime
-	 *            the runtime which contains all necessary information for
-	 *            querying process
+	 *            the runtime which contains all necessary information for querying process
 	 * @param context
 	 *            the current querying context
 	 * @param optionalArguments
@@ -227,18 +223,15 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 	}
 
 	/**
-	 * The method is called to interpret the given sub-expression by using the
-	 * given runtime. The interpretation will call the sub-expression if the
-	 * given expression isn't a leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the given runtime. The interpretation will
+	 * call the sub-expression if the given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
-	 * The interpretation will transform the value on top of the stack and put
-	 * its results also on top.
+	 * The interpretation will transform the value on top of the stack and put its results also on top.
 	 * </p>
 	 * 
 	 * @param runtime
-	 *            the runtime which contains all necessary information for
-	 *            querying process
+	 *            the runtime which contains all necessary information for querying process
 	 * @param context
 	 *            the current querying context
 	 * @param optionalArguments
@@ -268,7 +261,7 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 		 */
 		if (context.getContextBindings() != null) {
 			try {
-				INavigationAxis axis = NavigationRegistry.buildHandler().lookup(AxisTypes.class);
+				IAxis axis = Axes.buildHandler().lookup(AxisTypes.class);
 				List<Object> values = HashUtil.getList();
 				/*
 				 * iterate over all values of non-scoped variable
@@ -277,7 +270,7 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 					/*
 					 * check if value is a topic and a type of the current item
 					 */
-					if (axis.navigateForward(object).contains(type)) {
+					if (axis.navigate(context, object, null).contains(type)) {
 						values.add(object);
 					}
 				}
@@ -291,18 +284,15 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 	}
 
 	/**
-	 * The method is called to interpret the given sub-expression by using the
-	 * given runtime. The interpretation will call the sub-expression if the
-	 * given expression isn't a leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the given runtime. The interpretation will
+	 * call the sub-expression if the given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
-	 * The interpretation will transform the value on top of the stack and put
-	 * its results also on top.
+	 * The interpretation will transform the value on top of the stack and put its results also on top.
 	 * </p>
 	 * 
 	 * @param runtime
-	 *            the runtime which contains all necessary information for
-	 *            querying process
+	 *            the runtime which contains all necessary information for querying process
 	 * @param context
 	 *            the current querying context
 	 * @param optionalArguments
@@ -337,8 +327,7 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 			 */
 			for (Object object : context.getContextBindings().getPossibleValuesForVariable()) {
 				/*
-				 * check if value is a scoped item and the scope contains the
-				 * given theme
+				 * check if value is a scoped item and the scope contains the given theme
 				 */
 				if (object instanceof Scoped && ((Scoped) object).getScope().contains(theme)) {
 					values.add(object);
@@ -350,18 +339,15 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 	}
 
 	/**
-	 * The method is called to interpret the given sub-expression by using the
-	 * given runtime. The interpretation will call the sub-expression if the
-	 * given expression isn't a leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the given runtime. The interpretation will
+	 * call the sub-expression if the given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
-	 * The interpretation will transform the value on top of the stack and put
-	 * its results also on top.
+	 * The interpretation will transform the value on top of the stack and put its results also on top.
 	 * </p>
 	 * 
 	 * @param runtime
-	 *            the runtime which contains all necessary information for
-	 *            querying process
+	 *            the runtime which contains all necessary information for querying process
 	 * @param context
 	 *            the current querying context
 	 * @param optionalArguments
@@ -391,18 +377,15 @@ public class FilterPostfixInterpreter extends ExpressionInterpreterImpl<FilterPo
 	}
 
 	/**
-	 * The method is called to interpret the given sub-expression by using the
-	 * given runtime. The interpretation will call the sub-expression if the
-	 * given expression isn't a leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the given runtime. The interpretation will
+	 * call the sub-expression if the given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
-	 * The interpretation will transform the value on top of the stack and put
-	 * its results also on top.
+	 * The interpretation will transform the value on top of the stack and put its results also on top.
 	 * </p>
 	 * 
 	 * @param runtime
-	 *            the runtime which contains all necessary information for
-	 *            querying process
+	 *            the runtime which contains all necessary information for querying process
 	 * @param context
 	 *            the current querying context
 	 * @param optionalArguments

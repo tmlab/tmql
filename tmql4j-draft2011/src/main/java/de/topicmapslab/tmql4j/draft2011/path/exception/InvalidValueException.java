@@ -8,9 +8,9 @@
  */
 package de.topicmapslab.tmql4j.draft2011.path.exception;
 
+
 /**
- * Special navigation exception representing the case of invalid value given as
- * anchor for navigation process.
+ * Special navigation exception representing the case of invalid value given as anchor for navigation process.
  * 
  * @author Sven Krosse
  * @email krosse@informatik.uni-leipzig.de

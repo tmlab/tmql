@@ -21,8 +21,8 @@ import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.draft2011.path.components.navigation.NavigationRegistry;
-import de.topicmapslab.tmql4j.draft2011.path.components.navigation.model.INavigationAxis;
+import de.topicmapslab.tmql4j.draft2011.path.components.navigation.Axes;
+import de.topicmapslab.tmql4j.draft2011.path.components.navigation.model.IAxis;
 import de.topicmapslab.tmql4j.draft2011.path.exception.NavigationException;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisInstances;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Variable;
@@ -64,6 +64,7 @@ public class ISAExpressionInterpreter extends ExpressionInterpreterImpl<ISAExpre
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		TopicMap topicMap = context.getQuery().getTopicMap();
@@ -92,8 +93,7 @@ public class ISAExpressionInterpreter extends ExpressionInterpreterImpl<ISAExpre
 		}
 
 		/*
-		 * call the second simple-content expression representing the type
-		 * content
+		 * call the second simple-content expression representing the type content
 		 */
 		QueryMatches simpleContent2 = extractArguments(runtime, SimpleContent.class, 1, context, optionalArguments);
 
@@ -101,8 +101,7 @@ public class ISAExpressionInterpreter extends ExpressionInterpreterImpl<ISAExpre
 		 * simple-content-1 is variable
 		 */
 		try {
-			INavigationAxis axis = NavigationRegistry.buildHandler().lookup(AxisInstances.class);
-			axis.setTopicMap(topicMap);
+			IAxis axis = Axes.buildHandler().lookup(AxisInstances.class);
 			/*
 			 * create query-matches containing the results
 			 */
@@ -116,7 +115,7 @@ public class ISAExpressionInterpreter extends ExpressionInterpreterImpl<ISAExpre
 				 */
 				if (o instanceof Topic) {
 
-					for (Object obj_ : axis.navigateForward(o)) {
+					for (Object obj_ : axis.navigate(context, o, null)) {
 						Map<String, Object> map = HashUtil.getHashMap();
 						map.put(variable, obj_);
 						matches.add(map);

@@ -14,17 +14,16 @@ import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.components.interpreter.ExpressionInterpreterImpl;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.draft2011.path.components.navigation.NavigationRegistry;
-import de.topicmapslab.tmql4j.draft2011.path.components.navigation.model.INavigationAxis;
-import de.topicmapslab.tmql4j.draft2011.path.components.navigation.model.ITypeHierarchyNavigationAxis;
+import de.topicmapslab.tmql4j.draft2011.path.components.navigation.Axes;
+import de.topicmapslab.tmql4j.draft2011.path.components.navigation.model.IAxis;
 import de.topicmapslab.tmql4j.draft2011.path.exception.NavigationException;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisTypes;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.MoveForward;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisInstances;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisInstances;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.Anchor;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.Step;
@@ -79,8 +78,7 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 			/*
 			 * is shortcut of types axis
 			 */
-			INavigationAxis axis = null;
-			boolean forward = true;
+			IAxis axis = null;
 
 			/*
 			 * is // anchor
@@ -97,11 +95,7 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 				/*
 				 * set types axis
 				 */
-				axis = NavigationRegistry.buildHandler().lookup(AxisTypes.class);
-				/*
-				 * set direction
-				 */
-				forward = true;
+				axis = Axes.buildHandler().lookup(AxisInstances.class);
 			}
 			/*
 			 * is ( >> | << ) axis [ anchor ]
@@ -111,8 +105,8 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 				/*
 				 * Describing what to do:
 				 * 
-				 * 1. Fetch the value of variable @_ ( representing the current
-				 * tuple [topic map construct] to navigate))
+				 * 1. Fetch the value of variable @_ ( representing the current tuple [topic map construct] to
+				 * navigate))
 				 * 
 				 * 2. Look up navigation axis by name
 				 * 
@@ -120,8 +114,7 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 				 * 
 				 * 4. Navigate in given direction
 				 * 
-				 * 5. add result to current RuntimeEnvironment system variable
-				 * %%%___
+				 * 5. add result to current RuntimeEnvironment system variable %%%___
 				 */
 
 				/*
@@ -131,7 +124,7 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 				/*
 				 * set axis
 				 */
-				axis = NavigationRegistry.buildHandler().lookup(getTmqlTokens().get(1));
+				axis = Axes.buildHandler().lookup(getTmqlTokens().get(1));
 				/*
 				 * set optional if exists
 				 */
@@ -170,10 +163,6 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 					}
 
 				}
-				/*
-				 * set direction
-				 */
-				forward = getTmqlTokens().get(0).equals(MoveForward.class);
 			}
 
 			if (anchor == null) {
@@ -181,30 +170,19 @@ public class StepInterpreter extends ExpressionInterpreterImpl<Step> {
 				return QueryMatches.emptyMatches();
 			}
 			/*
-			 * set topic map to navigation axis
-			 */
-			axis.setTopicMap(context.getQuery().getTopicMap());
-			if (axis instanceof ITypeHierarchyNavigationAxis) {
-				((ITypeHierarchyNavigationAxis) axis).setTransitivity(context.isTransitive());
-			}
-			/*
 			 * execute navigation by calling navigation API
 			 */
-			Collection<?> navigationResults;
-			if (forward) {
-				navigationResults = axis.navigateForward(anchor, optional);
-			} else {
-				navigationResults = axis.navigateBackward(anchor, optional);
-			}
+			Collection<?> navigationResults = axis.navigate(context, anchor, optional instanceof Topic ? (Topic) optional : null);
 			/*
 			 * convert navigation results to tuple-sequence and store
 			 */
 			return QueryMatches.asQueryMatchNS(runtime, navigationResults.toArray());
 		} catch (TMQLRuntimeException ex) {
+			if (ex instanceof NavigationException) {
+				logger.warn("The following navigation error occured!", ex);
+				return new QueryMatches(runtime);
+			}
 			throw ex;
-		} catch (NavigationException e) {
-			logger.warn("The following navigation error occured!", e);
-			return new QueryMatches(runtime);
 		} catch (Exception ex) {
 			throw new TMQLRuntimeException("An error occured during runtime!", ex);
 		}

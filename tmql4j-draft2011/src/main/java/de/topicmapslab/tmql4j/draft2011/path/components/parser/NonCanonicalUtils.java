@@ -16,11 +16,11 @@ import java.util.List;
 import java.util.Map;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisAtomify;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisCharacteristics;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisIndicators;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisItem;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisLocators;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisValue;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisOccurrences;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisSubjectIdentifiers;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisItemIdentifiers;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisSubjectLocators;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisPlayers;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisReifier;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisTraverse;
@@ -155,10 +155,10 @@ public class NonCanonicalUtils {
 		 * add characteristics axis
 		 */
 		tmqlTokens_.add(MoveForward.class);
-		tmqlTokens_.add(AxisCharacteristics.class);
+		tmqlTokens_.add(AxisOccurrences.class);
 		tmqlTokens_.add(Element.class);
 		tokens_.add(new MoveForward().getLiteral());
-		tokens_.add(new AxisCharacteristics().getLiteral());
+		tokens_.add(new AxisOccurrences().getLiteral());
 		tokens_.add(tokens.get(1));
 		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
@@ -168,9 +168,9 @@ public class NonCanonicalUtils {
 		tmqlTokens_ = new LinkedList<Class<? extends IToken>>();
 		tokens_ = new LinkedList<String>();
 		tmqlTokens_.add(MoveForward.class);
-		tmqlTokens_.add(AxisAtomify.class);
+		tmqlTokens_.add(AxisValue.class);
 		tokens_.add(new MoveForward().getLiteral());
-		tokens_.add(new AxisAtomify().getLiteral());
+		tokens_.add(new AxisValue().getLiteral());
 		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 	}
@@ -205,9 +205,9 @@ public class NonCanonicalUtils {
 		 * add atomify axis
 		 */
 		tmqlTokens_.add(MoveBackward.class);
-		tmqlTokens_.add(AxisAtomify.class);
+		tmqlTokens_.add(AxisValue.class);
 		tokens_.add(new MoveBackward().getLiteral());
-		tokens_.add(new AxisAtomify().getLiteral());
+		tokens_.add(new AxisValue().getLiteral());
 		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 		/*
@@ -216,10 +216,10 @@ public class NonCanonicalUtils {
 		tmqlTokens_ = new LinkedList<Class<? extends IToken>>();
 		tokens_ = new LinkedList<String>();
 		tmqlTokens_.add(MoveBackward.class);
-		tmqlTokens_.add(AxisCharacteristics.class);
+		tmqlTokens_.add(AxisOccurrences.class);
 		tmqlTokens_.add(Element.class);
 		tokens_.add(new MoveBackward().getLiteral());
-		tokens_.add(new AxisCharacteristics().getLiteral());
+		tokens_.add(new AxisOccurrences().getLiteral());
 		tokens_.add(tokens.get(1));
 		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 	}
@@ -418,9 +418,9 @@ public class NonCanonicalUtils {
 		 * transform '!' to '<< item'
 		 */
 		tmqlTokens_.add(MoveBackward.class);
-		tmqlTokens_.add(AxisItem.class);
+		tmqlTokens_.add(AxisItemIdentifiers.class);
 		tokens_.add(new MoveBackward().getLiteral());
-		tokens_.add(new AxisItem().getLiteral());
+		tokens_.add(new AxisItemIdentifiers().getLiteral());
 		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 	}
@@ -451,9 +451,9 @@ public class NonCanonicalUtils {
 		 * transform '~' to '<< indicators'
 		 */
 		tmqlTokens_.add(MoveBackward.class);
-		tmqlTokens_.add(AxisIndicators.class);
+		tmqlTokens_.add(AxisSubjectIdentifiers.class);
 		tokens_.add(new MoveBackward().getLiteral());
-		tokens_.add(new AxisIndicators().getLiteral());
+		tokens_.add(new AxisSubjectIdentifiers().getLiteral());
 		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 	}
@@ -484,9 +484,9 @@ public class NonCanonicalUtils {
 		 * transform '=' to '<< locators'
 		 */
 		tmqlTokens_.add(MoveBackward.class);
-		tmqlTokens_.add(AxisLocators.class);
+		tmqlTokens_.add(AxisSubjectLocators.class);
 		tokens_.add(new MoveBackward().getLiteral());
-		tokens_.add(new AxisLocators().getLiteral());
+		tokens_.add(new AxisSubjectLocators().getLiteral());
 		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 	}

@@ -13,7 +13,7 @@ package de.topicmapslab.tmql4j.draft2011.path.grammar.productions;
 import java.util.List;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.draft2011.path.components.navigation.NavigationRegistry;
+import de.topicmapslab.tmql4j.draft2011.path.components.navigation.Axes;
 import de.topicmapslab.tmql4j.draft2011.path.exception.NavigationException;
 import de.topicmapslab.tmql4j.draft2011.path.exception.UnsupportedNavigationTypeException;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.MoveBackward;
@@ -82,7 +82,7 @@ public class Step extends ExpressionImpl {
 			/*
 			 * check if the axis is known
 			 */
-			NavigationRegistry.buildHandler().lookup(getTmqlTokens().get(1));
+			Axes.buildHandler().lookup(getTmqlTokens().get(1));
 		} catch (UnsupportedNavigationTypeException ex) {
 			return false;
 		} catch (NavigationException ex) {

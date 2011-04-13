@@ -10,16 +10,17 @@ package de.topicmapslab.tmql4j.draft2011.path.exception;
 
 import org.tmapi.core.TMAPIException;
 
+import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+
 /**
- * Base exception of navigation interpretation of all TMQL axis. This exception
- * is a special type of {@link TMAPIException} defined by the library to handle
- * all exception during the navigation process.
+ * Base exception of navigation interpretation of all TMQL axis. This exception is a special type of
+ * {@link TMAPIException} defined by the library to handle all exception during the navigation process.
  * 
  * @author Sven Krosse
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class NavigationException extends TMAPIException {
+public class NavigationException extends TMQLRuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
