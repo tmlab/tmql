@@ -55,8 +55,7 @@ import de.topicmapslab.tmql4j.util.HashUtil;
 public class NonCanonicalUtils {
 
 	/**
-	 * map containing all non-canonical patterns an the method to call to
-	 * convert them to canonical productions
+	 * map containing all non-canonical patterns an the method to call to convert them to canonical productions
 	 */
 	private final static Map<Class<? extends IToken>, String> nonCanonicals = HashUtil.getHashMap();
 
@@ -80,8 +79,7 @@ public class NonCanonicalUtils {
 	 *            the language-specific tokens
 	 * @param tokens
 	 *            the string-represented tokens
-	 * @return <code>true</code> if the given tokens are known as non-canonical
-	 *         production
+	 * @return <code>true</code> if the given tokens are known as non-canonical production
 	 */
 	public static boolean isNonCanonicalProduction(List<Class<? extends IToken>> tmqlTokens, List<String> tokens) {
 		if (tmqlTokens.isEmpty()) {
@@ -91,8 +89,8 @@ public class NonCanonicalUtils {
 	}
 
 	/**
-	 * Transformation method to transform the a non-canonical expression axis to
-	 * their canonical corresponding expression.
+	 * Transformation method to transform the a non-canonical expression axis to their canonical corresponding
+	 * expression.
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
@@ -126,8 +124,8 @@ public class NonCanonicalUtils {
 	}
 
 	/**
-	 * Transformation method to transform the non-canonical atomify axis in
-	 * forward direction to their canonical corresponding expression.
+	 * Transformation method to transform the non-canonical atomify axis in forward direction to their canonical
+	 * corresponding expression.
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
@@ -171,13 +169,20 @@ public class NonCanonicalUtils {
 		tmqlTokens_.add(AxisAtomify.class);
 		tokens_.add(new MoveForward().getLiteral());
 		tokens_.add(new AxisAtomify().getLiteral());
+		/*
+		 * check for more tokens
+		 */
+		for (int index = 2; index < tmqlTokens.size(); index++) {
+			tmqlTokens_.add(tmqlTokens.get(index));
+			tokens_.add(tokens.get(index));
+		}
 		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 	}
 
 	/**
-	 * Transformation method to transform the non-canonical atomify axis in
-	 * backward direction to their canonical corresponding expression.
+	 * Transformation method to transform the non-canonical atomify axis in backward direction to their canonical
+	 * corresponding expression.
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
@@ -221,12 +226,19 @@ public class NonCanonicalUtils {
 		tokens_.add(new MoveBackward().getLiteral());
 		tokens_.add(new AxisCharacteristics().getLiteral());
 		tokens_.add(tokens.get(1));
+		/*
+		 * check for more tokens
+		 */
+		for (int index = 2; index < tmqlTokens.size(); index++) {
+			tmqlTokens_.add(tmqlTokens.get(index));
+			tokens_.add(tokens.get(index));
+		}
 		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 	}
 
 	/**
-	 * Transformation method to transform the non-canonical players axis in
-	 * forward direction to their canonical corresponding expression.
+	 * Transformation method to transform the non-canonical players axis in forward direction to their canonical
+	 * corresponding expression.
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
@@ -255,13 +267,20 @@ public class NonCanonicalUtils {
 		tokens_.add(new MoveForward().getLiteral());
 		tokens_.add(new AxisPlayers().getLiteral());
 		tokens_.add(tokens.get(1));
+		/*
+		 * check for more tokens
+		 */
+		for (int index = 2; index < tmqlTokens.size(); index++) {
+			tmqlTokens_.add(tmqlTokens.get(index));
+			tokens_.add(tokens.get(index));
+		}
 		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 	}
 
 	/**
-	 * Transformation method to transform the non-canonical players axis in
-	 * backward direction to their canonical corresponding expression.
+	 * Transformation method to transform the non-canonical players axis in backward direction to their canonical
+	 * corresponding expression.
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
@@ -290,12 +309,19 @@ public class NonCanonicalUtils {
 		tokens_.add(new MoveBackward().getLiteral());
 		tokens_.add(new AxisPlayers().getLiteral());
 		tokens_.add(tokens.get(1));
+		/*
+		 * check for more tokens
+		 */
+		for (int index = 2; index < tmqlTokens.size(); index++) {
+			tmqlTokens_.add(tmqlTokens.get(index));
+			tokens_.add(tokens.get(index));
+		}
 		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 	}
 
 	/**
-	 * Transformation method to transform the non-canonical reifier axis in
-	 * forward direction to their canonical corresponding expression.
+	 * Transformation method to transform the non-canonical reifier axis in forward direction to their canonical
+	 * corresponding expression.
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
@@ -322,13 +348,20 @@ public class NonCanonicalUtils {
 		tmqlTokens_.add(AxisReifier.class);
 		tokens_.add(new MoveForward().getLiteral());
 		tokens_.add(new AxisReifier().getLiteral());
+		/*
+		 * check for more tokens
+		 */
+		for (int index = 1; index < tmqlTokens.size(); index++) {
+			tmqlTokens_.add(tmqlTokens.get(index));
+			tokens_.add(tokens.get(index));
+		}
 		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 	}
 
 	/**
-	 * Transformation method to transform the non-canonical reifier axis in
-	 * backward direction to their canonical corresponding expression.
+	 * Transformation method to transform the non-canonical reifier axis in backward direction to their canonical
+	 * corresponding expression.
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
@@ -355,12 +388,18 @@ public class NonCanonicalUtils {
 		tmqlTokens_.add(AxisReifier.class);
 		tokens_.add(new MoveBackward().getLiteral());
 		tokens_.add(new AxisReifier().getLiteral());
+		/*
+		 * check for more tokens
+		 */
+		for (int index = 1; index < tmqlTokens.size(); index++) {
+			tmqlTokens_.add(tmqlTokens.get(index));
+			tokens_.add(tokens.get(index));
+		}
 		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 	}
 
 	/**
-	 * Transformation method to transform the non-canonical traverse axis to
-	 * their canonical corresponding expression.
+	 * Transformation method to transform the non-canonical traverse axis to their canonical corresponding expression.
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
@@ -389,12 +428,18 @@ public class NonCanonicalUtils {
 		tokens_.add(new MoveForward().getLiteral());
 		tokens_.add(new AxisTraverse().getLiteral());
 		tokens_.add(tokens.get(1));
+		/*
+		 * check for more tokens
+		 */
+		for (int index = 2; index < tmqlTokens.size(); index++) {
+			tmqlTokens_.add(tmqlTokens.get(index));
+			tokens_.add(tokens.get(index));
+		}
 		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 	}
 
 	/**
-	 * Transformation method to transform the non-canonical item axisto their
-	 * canonical corresponding expression.
+	 * Transformation method to transform the non-canonical item axisto their canonical corresponding expression.
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
@@ -421,13 +466,19 @@ public class NonCanonicalUtils {
 		tmqlTokens_.add(AxisItem.class);
 		tokens_.add(new MoveBackward().getLiteral());
 		tokens_.add(new AxisItem().getLiteral());
+		/*
+		 * check for more tokens
+		 */
+		for (int index = 1; index < tmqlTokens.size(); index++) {
+			tmqlTokens_.add(tmqlTokens.get(index));
+			tokens_.add(tokens.get(index));
+		}
 		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 	}
 
 	/**
-	 * Transformation method to transform the non-canonical indicators axis to
-	 * their canonical corresponding expression.
+	 * Transformation method to transform the non-canonical indicators axis to their canonical corresponding expression.
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
@@ -454,13 +505,19 @@ public class NonCanonicalUtils {
 		tmqlTokens_.add(AxisIndicators.class);
 		tokens_.add(new MoveBackward().getLiteral());
 		tokens_.add(new AxisIndicators().getLiteral());
+		/*
+		 * check for more tokens
+		 */
+		for (int index = 1; index < tmqlTokens.size(); index++) {
+			tmqlTokens_.add(tmqlTokens.get(index));
+			tokens_.add(tokens.get(index));
+		}
 		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 	}
 
 	/**
-	 * Transformation method to transform the non-canonical locators axis to
-	 * their canonical corresponding expression.
+	 * Transformation method to transform the non-canonical locators axis to their canonical corresponding expression.
 	 * 
 	 * @param runtime
 	 *            the TMQL4J runtime
@@ -487,21 +544,26 @@ public class NonCanonicalUtils {
 		tmqlTokens_.add(AxisLocators.class);
 		tokens_.add(new MoveBackward().getLiteral());
 		tokens_.add(new AxisLocators().getLiteral());
+		/*
+		 * check for more tokens
+		 */
+		for (int index = 1; index < tmqlTokens.size(); index++) {
+			tmqlTokens_.add(tmqlTokens.get(index));
+			tokens_.add(tokens.get(index));
+		}
 		parent.checkForExtensions(StepDefinition.class, tmqlTokens_, tokens_, runtime);
 
 	}
 
 	/**
-	 * Transformation method to transform the non-canonical instance axis to
-	 * their canonical corresponding expression.
+	 * Transformation method to transform the non-canonical instance axis to their canonical corresponding expression.
 	 * 
 	 * @param tmqlTokens
 	 *            the language-specific tokens
 	 * @param tokens
 	 *            the string-represented tokens
-	 * @return an array containing the transformed token lists. The
-	 *         language-specific tokens at index <code>0</code> and the
-	 *         string-represented tokens at index <code>1</code>.
+	 * @return an array containing the transformed token lists. The language-specific tokens at index <code>0</code> and
+	 *         the string-represented tokens at index <code>1</code>.
 	 */
 	public static List<?>[] toCanonicalInstancesAxis(List<Class<? extends IToken>> tmqlTokens, List<String> tokens) {
 		List<Class<? extends IToken>> tmqlTokens_ = new LinkedList<Class<? extends IToken>>();
@@ -516,7 +578,6 @@ public class NonCanonicalUtils {
 		tokens_.add(tokens.get(1));
 		tokens_.add(new MoveBackward().getLiteral());
 		tokens_.add(new AxisTypes().getLiteral());
-
 		/*
 		 * add the rest of the given expression
 		 */

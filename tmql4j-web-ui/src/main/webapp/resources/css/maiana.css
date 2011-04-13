@@ -1,0 +1,162 @@
+/* default font color */
+h1, h2, h3, h4, h5, h6,
+body {
+  color: #444444;
+}
+
+body    { 
+  background: #fff;
+  }
+#footer { background-color: #352217; }
+#footer,
+#footer a,
+.orangeFont {
+  color: #FFAC3F;
+}
+#user-session a {
+  color: #FEAB3F;
+}
+
+.right { float: right; }
+.left  { float: left; }
+.space-before-1 { margin-top: 0; }
+.space-before-1 { margin-top: 1em; }
+.space-before-2 { margin-top: 2em; }
+.space-before-3 { margin-top: 3em; }
+.space-before-4 { margin-top: 4em; }
+.space-before-5 { margin-top: 5em; }
+
+.space-after-0 { margin-bottom: 0; }
+.space-after-1 { margin-bottom: 1em; }
+.space-after-2 { margin-bottom: 2em; }
+.space-after-3 { margin-bottom: 3em; }
+.space-after-4 { margin-bottom: 4em; }
+.space-after-5 { margin-bottom: 5em; }
+
+/* Common styles */
+ul.horizontal { padding-left: 0px; }
+ul.horizontal li {
+  float: left;
+  margin-right: 2em;
+}
+
+ul.right {
+  margin: 0px;
+  float: none;
+}
+ul.right li {
+  float: right;
+  margin-right: 0em;
+  margin-left: 2em;
+}
+
+.noBullet { list-style-type: none; }
+a {
+  text-decoration: underline;
+  color: inherit;
+}
+/* Some blue print fixes */
+input[type="text"], input[type="password"], input.text, input.title, textarea, select {
+  margin: .2em 0 .5em 0;
+}
+
+h1 { font-size: 2.2em; }
+
+legend {
+  color:gray;
+  padding-left:2px;
+  padding-right:5px;
+}
+
+label {
+  display:block;
+  font-size:1.1em;
+  padding-top:.3em;
+  }
+  form.wide-form label {
+    display:inline-block;
+    width: 180px;
+    }
+
+body { word-wrap: break-word; }
+
+#wrapper {
+  height: auto !important;
+  /*margin: 0 auto -100px;*/
+  min-height: 100%;
+}
+
+#header {
+  background-image: url(../images/header-background.png);
+  background-repeat: repeat-x;
+}
+
+#sub-header {
+  margin-top: 2em;
+  }
+  #sub-header h2 {
+    font-size: 1.7em;
+    color: white;
+    text-shadow: 1px 1px 1px #000;
+    margin: 0;
+    margin-top: .3em;
+  }
+  #sub-header p { 
+    color: #eee; 
+    text-shadow: 1px 1px 1px #000;
+    }
+
+#logo {
+  background: transparent url(../images/maiana-logo.png) no-repeat 0 15px;
+  height: 69px;
+}
+
+#logo a,
+#logo h1 {
+  position: relative;
+}
+
+#logo h1 { visibility: hidden; }
+#logo a img {
+  width: 300px;
+  height: 65px;
+}
+
+#content { 
+	background: transparent url(../images/content-top-background.gif) repeat-x; 
+	padding-left: 20px;	
+}
+
+#mainContent textarea#container_description { height: 50px; }
+
+/* Footer */
+#footer {
+  height: 40px;
+  line-height: 38px;
+  width: 100%;
+  background: url(../images/footer-background.gif) repeat-x;
+  bottom: 0;
+  position: fixed;
+}
+#footer ul li {
+  padding-left: 20px;
+  list-style: none;
+}
+
+#footer #bug_report {
+  position: absolute;
+  padding-left: 420px;
+  width: 352px;
+  height: 210px;
+  overflow: hidden;
+}
+#footer #bug_report fieldset {
+  background: white;
+  border: 3px solid;
+  margin-top:-1px;
+}
+#footer #bug_report textarea {
+  width: 300px;
+  height: 80px;
+}
+

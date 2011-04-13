@@ -44,6 +44,13 @@ import de.topicmapslab.tmql4j.util.HashUtil;
 public class TestNavigationAxis extends Tmql4JTestCase {
 
 	@Test
+	public void lala() {
+		String regexp = "as\\s*\\\\(\\s*\\\\^\\s*ab\\s*\\\\)";
+		String query = "\"hallo\" << atomify << characteristics topicg as ( ^ ab )";
+		System.out.println(query.replaceAll(regexp, "      "));
+	}
+
+	@Test
 	public void testInstancesAxis() throws Exception {
 		Topic[] topics = new Topic[100];
 		for (int i = 0; i < topics.length; i++) {

@@ -1,0 +1,16 @@
+#sideLabel {
+  position: fixed;
+  right: 0px;
+  bottom: 50px;
+  display: block;
+  background: url("../images/sidelabel_right.png") no-repeat scroll;
+  text-indent: 40000px;
+  width: 24px;
+  height: 181px;
+  z-index: 100001;
+}
+
+#sideLabelLink {
+	text-decoration: none;
+}
+	
