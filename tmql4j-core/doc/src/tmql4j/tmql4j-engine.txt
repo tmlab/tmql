@@ -8,7 +8,7 @@ Some special modules are designed to directly access the backend the TMAPI engin
 
 ==== Modularization ====
 
-TMQL4J is designed as a multi-lingual querying engine providing different TMQL versions or other topic map query languages like tolog. As base modules of version 3.0.0 the engine supports the TMQL drafts of 2007, 2010 and an experimental SQL and tolog translator.
+TMQL4J is designed as a multi-lingual querying engine providing different TMQL versions or other topic map query languages like tolog. As base modules of version 3.1.0 the engine supports the TMQL drafts of 2007, 2010 and an experimental SQL and tolog translator.
 
 Each style of the query language are encapsulated by its own plug-in which can be added to the class-path if needed. If a plug-in is missing, the parser and lexical scanner does not supports this style.
 

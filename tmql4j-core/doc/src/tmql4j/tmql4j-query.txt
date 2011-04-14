@@ -12,8 +12,6 @@ Because of the different syntactical notification of each language it is not sec
 
 The 'tmql4j-tolog' plugin implementing a query transformer for the query language tolog, which was established as de-facto standard as a part of the Ontopia topic maps engine. Some parts of the current draft inspired by the tolog query language. In combination with the plugin the tmql4j engine can used with tolog queries. Please note that the current version of the tmql4j-tolog' plugin only supports the querying part of the tolog query language and not the additional modification part developed in 2009. The next version of the plugin will be support the whole tolog specification.
 
-*Please note:* This sub-project is still not open source. If you are interested in please contact the project owner.
-
 ==== Integrate your own query language plug-in ====
 
 The tmql4j engine can be extended by own query language plugins to integrate your own query language in the tmql4j engine. The new plugin has to contain at least one class implements the 'IQuery' interface of the tmql4j engine. In addition the tmql4j engine contains an abstract base implementation of 'IQuery' implementing the base functions of this interface. The abstract base class can be use to reduce the implementation work.

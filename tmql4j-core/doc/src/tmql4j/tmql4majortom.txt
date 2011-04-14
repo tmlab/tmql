@@ -319,3 +319,13 @@ The function returns all topics of the topic map which have at least one name or
 
 [NOTE]
 This method with one argument is similar to the navigation '"pattern" << ratomify << characteristics'.
+
+==== Remove-Duplicates Function ====
+
+[width="70%", cols="1,4"]
+|================
+|*item-identifier*|http://psi.topicmaps.org/tmql/1.0/functions/fn:remove-duplicates
+|*profile*|fn:remove-duplicates( ) return void
+|================
+
+The function removes all duplicates from the underlying topic map. In detail, all occurrences having the same parent, type, value, scope and datatype are merged to one. All occurrences having the same parent, type, value, and scope are merged to one. All variants having the same parent, value, datatype and scope are merged to one. All roles having the same type, player and parent are merged to one. All associations having the same type, scope and set of roles are merged to one.

@@ -2,7 +2,7 @@
 
 Since version 3.0.0 the tmql4j query suite supports the feature of prepared statements to pre-calculate the parsing tree. Prepared statements can be contain wildcards, which have to replace by values before querying. The main benefit of prepared statements is the reuse of the parsed query tree, which can be speed up the application, if a query will be used more than one times.
 
-==== Create a Prepared Statement =====
+==== Create a Prepared Statement ====
 
 The new 'ITmqlRuntime' supports new methods to create a new prepared statement for a given string representation. The prepared statement may contain wildcards starting with '?'.
 
@@ -10,13 +10,13 @@ The new 'ITmqlRuntime' supports new methods to create a new prepared statement f
 1:	IPreparedStatement statement = runtime.preparedStatement(" ? >> characteristics ");
 -------------------------------------
 
-==== Using wildcards =====
+==== Using wildcards ====
 
 Wildcards can be used in a named or anonymous variant. All wildcards have to start with '?' following by any alpha-numerical character in case of the named variant. The anonymous wildcard only uses the '?'.
 
 Before the prepared statement can be executed by using the 'run' method, the variables have to bind to specific values. If at least one wildcard is not bind to any value, an error occur by calling the 'run' method. The value binding can be done in different ways.
 
-===== Provides as Arguments of Run Method ======
+===== Provides as Arguments of Run Method =====
 
 The 'run' method of a prepared statement supports an non-limited list of object arguments, which will be interpreted as values for the wildcards. The wildcard binding will be index-based in the same order than the values are provided for the 'run' method.
 
@@ -31,7 +31,7 @@ The 'run' method of a prepared statement supports an non-limited list of object 
 The code at line 4 are interpreted in the following way. The first argument are interpreted as the topic map the query should execute for. The second argument, the topic, are set as value for the first wildcard '?'.
 =====================================
 
-===== Using the Index-Based Setter ======
+===== Using the Index-Based Setter =====
 
 An alternative for the 'run' method which is more intuitive, is to use the setters of the 'IPreparedStatement' interface. There is one setter for each supported value type. The binding will be done for the index given by the first integer argument of the setter method. The indexes are zero-based.
 
@@ -43,7 +43,7 @@ An alternative for the 'run' method which is more intuitive, is to use the sette
 5:	statement.run(topicMap);
 -------------------------------------
 
-===== Using the Name-Wildcards ======
+===== Using the Name-Wildcards =====
 
 By using named wildcards, the prepared statement also provides special setters which expects a string argument as first parameter. This string argument have to be the same like the name of the wildcard. If the string argument starts with '?' it will be removed automatically. Using named wildcards and the special setters, an application can replace more than one wildcard by one call.
 

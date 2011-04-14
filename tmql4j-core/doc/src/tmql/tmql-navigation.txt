@@ -40,7 +40,7 @@ There is a shortcut definition contained by the non-canonical level based on the
 
 The 'item' axis represents the relationship between a topic item and its item-identifier. It does not support any optional type arguments and can be navigate in both directions.
 
-If the current node is a construct the forward navigation returns one item-identifier of the current construct. In relation to the TMQL meta model, a construct only contains one item-identifier. If the number of item-identifiers is more than one, one of them will be selected at random.
+If the current node is a construct the forward navigation returns all item-identifiers of the current construct. 
 
 If the current node is a string literal the backward navigation returns the construct represented by this item-identifier or an empty set if there is no construct contained.
 
@@ -117,6 +117,22 @@ There are special predefined topic references to identify the TMDM 'name-type' a
 
 If the current node is a characteristics item the backward navigation returns the topic item related to this characteristics item. If the optional type is used only topic items being an instance of the specified type will be returned.
 
+==== The variants axis ====
+
+The 'variants' axis represents the relationship between a topic name and its variants. The optional type only support for backward navigation.
+
+If the current node is a topic name, the forward navigation returns all variant items of this name object. The optional type has no relevance.
+
+If the current node if a variant item, the backward navigation returns the parent topic names being type of the optional argument.
+
+==== The datatype axis ====
+
+The 'datatype' axis represents the relationship between an occurrence or variant and its datatype. The optional type only support for forward navigation.
+
+If the current node is an occurrence or variant, the forward navigation returns the datatype of this construct. The optional type has no relevance.
+
+If the current node if a locator or string item, the backward navigation returns all variants or occurrences having this datatype. If the optional argument is given, only occurrences of this type are returned.
+
 ==== The atomify axis ====
 
 The 'atomify' axis represents the relationship between a characteristics or locator object and its literal. The axis does not support any optional type argument and can be navigated in both directions.
@@ -147,25 +163,33 @@ If the current node is a string literal the backward navigation returns all char
 
 ==== The players axis ====
 
-The 'players' axis represents the relationship between an association item and its players. The optional type argument is supported in both directions.
+The 'players' axis represents the relationship between a role item and its players. The optional type argument is supported in both directions.
 
-If the current node is an association item the forward navigation returns all topic items being a player of the current association item. If the optional type is used only the topic items being the player of the role type specified by the optional type will be returned. If the current node is a topic type, at first all association items of the topic type will be extracted.
-
-[NOTE]
-There is a shortcut contained by the non-canonical level. The shortcut '->' returns all players of the association item specified by the current node. The optional type can be used similar to the canonical production.
-
-If the current node is a topic item the backward navigation returns all association items played by the topic item. If the optional type is used only the association items will returned using the topic item as a player of the role typed by the optional type.
+If the current node is a role item the forward navigation returns the topic being a player of the current role item. If the optional type is used only the topic items being an instance of the optional type will be returned. If the current node is a topic type, at first all role items of the topic type will be extracted.
 
 [NOTE]
-There is a shortcut contained by the non-canonical level. The shortcut '<-' returns all associations played by the topic item specified by the current node. The optional type can be used similar to the canonical production.
+There is a shortcut contained by the non-canonical level. The shortcut '->' returns the player of the role item specified by the current node. The optional type can be used similar to the canonical production.
+
+If the current node is a topic item the backward navigation returns all role items played by the topic item. If the optional type is used only the role items will returned typed by the optional type.
+
+[NOTE]
+There is a shortcut contained by the non-canonical level. The shortcut '<-' returns all roles played by the topic item specified by the current node. The optional type can be used similar to the canonical production.
 
 ==== The roles axis ====
+
+The 'roles' axis represents the relationship between an association item and its roles. The optional type argument support for both navigations.
+
+If the current node is an association item the forward navigation returns all roles of the association. If the current node is a topic type, at first all association items of the topic type will be extracted.
+
+If the current node is a role item the backward navigation returns the association items being parent of this role. The optional type is interpreted as the type of the returned associations.
+
+==== The roletypes axis ====
 
 The 'roles' axis represents the relationship between an association item and its role types. The optional type argument only support for backward navigations.
 
 If the current node is an association item the forward navigation returns all topic types acts as role types of the association. If the current node is a topic type, at first all association items of the topic type will be extracted.
 
-If the current node is a topic type the backward navigation returns all association items using the topic type as a role type. The optional type has no relevance.
+If the current node is a topic type the backward navigation returns all associations items using the topic type as a role type. The optional type has no relevance.
 
 [NOTE]
 In addition to the current draft some implementations of the query language supporting an optional type argument. If the optional type is used the backward navigation only returns association items of the defined association type.

@@ -87,7 +87,7 @@
  	}
  %>
  <br />
- This service use the TMQL draft of 2008 and the tmql4j query engine version 3.1.0.
+ This service uses the TMQL draft of 2008 and the tmql4j query engine version 3.1.0.
  <hr />
 <form action="canonizer.jsp" method="POST"><textarea rows="10"
 	cols="100" id="query" name="query"><%=query%></textarea><br />

@@ -3,7 +3,7 @@
 Since version 3.0.0 the tmql4j engine supports the 'use-expression' to enable the modification of result type and result format. The 'use-expression' only contains two or three tokens representing the request format of result processing.
 
 -------------------------
-1:	USE-EXPRESSION ::=	'USE' ( 'CTM' | 'JTMQR' | 'JTMQROS' | ( 'TEMPLATE' literal ))
+1:	USE-EXPRESSION ::=	'USE' ( 'CTM' | 'JTMQR' | ( 'TEMPLATE' literal ))
 -------------------------
 
 ==== CTM ====
@@ -13,7 +13,7 @@ The token 'CTM' in the use-expression are used to call the result processor that
 [NOTE]
 The result processor only supports the possibility to returned topic or association CTM fragments, any other constructs will be ignored.
 
-==== JTMQR or JTMQROS ====
+==== JTMQR ====
 
 'JTMQR' is a modification of the JSON Topic Maps Notation to enable the representation of TMQL results within the JTM syntax. The syntax is quite simple. 
 
@@ -31,8 +31,6 @@ seq: [
 --------------------------
 
 The overall results of the query are contained within the 'seq' item, which contains a JSON array of result tuples 't'. A result tuple 't' is also a JSON array containing a set of cell values. A cell value can be a topic map construct represented by the 'i' key, a numerical value represented by the 'n' key or a string literal represented by 's'.
-
-In special the 'JTMQROS' only symbolize the engine to write the result in a provided output stream automatically.
 
 ==== TEMPLATE ====
 

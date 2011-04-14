@@ -249,6 +249,36 @@ The interface represents a specific token of the language of TMQL or some extens
 
 To use Java service provider technology, the jar file must be include a file named 'de.topicmapslab.tmql4j.extensions.model.IExtensionPoint' only includes one text line with the full qualified name of the extension point implementation.  The file has to be located in the folder 'META-INF\services'.
 
+You can also create your own pragma and register them to the core runtime. To define a new pragma the extension should implement a class inherit from the 'IPragma' interface:
+
+---------------------------------------
+1:	public interface IPragma {
+2:	
+3:		/**
+4:	 	* Returns the identifier of the pragma
+5:	 	* 
+6:	 	* @return the identifier of the pragma
+7:	 	*/
+8:		public String getIdentifier();
+9:
+10:		/**
+11:	 	* Interpret the given pragma
+12:	 	*	 
+13:	 	* @param runtiem
+14:	 	*            the runtime
+15:	 	* @param context
+16:	 	*            the context
+17:	 	* @param value
+18:	 	*            the value
+19:	 	* @throws TMQLRuntimeException
+20:	 	*/
+21:		public void interpret(final ITMQLRuntime runtime, final IContext context, final String value) throws TMQLRuntimeException;
+22:	
+23:	}
+---------------------------------------
+
+Each pragma implementation class should be registered during the initialization process of the extension by calling the 'PragmaRegistry' provided by the language context.
+
 ==== Omnigator Plug-in ====
 
 As one of the first implementations, we provide a generic query plug-in for the Topic Maps browser Omnigator, called tmql4j-ontopia. It offers the possibility to query the Topic Maps using the TMQL syntax. The generic plug-in is an extension of TMQL4J
