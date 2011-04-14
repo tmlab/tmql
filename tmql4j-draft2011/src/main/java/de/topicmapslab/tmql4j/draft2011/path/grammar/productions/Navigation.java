@@ -17,17 +17,14 @@ import de.topicmapslab.tmql4j.components.parser.IParserUtilsCallback;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.draft2011.path.components.parser.NonCanonicalUtils;
 import de.topicmapslab.tmql4j.draft2011.path.components.parser.ParserUtils;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.MoveBackward;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.MoveForward;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisAtomifyMoveBackward;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisAtomifyMoveForward;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisIndicators;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisItem;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisLocators;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisPlayersMoveBackward;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisPlayersMoveForward;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisReifierMoveBackward;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisReifierMoveForward;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisByItemIdentifier;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisBySubjectIdentifier;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisBySubjectLocator;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisPlayedRoles;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisPlayers;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisReified;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisReifier;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Slash;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
@@ -56,11 +53,9 @@ public class Navigation extends ExpressionImpl {
 	 * @param parent
 	 *            the known parent node
 	 * @param tmqlTokens
-	 *            the list of language-specific tokens contained by this
-	 *            expression
+	 *            the list of language-specific tokens contained by this expression
 	 * @param tokens
-	 *            the list of string-represented tokens contained by this
-	 *            expression
+	 *            the list of string-represented tokens contained by this expression
 	 * @param runtime
 	 *            the TMQL runtime
 	 * @throws TMQLInvalidSyntaxException
@@ -79,9 +74,9 @@ public class Navigation extends ExpressionImpl {
 			public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
 				Class<? extends IToken> token = tmqlTokens.get(0);
 				/*
-				 * is direction token >> or <<
+				 * is direction token \
 				 */
-				if (token.equals(MoveBackward.class) || token.equals(MoveForward.class)) {
+				if (token.equals(Slash.class)) {
 					checkForExtensions(StepDefinition.class, tmqlTokens, tokens, runtime);
 				}
 				/*
@@ -97,17 +92,14 @@ public class Navigation extends ExpressionImpl {
 		 * create set containing all delimers
 		 */
 		Set<Class<? extends IToken>> delimers = HashUtil.getHashSet();
-		delimers.add(MoveBackward.class);
-		delimers.add(MoveForward.class);
-		delimers.add(ShortcutAxisAtomifyMoveBackward.class);
-		delimers.add(ShortcutAxisAtomifyMoveForward.class);
-		delimers.add(ShortcutAxisItem.class);
-		delimers.add(ShortcutAxisIndicators.class);
-		delimers.add(ShortcutAxisLocators.class);
-		delimers.add(ShortcutAxisReifierMoveForward.class);
-		delimers.add(ShortcutAxisReifierMoveBackward.class);
-		delimers.add(ShortcutAxisPlayersMoveForward.class);
-		delimers.add(ShortcutAxisPlayersMoveBackward.class);
+		delimers.add(Slash.class);
+		delimers.add(ShortcutAxisByItemIdentifier.class);
+		delimers.add(ShortcutAxisBySubjectIdentifier.class);
+		delimers.add(ShortcutAxisBySubjectLocator.class);
+		delimers.add(ShortcutAxisReified.class);
+		delimers.add(ShortcutAxisReifier.class);
+		delimers.add(ShortcutAxisPlayers.class);
+		delimers.add(ShortcutAxisPlayedRoles.class);
 
 		/*
 		 * split expression

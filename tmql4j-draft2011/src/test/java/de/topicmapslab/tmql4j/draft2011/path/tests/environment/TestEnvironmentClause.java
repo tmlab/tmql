@@ -24,8 +24,7 @@ public class TestEnvironmentClause extends Tmql4JTestCase {
 
 	@Test
 	public void testPrefix() throws Exception {
-		Topic topic = topicMap.createTopicBySubjectIdentifier(topicMap
-				.createLocator("http://psi.example.org/myTopic"));
+		Topic topic = topicMap.createTopicBySubjectIdentifier(topicMap.createLocator("http://psi.example.org/myTopic"));
 		String query = null;
 		SimpleResultSet set = null;
 
@@ -51,39 +50,39 @@ public class TestEnvironmentClause extends Tmql4JTestCase {
 		// supertype ako supersupertype
 		addSupertype(supertype, supersupertype);
 
-		String query = "%pragma taxonometry tm:intransitive myTopic >> types";
+		String query = "%pragma taxonometry tm:intransitive myTopic / types";
 		SimpleResultSet set = execute(query);
 
 		assertEquals(1, set.size());
 
-		query = "%pragma taxonometry tm:transitive myTopic >> types";
+		query = "%pragma taxonometry tm:transitive myTopic / types";
 		set = execute(query);
 		assertEquals(3, set.size());
 
 		// for instances
-		query = "%pragma taxonometry tm:intransitive supersupertype >> instances";
+		query = "%pragma taxonometry tm:intransitive supersupertype / instances";
 		set = execute(query);
 		assertEquals(0, set.size());
 
-		query = "%pragma taxonometry tm:transitive supersupertype >> instances";
+		query = "%pragma taxonometry tm:transitive supersupertype / instances";
 		set = execute(query);
 		assertEquals(1, set.size());
 
 		// for supertypes
-		query = "%pragma taxonometry tm:intransitive myType >> supertypes";
+		query = "%pragma taxonometry tm:intransitive myType / supertypes";
 		set = execute(query);
 		assertEquals(1, set.size());
 
-		query = "%pragma taxonometry tm:transitive myType >> supertypes";
+		query = "%pragma taxonometry tm:transitive myType / supertypes";
 		set = execute(query);
 		assertEquals(2, set.size());
 
 		// for subtypes
-		query = "%pragma taxonometry tm:intransitive supersupertype >> subtypes";
+		query = "%pragma taxonometry tm:intransitive supersupertype / subtypes";
 		set = execute(query);
 		assertEquals(1, set.size());
 
-		query = "%pragma taxonometry tm:transitive supersupertype >> subtypes";
+		query = "%pragma taxonometry tm:transitive supersupertype / subtypes";
 		set = execute(query);
 		assertEquals(2, set.size());
 	}

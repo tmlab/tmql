@@ -86,126 +86,6 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 	}
 
 	@Test
-	public void testNCLAtomifyAxis() throws Exception {
-		Topic topic = createTopicBySI("myTopic");
-		Topic type = createTopicBySI("theType");
-		String[] values = new String[100];
-		for (int i = 0; i < values.length; i++) {
-			values[i] = "Value" + i;
-
-			if (i % 2 == 0) {
-				topic.createOccurrence(type, values[i], new Topic[0]);
-			} else {
-				topic.createName(type, values[i], new Topic[0]);
-			}
-		}
-		String query = null;
-		SimpleResultSet set = null;
-
-		query = "myTopic / theType";
-		set = execute(new TMQLQuery(topicMap, query));
-		assertEquals(values.length, set.size());
-
-		Set<String> result = HashUtil.getHashSet();
-		for (IResult r : set.getResults()) {
-			assertTrue(r.first() instanceof String);
-			result.add((String) r.first());
-		}
-
-		for (int i = 0; i < values.length; i++) {
-			assertTrue(result.contains(values[i]));
-		}
-	}
-
-	@Test
-	public void testNCLAtomifyAxisTmName() throws Exception {
-		Topic topic = createTopicBySI("myTopic");
-		Topic type = createTopicBySI("theType");
-		Name[] names = new Name[100];
-		for (int i = 0; i < names.length; i++) {
-			names[i] = topic.createName(type, "Value" + i, new Topic[0]);
-			topic.createOccurrence(type, "Value_" + i, new Topic[0]);
-		}
-		String query = null;
-		SimpleResultSet set = null;
-
-		query = "myTopic / tm:name";
-		set = execute(new TMQLQuery(topicMap, query));
-		assertEquals(names.length, set.size());
-
-		Set<String> result = HashUtil.getHashSet();
-		for (IResult r : set.getResults()) {
-			assertTrue(r.first() instanceof String);
-			result.add((String) r.first());
-		}
-
-		for (int i = 0; i < names.length; i++) {
-			assertTrue(result.contains(names[i].getValue()));
-		}
-	}
-
-	@Test
-	public void testNCLAtomifyAxisTmOccurrence() throws Exception {
-		Topic topic = createTopicBySI("myTopic");
-		Topic type = createTopicBySI("theType");
-		Occurrence[] occurrences = new Occurrence[100];
-		for (int i = 0; i < occurrences.length; i++) {
-			occurrences[i] = topic.createOccurrence(type, "Value" + i, new Topic[0]);
-			topic.createName(type, "Value_" + i, new Topic[0]);
-		}
-		String query = null;
-		SimpleResultSet set = null;
-
-		query = "myTopic / tm:occurrence";
-		set = execute(new TMQLQuery(topicMap, query));
-		assertEquals(occurrences.length, set.size());
-
-		Set<String> result = HashUtil.getHashSet();
-		for (IResult r : set.getResults()) {
-			assertTrue(r.first() instanceof String);
-			result.add((String) r.first());
-		}
-
-		for (int i = 0; i < occurrences.length; i++) {
-			assertTrue(result.contains(occurrences[i].getValue()));
-		}
-	}
-
-	@Test
-	public void testNCLDeAotmifyAxisName() throws Exception {
-		Topic topic = createTopicBySI("myTopic");
-		Topic type = createTopicBySI("theType");
-		topic.addType(type);
-		String query = null;
-		SimpleResultSet set = null;
-		for (int i = 0; i < 100; i++) {
-			topic.createName(type, "Value" + i, new Topic[0]);
-			query = "\"Value" + i + "\" \\ theType";
-			set = execute(new TMQLQuery(topicMap, query));
-			assertEquals(i + "", 1, set.size());
-			assertTrue(set.getResults().get(0).first() instanceof Topic);
-			assertTrue(set.getResults().get(0).first().equals(topic));
-		}
-	}
-
-	@Test
-	public void testNCLDeAotmifyAxisOccurrence() throws Exception {
-		Topic topic = createTopicBySI("myTopic");
-		Topic type = createTopicBySI("theType");
-		topic.addType(type);
-		String query = null;
-		SimpleResultSet set = null;
-		for (int i = 0; i < 100; i++) {
-			topic.createOccurrence(type, "Value" + i, new Topic[0]);
-			query = "\"Value" + i + "\" \\ theType";
-			set = execute(new TMQLQuery(topicMap, query));
-			assertEquals(i + "", 1, set.size());
-			assertTrue(set.getResults().get(0).first() instanceof Topic);
-			assertTrue(set.getResults().get(0).first().equals(topic));
-		}
-	}
-
-	@Test
 	public void testNCLPlayersAxis() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
 		Topic type = createTopicBySI("myType");
@@ -219,7 +99,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "myTopic -> myType";
+		query = "myTopic / typed -> myType";
 		set = execute(query);
 		assertEquals(topics.length, set.size());
 
@@ -235,7 +115,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 	}
 
 	@Test
-	public void testNCLPlayersBWAxis() throws Exception {
+	public void testNCLPlayedRolesAxis() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
 		Topic roleType = createTopicBySI("roleType");
 		Role[] roles = new Role[100];
@@ -263,7 +143,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 	}
 
 	@Test
-	public void testNCLReifierAxis() throws Exception {
+	public void testNCLReifiedAxis() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
 		/*
 		 * name
@@ -273,7 +153,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "myTopic ~~>";
+		query = "myTopic <~~";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertTrue(set.getResults().get(0).first() instanceof Name);
@@ -286,7 +166,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 		Occurrence o = createTopic().createOccurrence(createTopic(), "Value", new Topic[0]);
 		o.setReifier(topic);
 
-		query = "myTopic ~~>";
+		query = "myTopic <~~";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertTrue(set.getResults().get(0).first() instanceof Occurrence);
@@ -298,7 +178,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 		Variant v = createTopic().createName("Value", new Topic[0]).createVariant("Value", createTopic());
 		v.setReifier(topic);
 
-		query = "myTopic ~~>";
+		query = "myTopic <~~";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertTrue(set.getResults().get(0).first() instanceof Variant);
@@ -310,7 +190,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 		Association a = createAssociation();
 		a.setReifier(topic);
 
-		query = "myTopic ~~>";
+		query = "myTopic <~~";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertTrue(set.getResults().get(0).first() instanceof Association);
@@ -322,7 +202,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 		Role r = createAssociation().createRole(createTopic(), createTopic());
 		r.setReifier(topic);
 
-		query = "myTopic ~~>";
+		query = "myTopic <~~";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertTrue(set.getResults().get(0).first() instanceof Role);
@@ -332,7 +212,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 		 * topic map
 		 */
 		topicMap.setReifier(topic);
-		query = "myTopic ~~>";
+		query = "myTopic <~~";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertTrue(set.getResults().get(0).first() instanceof TopicMap);
@@ -340,7 +220,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 	}
 
 	@Test
-	public void testNCLReifierBWAxis() throws Exception {
+	public void testNCLReifierAxis() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
 		Topic[] topics = new Topic[100];
 		for (int i = 0; i < topics.length; i++) {
@@ -350,7 +230,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "myTopic >> characteristics <~~";
+		query = "myTopic / names ~~>";
 		set = execute(query);
 		assertEquals(topics.length, set.size());
 
@@ -427,7 +307,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 	}
 
 	@Test
-	public void testNCLItemAxis() throws Exception {
+	public void testNCLByItemIdentifierAxis() throws Exception {
 		Topic topic = createTopicByII("myTopic");
 		String query = null;
 		SimpleResultSet set = null;
@@ -440,7 +320,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 	}
 
 	@Test
-	public void testNCLIndicatorsAxis() throws Exception {
+	public void testNCLBySubjectIdentifierAxis() throws Exception {
 		Topic topic = createTopicBySI("myTopic");
 		String query = null;
 		SimpleResultSet set = null;
@@ -453,7 +333,7 @@ public class TestNonCanonicalNaviagationAxis extends Tmql4JTestCase {
 	}
 
 	@Test
-	public void testNCLLocatorsAxis() throws Exception {
+	public void testNCLBySubjectLocatorAxis() throws Exception {
 		Topic topic = createTopicBySL("myTopic");
 		String query = null;
 		SimpleResultSet set = null;

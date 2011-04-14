@@ -38,7 +38,7 @@ public class TestResultSets extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "tm:subject >> instances";
+		query = "tm:subject / instances";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 

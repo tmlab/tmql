@@ -13,13 +13,13 @@ package de.topicmapslab.tmql4j.draft2011.path.grammar.lexical;
 import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 
-public class ShortcutAxisReifierMoveForward extends Token {
+public class ShortcutAxisPlayedRoles extends Token {
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "~~>";
+		return "<-";
 	}
 
 }

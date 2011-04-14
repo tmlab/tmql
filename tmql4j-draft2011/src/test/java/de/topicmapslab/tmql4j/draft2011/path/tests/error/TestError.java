@@ -23,7 +23,7 @@ public class TestError extends Tmql4JTestCase {
 
 	@Test(expected = TMQLParserException.class)
 	public void testUnkownAxis() {
-		execute("123 << invalid");
+		execute("123 / invalid");
 	}
 
 	@Test(expected = TMQLParserException.class)

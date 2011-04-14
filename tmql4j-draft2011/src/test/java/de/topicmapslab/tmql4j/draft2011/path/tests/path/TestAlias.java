@@ -8,7 +8,8 @@
  */
 package de.topicmapslab.tmql4j.draft2011.path.tests.path;
 
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 import java.util.Set;
 
@@ -34,14 +35,14 @@ public class TestAlias extends Tmql4JTestCase {
 		IQuery q = runtime.run(topicMap, "// tm:subject ( . )");
 		q.getResults().get(0, "topic");
 	}
-	
+
 	@Test(expected = IllegalArgumentException.class)
 	public void testError2() throws Exception {
 		createTopic();
 		IQuery q = runtime.run(topicMap, "// tm:subject ( . )");
 		q.getResults().get(0).get("topic");
 	}
-	
+
 	@Test
 	public void testAlias() throws Exception {
 		createTopic();
@@ -54,40 +55,40 @@ public class TestAlias extends Tmql4JTestCase {
 		Topic t = createTopic();
 		IQuery q = runtime.run(topicMap, "// tm:subject ( . AS \"topic\" )");
 		assertEquals(t, q.getResults().get(0, "topic"));
-		
+
 		assertEquals(t, q.getResults().get(0).get("topic"));
 	}
-	
+
 	@Test
 	public void testProjectionWithAlias2() throws Exception {
 		Topic t = createTopic();
 		Set<Name> names = HashUtil.getHashSet();
-		for ( int i = 0 ;i < 10 ; i++){
-			names.add(t.createName(t, "Name"+i));
+		for (int i = 0; i < 10; i++) {
+			names.add(t.createName(t, "Name" + i));
 		}
-		IQuery q = runtime.run(topicMap, "// tm:subject ( . AS \"topic\" , . >> characteristics tm:name AS \"name\" )");
+		IQuery q = runtime.run(topicMap, "// tm:subject ( . AS \"topic\" , . / names AS \"name\" )");
 		IResultSet<?> set = q.getResults();
 		assertEquals(10, set.size());
-		for ( IResult r :set){
+		for (IResult r : set) {
 			assertEquals(2, r.size());
 			assertEquals(t, r.get("topic"));
 			assertTrue(names.contains(r.get("name")));
 		}
 	}
-	
+
 	@Test
 	public void testProjectionWithAlias3() throws Exception {
 		Topic t = createTopic();
 		Set<Name> names = HashUtil.getHashSet();
 		Set<String> values = HashUtil.getHashSet();
-		for ( int i = 0 ;i < 10 ; i++){
-			names.add(t.createName(t, "Name"+i));
-			values.add("Name"+i);
+		for (int i = 0; i < 10; i++) {
+			names.add(t.createName(t, "Name" + i));
+			values.add("Name" + i);
 		}
-		IQuery q = runtime.run(topicMap, "// tm:subject >> characteristics tm:name ( . << characteristics AS \"topic\" , . AS \"name\" , . >> atomify AS \"value\" )");
+		IQuery q = runtime.run(topicMap, "// tm:subject / names ( . / parent AS \"topic\" , . AS \"name\" , . / value AS \"value\" )");
 		IResultSet<?> set = q.getResults();
 		assertEquals(10, set.size());
-		for ( IResult r :set){
+		for (IResult r : set) {
 			assertEquals(3, r.size());
 			assertEquals(t, r.get("topic"));
 			assertTrue(names.contains(r.get("name")));

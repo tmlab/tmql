@@ -88,8 +88,30 @@
 	</build>
 	<repositories>
 		<repository>
-			<id>public</id>
+			<id>TML</id>
 			<url>http://maven.topicmapslab.de/public</url>
+		</repository>
+		<repository>
+			<id>Ontopia</id>
+			<url>http://ontopia.googlecode.com/svn/maven-repository</url>
+		</repository>
+		<repository>
+			<id>de.tmapi</id>
+			<url>http://www.tmapi.org/maven-repository</url>
+		</repository>
+		<repository>
+			<id>Semagia</id>
+			<name>Semagia</name>
+			<url>http://repository.semagia.com/snapshots/</url>
+		</repository>
+		<repository>
+			<id>Semagia releases</id>
+			<name>Semagia Releases</name>
+			<url>http://repository.semagia.com/releases/</url>
+		</repository>
+		<repository>
+			<id>org.tmapi.snapshot</id>
+			<url>http://www.tmapi.org/maven-repository/snapshots/</url>
 		</repository>
 	</repositories>
 	<dependencies>

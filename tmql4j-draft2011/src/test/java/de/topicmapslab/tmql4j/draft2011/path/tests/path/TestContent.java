@@ -58,7 +58,7 @@ public class TestContent extends Tmql4JTestCase {
 			assertEquals(1, r.size());
 			assertTrue(topics.contains(r.first()));
 		}
-		
+
 		query = " { // other INTERSECT // myType }";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
@@ -66,7 +66,7 @@ public class TestContent extends Tmql4JTestCase {
 			assertEquals(1, r.size());
 			assertTrue(topics.contains(r.first()));
 		}
-		
+
 		query = " // other INTERSECT { // myType }";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
@@ -74,7 +74,7 @@ public class TestContent extends Tmql4JTestCase {
 			assertEquals(1, r.size());
 			assertTrue(topics.contains(r.first()));
 		}
-		
+
 		query = " { // other } INTERSECT { // myType }";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
@@ -257,7 +257,7 @@ public class TestContent extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 	}
-	
+
 	@Test
 	public void testMinus() throws Exception {
 		String query;
@@ -312,8 +312,7 @@ public class TestContent extends Tmql4JTestCase {
 		}
 
 		/*
-		 * second part will be interpret first 
-		 * ( // other UNION // myType )
+		 * second part will be interpret first ( // other UNION // myType )
 		 */
 		query = " // another MINUS // other UNION // myType";
 		set = execute(query);
@@ -321,11 +320,10 @@ public class TestContent extends Tmql4JTestCase {
 		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertTrue(topics.contains(r.first()));
-		}		
-		
+		}
+
 		/*
-		 * second part will be interpret first 
-		 * ( // other UNION // myType )
+		 * second part will be interpret first ( // other UNION // myType )
 		 */
 		query = " // another MINUS { // other UNION // myType }";
 		set = execute(query);
@@ -333,14 +331,14 @@ public class TestContent extends Tmql4JTestCase {
 		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertTrue(topics.contains(r.first()));
-		}	
+		}
 	}
-	
+
 	@Test
 	public void testIfThenElseClause() throws Exception {
 		String query;
 		SimpleResultSet set = null;
-		Topic topic = createTopicBySI("myType");		
+		Topic topic = createTopicBySI("myType");
 		Set<String> values = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
 			Topic t = createTopic();
@@ -351,31 +349,31 @@ public class TestContent extends Tmql4JTestCase {
 			}
 		}
 
-		query = " // myType ( IF ( fn:count( . / tm:name ) > 0 ) THEN . / tm:name ) ";
+		query = " // myType ( IF ( fn:count( . / names / value ) > 0 ) THEN . / names / value ) ";
 		set = execute(query);
 		assertEquals(values.size(), set.size());
 		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertTrue(values.contains(r.first()));
-		}	
+		}
 
 		values.add("Missing");
-		query = " // myType ( IF ( fn:count( . / tm:name ) > 0 ) THEN . / tm:name ELSE \"Missing\" ) ";
+		query = " // myType ( IF ( fn:count( . / names / value ) > 0 ) THEN . / names / value ELSE \"Missing\" ) ";
 		set = execute(query);
 		assertEquals(100, set.size());
 		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertTrue(values.contains(r.first()));
-		}	
-		
+		}
+
 		values.add("Missing");
-		query = " // myType ( . / tm:name || \"Missing\" ) ";
+		query = " // myType ( . / names / value || \"Missing\" ) ";
 		set = execute(query);
 		assertEquals(100, set.size());
 		for (IResult r : set) {
 			assertEquals(1, r.size());
 			assertTrue(values.contains(r.first()));
-		}	
+		}
 	}
 
 }

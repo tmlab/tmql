@@ -12,12 +12,13 @@ package de.topicmapslab.tmql4j.draft2011.path.grammar.lexical;
 
 import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
-public class MoveForward extends Token {
+
+public class ShortcutAxisBySubjectLocator extends Token {
 
 	/**
 	 * 
 	 */
-	public static final String TOKEN = ">>";
+	public static final String TOKEN = "=";
 
 	/**
 	 * {@inheritDoc}

@@ -9,35 +9,35 @@
 package de.topicmapslab.tmql4j.draft2011.path.components.navigation.axis;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
-import org.tmapi.core.Association;
-import org.tmapi.core.Role;
+import org.tmapi.core.Construct;
 import org.tmapi.core.Topic;
 
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.draft2011.path.components.navigation.Axis;
 import de.topicmapslab.tmql4j.draft2011.path.exception.InvalidValueException;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisRoles;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisById;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
-import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
- * Class definition representing the roles axis.
+ * Class definition representing the by-id axis.
  * <p>
- * If the value is an association item, in forward direction this step computes all role items.
+ * <p>
+ * If the value is a string this step returns the construct with this id.
  * </p>
  * 
  * @author Sven Krosse
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class RolesAxis extends Axis {
+public class ByIdAxis extends Axis {
 
 	/**
 	 * base constructor to create an new instance
 	 */
-	public RolesAxis() {
-		super(AxisRoles.class);
+	public ByIdAxis() {
+		super(AxisById.class);
 	}
 
 	/**
@@ -46,22 +46,13 @@ public class RolesAxis extends Axis {
 	@Override
 	public Collection<?> navigate(IContext context, Object source, Topic type) throws TMQLRuntimeException {
 		/*
-		 * check if construct is an association
+		 * check if anchor is a construct
 		 */
-		if (source instanceof Association) {
-			Association association = (Association) source;
-			/*
-			 * create new instance of tuple-sequence
-			 */
-			Collection<Role> set = HashUtil.getHashSet();
-			for (Role role : association.getRoles()) {
-				if (type != null) {
-					if (matches(context, role, type)) {
-						set.add(role);
-					}
-				} else {
-					set.add(role);
-				}
+		if (source instanceof String) {
+			Collection<Object> set = new LinkedList<Object>();
+			Construct c = context.getQuery().getTopicMap().getConstructById(source.toString());
+			if (c != null) {
+				set.add(c);
 			}
 			return set;
 		}

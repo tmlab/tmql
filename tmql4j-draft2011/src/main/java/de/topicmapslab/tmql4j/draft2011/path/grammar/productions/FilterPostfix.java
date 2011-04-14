@@ -23,10 +23,10 @@ import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.DoubleDot;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Equality;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.LowerEquals;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.LowerThan;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.MoveForward;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Scope;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisInstances;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisTypes;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Slash;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
@@ -34,8 +34,7 @@ import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 
 /**
- * Special implementation of {@link ExpressionImpl} representing a
- * filter-postfix.
+ * Special implementation of {@link ExpressionImpl} representing a filter-postfix.
  * <p>
  * The grammar production rule of the expression is: <code>
  * <p>
@@ -48,8 +47,7 @@ import de.topicmapslab.tmql4j.grammar.productions.IExpression;
  * filter-postfix ::= [ integer ] ==> [ $# == integer ]
  * </p>
  * <p>
- * filter-postfix ::= [ integer-1 .. integer-2 ] ==> [ integer-1 <= $# & $# <
- * integer-2 ]
+ * filter-postfix ::= [ integer-1 .. integer-2 ] ==> [ integer-1 <= $# & $# < integer-2 ]
  * </p>
  * <p>
  * filter-postfix ::= [ @ scope ] | @ scope
@@ -73,8 +71,7 @@ public class FilterPostfix extends ExpressionImpl {
 	private static final String BOUNDS_JOIN = "<= $# AND $# <";
 
 	/**
-	 * variable represents the current position during the iteration over a
-	 * tuple sequence
+	 * variable represents the current position during the iteration over a tuple sequence
 	 */
 	public static final String CURRENT_POISTION = INDEX_VAR;
 
@@ -121,11 +118,9 @@ public class FilterPostfix extends ExpressionImpl {
 	 * @param parent
 	 *            the known parent node
 	 * @param tmqlTokens
-	 *            the list of language-specific tokens contained by this
-	 *            expression
+	 *            the list of language-specific tokens contained by this expression
 	 * @param tokens
-	 *            the list of string-represented tokens contained by this
-	 *            expression
+	 *            the list of string-represented tokens contained by this expression
 	 * @param runtime
 	 *            the TMQL runtime
 	 * @throws TMQLInvalidSyntaxException
@@ -193,8 +188,7 @@ public class FilterPostfix extends ExpressionImpl {
 			}
 
 			/*
-			 * no other production matches, because of that it has to be a
-			 * boolean-expression
+			 * no other production matches, because of that it has to be a boolean-expression
 			 */
 			if (getGrammarType() == -1) {
 				checkForExtensions(BooleanExpression.class, tmqlTokens.subList(1, tmqlTokens.size() - 1), tokens.subList(1, tokens.size() - 1), runtime);
@@ -244,7 +238,7 @@ public class FilterPostfix extends ExpressionImpl {
 		if (getGrammarType() == TYPE_TYPE_FILTER || getGrammarType() == TYPE_SHORTCUT_TYPE_FILTER) {
 			builder.append(Dot.TOKEN);
 			builder.append(WHITESPACE);
-			builder.append(MoveForward.TOKEN);
+			builder.append(Slash.TOKEN);
 			builder.append(WHITESPACE);
 			builder.append(AxisTypes.TOKEN);
 			builder.append(WHITESPACE);
@@ -253,7 +247,7 @@ public class FilterPostfix extends ExpressionImpl {
 		} else if (getGrammarType() == TYPE_SCOPE_FILTER || getGrammarType() == TYPE_SHORTCUT_SCOPE_FILTER) {
 			builder.append(Dot.TOKEN);
 			builder.append(WHITESPACE);
-			builder.append(MoveForward.TOKEN);
+			builder.append(Slash.TOKEN);
 			builder.append(WHITESPACE);
 			builder.append(AxisScope.TOKEN);
 			builder.append(WHITESPACE);

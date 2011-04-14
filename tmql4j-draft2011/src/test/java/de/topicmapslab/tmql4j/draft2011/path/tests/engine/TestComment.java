@@ -34,29 +34,29 @@ public class TestComment extends Tmql4JTestCase {
 		String query = null;
 		IResultSet<?> set = null;
 
-		query = "#tm:subject >> instances";
+		query = "#tm:subject / instances";
 		set = execute(query);
 		assertEquals(0, set.size());
 
-		query = "\"Hallo Welt\"#tm:subject >> instances";
+		query = "\"Hallo Welt\"#tm:subject / instances";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals("Hallo Welt", set.get(0, 0));
 
-		query = "\"Hallo #Welt\"#tm:subject >> instances";
+		query = "\"Hallo #Welt\"#tm:subject / instances";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals("Hallo #Welt", set.get(0, 0));
 
-		query = "\"Hallo #################Welt\"#tm:subject >> instances";
+		query = "\"Hallo #################Welt\"#tm:subject / instances";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());
 		assertEquals("Hallo #################Welt", set.get(0, 0));
 
-		query = "\"Hallo <Welt>\"#tm:subject >> instances";
+		query = "\"Hallo <Welt>\"#tm:subject / instances";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertEquals(1, set.first().size());

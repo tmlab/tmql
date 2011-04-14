@@ -19,7 +19,7 @@ public class AxisBySubjectIdentifier extends Token {
 	 */
 	@Override
 	public String getLiteral() {
-		return "by-subject-identifiers";
+		return "by-subject-identifier";
 	}
 
 }

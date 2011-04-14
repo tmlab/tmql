@@ -40,19 +40,13 @@ public class TestTupleExpression extends Tmql4JTestCase {
 		Topic type = createTopicBySI("theType");
 		Construct[] constructs = new Construct[100];
 		for (int i = 0; i < constructs.length; i++) {
-			if (i % 2 == 0) {
-				constructs[i] = topic.createName(type, "Value", new Topic[0]);
-				topic.createName(createTopic(), "Value", new Topic[0]);
-			} else {
-				constructs[i] = topic.createOccurrence(type, "Value",
-						new Topic[0]);
-				topic.createOccurrence(createTopic(), "Value", new Topic[0]);
-			}
+			constructs[i] = topic.createName(type, "Value", new Topic[0]);
+			topic.createName(createTopic(), "Value", new Topic[0]);
 		}
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "( myTopic >> characteristics theType)";
+		query = "( myTopic / names theType)";
 		set = execute(query);
 		assertEquals(constructs.length, set.size());
 
@@ -73,19 +67,13 @@ public class TestTupleExpression extends Tmql4JTestCase {
 		Topic type = createTopicBySI("theType");
 		Set<Construct> constructs = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
-			if (i % 2 == 0) {
-				constructs.add(topic.createName(type, "Value", new Topic[0]));
-				topic.createName(createTopic(), "Value", new Topic[0]);
-			} else {
-				constructs.add(topic.createOccurrence(type, "Value",
-						new Topic[0]));
-				topic.createOccurrence(createTopic(), "Value", new Topic[0]);
-			}
+			constructs.add(topic.createName(type, "Value", new Topic[0]));
+			topic.createName(createTopic(), "Value", new Topic[0]);
 		}
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = " ( myTopic  , myTopic >> characteristics theType)";
+		query = " ( myTopic  , myTopic / names theType)";
 		set = execute(query);
 		assertEquals(100, set.size());
 		for (IResult r : set) {
@@ -101,19 +89,13 @@ public class TestTupleExpression extends Tmql4JTestCase {
 		Topic type = createTopicBySI("theType");
 		Set<Construct> constructs = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
-			if (i % 2 == 0) {
-				constructs.add(topic.createName(type, "Value", new Topic[0]));
-				topic.createName(createTopic(), "Value", new Topic[0]);
-			} else {
-				constructs.add(topic.createOccurrence(type, "Value",
-						new Topic[0]));
-				topic.createOccurrence(createTopic(), "Value", new Topic[0]);
-			}
+			constructs.add(topic.createName(type, "Value", new Topic[0]));
+			topic.createName(createTopic(), "Value", new Topic[0]);
 		}
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = " ( myTopic  , theType, myTopic >> characteristics theType)";
+		query = " ( myTopic  , theType, myTopic / names theType)";
 		set = execute(query);
 		assertEquals(100, set.size());
 		for (IResult r : set) {
@@ -130,19 +112,13 @@ public class TestTupleExpression extends Tmql4JTestCase {
 		Topic type = createTopicBySI("theType");
 		Set<Construct> constructs = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
-			if (i % 2 == 0) {
-				constructs.add(topic.createName(type, "Value", new Topic[0]));
-				topic.createName(createTopic(), "Value", new Topic[0]);
-			} else {
-				constructs.add(topic.createOccurrence(type, "Value",
-						new Topic[0]));
-				topic.createOccurrence(createTopic(), "Value", new Topic[0]);
-			}
+			constructs.add(topic.createName(type, "Value", new Topic[0]));
+			topic.createName(createTopic(), "Value", new Topic[0]);
 		}
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "myTopic ( .  , . >> characteristics theType)";
+		query = "myTopic ( .  , . / names theType)";
 		set = execute(query);
 		assertEquals(100, set.size());
 		for (IResult r : set) {
@@ -158,19 +134,13 @@ public class TestTupleExpression extends Tmql4JTestCase {
 		Topic type = createTopicBySI("theType");
 		Set<Construct> constructs = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
-			if (i % 2 == 0) {
-				constructs.add(topic.createName(type, "Value", new Topic[0]));
-				topic.createName(createTopic(), "Value", new Topic[0]);
-			} else {
-				constructs.add(topic.createOccurrence(type, "Value",
-						new Topic[0]));
-				topic.createOccurrence(createTopic(), "Value", new Topic[0]);
-			}
+			constructs.add(topic.createName(type, "Value", new Topic[0]));
+			topic.createName(createTopic(), "Value", new Topic[0]);
 		}
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = " myTopic ( .  , theType , . >> characteristics theType , . / nonExists )";
+		query = " myTopic ( .  , theType , . / names theType , . / names nonExists / value )";
 		set = execute(query);
 		assertEquals(100, set.size());
 		for (IResult r : set) {
@@ -180,14 +150,14 @@ public class TestTupleExpression extends Tmql4JTestCase {
 			assertTrue(constructs.contains(r.getResults().get(2)));
 			assertTrue(r.isNullValue(3));
 		}
-		
-		query = " myTopic ( . / nonExists   , . / nonExists  , . / nonExists , . / nonExists )";
+
+		query = " myTopic ( . / names nonExists / value  , . / names nonExists / value  , . / names nonExists / value , . / names nonExists / value )";
 		set = execute(query);
 		assertEquals(1, set.size());
-		assertTrue(set.isNullValue(0,0));
-		assertTrue(set.isNullValue(0,1));
-		assertTrue(set.isNullValue(0,2));
-		assertTrue(set.isNullValue(0,3));
+		assertTrue(set.isNullValue(0, 0));
+		assertTrue(set.isNullValue(0, 1));
+		assertTrue(set.isNullValue(0, 2));
+		assertTrue(set.isNullValue(0, 3));
 	}
 
 	@Test
@@ -196,19 +166,13 @@ public class TestTupleExpression extends Tmql4JTestCase {
 		Topic type = createTopicBySI("theType");
 		Set<Construct> constructs = HashUtil.getHashSet();
 		for (int i = 0; i < 100; i++) {
-			if (i % 2 == 0) {
-				constructs.add(topic.createName(type, "Value", new Topic[0]));
-				topic.createName(createTopic(), "Value", new Topic[0]);
-			} else {
-				constructs.add(topic.createOccurrence(type, "Value",
-						new Topic[0]));
-				topic.createOccurrence(createTopic(), "Value", new Topic[0]);
-			}
+			constructs.add(topic.createName(type, "Value", new Topic[0]));
+			topic.createName(createTopic(), "Value", new Topic[0]);
 		}
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "myTopic ( . >> characteristics theType)";
+		query = "myTopic ( . / names theType)";
 		set = execute(query);
 		assertEquals(100, set.size());
 		for (IResult r : set) {
@@ -229,7 +193,7 @@ public class TestTupleExpression extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "( myTopic  / theType ASC )";
+		query = "( myTopic  / names theType / value ASC )";
 		set = execute(query);
 		assertEquals(10, set.size());
 		int i = 0;
@@ -238,7 +202,7 @@ public class TestTupleExpression extends Tmql4JTestCase {
 			assertEquals(constructs.get(i++), r.getResults().get(0));
 		}
 
-		query = "( myTopic  / theType DESC )";
+		query = "( myTopic  / names theType / value DESC )";
 		set = execute(query);
 		assertEquals(10, set.size());
 		i = constructs.size() - 1;
@@ -263,13 +227,14 @@ public class TestTupleExpression extends Tmql4JTestCase {
 
 		query = " NULL ";
 		try {
-			set = execute(new TMQLQuery(topicMap,query));
+			set = execute(new TMQLQuery(topicMap, query));
 		} catch (TMQLRuntimeException e) {
 			fail("Interpretation of empty tuple fails!");
 		}
 		/*
-		 * in combination with the new draft the result contains the string NULL if a topic was not found with the given ID
+		 * in combination with the new draft the result contains the string NULL if a topic was not found with the given
+		 * ID
 		 */
-		assertEquals(0, set.size(),1.0);
+		assertEquals(0, set.size(), 1.0);
 	}
 }

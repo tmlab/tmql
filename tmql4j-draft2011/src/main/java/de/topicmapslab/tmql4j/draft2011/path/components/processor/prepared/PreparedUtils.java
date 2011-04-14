@@ -32,7 +32,7 @@ public class PreparedUtils {
 	/**
 	 * constant for ID axis navigation
 	 */
-	private static final String IDNAVIGATION = " << id";
+	private static final String IDNAVIGATION = " / by-id";
 	/**
 	 * constant for whitespace navigation
 	 */
@@ -63,12 +63,11 @@ public class PreparedUtils {
 	}
 
 	/**
-	 * Utility method to transform the given value to a query part. The
-	 * transformation depends on the type of the given value.
+	 * Utility method to transform the given value to a query part. The transformation depends on the type of the given
+	 * value.
 	 * <p>
 	 * {@link String}: returns the quoted literal <br />
-	 * {@link Calendar}: returns the quoted string representation of the
-	 * calendar.<br />
+	 * {@link Calendar}: returns the quoted string representation of the calendar.<br />
 	 * {@link Construct}: return the query part: <code> "12345" << id </code><br />
 	 * default: the string representation
 	 * </p>
@@ -91,15 +90,15 @@ public class PreparedUtils {
 			Topic topic = (Topic) value;
 			Set<Locator> set = topic.getSubjectIdentifiers();
 			if (!set.isEmpty()) {
-				return LiteralUtils.asEscapedString(set.iterator().next().getReference()) + " << indicators";
+				return LiteralUtils.asEscapedString(set.iterator().next().getReference()) + " / by-subject-identifier";
 			}
 			set = topic.getSubjectLocators();
 			if (!set.isEmpty()) {
-				return LiteralUtils.asEscapedString(set.iterator().next().getReference()) + " << locators";
+				return LiteralUtils.asEscapedString(set.iterator().next().getReference()) + " / by-subject-locator";
 			}
 			set = topic.getItemIdentifiers();
 			if (!set.isEmpty()) {
-				return LiteralUtils.asEscapedString(set.iterator().next().getReference()) + " << item";
+				return LiteralUtils.asEscapedString(set.iterator().next().getReference()) + " / by-item-identifier";
 			}
 			return LiteralUtils.asEscapedString(topic.getId()) + IDNAVIGATION;
 		}

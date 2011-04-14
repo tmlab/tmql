@@ -156,7 +156,7 @@ public class SubtypesAxis extends Axis {
 					subset.addAll(cache);
 					cache.clear();
 
-					if (context.isTransitive()) {
+					if (!context.isTransitive()) {
 						newAdded = false;
 						break;
 					}

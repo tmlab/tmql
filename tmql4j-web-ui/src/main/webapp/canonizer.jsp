@@ -1,3 +1,4 @@
+<%@page import="de.topicmapslab.tmql4j.draft2011.path.components.processor.runtime.TmqlRuntime2011"%>
 <%@page import="java.util.regex.Pattern"%>
 <%@page import="java.util.regex.Matcher"%>
 <%@page
@@ -43,6 +44,7 @@
 </div>
 </div>
 <div id="content">&nbsp; <%
+	String tmql = request.getParameter("tmql");
  	String query = "// tm:subject";
  	String newQuery = query;
  	boolean isPost = request.getMethod().equalsIgnoreCase("POST");
@@ -51,7 +53,7 @@
  	String error = null;
  	if (isPost) {
  		query = request.getParameter("query");
- 		ITMQLRuntime runtime = TMQLRuntimeFactory.newFactory().newRuntime(TmqlRuntime2007.TMQL_2007);
+ 		ITMQLRuntime runtime = TMQLRuntimeFactory.newFactory().newRuntime("2011".equalsIgnoreCase(tmql)?TmqlRuntime2011.TMQL_2011:TmqlRuntime2007.TMQL_2007);
  		try {
  			IParserTree tree = runtime.parse(query);
  			canonized = tree.toQueryString();
@@ -87,10 +89,11 @@
  	}
  %>
  <br />
- This service uses the TMQL draft of 2008 and the tmql4j query engine version 3.1.0.
+ This service uses the TMQL draft of <%=tmql!=null?tmql:"2008" %> and the tmql4j query engine version 3.1.0.
  <hr />
-<form action="canonizer.jsp" method="POST"><textarea rows="10"
-	cols="100" id="query" name="query"><%=query%></textarea><br />
+<form action="canonizer.jsp" method="POST">
+ <input type="hidden" name="tmql" value="<%=tmql!=null?tmql:"2008"%>">
+ <textarea rows="10"	cols="100" id="query" name="query"><%=query%></textarea><br />
 <input type="submit" value="Canonize"></form>
 <br />
 <%

@@ -13,12 +13,12 @@ import java.util.Collection;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.majortom.util.HashUtil;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.draft2011.path.components.navigation.Axis;
 import de.topicmapslab.tmql4j.draft2011.path.exception.InvalidValueException;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisParent;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Class definition representing the characteristics axis.
@@ -46,7 +46,10 @@ public class ParentAxis extends Axis {
 	public Collection<?> navigate(IContext context, Object source, Topic type) throws TMQLRuntimeException {
 		if (source instanceof Construct) {
 			Collection<Construct> set = HashUtil.getHashSet();
-			set.add(((Construct) source).getParent());
+			Construct parent = ((Construct) source).getParent();
+			if (type == null || matches(context, parent, type)) {
+				set.add(parent);
+			}
 			return set;
 		}
 		throw new InvalidValueException();

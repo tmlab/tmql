@@ -78,7 +78,7 @@ public class InstancesAxis extends Axis {
 		set.addAll(index.getTopics(topic));
 
 		if (context.isTransitive()) {
-			SupertypesAxis axis = new SupertypesAxis();
+			SubtypesAxis axis = new SubtypesAxis();
 			Collection<Topic> subtypes = (Collection<Topic>) axis.navigate(context, topic, null);
 			for (Topic subtype : subtypes) {
 				set.addAll(index.getTopics(subtype));

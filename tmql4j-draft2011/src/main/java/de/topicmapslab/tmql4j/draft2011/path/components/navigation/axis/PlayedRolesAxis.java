@@ -13,12 +13,12 @@ import java.util.Collection;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 
-import de.topicmapslab.majortom.util.HashUtil;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.draft2011.path.components.navigation.Axis;
 import de.topicmapslab.tmql4j.draft2011.path.exception.InvalidValueException;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisPlayedRoles;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Class definition representing the roles axis.

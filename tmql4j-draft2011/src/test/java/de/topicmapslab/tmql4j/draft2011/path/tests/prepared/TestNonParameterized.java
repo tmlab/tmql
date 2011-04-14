@@ -30,10 +30,10 @@ public class TestNonParameterized extends Tmql4JTestCase {
 		Name n = t.createName("Hans");
 		IResultSet<?> rs;
 
-		IPreparedStatement stmt = runtime.preparedStatement("? << atomify");
+		IPreparedStatement stmt = runtime.preparedStatement("? / by-value");
 		stmt.setString(0, n.getValue());
 		String query = stmt.getNonParameterizedQueryString();
-		assertEquals("\"Hans\" << atomify", query);
+		assertEquals("\"Hans\" / by-value", query);
 		rs = execute(query);
 		assertEquals(1, rs.size());
 		assertEquals(1, rs.first().size());
@@ -42,7 +42,7 @@ public class TestNonParameterized extends Tmql4JTestCase {
 		n.setValue("Han\"s");
 		stmt.setString(0, n.getValue());
 		query = stmt.getNonParameterizedQueryString();
-		assertEquals("\"\"\"Han\"s\"\"\" << atomify", query);
+		assertEquals("\"\"\"Han\"s\"\"\" / by-value", query);
 		rs = execute(query);
 		assertEquals(1, rs.size());
 		assertEquals(1, rs.first().size());
@@ -51,7 +51,7 @@ public class TestNonParameterized extends Tmql4JTestCase {
 		n.setValue("Han\"\"\"s");
 		stmt.setString(0, n.getValue());
 		query = stmt.getNonParameterizedQueryString();
-		assertEquals("\"\"\"Han\\\"\\\"\\\"s\"\"\" << atomify", query);
+		assertEquals("\"\"\"Han\\\"\\\"\\\"s\"\"\" / by-value", query);
 		rs = execute(query);
 		assertEquals(1, rs.size());
 		assertEquals(1, rs.first().size());
@@ -60,7 +60,7 @@ public class TestNonParameterized extends Tmql4JTestCase {
 		n.setValue("H\"an\"\"\"s");
 		stmt.setString(0, n.getValue());
 		query = stmt.getNonParameterizedQueryString();
-		assertEquals("\"\"\"H\\\"an\\\"\\\"\\\"s\"\"\" << atomify", query);
+		assertEquals("\"\"\"H\\\"an\\\"\\\"\\\"s\"\"\" / by-value", query);
 		rs = execute(query);
 		assertEquals(1, rs.size());
 		assertEquals(1, rs.first().size());
@@ -76,7 +76,7 @@ public class TestNonParameterized extends Tmql4JTestCase {
 		IPreparedStatement stmt = runtime.preparedStatement("?");
 		stmt.setConstruct(0, n);
 		String query = stmt.getNonParameterizedQueryString();
-		assertEquals("\"" + n.getId() + "\" << id", query);
+		assertEquals("\"" + n.getId() + "\" / by-id", query);
 		rs = execute(query);
 		assertEquals(1, rs.size());
 		assertEquals(1, rs.first().size());
@@ -84,7 +84,7 @@ public class TestNonParameterized extends Tmql4JTestCase {
 
 		stmt.set(0, n);
 		query = stmt.getNonParameterizedQueryString();
-		assertEquals("\"" + n.getId() + "\" << id", query);
+		assertEquals("\"" + n.getId() + "\" / by-id", query);
 		rs = execute(query);
 		assertEquals(1, rs.size());
 		assertEquals(1, rs.first().size());
@@ -105,10 +105,10 @@ public class TestNonParameterized extends Tmql4JTestCase {
 		Name n = t.createName("Hans");
 		IResultSet<?> rs;
 
-		IPreparedStatement stmt = runtime.preparedStatement("? << atomify");
+		IPreparedStatement stmt = runtime.preparedStatement("? / by-value");
 		stmt.set(0, n.getValue());
 		String query = stmt.getNonParameterizedQueryString();
-		assertEquals("\"Hans\" << atomify", query);
+		assertEquals("\"Hans\" / by-value", query);
 		rs = execute(query);
 		assertEquals(1, rs.size());
 		assertEquals(1, rs.first().size());
@@ -117,7 +117,7 @@ public class TestNonParameterized extends Tmql4JTestCase {
 		n.setValue("Han\"s");
 		stmt.set(0, n.getValue());
 		query = stmt.getNonParameterizedQueryString();
-		assertEquals("\"\"\"Han\"s\"\"\" << atomify", query);
+		assertEquals("\"\"\"Han\"s\"\"\" / by-value", query);
 		rs = execute(query);
 		assertEquals(1, rs.size());
 		assertEquals(1, rs.first().size());
@@ -126,7 +126,7 @@ public class TestNonParameterized extends Tmql4JTestCase {
 		n.setValue("Han\"\"\"s");
 		stmt.set(0, n.getValue());
 		query = stmt.getNonParameterizedQueryString();
-		assertEquals("\"\"\"Han\\\"\\\"\\\"s\"\"\" << atomify", query);
+		assertEquals("\"\"\"Han\\\"\\\"\\\"s\"\"\" / by-value", query);
 		rs = execute(query);
 		assertEquals(1, rs.size());
 		assertEquals(1, rs.first().size());
@@ -135,7 +135,7 @@ public class TestNonParameterized extends Tmql4JTestCase {
 		n.setValue("H\"an\"\"\"s");
 		stmt.set(0, n.getValue());
 		query = stmt.getNonParameterizedQueryString();
-		assertEquals("\"\"\"H\\\"an\\\"\\\"\\\"s\"\"\" << atomify", query);
+		assertEquals("\"\"\"H\\\"an\\\"\\\"\\\"s\"\"\" / by-value", query);
 		rs = execute(query);
 		assertEquals(1, rs.size());
 		assertEquals(1, rs.first().size());
@@ -152,26 +152,26 @@ public class TestNonParameterized extends Tmql4JTestCase {
 		stmt.set(0, 1);
 		assertEquals("1 [ \"To be or not to be?\" ]", stmt.getNonParameterizedQueryString());
 
-		stmt = runtime.preparedStatement("? << id [ \"To be or not to be?\" ] >> characteristics [ ? ]");
+		stmt = runtime.preparedStatement("? / by-id [ \"To be or not to be?\" ] / names [ ? ]");
 		stmt.set(0, 1);
 		stmt.set(1, 2);
-		assertEquals("1 << id [ \"To be or not to be?\" ] >> characteristics [ 2 ]", stmt.getNonParameterizedQueryString());
+		assertEquals("1 / by-id [ \"To be or not to be?\" ] / names [ 2 ]", stmt.getNonParameterizedQueryString());
 
-		stmt = runtime.preparedStatement("<?> << id [ \"To be or not to be?\" ] >> characteristics [ ? ]");
+		stmt = runtime.preparedStatement("<?> / by-id [ \"To be or not to be?\" ] / names [ ? ]");
 		stmt.set(0, 1);
-		assertEquals("<?> << id [ \"To be or not to be?\" ] >> characteristics [ 1 ]", stmt.getNonParameterizedQueryString());
+		assertEquals("<?> / by-id [ \"To be or not to be?\" ] / names [ 1 ]", stmt.getNonParameterizedQueryString());
 
 		stmt = runtime.preparedStatement("?topic [ \"To be or not to be?\" ]");
 		stmt.set("topic", 1);
 		assertEquals("1 [ \"To be or not to be?\" ]", stmt.getNonParameterizedQueryString());
 
-		stmt = runtime.preparedStatement("?topic << id [ \"To be or not to be?\" ] >> characteristics [ ?topic ]");
+		stmt = runtime.preparedStatement("?topic / by-id [ \"To be or not to be?\" ] / names [ ?topic ]");
 		stmt.set("topic", 1);
-		assertEquals("1 << id [ \"To be or not to be?\" ] >> characteristics [ 1 ]", stmt.getNonParameterizedQueryString());
+		assertEquals("1 / by-id [ \"To be or not to be?\" ] / names [ 1 ]", stmt.getNonParameterizedQueryString());
 
-		stmt = runtime.preparedStatement("<?> << id [ \"To be or not to be?\" ] >> characteristics [ ?topic ]");
+		stmt = runtime.preparedStatement("<?> / by-id [ \"To be or not to be?\" ] / names[ ?topic ]");
 		stmt.set("topic", 1);
-		assertEquals("<?> << id [ \"To be or not to be?\" ] >> characteristics [ 1 ]", stmt.getNonParameterizedQueryString());
+		assertEquals("<?> / by-id [ \"To be or not to be?\" ] / names [ 1 ]", stmt.getNonParameterizedQueryString());
 	}
 
 }

@@ -38,7 +38,7 @@ public class TestPreparedStatement extends Tmql4JTestCase {
 
 	@Test
 	public void testPreparedStatement() {
-		IPreparedStatement statement = runtime.preparedStatement(" ? >> characteristics");
+		IPreparedStatement statement = runtime.preparedStatement(" ? / names ");
 		statement.setTopicMap(topicMap);
 
 		Map<Topic, Set<Construct>> values = HashUtil.getHashMap();
@@ -63,7 +63,7 @@ public class TestPreparedStatement extends Tmql4JTestCase {
 				assertEquals(1, result.size());
 				assertTrue(entry.getValue().contains(result.first()));
 			}
-			assertEquals("\"" + entry.getKey().getItemIdentifiers().iterator().next().getReference() + "\" << item >> characteristics", statement.getNonParameterizedQueryString());
+			assertEquals("\"" + entry.getKey().getItemIdentifiers().iterator().next().getReference() + "\" / by-item-identifier / names", statement.getNonParameterizedQueryString());
 		}
 
 		/*
@@ -77,13 +77,13 @@ public class TestPreparedStatement extends Tmql4JTestCase {
 				assertEquals(1, result.size());
 				assertTrue(entry.getValue().contains(result.first()));
 			}
-			assertEquals("\"" + entry.getKey().getItemIdentifiers().iterator().next().getReference() + "\" << item >> characteristics", statement.getNonParameterizedQueryString());
+			assertEquals("\"" + entry.getKey().getItemIdentifiers().iterator().next().getReference() + "\" / by-item-identifier / names", statement.getNonParameterizedQueryString());
 		}
 	}
 
 	@Test
 	public void testAnonymousNamedWildcards() {
-		IPreparedStatement statement = runtime.preparedStatement(" ? ( ? , . >> characteristics )");
+		IPreparedStatement statement = runtime.preparedStatement(" ? ( ? , . / names )");
 		statement.setTopicMap(topicMap);
 
 		Map<Topic, Set<Construct>> values = HashUtil.getHashMap();
@@ -147,7 +147,7 @@ public class TestPreparedStatement extends Tmql4JTestCase {
 
 	@Test
 	public void testNamedWildcards() {
-		IPreparedStatement statement = runtime.preparedStatement(" ?topic ( ?topic , . >> characteristics )");
+		IPreparedStatement statement = runtime.preparedStatement(" ?topic ( ?topic , . / names )");
 		statement.setTopicMap(topicMap);
 
 		Map<Topic, Set<Construct>> values = HashUtil.getHashMap();
@@ -211,7 +211,7 @@ public class TestPreparedStatement extends Tmql4JTestCase {
 		}
 
 		for (Entry<Topic, Set<Construct>> entry : values.entrySet()) {
-			IResultSet<?> set = runtime.run(topicMap, " ? >> characteristics", entry.getKey()).getResults();
+			IResultSet<?> set = runtime.run(topicMap, " ? / names", entry.getKey()).getResults();
 			assertEquals(10, set.size());
 			for (IResult result : set) {
 				assertEquals(1, result.size());
@@ -233,38 +233,38 @@ public class TestPreparedStatement extends Tmql4JTestCase {
 		}
 
 		for (Entry<Topic, Set<Name>> entry : values.entrySet()) {
-			IResultSet<?> set = runtime.run(topicMap, " ? >> characteristics", entry.getKey()).getResults();
+			IResultSet<?> set = runtime.run(topicMap, " ? / names", entry.getKey()).getResults();
 			assertEquals(entry.getValue().size(), set.size());
-			set = runtime.run(topicMap, " ? >> characteristics [ ? ]", entry.getKey(), 0).getResults();
+			set = runtime.run(topicMap, " ? / names [ ? ]", entry.getKey(), 0).getResults();
 			assertEquals(1, set.size());
-			set = runtime.run(topicMap, " ? >> characteristics [ ? ]", entry.getKey(), 0L).getResults();
+			set = runtime.run(topicMap, " ? / names [ ? ]", entry.getKey(), 0L).getResults();
 			assertEquals(1, set.size());
-			set = runtime.run(topicMap, " ? >> characteristics [ ? ]", entry.getKey(), BigInteger.valueOf(0L)).getResults();
+			set = runtime.run(topicMap, " ? / names [ ? ]", entry.getKey(), BigInteger.valueOf(0L)).getResults();
 			assertEquals(1, set.size());
 
-			set = runtime.run(topicMap, " ? >> characteristics [ $# == ? ]", entry.getKey(), 0).getResults();
+			set = runtime.run(topicMap, " ? / names [ $# == ? ]", entry.getKey(), 0).getResults();
 			assertEquals(1, set.size());
-			set = runtime.run(topicMap, " ? >> characteristics [ $# == ? ]", entry.getKey(), 0L).getResults();
+			set = runtime.run(topicMap, " ? / names [ $# == ? ]", entry.getKey(), 0L).getResults();
 			assertEquals(1, set.size());
-			set = runtime.run(topicMap, " ? >> characteristics [ $# == ? ]", entry.getKey(), BigInteger.valueOf(0L)).getResults();
+			set = runtime.run(topicMap, " ? / names [ $# == ? ]", entry.getKey(), BigInteger.valueOf(0L)).getResults();
 			assertEquals(1, set.size());
 		}
 
 		for (Entry<Topic, Set<Name>> entry : values.entrySet()) {
-			IResultSet<?> set = runtime.run(topicMap, " ? >> characteristics", entry.getKey()).getResults();
+			IResultSet<?> set = runtime.run(topicMap, " ? / names", entry.getKey()).getResults();
 			assertEquals(entry.getValue().size(), set.size());
-			set = runtime.run(topicMap, " ? >> characteristics [ ? .. ? ]", entry.getKey(), 0, 1).getResults();
+			set = runtime.run(topicMap, " ? / names [ ? .. ? ]", entry.getKey(), 0, 1).getResults();
 			assertEquals(1, set.size());
-			set = runtime.run(topicMap, " ? >> characteristics [ ? .. ? ]", entry.getKey(), 0L, 1L).getResults();
+			set = runtime.run(topicMap, " ? / names [ ? .. ? ]", entry.getKey(), 0L, 1L).getResults();
 			assertEquals(1, set.size());
-			set = runtime.run(topicMap, " ? >> characteristics [ ? .. ? ]", entry.getKey(), BigInteger.valueOf(0L), BigInteger.valueOf(1L)).getResults();
+			set = runtime.run(topicMap, " ? / names [ ? .. ? ]", entry.getKey(), BigInteger.valueOf(0L), BigInteger.valueOf(1L)).getResults();
 			assertEquals(1, set.size());
 
-			set = runtime.run(topicMap, " ? >> characteristics [ ? <= $# AND $# < ? ]", entry.getKey(), 0, 1).getResults();
+			set = runtime.run(topicMap, " ? / names [ ? <= $# AND $# < ? ]", entry.getKey(), 0, 1).getResults();
 			assertEquals(1, set.size());
-			set = runtime.run(topicMap, " ? >> characteristics [ ? <= $# AND $# < ? ]", entry.getKey(), 0L, 1L).getResults();
+			set = runtime.run(topicMap, " ? / names [ ? <= $# AND $# < ? ]", entry.getKey(), 0L, 1L).getResults();
 			assertEquals(1, set.size());
-			set = runtime.run(topicMap, " ? >> characteristics [ ? <= $# AND $# < ? ]", entry.getKey(), BigInteger.valueOf(0L), BigInteger.valueOf(1L)).getResults();
+			set = runtime.run(topicMap, " ? / names [ ? <= $# AND $# < ? ]", entry.getKey(), BigInteger.valueOf(0L), BigInteger.valueOf(1L)).getResults();
 			assertEquals(1, set.size());
 		}
 	}
@@ -282,9 +282,9 @@ public class TestPreparedStatement extends Tmql4JTestCase {
 			}
 		}
 
-		IResultSet<?> set = runtime.run(topicMap, " ? >> characteristics", t).getResults();
+		IResultSet<?> set = runtime.run(topicMap, " ? / names", t).getResults();
 		assertEquals(100, set.size());
-		set = runtime.run(topicMap, " ? >> characteristics ?", t, type).getResults();
+		set = runtime.run(topicMap, " ? / names ?", t, type).getResults();
 		assertEquals(50, set.size());
 		for (IResult r : set) {
 			assertEquals(1, r.size());
@@ -306,7 +306,7 @@ public class TestPreparedStatement extends Tmql4JTestCase {
 		}
 
 		for (Entry<Topic, Set<Construct>> entry : values.entrySet()) {
-			String query = entry.getKey().getSubjectIdentifiers().iterator().next().getReference() + " >> characteristics ";
+			String query = entry.getKey().getSubjectIdentifiers().iterator().next().getReference() + " / names ";
 			IQuery q = runtime.run(topicMap, query);
 			IResultSet<?> set = q.getResults();
 			assertEquals(10, set.size());

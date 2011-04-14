@@ -22,10 +22,9 @@ import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketRoundClose;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketRoundOpen;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketSquareClose;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketSquareOpen;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.MoveBackward;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.MoveForward;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Scope;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisInstances;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Slash;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
@@ -57,11 +56,9 @@ public class StepDefinition extends ExpressionImpl {
 	 * @param parent
 	 *            the known parent node
 	 * @param tmqlTokens
-	 *            the list of language-specific tokens contained by this
-	 *            expression
+	 *            the list of language-specific tokens contained by this expression
 	 * @param tokens
-	 *            the list of string-represented tokens contained by this
-	 *            expression
+	 *            the list of string-represented tokens contained by this expression
 	 * @param runtime
 	 *            the TMQL runtime
 	 * @throws TMQLInvalidSyntaxException
@@ -79,6 +76,7 @@ public class StepDefinition extends ExpressionImpl {
 
 			private long numberOfExpressions = 0;
 
+			@Override
 			public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
 				/*
 				 * is first step
@@ -131,7 +129,7 @@ public class StepDefinition extends ExpressionImpl {
 	 */
 	@Override
 	public boolean isValid() {
-		if (!getTmqlTokens().get(0).equals(MoveBackward.class) && !getTmqlTokens().get(0).equals(MoveForward.class)) {
+		if (!getTmqlTokens().get(0).equals(Slash.class)) {
 			return false;
 		}
 		return true;

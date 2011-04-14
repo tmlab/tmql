@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.topicmapslab.tmql4j.draft2011.path.components.navigation.axis.ByIdAxis;
 import de.topicmapslab.tmql4j.draft2011.path.components.navigation.axis.ByItemIdentifierAxis;
 import de.topicmapslab.tmql4j.draft2011.path.components.navigation.axis.ByRegularExpressionAxis;
 import de.topicmapslab.tmql4j.draft2011.path.components.navigation.axis.BySubjectIdentifierAxis;
@@ -47,6 +48,7 @@ import de.topicmapslab.tmql4j.draft2011.path.components.navigation.axis.Variants
 import de.topicmapslab.tmql4j.draft2011.path.components.navigation.model.IAxis;
 import de.topicmapslab.tmql4j.draft2011.path.exception.NavigationException;
 import de.topicmapslab.tmql4j.draft2011.path.exception.UnsupportedNavigationTypeException;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisById;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisByItemIdentifier;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisByRegularExpression;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.AxisBySubjectIdentifier;
@@ -104,6 +106,7 @@ public class Axes {
 	 */
 	private Axes() {
 		axis = new HashMap<Class<? extends IToken>, Class<? extends IAxis>>();
+		axis.put(AxisById.class, ByIdAxis.class);
 		axis.put(AxisByItemIdentifier.class, ByItemIdentifierAxis.class);
 		axis.put(AxisBySubjectIdentifier.class, BySubjectIdentifierAxis.class);
 		axis.put(AxisBySubjectLocator.class, BySubjectLocatorAxis.class);

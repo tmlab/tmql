@@ -12,14 +12,14 @@ package de.topicmapslab.tmql4j.draft2011.path.grammar.lexical;
 
 import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
-
-public class ShortcutAxisPlayersMoveForward extends Token {
+public class AxisById extends Token {
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getLiteral() {
-		return "->";
+		return "by-id";
 	}
 
 }

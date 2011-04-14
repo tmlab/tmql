@@ -12,18 +12,14 @@ package de.topicmapslab.tmql4j.draft2011.path.grammar.lexical;
 
 import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
-public class MoveBackward extends Token {
 
-	/**
-	 * 
-	 */
-	public static final String TOKEN = "<<";
+public class ShortcutAxisBySubjectIdentifier extends Token {
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return TOKEN;
+		return "~";
 	}
 
 }

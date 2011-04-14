@@ -13,13 +13,18 @@ package de.topicmapslab.tmql4j.draft2011.path.grammar.lexical;
 import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 
-public class ShortcutAxisItem extends Token {
+public class Slash extends Token {
+
+	/**
+	 * 
+	 */
+	public static final String TOKEN = "/";
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getLiteral() {
-		return "!";
+		return TOKEN;
 	}
 
 }

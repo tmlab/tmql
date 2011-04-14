@@ -8,6 +8,7 @@
  */
 package de.topicmapslab.tmql4j.draft2011.path.components.navigation.axis;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
@@ -17,8 +18,8 @@ import org.tmapi.core.Occurrence;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.Variant;
+import org.tmapi.index.Index;
 
-import de.topicmapslab.majortom.model.index.ILiteralIndex;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.draft2011.path.components.navigation.Axis;
 import de.topicmapslab.tmql4j.draft2011.path.exception.InvalidValueException;
@@ -47,6 +48,7 @@ public class ByRegularExpressionAxis extends Axis {
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<?> navigate(IContext context, Object source, Topic type) throws TMQLRuntimeException {
 		if (source instanceof Object) {
@@ -56,18 +58,21 @@ public class ByRegularExpressionAxis extends Axis {
 			 */
 			Collection<Object> set = new LinkedList<Object>();
 			try {
+				Class<? extends Index> clazz = (Class<? extends Index>) Class.forName("de.topicmapslab.majortom.model.index.ILiteralIndex");
 				/*
 				 * get literal index
 				 */
-				ILiteralIndex index = map.getIndex(ILiteralIndex.class);
+				Index index = map.getIndex(clazz);
 				if (!index.isOpen()) {
 					index.open();
 				}
 				/*
 				 * check if occurrence with literal exists
 				 */
-				set.addAll(index.getCharacteristicsMatches(source.toString()));
-			} catch (IllegalArgumentException e) {
+				Method m = clazz.getMethod("getCharacteristicsMatches", String.class);
+				Object o = m.invoke(index, source.toString());
+				set.addAll((Collection<?>) o);
+			} catch (Exception e) {
 				/*
 				 * is not MAJORTOM
 				 */

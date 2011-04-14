@@ -39,18 +39,13 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		Topic type = createTopicBySI("theType");
 		Construct[] constructs = new Construct[100];
 		for (int i = 0; i < constructs.length; i++) {
-			if (i % 2 == 0) {
-				constructs[i] = topic.createName(type, "Value", new Topic[0]);
-				topic.createName(createTopic(), "Value", new Topic[0]);
-			} else {
-				constructs[i] = topic.createOccurrence(type, "Value", new Topic[0]);
-				topic.createOccurrence(createTopic(), "Value", new Topic[0]);
-			}
+			constructs[i] = topic.createName(type, "Value", new Topic[0]);
+			topic.createName(createTopic(), "Value", new Topic[0]);
 		}
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "myTopic >> characteristics // theType";
+		query = "myTopic / names // theType";
 		set = execute(query);
 		assertEquals(constructs.length, set.size());
 
@@ -71,18 +66,13 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		Topic type = createTopicBySI("theType");
 		Construct[] constructs = new Construct[100];
 		for (int i = 0; i < constructs.length; i++) {
-			if (i % 2 == 0) {
-				constructs[i] = topic.createName(type, "Value", new Topic[0]);
-				topic.createName(createTopic(), "Value", new Topic[0]);
-			} else {
-				constructs[i] = topic.createOccurrence(type, "Value", new Topic[0]);
-				topic.createOccurrence(createTopic(), "Value", new Topic[0]);
-			}
+			constructs[i] = topic.createName(type, "Value", new Topic[0]);
+			topic.createName(createTopic(), "Value", new Topic[0]);
 		}
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "myTopic >> characteristics [ ^ theType ]";
+		query = "myTopic / names [ ^ theType ]";
 		set = execute(query);
 		assertEquals(constructs.length, set.size());
 
@@ -103,18 +93,13 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		Topic type = createTopicBySI("theType");
 		Construct[] constructs = new Construct[100];
 		for (int i = 0; i < constructs.length; i++) {
-			if (i % 2 == 0) {
-				constructs[i] = topic.createName(type, "Value", new Topic[0]);
-				topic.createName(createTopic(), "Value", new Topic[0]);
-			} else {
-				constructs[i] = topic.createOccurrence(type, "Value", new Topic[0]);
-				topic.createOccurrence(createTopic(), "Value", new Topic[0]);
-			}
+			constructs[i] = topic.createName(type, "Value", new Topic[0]);
+			topic.createName(createTopic(), "Value", new Topic[0]);
 		}
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "myTopic >> characteristics [ . >> types == theType ]";
+		query = "myTopic / names [ . / types == theType ]";
 		set = execute(query);
 		assertEquals(constructs.length, set.size());
 
@@ -135,17 +120,13 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		Topic theme = createTopicBySI("theme");
 		Scoped[] scopeds = new Scoped[100];
 		for (int i = 0; i < scopeds.length; i++) {
-			if (i % 2 == 0) {
-				scopeds[i] = topic.createName("Value", new Topic[0]);
-			} else if (i % 2 == 1) {
-				scopeds[i] = topic.createOccurrence(createTopic(), "Value", new Topic[0]);
-			}
+			scopeds[i] = topic.createName("Value", new Topic[0]);
 			scopeds[i].addTheme(theme);
 		}
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "myTopic >> characteristics  @ theme";
+		query = "myTopic / names  @ theme";
 		set = execute(query);
 		assertEquals(scopeds.length, set.size());
 
@@ -166,17 +147,13 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		Topic theme = createTopicBySI("theme");
 		Scoped[] scopeds = new Scoped[100];
 		for (int i = 0; i < scopeds.length; i++) {
-			if (i % 2 == 0) {
-				scopeds[i] = topic.createName("Value", new Topic[0]);
-			} else if (i % 2 == 1) {
-				scopeds[i] = topic.createOccurrence(createTopic(), "Value", new Topic[0]);
-			}
+			scopeds[i] = topic.createName("Value", new Topic[0]);
 			scopeds[i].addTheme(theme);
 		}
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "myTopic >> characteristics [ @ theme ]";
+		query = "myTopic / names [ @ theme ]";
 		set = execute(query);
 		assertEquals(scopeds.length, set.size());
 
@@ -197,17 +174,13 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		Topic theme = createTopicBySI("theme");
 		Scoped[] scopeds = new Scoped[100];
 		for (int i = 0; i < scopeds.length; i++) {
-			if (i % 2 == 0) {
-				scopeds[i] = topic.createName("Value", new Topic[0]);
-			} else if (i % 2 == 1) {
-				scopeds[i] = topic.createOccurrence(createTopic(), "Value", new Topic[0]);
-			}
+			scopeds[i] = topic.createName("Value", new Topic[0]);
 			scopeds[i].addTheme(theme);
 		}
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "myTopic >> characteristics [ . >> scope == theme ]";
+		query = "myTopic / names [ . / scope == theme ]";
 		set = execute(query);
 		assertEquals(scopeds.length, set.size());
 
@@ -230,7 +203,7 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		Occurrence[] occurrences = new Occurrence[100];
 		for (int i = 0; i < occurrences.length; i++) {
 			occurrences[i] = topic.createOccurrence(createTopic(), "Value", new Topic[0]);
-			query = "myTopic >> characteristics [ $# == " + i + " ]";
+			query = "myTopic / occurrences [ $# == " + i + " ]";
 			set = execute(query);
 			assertEquals(1, set.size());
 			assertTrue(set.getResults().get(0).first() instanceof Occurrence);
@@ -245,7 +218,7 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		Occurrence[] occurrences = new Occurrence[100];
 		for (int i = 0; i < occurrences.length; i++) {
 			occurrences[i] = topic.createOccurrence(createTopic(), "Value", new Topic[0]);
-			query = "myTopic >> characteristics [" + i + "]";
+			query = "myTopic / occurrences [" + i + "]";
 			set = execute(query);
 			assertEquals(1, set.size());
 			assertTrue(set.getResults().get(0).first() instanceof Occurrence);
@@ -260,11 +233,11 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		Occurrence[] occurrences = new Occurrence[100];
 		for (int i = 0; i < occurrences.length; i++) {
 			occurrences[i] = topic.createOccurrence(createTopic(), "Value", new Topic[0]);
-			query = "myTopic >> characteristics [ -1 ]";
+			query = "myTopic  / occurrences[ -1 ]";
 			set = execute(query);
 			assertEquals(0, set.size());
 
-			query = "myTopic >> characteristics [  999 ]";
+			query = "myTopic / occurrences [  999 ]";
 			set = execute(query);
 			assertEquals(0, set.size());
 		}
@@ -278,7 +251,7 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		Occurrence[] occurrences = new Occurrence[100];
 		for (int i = 0; i < occurrences.length; i++) {
 			occurrences[i] = topic.createOccurrence(createTopic(), "Value", new Topic[0]);
-			query = "myTopic >> characteristics [ " + i + " .. " + (i + 1) + " ]";
+			query = "myTopic  / occurrences [ " + i + " .. " + (i + 1) + " ]";
 			set = execute(query);
 			assertEquals(1, set.size());
 			assertTrue(set.getResults().get(0).first() instanceof Occurrence);
@@ -293,15 +266,15 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		Occurrence[] occurrences = new Occurrence[100];
 		for (int i = 0; i < occurrences.length; i++) {
 			occurrences[i] = topic.createOccurrence(createTopic(), "Value", new Topic[0]);
-			query = "myTopic >> characteristics [ -1 .. " + i + " ]";
+			query = "myTopic / occurrences [ -1 .. " + i + " ]";
 			set = execute(query);
 			assertEquals(i, set.size());
 
-			query = "myTopic >> characteristics [ -1 .. 999 ]";
+			query = "myTopic  / occurrences [ -1 .. 999 ]";
 			set = execute(query);
 			assertEquals(i + 1, set.size());
 
-			query = "myTopic >> characteristics [ " + i + " .. 999 ]";
+			query = "myTopic  / occurrences [ " + i + " .. 999 ]";
 			set = execute(query);
 			assertEquals(1, set.size());
 		}
@@ -315,7 +288,7 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		Occurrence[] occurrences = new Occurrence[100];
 		for (int i = 0; i < occurrences.length; i++) {
 			occurrences[i] = topic.createOccurrence(createTopic(), "Value", new Topic[0]);
-			query = "myTopic >> characteristics [ " + i + " <= $# AND $# < " + (i + 1) + " ]";
+			query = "myTopic  / occurrences [ " + i + " <= $# AND $# < " + (i + 1) + " ]";
 			set = execute(query);
 			assertEquals(i + "", 1, set.size());
 			assertTrue(set.getResults().get(0).first() instanceof Occurrence);
@@ -334,23 +307,23 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		String query = null;
 		IResultSet<?> set = null;
 
-		query = "// tm:subject >> characteristics type [ . >> atomify == \"" + value + "\" ]";
+		query = "// tm:subject  / occurrences type [ . / value == \"" + value + "\" ]";
 		set = execute(query);
 		assertEquals(100, set.size());
 
-		query = "// tm:subject >> characteristics type [  . >> atomify =~ \"Wed Jun 23 19:11:23 \\\\+0200 2010\" ]";
+		query = "// tm:subject  / occurrences type [  . / value =~ \"Wed Jun 23 19:11:23 \\\\+0200 2010\" ]";
 		set = execute(query);
 		assertEquals(100, set.size());
 
-		query = "// tm:subject >> characteristics type [  fn:count ( . >> scope ) == 0 ]";
+		query = "// tm:subject  / occurrences type [  fn:count ( . / scope ) == 0 ]";
 		set = execute(query);
 		assertEquals(100, set.size());
 
-		query = "// tm:subject >> characteristics type [ fn:count ( . >> scope ) == 0 AND . >> atomify == \"" + value + "\" ]";
+		query = "// tm:subject  / occurrences type [ fn:count ( . / scope ) == 0 AND . / value == \"" + value + "\" ]";
 		set = execute(query);
 		assertEquals(100, set.size());
 
-		query = "// tm:subject >> characteristics type [ fn:count ( . >> scope ) == 0 AND . >> atomify =~ \"Wed Jun 23 19:11:23 \\\\+0200 2010\" ]";
+		query = "// tm:subject  / occurrences type [ fn:count ( . / scope ) == 0 AND . / value =~ \"Wed Jun 23 19:11:23 \\\\+0200 2010\" ]";
 		set = execute(query);
 		assertEquals(100, set.size());
 
@@ -368,23 +341,23 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		String query = null;
 		IResultSet<?> set = null;
 
-		query = "// tm:subject >> characteristics type [ . >> atomify == \"" + value + "\"]";
+		query = "// tm:subject / occurrences type [ . / value == \"" + value + "\"]";
 		set = execute(query);
 		assertEquals(100, set.size());
 
-		query = "// tm:subject >> characteristics type [  . >> atomify =~ \"" + value + "\"]";
+		query = "// tm:subject / occurrences  type [  . / value =~ \"" + value + "\"]";
 		set = execute(query);
 		assertEquals(100, set.size());
 
-		query = "// tm:subject >> characteristics type [  fn:count ( . >> scope ) == 0 ]";
+		query = "// tm:subject / occurrences  type [  fn:count ( . / scope ) == 0 ]";
 		set = execute(query);
 		assertEquals(100, set.size());
 
-		query = "// tm:subject >> characteristics type [ fn:count ( . >> scope ) == 0 AND . >> atomify == \"" + value + "\"]";
+		query = "// tm:subject / occurrences type [ fn:count ( . / scope ) == 0 AND . / value == \"" + value + "\"]";
 		set = execute(query);
 		assertEquals(100, set.size());
 
-		query = "// tm:subject >> characteristics type [ fn:count ( . >> scope ) == 0 AND . >> atomify =~ \"" + value + "\"]";
+		query = "// tm:subject / occurrences  type [ fn:count ( . / scope ) == 0 AND . / value =~ \"" + value + "\"]";
 		set = execute(query);
 		assertEquals(100, set.size());
 
@@ -402,23 +375,23 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		String query = null;
 		IResultSet<?> set = null;
 
-		query = "// tm:subject >> characteristics type [ . >> atomify == \"" + value + "\"]";
+		query = "// tm:subject / occurrences  type [ . / value == \"" + value + "\"]";
 		set = execute(query);
 		assertEquals(100, set.size());
 
-		query = "// tm:subject >> characteristics type [  . >> atomify =~ \"" + value + "\"]";
+		query = "// tm:subject / occurrences  type [  . / value =~ \"" + value + "\"]";
 		set = execute(query);
 		assertEquals(100, set.size());
 
-		query = "// tm:subject >> characteristics type [  fn:count ( . >> scope ) == 0 ]";
+		query = "// tm:subject / occurrences  type [  fn:count ( . / scope ) == 0 ]";
 		set = execute(query);
 		assertEquals(100, set.size());
 
-		query = "// tm:subject >> characteristics type [ fn:count ( . >> scope ) == 0 AND . >> atomify == \"" + value + "\"]";
+		query = "// tm:subject / occurrences  type [ fn:count ( . / scope ) == 0 AND . / value == \"" + value + "\"]";
 		set = execute(query);
 		assertEquals(100, set.size());
 
-		query = "// tm:subject >> characteristics type [ fn:count ( . >> scope ) == 0 AND . >> atomify =~ \"" + value + "\"]";
+		query = "// tm:subject / occurrences  type [ fn:count ( . / scope ) == 0 AND . / value =~ \"" + value + "\"]";
 		set = execute(query);
 		assertEquals(100, set.size());
 
@@ -449,7 +422,7 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "// tm:subject [ fn:count ( . >> instances ) == 0 AND fn:count ( . >> typed ) == 0 ]";
+		query = "// tm:subject [ fn:count ( . / instances ) == 0 AND fn:count ( . / typed ) == 0 ]";
 		set = execute(query);
 		assertEquals(75, set.size());
 		for (IResult r : set.getResults()) {
@@ -473,7 +446,7 @@ public class TestFilterPostfix extends Tmql4JTestCase {
 			}
 		}
 
-		final String query = " myTopic >> characteristics [ . >> types ==  \"" + type.getId() + "\" << id ] >> atomify ";
+		final String query = " myTopic / occurrences [ . / types ==  \"" + type.getId() + "\" / by-id ] / value ";
 		IResultSet<?> rs = execute(query);
 		assertEquals(results.size(), rs.size());
 		for (IResult r : rs) {

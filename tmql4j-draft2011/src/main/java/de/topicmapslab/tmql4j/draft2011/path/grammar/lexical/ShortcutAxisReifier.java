@@ -13,7 +13,7 @@ package de.topicmapslab.tmql4j.draft2011.path.grammar.lexical;
 import de.topicmapslab.tmql4j.grammar.lexical.Token;
 
 
-public class ShortcutAxisReifierMoveBackward extends Token {
+public class ShortcutAxisReifier extends Token {
 
 	/**
 	 * {@inheritDoc}

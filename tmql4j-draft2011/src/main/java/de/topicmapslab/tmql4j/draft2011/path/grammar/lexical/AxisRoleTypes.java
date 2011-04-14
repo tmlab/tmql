@@ -17,8 +17,9 @@ public class AxisRoleTypes extends Token {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getLiteral() {
-		return "roletypes";
+		return "role-types";
 	}
 
 }

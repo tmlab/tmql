@@ -11,14 +11,15 @@ package de.topicmapslab.tmql4j.draft2011.path.components.navigation;
 import java.util.Collection;
 import java.util.Set;
 
+import org.tmapi.core.Construct;
 import org.tmapi.core.Topic;
 import org.tmapi.core.Typed;
 
-import de.topicmapslab.majortom.util.HashUtil;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.draft2011.path.components.navigation.axis.SupertypesAxis;
 import de.topicmapslab.tmql4j.draft2011.path.components.navigation.model.IAxis;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
+import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
  * Base implementation of a navigation axis to implement some core functionality of each TMQL axis.
@@ -117,6 +118,28 @@ public abstract class Axis implements IAxis {
 		} else {
 			return typed.getType().equals(type);
 		}
+	}
+
+	/**
+	 * Checks if the given construct matches the given topic type. If the construct is a topic
+	 * {@link #matches(IContext, Topic, Topic)} will be called. If the construct is a typed construct
+	 * {@link #matches(IContext, Typed, Topic)} will be called. Otherwise <code>false</code> will be returned.
+	 * 
+	 * @param context
+	 *            the context
+	 * @param c
+	 *            the c
+	 * @param type
+	 *            the type
+	 * @return <code>true</code> if the c matches the type argument, <code>false</code> otherwise.
+	 */
+	protected boolean matches(IContext context, Construct c, Topic type) {
+		if (c instanceof Topic) {
+			return matches(context, (Topic) c, type);
+		} else if (c instanceof Typed) {
+			return matches(context, (Typed) c, type);
+		}
+		return false;
 	}
 
 }
