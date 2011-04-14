@@ -16,7 +16,7 @@ import java.util.Set;
 import de.topicmapslab.tmql4j.components.parser.IParserUtilsCallback;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.draft2011.path.components.parser.ParserUtils;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketRoundOpen;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketAngleOpen;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Comma;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Null;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
@@ -27,8 +27,7 @@ import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
- * Special implementation of {@link ExpressionImpl} representing a
- * tuple-expression.
+ * Special implementation of {@link ExpressionImpl} representing a tuple-expression.
  * <p>
  * The grammar production rule of the expression is: <code>
  * <p>
@@ -51,11 +50,9 @@ public class TupleExpression extends ExpressionImpl {
 	 * @param parent
 	 *            the known parent node
 	 * @param tmqlTokens
-	 *            the list of language-specific tokens contained by this
-	 *            expression
+	 *            the list of language-specific tokens contained by this expression
 	 * @param tokens
-	 *            the list of string-represented tokens contained by this
-	 *            expression
+	 *            the list of string-represented tokens contained by this expression
 	 * @param runtime
 	 *            the TMQL runtime
 	 * @throws TMQLInvalidSyntaxException
@@ -69,7 +66,7 @@ public class TupleExpression extends ExpressionImpl {
 		/*
 		 * is a null expression
 		 */
-		if (tmqlTokens.isEmpty() || tmqlTokens.get(0).equals(Null.class) || (tmqlTokens.size() == 2 && tmqlTokens.get(0).equals(BracketRoundOpen.class))) {
+		if (tmqlTokens.isEmpty() || tmqlTokens.get(0).equals(Null.class) || (tmqlTokens.size() == 2 && tmqlTokens.get(0).equals(BracketAngleOpen.class))) {
 			setGrammarType(1);
 		}
 		/*

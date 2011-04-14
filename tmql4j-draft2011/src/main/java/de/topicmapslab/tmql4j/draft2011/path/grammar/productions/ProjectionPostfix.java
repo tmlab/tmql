@@ -13,8 +13,8 @@ package de.topicmapslab.tmql4j.draft2011.path.grammar.productions;
 import java.util.List;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketRoundClose;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketRoundOpen;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketAngleClose;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketAngleOpen;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
@@ -22,8 +22,7 @@ import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 
 /**
- * Special implementation of {@link ExpressionImpl} representing a
- * projection-postfix.
+ * Special implementation of {@link ExpressionImpl} representing a projection-postfix.
  * <p>
  * The grammar production rule of the expression is: <code>
  * <p>
@@ -43,11 +42,9 @@ public class ProjectionPostfix extends ExpressionImpl {
 	 * @param parent
 	 *            the known parent node
 	 * @param tmqlTokens
-	 *            the list of language-specific tokens contained by this
-	 *            expression
+	 *            the list of language-specific tokens contained by this expression
 	 * @param tokens
-	 *            the list of string-represented tokens contained by this
-	 *            expression
+	 *            the list of string-represented tokens contained by this expression
 	 * @param runtime
 	 *            the TMQL runtime
 	 * @throws TMQLInvalidSyntaxException
@@ -70,7 +67,7 @@ public class ProjectionPostfix extends ExpressionImpl {
 	 */
 	@Override
 	public boolean isValid() {
-		return getTmqlTokens().size() >= 2 && getTmqlTokens().get(0).equals(BracketRoundOpen.class) && getTmqlTokens().get(getTmqlTokens().size() - 1).equals(BracketRoundClose.class);
+		return getTmqlTokens().size() >= 2 && getTmqlTokens().get(0).equals(BracketAngleOpen.class) && getTmqlTokens().get(getTmqlTokens().size() - 1).equals(BracketAngleClose.class);
 	}
 
 	/**
@@ -78,7 +75,7 @@ public class ProjectionPostfix extends ExpressionImpl {
 	 */
 	@Override
 	protected void addFlatPartBefore(StringBuilder builder) {
-		builder.append(BracketRoundOpen.TOKEN);
+		builder.append(BracketAngleOpen.TOKEN);
 		builder.append(WHITESPACE);
 	}
 
@@ -87,7 +84,7 @@ public class ProjectionPostfix extends ExpressionImpl {
 	 */
 	@Override
 	protected void addFlatPartAfter(StringBuilder builder) {
-		builder.append(BracketRoundClose.TOKEN);
+		builder.append(BracketAngleClose.TOKEN);
 		builder.append(WHITESPACE);
 	}
 

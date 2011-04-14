@@ -17,8 +17,6 @@ import de.topicmapslab.tmql4j.components.lexer.ILexer;
 import de.topicmapslab.tmql4j.components.parser.IParserTree;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.draft2011.path.components.parser.ParserUtils;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketAngleClose;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketAngleOpen;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Prefix;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
@@ -27,8 +25,7 @@ import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 
 /**
- * Special implementation of {@link ExpressionImpl} representing a
- * query-expression.
+ * Special implementation of {@link ExpressionImpl} representing a query-expression.
  * <p>
  * query-expression ::= [ environment-clause ] path-expression
  * </p>
@@ -44,8 +41,7 @@ public class QueryExpression extends ExpressionImpl {
 	 * base constructor to create a new instance used by {@link IParserTree}
 	 * 
 	 * <p>
-	 * Constructor is calling
-	 * {@link QueryExpression#QueryExpression(IExpression, List, List, TMQLRuntime)}
+	 * Constructor is calling {@link QueryExpression#QueryExpression(IExpression, List, List, TMQLRuntime)}
 	 * </p>
 	 * 
 	 * @param runtime
@@ -68,11 +64,9 @@ public class QueryExpression extends ExpressionImpl {
 	 * @param parent
 	 *            the known parent node
 	 * @param tmqlTokens
-	 *            the list of language-specific tokens contained by this
-	 *            expression
+	 *            the list of language-specific tokens contained by this expression
 	 * @param tokens
-	 *            the list of string-represented tokens contained by this
-	 *            expression
+	 *            the list of string-represented tokens contained by this expression
 	 * @param runtime
 	 *            the TMQL runtime
 	 * @throws TMQLInvalidSyntaxException
@@ -129,19 +123,6 @@ public class QueryExpression extends ExpressionImpl {
 		 */
 		if (index < tmqlTokens.size()) {
 			int size = tmqlTokens.size();
-			/*
-			 * check for encapsulating brackets
-			 */
-			if (getTmqlTokens().get(index).equals(BracketAngleOpen.class)) {
-				int iClosingBracket = ParserUtils.indexOfTokens(tmqlTokens.subList(index+1, size), BracketAngleClose.class);
-				/*
-				 * check if closing angle Bracket is
-				 */
-				if (iClosingBracket == ( size - (index + 2 ))) {
-					checkForExtensions(QueryExpression.class, tmqlTokens.subList(index + 1, size - 1), tokens.subList(index + 1, size - 1), runtime);
-					return;
-				}
-			}
 			/*
 			 * is simple path expression
 			 */

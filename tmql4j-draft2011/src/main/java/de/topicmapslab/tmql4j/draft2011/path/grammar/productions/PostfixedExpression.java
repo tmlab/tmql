@@ -17,8 +17,8 @@ import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.draft2011.path.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.As;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.At;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketAngleClose;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketAngleOpen;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketRoundClose;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketRoundOpen;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketSquareClose;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketSquareOpen;
@@ -52,8 +52,7 @@ import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
- * Special implementation of {@link ExpressionImpl} representing a
- * postfixed-expression.
+ * Special implementation of {@link ExpressionImpl} representing a postfixed-expression.
  * <p>
  * The grammar production rule of the expression is: <code>
  * <p>
@@ -82,11 +81,9 @@ public class PostfixedExpression extends ExpressionImpl {
 	 * @param parent
 	 *            the known parent node
 	 * @param tmqlTokens
-	 *            the list of language-specific tokens contained by this
-	 *            expression
+	 *            the list of language-specific tokens contained by this expression
 	 * @param tokens
-	 *            the list of string-represented tokens contained by this
-	 *            expression
+	 *            the list of string-represented tokens contained by this expression
 	 * @param runtime
 	 *            the TMQL runtime
 	 * @throws TMQLInvalidSyntaxException
@@ -125,21 +122,21 @@ public class PostfixedExpression extends ExpressionImpl {
 			 * define opening brackets as beginning of protected section
 			 */
 			Set<Class<? extends IToken>> protectionStarts = HashUtil.getHashSet();
-			protectionStarts.add(BracketAngleOpen.class);
+			protectionStarts.add(BracketRoundOpen.class);
 			protectionStarts.add(BracketSquareOpen.class);
 
 			/*
 			 * define closing brackets as end of protected section
 			 */
 			Set<Class<? extends IToken>> protectionEnds = HashUtil.getHashSet();
-			protectionEnds.add(BracketAngleClose.class);
+			protectionEnds.add(BracketRoundClose.class);
 			protectionEnds.add(BracketSquareClose.class);
 
 			/*
 			 * indicators for projection-postfix
 			 */
 			Set<Class<? extends IToken>> indicators = HashUtil.getHashSet();
-			indicators.add(BracketRoundOpen.class);
+			indicators.add(BracketAngleOpen.class);
 
 			int index = ParserUtils.indexOfTokens(tmqlTokens, indicators, protectionStarts, protectionEnds);
 			/*
@@ -167,13 +164,12 @@ public class PostfixedExpression extends ExpressionImpl {
 	}
 
 	/**
-	 * Internal method try to detect if the current expression is a
-	 * tuple-expression. Tuple-expression can be identify if the expression
-	 * contains a comma, except commas of function-invocations or if it contains
-	 * brackets except of function-brackets.
+	 * Internal method try to detect if the current expression is a tuple-expression. Tuple-expression can be identify
+	 * if the expression contains a comma, except commas of function-invocations or if it contains brackets except of
+	 * function-brackets.
 	 * 
-	 * @return <code>true</code> if this expression was identified as
-	 *         tuple-expression, <code>false</code> if it is simple-content.
+	 * @return <code>true</code> if this expression was identified as tuple-expression, <code>false</code> if it is
+	 *         simple-content.
 	 */
 	private final boolean isTupleExpression() {
 
@@ -225,9 +221,9 @@ public class PostfixedExpression extends ExpressionImpl {
 		tupleExpressionIndicators.add(As.class);
 
 		/*
-		 * starts with round bracket
+		 * starts with angle bracket
 		 */
-		if (getTmqlTokens().get(0).equals(BracketRoundOpen.class)) {
+		if (getTmqlTokens().get(0).equals(BracketAngleOpen.class)) {
 			return true;
 		}
 		return ParserUtils.containsTokens(getTmqlTokens(), tupleExpressionIndicators);

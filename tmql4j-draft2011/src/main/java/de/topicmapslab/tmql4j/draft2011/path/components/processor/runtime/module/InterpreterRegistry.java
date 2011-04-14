@@ -13,6 +13,7 @@ import de.topicmapslab.tmql4j.draft2011.path.components.interpreter.AKOExpressio
 import de.topicmapslab.tmql4j.draft2011.path.components.interpreter.AliasExpressionInterpreter;
 import de.topicmapslab.tmql4j.draft2011.path.components.interpreter.AliasValueExpressionInterpreter;
 import de.topicmapslab.tmql4j.draft2011.path.components.interpreter.AnchorInterpreter;
+import de.topicmapslab.tmql4j.draft2011.path.components.interpreter.AssociationPatternInterpeter;
 import de.topicmapslab.tmql4j.draft2011.path.components.interpreter.BindingSetInterpreter;
 import de.topicmapslab.tmql4j.draft2011.path.components.interpreter.BooleanExpressionInterpreter;
 import de.topicmapslab.tmql4j.draft2011.path.components.interpreter.BooleanPrimitiveInterpreter;
@@ -47,6 +48,7 @@ import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.AKOExpression;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.AliasExpression;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.AliasValueExpression;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.Anchor;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.AssociationPattern;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.BindingSet;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.BooleanExpression;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.BooleanPrimitive;
@@ -79,8 +81,7 @@ import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.Variable;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.VariableAssignment;
 
 /**
- * Internal registry for interpreter classes. Provides access to interpreter
- * instances for all TMQL-expression types.
+ * Internal registry for interpreter classes. Provides access to interpreter instances for all TMQL-expression types.
  * 
  * @author Sven Krosse
  * @email krosse@informatik.uni-leipzig.de
@@ -92,9 +93,11 @@ public class InterpreterRegistry extends InterpreterRegistryImpl {
 	 * 
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected void initialize() {
 		registerInterpreterClass(AliasExpression.class, AliasExpressionInterpreter.class);
 		registerInterpreterClass(AliasValueExpression.class, AliasValueExpressionInterpreter.class);
+		registerInterpreterClass(AssociationPattern.class, AssociationPatternInterpeter.class);
 		registerInterpreterClass(BindingSet.class, BindingSetInterpreter.class);
 		registerInterpreterClass(BooleanExpression.class, BooleanExpressionInterpreter.class);
 		registerInterpreterClass(BooleanPrimitive.class, BooleanPrimitiveInterpreter.class);

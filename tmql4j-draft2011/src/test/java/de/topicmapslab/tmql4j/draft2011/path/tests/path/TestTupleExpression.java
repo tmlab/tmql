@@ -46,7 +46,7 @@ public class TestTupleExpression extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "( myTopic / names theType)";
+		query = "{ myTopic / names theType }";
 		set = execute(query);
 		assertEquals(constructs.length, set.size());
 
@@ -73,7 +73,7 @@ public class TestTupleExpression extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = " ( myTopic  , myTopic / names theType)";
+		query = " { myTopic  , myTopic / names theType }";
 		set = execute(query);
 		assertEquals(100, set.size());
 		for (IResult r : set) {
@@ -95,7 +95,7 @@ public class TestTupleExpression extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = " ( myTopic  , theType, myTopic / names theType)";
+		query = " { myTopic  , theType, myTopic / names theType }";
 		set = execute(query);
 		assertEquals(100, set.size());
 		for (IResult r : set) {
@@ -118,7 +118,7 @@ public class TestTupleExpression extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "myTopic ( .  , . / names theType)";
+		query = "myTopic { .  , . / names theType }";
 		set = execute(query);
 		assertEquals(100, set.size());
 		for (IResult r : set) {
@@ -140,7 +140,7 @@ public class TestTupleExpression extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = " myTopic ( .  , theType , . / names theType , . / names nonExists / value )";
+		query = " myTopic { .  , theType , . / names theType , . / names nonExists / value }";
 		set = execute(query);
 		assertEquals(100, set.size());
 		for (IResult r : set) {
@@ -151,7 +151,7 @@ public class TestTupleExpression extends Tmql4JTestCase {
 			assertTrue(r.isNullValue(3));
 		}
 
-		query = " myTopic ( . / names nonExists / value  , . / names nonExists / value  , . / names nonExists / value , . / names nonExists / value )";
+		query = " myTopic { . / names nonExists / value  , . / names nonExists / value  , . / names nonExists / value , . / names nonExists / value }";
 		set = execute(query);
 		assertEquals(1, set.size());
 		assertTrue(set.isNullValue(0, 0));
@@ -172,7 +172,7 @@ public class TestTupleExpression extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "myTopic ( . / names theType)";
+		query = "myTopic { . / names theType }";
 		set = execute(query);
 		assertEquals(100, set.size());
 		for (IResult r : set) {
@@ -193,7 +193,7 @@ public class TestTupleExpression extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "( myTopic  / names theType / value ASC )";
+		query = "myTopic { . / names theType / value ASC }";
 		set = execute(query);
 		assertEquals(10, set.size());
 		int i = 0;
@@ -202,7 +202,7 @@ public class TestTupleExpression extends Tmql4JTestCase {
 			assertEquals(constructs.get(i++), r.getResults().get(0));
 		}
 
-		query = "( myTopic  / names theType / value DESC )";
+		query = "myTopic { .  / names theType / value DESC }";
 		set = execute(query);
 		assertEquals(10, set.size());
 		i = constructs.size() - 1;
@@ -217,7 +217,7 @@ public class TestTupleExpression extends Tmql4JTestCase {
 		String query = null;
 		SimpleResultSet set = null;
 
-		query = "(  )";
+		query = "{  }";
 		try {
 			set = execute(query);
 		} catch (TMQLRuntimeException e) {

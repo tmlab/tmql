@@ -16,6 +16,7 @@ import de.topicmapslab.tmql4j.components.processor.core.Context;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.AssociationPattern;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.FilterPostfix;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.Step;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.StepDefinition;
@@ -51,12 +52,18 @@ public class StepDefinitionInterpreter extends ExpressionInterpreterImpl<StepDef
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * execute step expression
 		 */
-		QueryMatches results = extractArguments(runtime, Step.class, 0, context, optionalArguments);
+		QueryMatches results = null;
+		if (getExpression().contains(Step.class)) {
+			results = extractArguments(runtime, Step.class, 0, context, optionalArguments);
+		} else {
+			results = extractArguments(runtime, AssociationPattern.class, 0, context, optionalArguments);
+		}
 		if (results.isEmpty()) {
 			return results;
 		}
