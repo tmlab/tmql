@@ -13,7 +13,9 @@ import de.topicmapslab.tmql4j.draft2011.path.components.interpreter.AKOExpressio
 import de.topicmapslab.tmql4j.draft2011.path.components.interpreter.AliasExpressionInterpreter;
 import de.topicmapslab.tmql4j.draft2011.path.components.interpreter.AliasValueExpressionInterpreter;
 import de.topicmapslab.tmql4j.draft2011.path.components.interpreter.AnchorInterpreter;
+import de.topicmapslab.tmql4j.draft2011.path.components.interpreter.AssociationPatternDefinitionInterpreter;
 import de.topicmapslab.tmql4j.draft2011.path.components.interpreter.AssociationPatternInterpeter;
+import de.topicmapslab.tmql4j.draft2011.path.components.interpreter.AssociationPatternRolePartInterpeter;
 import de.topicmapslab.tmql4j.draft2011.path.components.interpreter.BindingSetInterpreter;
 import de.topicmapslab.tmql4j.draft2011.path.components.interpreter.BooleanExpressionInterpreter;
 import de.topicmapslab.tmql4j.draft2011.path.components.interpreter.BooleanPrimitiveInterpreter;
@@ -49,6 +51,8 @@ import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.AliasExpression
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.AliasValueExpression;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.Anchor;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.AssociationPattern;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.AssociationPatternDefinition;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.AssociationPatternRolePart;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.BindingSet;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.BooleanExpression;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.BooleanPrimitive;
@@ -98,6 +102,8 @@ public class InterpreterRegistry extends InterpreterRegistryImpl {
 		registerInterpreterClass(AliasExpression.class, AliasExpressionInterpreter.class);
 		registerInterpreterClass(AliasValueExpression.class, AliasValueExpressionInterpreter.class);
 		registerInterpreterClass(AssociationPattern.class, AssociationPatternInterpeter.class);
+		registerInterpreterClass(AssociationPatternDefinition.class, AssociationPatternDefinitionInterpreter.class);
+		registerInterpreterClass(AssociationPatternRolePart.class, AssociationPatternRolePartInterpeter.class);
 		registerInterpreterClass(BindingSet.class, BindingSetInterpreter.class);
 		registerInterpreterClass(BooleanExpression.class, BooleanExpressionInterpreter.class);
 		registerInterpreterClass(BooleanPrimitive.class, BooleanPrimitiveInterpreter.class);

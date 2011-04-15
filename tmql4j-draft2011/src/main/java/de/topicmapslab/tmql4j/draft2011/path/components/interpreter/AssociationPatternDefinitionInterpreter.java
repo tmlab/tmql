@@ -16,27 +16,20 @@ import de.topicmapslab.tmql4j.components.processor.core.Context;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.AssociationPattern;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.AssociationPatternDefinition;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.FilterPostfix;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.Step;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.StepDefinition;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 
 /**
  * 
- * Special interpreter class to interpret steps.
- * <p>
- * step-definition ::= step filter*
- * </p>
- * <p>
- * step ::= // anchor
- * </p>
- * </code> </p>*
+ * Special interpreter class to interpret {@link AssociationPatternDefinition}.
  * 
  * @author Sven Krosse
  * @email krosse@informatik.uni-leipzig.de
  * 
  */
-public class StepDefinitionInterpreter extends ExpressionInterpreterImpl<StepDefinition> {
+public class AssociationPatternDefinitionInterpreter extends ExpressionInterpreterImpl<AssociationPatternDefinition> {
 
 	/**
 	 * base constructor to create a new instance
@@ -44,7 +37,7 @@ public class StepDefinitionInterpreter extends ExpressionInterpreterImpl<StepDef
 	 * @param ex
 	 *            the expression which shall be interpreted
 	 */
-	public StepDefinitionInterpreter(StepDefinition ex) {
+	public AssociationPatternDefinitionInterpreter(AssociationPatternDefinition ex) {
 		super(ex);
 	}
 
@@ -58,8 +51,7 @@ public class StepDefinitionInterpreter extends ExpressionInterpreterImpl<StepDef
 		 * execute step expression
 		 */
 		QueryMatches results = null;
-		results = extractArguments(runtime, Step.class, 0, context, optionalArguments);
-
+		results = extractArguments(runtime, AssociationPattern.class, 0, context, optionalArguments);
 		if (results.isEmpty()) {
 			return results;
 		}

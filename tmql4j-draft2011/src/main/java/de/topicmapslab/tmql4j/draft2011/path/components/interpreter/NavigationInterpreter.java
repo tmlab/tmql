@@ -19,7 +19,6 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.Navigation;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.StepDefinition;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
@@ -54,6 +53,7 @@ public class NavigationInterpreter extends ExpressionInterpreterImpl<Navigation>
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		List<Object> values = HashUtil.getList();
@@ -61,7 +61,7 @@ public class NavigationInterpreter extends ExpressionInterpreterImpl<Navigation>
 		/*
 		 * Iterate over all contained steps
 		 */
-		for (IExpressionInterpreter<StepDefinition> nextExpression : getInterpretersFilteredByEypressionType(runtime, StepDefinition.class)) {
+		for (IExpressionInterpreter<?> nextExpression : getInterpreters(runtime)) {
 			List<Object> results = HashUtil.getList();
 			/*
 			 * Iterate over all possible bindings and navigate over axis

@@ -10,6 +10,7 @@
  */
 package de.topicmapslab.tmql4j.draft2011.path.grammar.productions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -17,6 +18,9 @@ import de.topicmapslab.tmql4j.components.parser.IParserUtilsCallback;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.draft2011.path.components.parser.NonCanonicalUtils;
 import de.topicmapslab.tmql4j.draft2011.path.components.parser.ParserUtils;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketRoundOpen;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketSquareClose;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketSquareOpen;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisByItemIdentifier;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisBySubjectIdentifier;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisBySubjectLocator;
@@ -67,6 +71,15 @@ public class Navigation extends ExpressionImpl {
 		super(parent, tmqlTokens, tokens, runtime);
 
 		/*
+		 * look for ( .. -> .... ) part of association pattern but protected brackets within filter
+		 */
+		final List<Class<? extends IToken>> protectionStarts = new ArrayList<Class<? extends IToken>>();
+		protectionStarts.add(BracketSquareOpen.class);
+		final List<Class<? extends IToken>> protectionEnds = new ArrayList<Class<? extends IToken>>();
+		protectionEnds.add(BracketSquareClose.class);
+		final List<Class<? extends IToken>> tokensToFound = new ArrayList<Class<? extends IToken>>();
+		tokensToFound.add(BracketRoundOpen.class);
+		/*
 		 * call-back instance of parser utility
 		 */
 		IParserUtilsCallback callback = new IParserUtilsCallback() {
@@ -77,7 +90,11 @@ public class Navigation extends ExpressionImpl {
 				 * is direction token \
 				 */
 				if (token.equals(Slash.class)) {
-					checkForExtensions(StepDefinition.class, tmqlTokens, tokens, runtime);
+					if (ParserUtils.containsTokens(tmqlTokens, tokensToFound, protectionStarts, protectionEnds)) {
+						checkForExtensions(AssociationPatternDefinition.class, tmqlTokens, tokens, runtime);
+					} else {
+						checkForExtensions(StepDefinition.class, tmqlTokens, tokens, runtime);
+					}
 				}
 				/*
 				 * special handling for non-canonical axis

@@ -61,6 +61,54 @@ public class AssociationPatternTest extends Tmql4JTestCase {
 	 * @throws Exception
 	 */
 	@Test
+	public void testFullQualifiedAssociationPatternWithScopeFilter() throws Exception {
+		String query = null;
+		SimpleResultSet set = null;
+
+		Topic topic = createTopicBySI("myTopic");
+		Topic type = createTopicBySI("myType");
+		Topic rType1 = createTopicBySI("rType1");
+		Topic rType2 = createTopicBySI("rType2");
+		Topic theme = createTopicBySI("theme");
+		Topic otheme = createTopicBySI("otheme");
+
+		Set<Topic> topics = HashUtil.getHashSet();
+		for (int i = 0; i < 100; i++) {
+			Topic t = createTopic();
+			Association a = topicMap.createAssociation(type);
+			if (i % 2 == 0) {
+				a.addTheme(theme);
+			} else {
+				a.addTheme(otheme);
+			}
+			a.createRole(rType1, topic);
+			a.createRole(rType2, t);
+			topics.add(t);
+		}
+
+		query = " myTopic / myType @theme ( rType1 -> rType2 )  ";
+		set = execute(query);
+		assertEquals(50, set.size());
+		for (IResult r : set) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+
+		query = " myTopic / myType @otheme ( rType1 -> rType2 )  ";
+		set = execute(query);
+		assertEquals(50, set.size());
+		for (IResult r : set) {
+			assertEquals(1, r.size());
+			assertTrue(topics.contains(r.first()));
+		}
+	}
+
+	/**
+	 * TEST METHOD
+	 * 
+	 * @throws Exception
+	 */
+	@Test
 	public void testAssociationPatternWithoutOtherRole() throws Exception {
 		String query = null;
 		SimpleResultSet set = null;

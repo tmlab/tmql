@@ -82,14 +82,7 @@ public class StepDefinition extends ExpressionImpl {
 				 * is first step
 				 */
 				if (numberOfExpressions == 0) {
-					/*
-					 * is association pattern
-					 */
-					if (tmqlTokens.contains(BracketRoundOpen.class)) {
-						checkForExtensions(AssociationPattern.class, tmqlTokens, tokens, runtime);
-					} else {
-						checkForExtensions(Step.class, tmqlTokens, tokens, runtime);
-					}
+					checkForExtensions(Step.class, tmqlTokens, tokens, runtime);
 				}
 				/*
 				 * parser break because of [ @ ... ]
