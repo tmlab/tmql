@@ -5,12 +5,12 @@
 	<groupId>de.topicmapslab.tmql4j</groupId>
 
 	<artifactId>tmql4j-parent</artifactId>
-	<version>3.1.0</version>
+	<version>3.2.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>TMQL4J Parent Project</name>
 	
 	<properties>
-        <osgi.version>3.1.0</osgi.version>
+        <osgi.version>3.2.0</osgi.version>
         <qualified.osgi.version>${osgi.version}.${maven.build.timestamp}</qualified.osgi.version>
         <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
 	</properties>
