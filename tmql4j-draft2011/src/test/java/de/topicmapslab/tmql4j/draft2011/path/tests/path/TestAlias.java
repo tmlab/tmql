@@ -32,14 +32,14 @@ public class TestAlias extends Tmql4JTestCase {
 	@Test(expected = IllegalArgumentException.class)
 	public void testError() throws Exception {
 		createTopic();
-		IQuery q = runtime.run(topicMap, "// tm:subject ( . )");
+		IQuery q = runtime.run(topicMap, "// tm:subject { . }");
 		q.getResults().get(0, "topic");
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testError2() throws Exception {
 		createTopic();
-		IQuery q = runtime.run(topicMap, "// tm:subject ( . )");
+		IQuery q = runtime.run(topicMap, "// tm:subject { . }");
 		q.getResults().get(0).get("topic");
 	}
 
@@ -53,7 +53,7 @@ public class TestAlias extends Tmql4JTestCase {
 	@Test
 	public void testProjectionWithAlias() throws Exception {
 		Topic t = createTopic();
-		IQuery q = runtime.run(topicMap, "// tm:subject ( . AS \"topic\" )");
+		IQuery q = runtime.run(topicMap, "// tm:subject { . AS \"topic\" }");
 		assertEquals(t, q.getResults().get(0, "topic"));
 
 		assertEquals(t, q.getResults().get(0).get("topic"));
@@ -66,7 +66,7 @@ public class TestAlias extends Tmql4JTestCase {
 		for (int i = 0; i < 10; i++) {
 			names.add(t.createName(t, "Name" + i));
 		}
-		IQuery q = runtime.run(topicMap, "// tm:subject ( . AS \"topic\" , . / names AS \"name\" )");
+		IQuery q = runtime.run(topicMap, "// tm:subject { . AS \"topic\" , . / names AS \"name\" }");
 		IResultSet<?> set = q.getResults();
 		assertEquals(10, set.size());
 		for (IResult r : set) {
@@ -85,7 +85,7 @@ public class TestAlias extends Tmql4JTestCase {
 			names.add(t.createName(t, "Name" + i));
 			values.add("Name" + i);
 		}
-		IQuery q = runtime.run(topicMap, "// tm:subject / names ( . / parent AS \"topic\" , . AS \"name\" , . / value AS \"value\" )");
+		IQuery q = runtime.run(topicMap, "// tm:subject / names { . / parent AS \"topic\" , . AS \"name\" , . / value AS \"value\" }");
 		IResultSet<?> set = q.getResults();
 		assertEquals(10, set.size());
 		for (IResult r : set) {

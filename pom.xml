@@ -5,7 +5,7 @@
 	<groupId>de.topicmapslab.tmql4j</groupId>
 
 	<artifactId>tmql4j-parent</artifactId>
-	<version>3.1.0-SNAPSHOT</version>
+	<version>3.1.0</version>
 	<packaging>pom</packaging>
 	<name>TMQL4J Parent Project</name>
 	
@@ -92,5 +92,7 @@
 		<module>tmql4j-template</module>
 		<module>tmql4j-draft2007-pack</module>
 		<module>tmql4j-tolog</module>
+		<module>tmql4j-draft2011</module>
+		<module>tmql4j-path-sql</module>
 	</modules>
 </project>

@@ -11,6 +11,8 @@ package de.topicmapslab.tmql4j.sql.path.components.processor;
 import java.io.OutputStream;
 import java.sql.SQLException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.tmapi.core.TopicMap;
 
 import de.topicmapslab.majortom.database.jdbc.model.ISession;
@@ -19,6 +21,7 @@ import de.topicmapslab.majortom.model.core.ITopicMap;
 import de.topicmapslab.tmql4j.components.parser.IParserTree;
 import de.topicmapslab.tmql4j.components.processor.core.Context;
 import de.topicmapslab.tmql4j.components.processor.core.IContext;
+import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResultProcessor;
 import de.topicmapslab.tmql4j.components.processor.results.model.IResultSet;
 import de.topicmapslab.tmql4j.components.processor.results.model.ResultSet;
@@ -36,6 +39,10 @@ import de.topicmapslab.tmql4j.sql.path.components.results.SqlResultProcessor;
  * 
  */
 public class TmqlSqlProcessor extends TmqlProcessor2007 {
+	/**
+	 * the Logger
+	 */
+	private final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
 
 	/**
 	 * constructor
@@ -50,14 +57,25 @@ public class TmqlSqlProcessor extends TmqlProcessor2007 {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public IResultSet<?> query(IQuery query, OutputStream os) {
 		IParserTree tree = parse(query);
 		if (tree != null) {
 			IContext context = new Context(this, query);
-			ISqlDefinition definition = new SqlDefinition();
-			definition = TranslatorRegistry.getTranslator(tree.root().getClass()).toSql(getRuntime(), context, tree.root(), definition);
-			System.out.println(definition);
-			return executeSql(query, definition);			 
+			try {
+				ISqlDefinition definition = new SqlDefinition();
+				definition = TranslatorRegistry.getTranslator(tree.root().getClass()).toSql(getRuntime(), context, tree.root(), definition);
+				return executeSql(query, definition);
+			} catch (TMQLRuntimeException e) {
+				logger.warn("Cannot translate query to SQL, at least one expression not supported by translator!", e);
+				/*
+				 * try normal runtime over TMAPI
+				 */
+				QueryMatches results = tree.root().interpret(getRuntime(), context);
+				IResultProcessor resultProcessor = getResultProcessor();
+				resultProcessor.proceed(context, results);
+				return resultProcessor.getResultSet();
+			}
 		}
 		return ResultSet.emptyResultSet();
 	}
@@ -77,7 +95,7 @@ public class TmqlSqlProcessor extends TmqlProcessor2007 {
 		ISession session = store.openSession();
 		try {
 			java.sql.ResultSet rs = session.getConnection().createStatement().executeQuery(definition.toString());
-			SqlResultProcessor processor = (SqlResultProcessor)getResultProcessor();
+			SqlResultProcessor processor = (SqlResultProcessor) getResultProcessor();
 			processor.proceed(definition, query, session, rs);
 			return processor.getResultSet();
 		} catch (SQLException e) {
@@ -91,12 +109,13 @@ public class TmqlSqlProcessor extends TmqlProcessor2007 {
 		}
 
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	protected IResultProcessor createResultProcessor() {
 		return new SqlResultProcessor(getRuntime());
 	}
-	
+
 }

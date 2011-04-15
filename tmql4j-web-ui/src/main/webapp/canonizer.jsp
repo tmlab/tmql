@@ -1,3 +1,4 @@
+<%@page import="de.topicmapslab.tmql4j.draft2010.components.processor.runtime.TmqlRuntime"%>
 <%@page import="de.topicmapslab.tmql4j.draft2011.path.components.processor.runtime.TmqlRuntime2011"%>
 <%@page import="java.util.regex.Pattern"%>
 <%@page import="java.util.regex.Matcher"%>
@@ -45,6 +46,9 @@
 </div>
 <div id="content">&nbsp; <%
 	String tmql = request.getParameter("tmql");
+	if ( tmql == null ){
+		tmql = "2008";
+	}
  	String query = "// tm:subject";
  	String newQuery = query;
  	boolean isPost = request.getMethod().equalsIgnoreCase("POST");
@@ -53,7 +57,16 @@
  	String error = null;
  	if (isPost) {
  		query = request.getParameter("query");
- 		ITMQLRuntime runtime = TMQLRuntimeFactory.newFactory().newRuntime("2011".equalsIgnoreCase(tmql)?TmqlRuntime2011.TMQL_2011:TmqlRuntime2007.TMQL_2007);
+ 		ITMQLRuntime runtime = null;
+ 		String version;
+ 		if ( "2011".equalsIgnoreCase(tmql)){
+ 			version = TmqlRuntime2011.TMQL_2011; 			
+ 		}else if ( "2010".equalsIgnoreCase(tmql)){
+ 			version = TmqlRuntime.TMQL_2010;
+ 		}else{
+ 			version = TmqlRuntime2007.TMQL_2007;
+ 		}
+ 		runtime = TMQLRuntimeFactory.newFactory().newRuntime(version);
  		try {
  			IParserTree tree = runtime.parse(query);
  			canonized = tree.toQueryString();
@@ -92,7 +105,12 @@
  This service uses the TMQL draft of <%=tmql!=null?tmql:"2008" %> and the tmql4j query engine version 3.1.0.
  <hr />
 <form action="canonizer.jsp" method="POST">
- <input type="hidden" name="tmql" value="<%=tmql!=null?tmql:"2008"%>">
+ Version: <select name="tmql" id="tmql">
+ 	<option value="2008" <%=("2008".equalsIgnoreCase(tmql)?"selected=\"selected\"":"")%>>2008</option>
+ 	<option value="2010" <%=("2010".equalsIgnoreCase(tmql)?"selected=\"selected\"":"")%>>2010</option>
+ 	<option value="2011" <%=("2011".equalsIgnoreCase(tmql)?"selected=\"selected\"":"")%>>2011</option>
+ </select>
+ <br />
  <textarea rows="10"	cols="100" id="query" name="query"><%=query%></textarea><br />
 <input type="submit" value="Canonize"></form>
 <br />

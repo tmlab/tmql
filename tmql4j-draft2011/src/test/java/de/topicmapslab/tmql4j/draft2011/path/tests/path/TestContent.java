@@ -349,7 +349,7 @@ public class TestContent extends Tmql4JTestCase {
 			}
 		}
 
-		query = " // myType ( IF ( fn:count( . / names / value ) > 0 ) THEN . / names / value ) ";
+		query = " // myType { IF fn:count( . / names / value ) > 0 THEN . / names / value } ";
 		set = execute(query);
 		assertEquals(values.size(), set.size());
 		for (IResult r : set) {
@@ -358,7 +358,7 @@ public class TestContent extends Tmql4JTestCase {
 		}
 
 		values.add("Missing");
-		query = " // myType ( IF ( fn:count( . / names / value ) > 0 ) THEN . / names / value ELSE \"Missing\" ) ";
+		query = " // myType { IF fn:count( . / names / value ) > 0 THEN . / names / value ELSE \"Missing\" } ";
 		set = execute(query);
 		assertEquals(100, set.size());
 		for (IResult r : set) {
@@ -367,7 +367,7 @@ public class TestContent extends Tmql4JTestCase {
 		}
 
 		values.add("Missing");
-		query = " // myType ( . / names / value || \"Missing\" ) ";
+		query = " // myType { . / names / value || \"Missing\" } ";
 		set = execute(query);
 		assertEquals(100, set.size());
 		for (IResult r : set) {

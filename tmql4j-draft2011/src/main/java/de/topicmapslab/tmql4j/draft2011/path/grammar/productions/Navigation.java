@@ -84,6 +84,8 @@ public class Navigation extends ExpressionImpl {
 				 */
 				else if (NonCanonicalUtils.isNonCanonicalProduction(tmqlTokens, tokens)) {
 					NonCanonicalUtils.toCanonical(runtime, Navigation.this, tmqlTokens, tokens);
+				} else {
+					throw new TMQLInvalidSyntaxException(tmqlTokens, tokens, Navigation.class);
 				}
 			}
 		};

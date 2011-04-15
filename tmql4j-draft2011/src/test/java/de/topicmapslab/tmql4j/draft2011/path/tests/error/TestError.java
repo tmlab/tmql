@@ -13,6 +13,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import de.topicmapslab.tmql4j.draft2011.path.tests.Tmql4JTestCase;
+import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLParserException;
 
 /**
@@ -36,8 +37,8 @@ public class TestError extends Tmql4JTestCase {
 		final String query = " das ist kein valider query";
 		try {
 			execute(query);
-		} catch (IllegalArgumentException e) {
-			Assert.assertEquals("String represenation cannot convert to a TMQL query: " + query + "!", e.getMessage());
+			Assert.fail("Should be failed");
+		} catch (TMQLGeneratorException e) {
 		}
 	}
 }

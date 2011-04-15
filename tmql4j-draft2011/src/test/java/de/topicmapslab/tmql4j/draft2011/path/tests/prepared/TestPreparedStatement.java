@@ -83,7 +83,7 @@ public class TestPreparedStatement extends Tmql4JTestCase {
 
 	@Test
 	public void testAnonymousNamedWildcards() {
-		IPreparedStatement statement = runtime.preparedStatement(" ? ( ? , . / names )");
+		IPreparedStatement statement = runtime.preparedStatement(" ? { ? , . / names }");
 		statement.setTopicMap(topicMap);
 
 		Map<Topic, Set<Construct>> values = HashUtil.getHashMap();
@@ -147,7 +147,7 @@ public class TestPreparedStatement extends Tmql4JTestCase {
 
 	@Test
 	public void testNamedWildcards() {
-		IPreparedStatement statement = runtime.preparedStatement(" ?topic ( ?topic , . / names )");
+		IPreparedStatement statement = runtime.preparedStatement(" ?topic { ?topic , . / names }");
 		statement.setTopicMap(topicMap);
 
 		Map<Topic, Set<Construct>> values = HashUtil.getHashMap();

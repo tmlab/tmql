@@ -101,7 +101,7 @@ public class TestFunctionInvocation extends Tmql4JTestCase {
 		values.add("V2, V3");
 		values.add("V2, V4");
 
-		query = "myTopic ( fn:string-concat ( . / names myType , \", \", . / names myOtherType ) )";
+		query = "myTopic { fn:string-concat ( . / names myType , \", \", . / names myOtherType ) }";
 		set = execute(new TMQLQuery(topicMap, query));
 		assertEquals(4, set.size());
 		for (IResult r : set) {

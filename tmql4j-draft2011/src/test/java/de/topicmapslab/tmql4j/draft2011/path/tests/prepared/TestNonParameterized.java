@@ -148,9 +148,9 @@ public class TestNonParameterized extends Tmql4JTestCase {
 		IPreparedStatement stmt = runtime.preparedStatement("\"To be or not to be?\"");
 		assertEquals(stmt.getQueryString(), stmt.getNonParameterizedQueryString());
 
-		stmt = runtime.preparedStatement("? [ \"To be or not to be?\" ]");
+		stmt = runtime.preparedStatement("? / by-id [ \"To be or not to be?\" ]");
 		stmt.set(0, 1);
-		assertEquals("1 [ \"To be or not to be?\" ]", stmt.getNonParameterizedQueryString());
+		assertEquals("1 / by-id [ \"To be or not to be?\" ]", stmt.getNonParameterizedQueryString());
 
 		stmt = runtime.preparedStatement("? / by-id [ \"To be or not to be?\" ] / names [ ? ]");
 		stmt.set(0, 1);
@@ -161,9 +161,9 @@ public class TestNonParameterized extends Tmql4JTestCase {
 		stmt.set(0, 1);
 		assertEquals("<?> / by-id [ \"To be or not to be?\" ] / names [ 1 ]", stmt.getNonParameterizedQueryString());
 
-		stmt = runtime.preparedStatement("?topic [ \"To be or not to be?\" ]");
+		stmt = runtime.preparedStatement("?topic / by-id [ \"To be or not to be?\" ]");
 		stmt.set("topic", 1);
-		assertEquals("1 [ \"To be or not to be?\" ]", stmt.getNonParameterizedQueryString());
+		assertEquals("1 / by-id [ \"To be or not to be?\" ]", stmt.getNonParameterizedQueryString());
 
 		stmt = runtime.preparedStatement("?topic / by-id [ \"To be or not to be?\" ] / names [ ?topic ]");
 		stmt.set("topic", 1);

@@ -20,9 +20,8 @@ import de.topicmapslab.tmql4j.exception.TMQLLexerException;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
- * TMQL tokenizer class. String secure tokenizer of TMQL queries, splitting
- * strings by looking for space characters, but protects white spaces as part of
- * string tokens.
+ * TMQL tokenizer class. String secure tokenizer of TMQL queries, splitting strings by looking for space characters, but
+ * protects white spaces as part of string tokens.
  * 
  * @author Sven Krosse
  * @email krosse@informatik.uni-leipzig.de
@@ -41,12 +40,14 @@ public class TMQLTokenizer {
 		restrictedCharsAfterXMLStart.add('-');
 		restrictedCharsAfterXMLStart.add('=');
 		restrictedCharsAfterXMLStart.add('<');
+		restrictedCharsAfterXMLStart.add('~');
 		/*
 		 * following characters may not stand before an XML end token '>'
 		 */
 		restrictedCharsBeforeXMLEnd.add('-');
 		restrictedCharsBeforeXMLEnd.add(' ');
 		restrictedCharsBeforeXMLEnd.add('>');
+		restrictedCharsBeforeXMLEnd.add('~');
 		/*
 		 * following characters may not stand after an XML end token '>'
 		 */
@@ -93,16 +94,14 @@ public class TMQLTokenizer {
 	/**
 	 * Method checks if another token is available after the current position.
 	 * 
-	 * @return <code>true</code> if iterator has more tokens, <code>false</code>
-	 *         otherwise
+	 * @return <code>true</code> if iterator has more tokens, <code>false</code> otherwise
 	 */
 	public boolean hasMoreTokens() {
 		return iterator.hasNext();
 	}
 
 	/**
-	 * Method return the next token after the current position if it is
-	 * available
+	 * Method return the next token after the current position if it is available
 	 * 
 	 * @return the next token but never <code>null</code>
 	 * @throws NoSuchElementException
@@ -182,8 +181,7 @@ public class TMQLTokenizer {
 						continue;
 					}
 					/*
-					 * if next character is also an quote ignore current
-					 * existence of quotes
+					 * if next character is also an quote ignore current existence of quotes
 					 */
 					else if (origin.length() > index + 1 && origin.charAt(index + 1) == '"') {
 						continue;

@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>tmql4j-parent</artifactId>
 		<groupId>de.topicmapslab.tmql4j</groupId>
-		<version>3.1.0-SNAPSHOT</version>
+		<version>3.1.0</version>
 	</parent>
 	<groupId>de.topicmapslab.tmql4j.sql</groupId>
 	<artifactId>tmql4j-path-sql</artifactId>
@@ -30,15 +30,6 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifestFile>META-INF/MANIFEST.MF</manifestFile>
-					</archive>
 				</configuration>
 			</plugin>
 		</plugins>
