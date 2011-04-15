@@ -41,7 +41,7 @@ import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Plus;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.RegularExpression;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Some;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Star;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Substraction;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Except;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Unequals;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Union;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
@@ -201,7 +201,7 @@ public class PostfixedExpression extends ExpressionImpl {
 		 * set operators
 		 */
 		tupleExpressionIndicators.add(Intersect.class);
-		tupleExpressionIndicators.add(Substraction.class);
+		tupleExpressionIndicators.add(Except.class);
 		tupleExpressionIndicators.add(Union.class);
 		/*
 		 * special boolean keywords

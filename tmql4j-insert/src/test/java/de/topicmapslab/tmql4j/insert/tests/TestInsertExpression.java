@@ -89,4 +89,10 @@ public class TestInsertExpression extends Tmql4JTestCase {
 
 	}
 
+	@Test
+	public void testTemplateDef() throws Exception {
+		String query = "INSERT ''' %prefix tmcl http://psi.topicmaps.org/tmcl/  %prefix tmdm http://psi.topicmaps.org/iso13250/model  def overlaps($tt1, $tt2) ?c isa tmcl:overlap-declaration. tmcl:overlaps(tmcl:allows : ?c, tmcl:allowed : $tt1) tmcl:overlaps(tmcl:allows : ?c, tmcl:allowed : $tt2) end  overlaps( <http://en.wikipedia.org/wiki/State_(administrative_division)>, <http://en.wikipedia.org/wiki/City>) '''";
+		execute(query);
+	}
+
 }

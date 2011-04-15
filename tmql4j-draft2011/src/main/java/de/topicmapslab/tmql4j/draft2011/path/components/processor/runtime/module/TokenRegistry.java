@@ -151,7 +151,7 @@ public class TokenRegistry extends TokenRegistryImpl {
 			register(ShortcutCondition.class);
 			register(Some.class);
 			register(Star.class);
-			register(Substraction.class);
+			register(Except.class);
 			register(Then.class);
 			register(TripleQuote.class);
 			register(Variable.class);

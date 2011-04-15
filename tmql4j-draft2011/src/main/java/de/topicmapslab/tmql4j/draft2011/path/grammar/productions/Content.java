@@ -21,7 +21,7 @@ import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Else;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.If;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Intersect;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutCondition;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Substraction;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Except;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Then;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Union;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
@@ -122,7 +122,7 @@ public class Content extends ExpressionImpl {
 		 * create set containing all set-operators UNION , MINUS , INTERSECT
 		 */
 		Set<Class<? extends IToken>> operators = HashUtil.getHashSet();
-		operators.add(Substraction.class);
+		operators.add(Except.class);
 		operators.add(Intersect.class);
 		operators.add(Union.class);
 		int index = ParserUtils.indexOfTokens(tmqlTokens, operators);

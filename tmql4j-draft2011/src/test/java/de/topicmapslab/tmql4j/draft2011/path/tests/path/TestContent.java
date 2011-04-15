@@ -276,7 +276,7 @@ public class TestContent extends Tmql4JTestCase {
 			}
 		}
 
-		query = " // other MINUS // myType";
+		query = " // other EXCEPT // myType";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -284,7 +284,7 @@ public class TestContent extends Tmql4JTestCase {
 			assertTrue(topics.contains(r.first()));
 		}
 
-		query = " // myType MINUS // other";
+		query = " // myType EXCEPT // other";
 		set = execute(query);
 		assertEquals(0, set.size());
 	}
@@ -314,7 +314,7 @@ public class TestContent extends Tmql4JTestCase {
 		/*
 		 * second part will be interpret first ( // other UNION // myType )
 		 */
-		query = " // another MINUS // other UNION // myType";
+		query = " // another EXCEPT // other UNION // myType";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {
@@ -325,7 +325,7 @@ public class TestContent extends Tmql4JTestCase {
 		/*
 		 * second part will be interpret first ( // other UNION // myType )
 		 */
-		query = " // another MINUS { // other UNION // myType }";
+		query = " // another EXCEPT { // other UNION // myType }";
 		set = execute(query);
 		assertEquals(topics.size(), set.size());
 		for (IResult r : set) {

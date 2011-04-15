@@ -23,7 +23,7 @@ import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.If;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Intersect;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Substraction;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Except;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Union;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.Content;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.PathExpression;
@@ -196,7 +196,7 @@ public class ContentInterpreter extends ExpressionInterpreterImpl<Content> {
 		/*
 		 * is MINUS
 		 */
-		else if (operator.equals(Substraction.class)) {
+		else if (operator.equals(Except.class)) {
 			/*
 			 * only tuples contained in sequence A but not in sequence B
 			 */
