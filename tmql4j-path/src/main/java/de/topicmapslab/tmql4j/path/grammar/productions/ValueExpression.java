@@ -30,6 +30,7 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Exists;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Function;
 import de.topicmapslab.tmql4j.path.grammar.lexical.GreaterEquals;
 import de.topicmapslab.tmql4j.path.grammar.lexical.GreaterThan;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Intersect;
 import de.topicmapslab.tmql4j.path.grammar.lexical.LowerEquals;
 import de.topicmapslab.tmql4j.path.grammar.lexical.LowerThan;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Minus;
@@ -41,12 +42,13 @@ import de.topicmapslab.tmql4j.path.grammar.lexical.Plus;
 import de.topicmapslab.tmql4j.path.grammar.lexical.RegularExpression;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Some;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Star;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Substraction;
 import de.topicmapslab.tmql4j.path.grammar.lexical.Unequals;
+import de.topicmapslab.tmql4j.path.grammar.lexical.Union;
 import de.topicmapslab.tmql4j.util.HashUtil;
 
 /**
- * Special implementation of {@link ExpressionImpl} representing a
- * value-expression.
+ * Special implementation of {@link ExpressionImpl} representing a value-expression.
  * <p>
  * The grammar production rule of the expression is: <code>
  * <p>
@@ -99,8 +101,7 @@ public class ValueExpression extends ExpressionImpl {
 	 */
 	public static final int TYPE_BOOLEAN = 4;
 	/**
-	 * index of the detected operator if grammar type is
-	 * {@link ValueExpression#TYPE_INFIX_OPERATOR} or
+	 * index of the detected operator if grammar type is {@link ValueExpression#TYPE_INFIX_OPERATOR} or
 	 * {@link ValueExpression#TYPE_PREFIX_OPERATOR}
 	 */
 	private int indexOfOperator = -1;
@@ -116,11 +117,9 @@ public class ValueExpression extends ExpressionImpl {
 	 * @param parent
 	 *            the known parent node
 	 * @param tmqlTokens
-	 *            the list of language-specific tokens contained by this
-	 *            expression
+	 *            the list of language-specific tokens contained by this expression
 	 * @param tokens
-	 *            the list of string-represented tokens contained by this
-	 *            expression
+	 *            the list of string-represented tokens contained by this expression
 	 * @param runtime
 	 *            the TMQL runtime
 	 * @throws TMQLInvalidSyntaxException
@@ -166,6 +165,13 @@ public class ValueExpression extends ExpressionImpl {
 				else if (ParserUtils.containsTokens(tmqlTokens, Or.class, And.class, Not.class)) {
 					checkForExtensions(BooleanExpression.class, tmqlTokens, tokens, runtime);
 					setGrammarType(TYPE_BOOLEAN);
+				}
+				/*
+				 * has set operator
+				 */
+				else if (ParserUtils.containsTokens(tmqlTokens, Union.class, Intersect.class, Substraction.class)) {
+					checkForExtensions(Content.class, tmqlTokens, tokens, runtime);
+					setGrammarType(TYPE_CONTENT);
 				}
 				/*
 				 * is function invocation
@@ -226,8 +232,8 @@ public class ValueExpression extends ExpressionImpl {
 	}
 
 	/**
-	 * Method checks if there is a mathematical operator token. Only operators
-	 * which are part of the expression and not cramped.
+	 * Method checks if there is a mathematical operator token. Only operators which are part of the expression and not
+	 * cramped.
 	 * 
 	 * @param tokens
 	 *            the token list
@@ -244,8 +250,8 @@ public class ValueExpression extends ExpressionImpl {
 	}
 
 	/**
-	 * Method checks if there is a comparison operator token. Only operators
-	 * which are part of the expression and not cramped.
+	 * Method checks if there is a comparison operator token. Only operators which are part of the expression and not
+	 * cramped.
 	 * 
 	 * @param tokens
 	 *            the token list
@@ -272,13 +278,10 @@ public class ValueExpression extends ExpressionImpl {
 	}
 
 	/**
-	 * Method return the index of the detected operator contained by this
-	 * value-expression.
+	 * Method return the index of the detected operator contained by this value-expression.
 	 * 
-	 * @return the index of detected operator if grammar type is
-	 *         {@link ValueExpression#TYPE_INFIX_OPERATOR} or
-	 *         {@link ValueExpression#TYPE_PREFIX_OPERATOR}, otherwise
-	 *         <code>-1</code> will be returned.
+	 * @return the index of detected operator if grammar type is {@link ValueExpression#TYPE_INFIX_OPERATOR} or
+	 *         {@link ValueExpression#TYPE_PREFIX_OPERATOR}, otherwise <code>-1</code> will be returned.
 	 */
 	public int getIndexOfOperator() {
 		return indexOfOperator;

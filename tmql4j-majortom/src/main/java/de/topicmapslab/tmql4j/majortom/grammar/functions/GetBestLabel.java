@@ -3,8 +3,11 @@
  */
 package de.topicmapslab.tmql4j.majortom.grammar.functions;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
+
+import org.tmapi.core.Topic;
 
 import de.topicmapslab.majortom.model.core.ITopic;
 import de.topicmapslab.majortom.util.DatatypeAwareUtils;
@@ -30,26 +33,27 @@ public class GetBestLabel extends FunctionImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
 		QueryMatches parameters = getParameters(runtime, context, caller);
 
-		if ( parameters.isEmpty()){
+		if (parameters.isEmpty()) {
 			return QueryMatches.emptyMatches();
 		}
-		
-		if (!isExpectedNumberOfParameters(parameters.getOrderedKeys().size()))
+
+		if (!isExpectedNumberOfParameters(parameters.getOrderedKeys().size())) {
 			throw new TMQLRuntimeException("Illegal Number Of Arguments for " + GETBESTLABEL);
+		}
 		QueryMatches results = new QueryMatches(runtime);
 		for (Map<String, Object> tuple : parameters) {
 
 			Object p1 = tuple.get("$0");
 			Object p2 = tuple.get("$1");
 			Object p3 = tuple.get("$2");
-
-			ITopic t = getTopic(runtime, context, p1);
+			Topic t = getTopic(runtime, context, p1);
 
 			// only one topic
-			ITopic theme = getTopic(runtime, context, p2);
+			Topic theme = getTopic(runtime, context, p2);
 			boolean strict = false;
 			try {
 				strict = (Boolean) DatatypeAwareUtils.toValue(p3, Boolean.class);
@@ -61,8 +65,9 @@ public class GetBestLabel extends FunctionImpl {
 			} else if (p1 instanceof Collection<?>) {
 				for (Object o : (Collection<?>) p1) {
 					t = getTopic(runtime, context, o);
-					if (t != null)
+					if (t != null) {
 						addResult(results, t, theme, strict);
+					}
 				}
 			}
 		}
@@ -70,8 +75,7 @@ public class GetBestLabel extends FunctionImpl {
 	}
 
 	/**
-	 * Utility method to add the best label for the given topic and theme to the
-	 * result set if exists
+	 * Utility method to add the best label for the given topic and theme to the result set if exists
 	 * 
 	 * @param rqm
 	 *            the result set
@@ -80,22 +84,42 @@ public class GetBestLabel extends FunctionImpl {
 	 * @param theme
 	 *            the theme
 	 * @param strict
-	 *            strict mode for
-	 *            {@link ITopic#getBestLabel(org.tmapi.core.Topic, boolean)}
+	 *            strict mode for {@link ITopic#getBestLabel(org.tmapi.core.Topic, boolean)}
 	 */
-	private void addResult(QueryMatches rqm, ITopic t, ITopic theme, boolean strict) {
+	private void addResult(QueryMatches rqm, Topic t, Topic theme, boolean strict) {
 		String r;
-		if (theme == null) {
-			r = t.getBestLabel();
-		} else {
-			r = t.getBestLabel(theme, strict);
+		/*
+		 * is MajorToM topic instance
+		 */
+		if (t instanceof ITopic) {
+			if (theme == null) {
+				r = ((ITopic) t).getBestLabel();
+			} else {
+				r = ((ITopic) t).getBestLabel(theme, strict);
+			}
+		}
+		/*
+		 * check for other TMAPI implementations supporting getBestLabel method
+		 */
+		else {
+			try {
+				if (theme == null) {
+					Method m = t.getClass().getMethod("getBestLabel");
+					r = (String) m.invoke(t);
+				} else {
+					Method m = t.getClass().getMethod("getBestLabel", Topic.class, boolean.class);
+					r = (String) m.invoke(t, theme, strict);
+				}
+			} catch (Exception e) {
+				throw new TMQLRuntimeException("The function '" + GETBESTLABEL + "' is not supported by the current topic map.");
+			}
 		}
 		addResult(rqm, r);
 	}
 
 	/**
-	 * Transform the given object to a topic construct. If the object is a
-	 * string, the topic map will be asked for the given identifier.
+	 * Transform the given object to a topic construct. If the object is a string, the topic map will be asked for the
+	 * given identifier.
 	 * 
 	 * @param runtime
 	 *            the runtime
@@ -105,12 +129,12 @@ public class GetBestLabel extends FunctionImpl {
 	 *            the object
 	 * @return the topic or <code>null</code>
 	 */
-	private ITopic getTopic(ITMQLRuntime runtime, IContext context, Object obj) {
-		if (obj instanceof ITopic) {
-			return (ITopic) obj;
+	private Topic getTopic(ITMQLRuntime runtime, IContext context, Object obj) {
+		if (obj instanceof Topic) {
+			return (Topic) obj;
 		}
 		if (obj instanceof String) {
-			return (ITopic) runtime.getConstructResolver().getConstructByIdentifier(context, (String) obj);
+			return (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, (String) obj);
 		}
 		return null;
 	}

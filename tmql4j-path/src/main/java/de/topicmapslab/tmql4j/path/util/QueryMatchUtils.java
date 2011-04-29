@@ -158,8 +158,18 @@ public class QueryMatchUtils {
 	 */
 	public static QueryMatches union(final ITMQLRuntime runtime, final QueryMatches leftHand, final QueryMatches rightHand) throws TMQLRuntimeException {
 		QueryMatches result = new QueryMatches(runtime);
-		result.add(leftHand);
-		result.add(rightHand);
+		for (Map<String, Object> tuple : leftHand) {
+			if (!result.getMatches().contains(tuple)) {
+				result.add(tuple);
+			}
+		}
+		result.getOrigins().putAll(leftHand.getOrigins());
+		for (Map<String, Object> tuple : rightHand) {
+			if (!result.getMatches().contains(tuple)) {
+				result.add(tuple);
+			}
+		}
+		result.getOrigins().putAll(rightHand.getOrigins());
 		return result;
 	}
 
@@ -267,8 +277,7 @@ public class QueryMatchUtils {
 				boolean add = false;
 				for (Map<String, Object> tupleB : rightHand) {
 					/*
-					 * both tuples are of the same size and the right hand part
-					 * contains only the key $$$$
+					 * both tuples are of the same size and the right hand part contains only the key $$$$
 					 */
 					if (tuple.size() == 1 && tupleB.size() == 1 && tupleB.containsKey(QueryMatches.getNonScopedVariable())) {
 						add = tuple.values().containsAll(tupleB.values());
@@ -603,8 +612,7 @@ public class QueryMatchUtils {
 	 *            the left hand set
 	 * @param rightHand
 	 *            the right hand set
-	 * @return the query-matches contains the quotients without remainder of all
-	 *         combinations
+	 * @return the query-matches contains the quotients without remainder of all combinations
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */
@@ -621,8 +629,7 @@ public class QueryMatchUtils {
 	 *            the name of the method to call
 	 * @param arguments
 	 *            the arguments sets
-	 * @return the query-matches containing the results of mathematical
-	 *         operation
+	 * @return the query-matches containing the results of mathematical operation
 	 * @throws TMQLRuntimeException
 	 *             thrown if result cannot be instantiate
 	 */

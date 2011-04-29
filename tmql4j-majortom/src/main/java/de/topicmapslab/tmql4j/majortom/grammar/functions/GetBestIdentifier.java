@@ -3,8 +3,11 @@
  */
 package de.topicmapslab.tmql4j.majortom.grammar.functions;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
+
+import org.tmapi.core.Topic;
 
 import de.topicmapslab.majortom.model.core.ITopic;
 import de.topicmapslab.majortom.util.DatatypeAwareUtils;
@@ -30,34 +33,37 @@ public class GetBestIdentifier extends FunctionImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
 		QueryMatches parameters = getParameters(runtime, context, caller);
-		if ( parameters.isEmpty()){
+		if (parameters.isEmpty()) {
 			return QueryMatches.emptyMatches();
 		}
-		if (!isExpectedNumberOfParameters(parameters.getOrderedKeys().size()))
+		if (!isExpectedNumberOfParameters(parameters.getOrderedKeys().size())) {
 			throw new TMQLRuntimeException("Illegal Number Of Arguments for " + IDENTIFIER);
+		}
 		QueryMatches results = new QueryMatches(runtime);
 		for (Map<String, Object> tuple : parameters) {
 
 			Object p1 = tuple.get("$0");
 			Object p2 = tuple.get("$1");
 
-			ITopic t = getTopic(runtime, context, p1);
+			Topic t = getTopic(runtime, context, p1);
 
 			boolean withPrefix = false;
 			try {
 				withPrefix = (Boolean) DatatypeAwareUtils.toValue(p2, Boolean.class);
 			} catch (Exception e1) {
-				// NOTHING TO DO 
+				// NOTHING TO DO
 			}
 			if (t != null) {
-				addResult(results, t,  withPrefix);
+				addResult(results, t, withPrefix);
 			} else if (p1 instanceof Collection<?>) {
 				for (Object o : (Collection<?>) p1) {
 					t = getTopic(runtime, context, o);
-					if (t != null)
+					if (t != null) {
 						addResult(results, t, withPrefix);
+					}
 				}
 			}
 		}
@@ -65,25 +71,40 @@ public class GetBestIdentifier extends FunctionImpl {
 	}
 
 	/**
-	 * Utility method to add the best identifier for the given topic to the
-	 * result set if exists
+	 * Utility method to add the best identifier for the given topic to the result set if exists
 	 * 
 	 * @param rqm
 	 *            the result set
 	 * @param t
 	 *            the topic
 	 * @param withPrefix
-	 *            withPrefix flag for
-	 *            {@link ITopic#getBestIdentifier(boolean)}
+	 *            withPrefix flag for {@link ITopic#getBestIdentifier(boolean)}
 	 */
-	private void addResult(QueryMatches rqm, ITopic t, boolean withPrefix) {
-		String r = t.getBestIdentifier(withPrefix);
+	private void addResult(QueryMatches rqm, Topic t, boolean withPrefix) {
+		String r = null;
+		/*
+		 * is MajorToM topic instance
+		 */
+		if (t instanceof ITopic) {
+			r = ((ITopic) t).getBestIdentifier(withPrefix);
+		}
+		/*
+		 * check for other TMAPI implementations supporting getBestIdentifier method
+		 */
+		else {
+			try {
+				Method m = t.getClass().getMethod("getBestIdentifier", boolean.class);
+				r = (String) m.invoke(t, withPrefix);
+			} catch (Exception e) {
+				throw new TMQLRuntimeException("The function '" + IDENTIFIER + "' is not supported by the current topic map.");
+			}
+		}
 		addResult(rqm, r);
 	}
 
 	/**
-	 * Transform the given object to a topic construct. If the object is a
-	 * string, the topic map will be asked for the given identifier.
+	 * Transform the given object to a topic construct. If the object is a string, the topic map will be asked for the
+	 * given identifier.
 	 * 
 	 * @param runtime
 	 *            the runtime
@@ -93,12 +114,12 @@ public class GetBestIdentifier extends FunctionImpl {
 	 *            the object
 	 * @return the topic or <code>null</code>
 	 */
-	private ITopic getTopic(ITMQLRuntime runtime, IContext context, Object obj) {
-		if (obj instanceof ITopic) {
-			return (ITopic) obj;
+	private Topic getTopic(ITMQLRuntime runtime, IContext context, Object obj) {
+		if (obj instanceof Topic) {
+			return (Topic) obj;
 		}
 		if (obj instanceof String) {
-			return (ITopic) runtime.getConstructResolver().getConstructByIdentifier(context, (String) obj);
+			return (Topic) runtime.getConstructResolver().getConstructByIdentifier(context, (String) obj);
 		}
 		return null;
 	}
@@ -134,7 +155,7 @@ public class GetBestIdentifier extends FunctionImpl {
 	 */
 	@Override
 	public boolean isExpectedNumberOfParameters(long num) {
-		return num == 2 ;
+		return num == 2;
 	}
 
 }

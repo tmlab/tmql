@@ -14,7 +14,10 @@ import java.util.List;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.draft2011.path.components.parser.NonCanonicalUtils;
+import de.topicmapslab.tmql4j.draft2011.path.components.parser.ParserUtils;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Function;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisInstances;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Slash;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
@@ -22,8 +25,7 @@ import de.topicmapslab.tmql4j.grammar.productions.ExpressionImpl;
 import de.topicmapslab.tmql4j.grammar.productions.IExpression;
 
 /**
- * Special implementation of {@link ExpressionImpl} representing a
- * simple-content.
+ * Special implementation of {@link ExpressionImpl} representing a simple-content.
  * <p>
  * The grammar production rule of the expression is: <code>
  * <p>
@@ -43,11 +45,9 @@ public class SimpleContent extends ExpressionImpl {
 	 * @param parent
 	 *            the known parent node
 	 * @param tmqlTokens
-	 *            the list of language-specific tokens contained by this
-	 *            expression
+	 *            the list of language-specific tokens contained by this expression
 	 * @param tokens
-	 *            the list of string-represented tokens contained by this
-	 *            expression
+	 *            the list of string-represented tokens contained by this expression
 	 * @param runtime
 	 *            the TMQL runtime
 	 * @throws TMQLInvalidSyntaxException
@@ -77,17 +77,27 @@ public class SimpleContent extends ExpressionImpl {
 
 		}
 		/*
-		 * create anchor expression
+		 * is anchor a function?
 		 */
-		checkForExtensions(Anchor.class, tmqlTokens_.subList(0, 1), tokens_.subList(0, 1), runtime);
+		int index = 1;
+		if (token.equals(Function.class)) {
+			index = ParserUtils.indexOfTokens(tmqlTokens_, Slash.class);
+			if (index == -1) {
+				checkForExtensions(FunctionInvocation.class, tmqlTokens_, tokens_, runtime);
+			} else {
+				checkForExtensions(FunctionInvocation.class, tmqlTokens_.subList(0, index), tokens_.subList(0, index), runtime);
+			}
+		} else {
+			checkForExtensions(Anchor.class, tmqlTokens_.subList(0, 1), tokens_.subList(0, 1), runtime);
+		}
 		/*
 		 * check if expression has navigation part
 		 */
-		if (tmqlTokens_.size() > 1) {
+		if (index != -1 && index < tmqlTokens_.size()) {
 			/*
 			 * create navigation expression
 			 */
-			checkForExtensions(Navigation.class, tmqlTokens_.subList(1, tmqlTokens_.size()), tokens_.subList(1, tokens_.size()), runtime);
+			checkForExtensions(Navigation.class, tmqlTokens_.subList(index, tmqlTokens_.size()), tokens_.subList(index, tokens_.size()), runtime);
 		}
 	}
 

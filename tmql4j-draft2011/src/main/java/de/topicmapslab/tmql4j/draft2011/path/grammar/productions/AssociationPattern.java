@@ -7,10 +7,13 @@ import java.util.List;
 import de.topicmapslab.tmql4j.components.parser.IParserUtilsCallback;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.draft2011.path.components.parser.ParserUtils;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketRoundClose;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketRoundOpen;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketSquareClose;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketSquareOpen;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Comma;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisPlayers;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Slash;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
 import de.topicmapslab.tmql4j.exception.TMQLInvalidSyntaxException;
 import de.topicmapslab.tmql4j.grammar.lexical.IToken;
@@ -112,6 +115,40 @@ public class AssociationPattern extends ExpressionImpl {
 	@Override
 	public boolean isValid() {
 		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void asFlatString(StringBuilder builder) {
+		builder.append(Slash.TOKEN);
+		builder.append(WHITESPACE);
+		/*
+		 * anchor to flat string
+		 */
+		getExpressionFilteredByType(Anchor.class).get(0).asFlatString(builder);
+		/*
+		 * check for filter
+		 */
+		if (contains(FilterPostfix.class)) {
+			getExpressionFilteredByType(FilterPostfix.class).get(0).asFlatString(builder);
+		}
+		builder.append(BracketRoundOpen.TOKEN);
+		builder.append(WHITESPACE);
+		int count = 0;
+		for (AssociationPatternRolePart part : getExpressionFilteredByType(AssociationPatternRolePart.class)) {
+			if (count == 1) {
+				builder.append(ShortcutAxisPlayers.TOKEN);
+				builder.append(WHITESPACE);
+			} else if (count > 1) {
+				builder.append(Comma.TOKEN);
+				builder.append(WHITESPACE);
+			}
+			part.asFlatString(builder);
+		}
+		builder.append(BracketRoundClose.TOKEN);
+		builder.append(WHITESPACE);
 	}
 
 }

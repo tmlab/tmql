@@ -19,6 +19,7 @@ import de.topicmapslab.tmql4j.components.processor.core.IContext;
 import de.topicmapslab.tmql4j.components.processor.core.QueryMatches;
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.Anchor;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.FunctionInvocation;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.Navigation;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.productions.SimpleContent;
 import de.topicmapslab.tmql4j.exception.TMQLRuntimeException;
@@ -56,12 +57,14 @@ public class SimpleContentInterpreter extends ExpressionInterpreterImpl<SimpleCo
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		/*
 		 * interpret anchor
 		 */
-		QueryMatches anchor = extractArguments(runtime, Anchor.class, 0, context, optionalArguments);
+		boolean isAnchor = getExpression().contains(Anchor.class);
+		QueryMatches anchor = extractArguments(runtime, isAnchor ? Anchor.class : FunctionInvocation.class, 0, context, optionalArguments);
 
 		/*
 		 * don't contains a subexpression
@@ -72,15 +75,21 @@ public class SimpleContentInterpreter extends ExpressionInterpreterImpl<SimpleCo
 		/*
 		 * contains a subexpression
 		 */
-		Anchor a = getExpression().getExpressionFilteredByType(Anchor.class).get(0);
-		if (anchor.isEmpty() && a.getGrammarType() == Anchor.TYPE_VARIABLE) {
-			anchor = QueryMatches.asQueryMatchNS(runtime, context.getQuery().getTopicMap().getTopics().toArray());
-		}
-		/*
-		 * special interpretation for tm:subject
-		 */
-		else if (anchor.isEmpty() && TmdmSubjectIdentifier.isTmdmSubject(a.getTokens().get(0))) {
-			anchor = QueryMatches.asQueryMatch(runtime, QueryMatches.getNonScopedVariable(), TmdmSubjectIdentifier.TM_SUBJECT);
+		String variable = null;
+		if (isAnchor) {
+			Anchor a = getExpression().getExpressionFilteredByType(Anchor.class).get(0);
+			if (a.getGrammarType() == Anchor.TYPE_VARIABLE) {
+				variable = a.getTokens().get(0);
+				if (anchor.isEmpty()) {
+					anchor = QueryMatches.asQueryMatchNS(runtime, context.getQuery().getTopicMap().getTopics().toArray());
+				}
+			}
+			/*
+			 * special interpretation for tm:subject
+			 */
+			else if (anchor.isEmpty() && TmdmSubjectIdentifier.isTmdmSubject(a.getTokens().get(0))) {
+				anchor = QueryMatches.asQueryMatch(runtime, QueryMatches.getNonScopedVariable(), TmdmSubjectIdentifier.TM_SUBJECT);
+			}
 		}
 		QueryMatches results = new QueryMatches(runtime);
 		/*
@@ -103,11 +112,10 @@ public class SimpleContentInterpreter extends ExpressionInterpreterImpl<SimpleCo
 				Map<String, Object> binding = HashUtil.getHashMap();
 				binding.putAll(object);
 				/*
-				 * check if anchor is a variable and add an entry to the tuple
-				 * containing the binding of this variable
+				 * check if anchor is a variable and add an entry to the tuple containing the binding of this variable
 				 */
-				if (a.getGrammarType() == Anchor.TYPE_VARIABLE) {
-					binding.put(a.getTokens().get(0), match);
+				if (variable != null) {
+					binding.put(variable, match);
 				}
 				results.add(binding);
 			}

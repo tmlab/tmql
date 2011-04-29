@@ -21,6 +21,7 @@ import de.topicmapslab.tmql4j.draft2011.path.components.parser.ParserUtils;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketRoundOpen;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketSquareClose;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketSquareOpen;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Function;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisByItemIdentifier;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisBySubjectIdentifier;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.ShortcutAxisBySubjectLocator;
@@ -87,11 +88,13 @@ public class Navigation extends ExpressionImpl {
 			public void newToken(List<Class<? extends IToken>> tmqlTokens, List<String> tokens, Class<? extends IToken> foundDelimer) throws TMQLGeneratorException, TMQLInvalidSyntaxException {
 				Class<? extends IToken> token = tmqlTokens.get(0);
 				/*
-				 * is direction token \
+				 * is direction token /
 				 */
 				if (token.equals(Slash.class)) {
 					if (ParserUtils.containsTokens(tmqlTokens, tokensToFound, protectionStarts, protectionEnds)) {
 						checkForExtensions(AssociationPatternDefinition.class, tmqlTokens, tokens, runtime);
+					} else if (tmqlTokens.get(0).equals(Function.class)) {
+						checkForExtensions(FunctionInvocation.class, tmqlTokens, tokens, runtime);
 					} else {
 						checkForExtensions(StepDefinition.class, tmqlTokens, tokens, runtime);
 					}

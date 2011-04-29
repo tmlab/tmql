@@ -47,6 +47,7 @@ public class CompareFunction extends FunctionImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, IExpressionInterpreter<?> caller) {
 		QueryMatches results = new QueryMatches(runtime);
@@ -93,7 +94,7 @@ public class CompareFunction extends FunctionImpl {
 			 * combine tuples
 			 */
 			sequenceA.retainAll(sequenceB);
-			result.put(QueryMatches.getNonScopedVariable(), !sequenceA.isEmpty());
+			result.put("$0", !sequenceA.isEmpty());
 			results.add(result);
 		}
 		return results;
@@ -102,6 +103,7 @@ public class CompareFunction extends FunctionImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public String getItemIdentifier() {
 		return IDENTIFIER;
 	}
@@ -109,6 +111,7 @@ public class CompareFunction extends FunctionImpl {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isExpectedNumberOfParameters(long numberOfParameters) {
 		return numberOfParameters == 2;
 	}

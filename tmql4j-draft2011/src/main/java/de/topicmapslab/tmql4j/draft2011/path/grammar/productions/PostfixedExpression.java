@@ -15,6 +15,7 @@ import java.util.Set;
 
 import de.topicmapslab.tmql4j.components.processor.runtime.ITMQLRuntime;
 import de.topicmapslab.tmql4j.draft2011.path.components.parser.ParserUtils;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.And;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.As;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.At;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketAngleOpen;
@@ -25,8 +26,8 @@ import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.BracketSquareOpen;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Comma;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Equality;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Every;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Except;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Exists;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Function;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.GreaterEquals;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.GreaterThan;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.If;
@@ -35,13 +36,14 @@ import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.LowerEquals;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.LowerThan;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Minus;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Modulo;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Not;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Null;
+import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Or;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Percent;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Plus;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.RegularExpression;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Some;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Star;
-import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Except;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Unequals;
 import de.topicmapslab.tmql4j.draft2011.path.grammar.lexical.Union;
 import de.topicmapslab.tmql4j.exception.TMQLGeneratorException;
@@ -177,7 +179,7 @@ public class PostfixedExpression extends ExpressionImpl {
 		/*
 		 * special tokens only allowed as tuple-expression parts
 		 */
-		tupleExpressionIndicators.add(Function.class);
+		// tupleExpressionIndicators.add(Function.class);
 		tupleExpressionIndicators.add(Comma.class);
 		/*
 		 * mathematical operators
@@ -197,6 +199,12 @@ public class PostfixedExpression extends ExpressionImpl {
 		tupleExpressionIndicators.add(RegularExpression.class);
 		tupleExpressionIndicators.add(Equality.class);
 		tupleExpressionIndicators.add(Unequals.class);
+		/*
+		 * boolean operators
+		 */
+		tupleExpressionIndicators.add(And.class);
+		tupleExpressionIndicators.add(Or.class);
+		tupleExpressionIndicators.add(Not.class);
 		/*
 		 * set operators
 		 */

@@ -52,7 +52,7 @@ public class BooleanExpressionInterpreter extends ExpressionInterpreterImpl<Bool
 	/**
 	 * the Logger
 	 */
-	private Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
+	private final Logger logger = LoggerFactory.getLogger(getClass().getSimpleName());
 
 	/**
 	 * base constructor to create a new instance
@@ -67,52 +67,49 @@ public class BooleanExpressionInterpreter extends ExpressionInterpreterImpl<Bool
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public QueryMatches interpret(ITMQLRuntime runtime, IContext context, Object... optionalArguments) throws TMQLRuntimeException {
 		switch (getGrammarTypeOfExpression()) {
-		/*
-		 * is boolean-expression ::= boolean-expression | boolean-expression
-		 */
-		case BooleanExpression.TYPE_DISJUNCTION: {
-			return interpretDisjunction(runtime, context, optionalArguments);
-		}
 			/*
-			 * is boolean-expression ::= boolean-expression & boolean-expression
+			 * is boolean-expression ::= boolean-expression | boolean-expression
 			 */
-		case BooleanExpression.TYPE_CONJUNCTION: {
-			return interpretConjunction(runtime, context, optionalArguments);
-		}
-			/*
-			 * is boolean-expression ::= boolean-primitive
-			 */
-		case BooleanExpression.TYPE_BOOLEAN_PRIMITIVE: {
-			return interpretBooleanPrimitve(runtime, context, optionalArguments);
-		}
-			/*
-			 * is boolean-expression ::= every binding-set satisfies
-			 * boolean-expression
-			 */
-		case BooleanExpression.TYPE_FORALL_CLAUSE: {
-			return interpretForAllClause(runtime, context, optionalArguments);
-		}
-		default:
-			throw new TMQLRuntimeException("The state of this expression is invalid!");
+			case BooleanExpression.TYPE_DISJUNCTION: {
+				return interpretDisjunction(runtime, context, optionalArguments);
+			}
+				/*
+				 * is boolean-expression ::= boolean-expression & boolean-expression
+				 */
+			case BooleanExpression.TYPE_CONJUNCTION: {
+				return interpretConjunction(runtime, context, optionalArguments);
+			}
+				/*
+				 * is boolean-expression ::= boolean-primitive
+				 */
+			case BooleanExpression.TYPE_BOOLEAN_PRIMITIVE: {
+				return interpretBooleanPrimitve(runtime, context, optionalArguments);
+			}
+				/*
+				 * is boolean-expression ::= every binding-set satisfies boolean-expression
+				 */
+			case BooleanExpression.TYPE_FORALL_CLAUSE: {
+				return interpretForAllClause(runtime, context, optionalArguments);
+			}
+			default:
+				throw new TMQLRuntimeException("The state of this expression is invalid!");
 		}
 	}
 
 	/**
-	 * The method is called to interpret the given sub-expression by using the
-	 * given runtime. The interpretation will call the sub-expression if the
-	 * given expression isn't a leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the given runtime. The interpretation will
+	 * call the sub-expression if the given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
-	 * The interpretation will transform the value on top of the stack and put
-	 * its results also on top.
+	 * The interpretation will transform the value on top of the stack and put its results also on top.
 	 * </p>
 	 * 
 	 * @param runtime
-	 *            the runtime which contains all necessary information for
-	 *            querying process
+	 *            the runtime which contains all necessary information for querying process
 	 * @param context
 	 *            the current querying context
 	 * @param optionalArguments
@@ -149,18 +146,15 @@ public class BooleanExpressionInterpreter extends ExpressionInterpreterImpl<Bool
 	}
 
 	/**
-	 * The method is called to interpret the given sub-expression by using the
-	 * given runtime. The interpretation will call the sub-expression if the
-	 * given expression isn't a leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the given runtime. The interpretation will
+	 * call the sub-expression if the given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
-	 * The interpretation will transform the value on top of the stack and put
-	 * its results also on top.
+	 * The interpretation will transform the value on top of the stack and put its results also on top.
 	 * </p>
 	 * 
 	 * @param runtime
-	 *            the runtime which contains all necessary information for
-	 *            querying process
+	 *            the runtime which contains all necessary information for querying process
 	 * @param context
 	 *            the current querying context
 	 * @param optionalArguments
@@ -214,8 +208,7 @@ public class BooleanExpressionInterpreter extends ExpressionInterpreterImpl<Bool
 			newContext.setContextBindings(queryMatches);
 
 			/*
-			 * check if result is empty -> boolean-expression returns empty
-			 * tuple sequence
+			 * check if result is empty -> boolean-expression returns empty tuple sequence
 			 */
 			if (queryMatches.isEmpty() || !satisfy) {
 				/*
@@ -229,18 +222,15 @@ public class BooleanExpressionInterpreter extends ExpressionInterpreterImpl<Bool
 	}
 
 	/**
-	 * The method is called to interpret the given sub-expression by using the
-	 * given runtime. The interpretation will call the sub-expression if the
-	 * given expression isn't a leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the given runtime. The interpretation will
+	 * call the sub-expression if the given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
-	 * The interpretation will transform the value on top of the stack and put
-	 * its results also on top.
+	 * The interpretation will transform the value on top of the stack and put its results also on top.
 	 * </p>
 	 * 
 	 * @param runtime
-	 *            the runtime which contains all necessary information for
-	 *            querying process
+	 *            the runtime which contains all necessary information for querying process
 	 * @param context
 	 *            the current querying context
 	 * @param optionalArguments
@@ -259,18 +249,15 @@ public class BooleanExpressionInterpreter extends ExpressionInterpreterImpl<Bool
 	}
 
 	/**
-	 * The method is called to interpret the given sub-expression by using the
-	 * given runtime. The interpretation will call the sub-expression if the
-	 * given expression isn't a leaf in parsing-tree.
+	 * The method is called to interpret the given sub-expression by using the given runtime. The interpretation will
+	 * call the sub-expression if the given expression isn't a leaf in parsing-tree.
 	 * 
 	 * <p>
-	 * The interpretation will transform the value on top of the stack and put
-	 * its results also on top.
+	 * The interpretation will transform the value on top of the stack and put its results also on top.
 	 * </p>
 	 * 
 	 * @param runtime
-	 *            the runtime which contains all necessary information for
-	 *            querying process
+	 *            the runtime which contains all necessary information for querying process
 	 * @param context
 	 *            the current querying context
 	 * @param optionalArguments
